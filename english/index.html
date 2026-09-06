@@ -88,6 +88,15 @@
   .stat .n{ font-family:"IBM Plex Mono", monospace; font-weight:600; font-size:1.15rem; font-variant-numeric:tabular-nums; }
   .stat .l{ font-size:0.68rem; color:var(--ink-soft); letter-spacing:0.03em; }
 
+  .pack-tabs{ display:flex; gap:6px; margin:18px 0 8px; }
+  .pack-tab{
+    border:1px solid var(--line); background:var(--surface); color:var(--ink-soft);
+    border-radius:999px; padding:7px 14px; font-size:0.82rem; font-weight:600; cursor:pointer;
+  }
+  .pack-tab:hover{ border-color:var(--ink-faint); }
+  .pack-tab.active{ background:var(--ink); color:var(--bg); border-color:var(--ink); }
+  .pack-subtitle{ margin:0 0 18px; font-size:0.82rem; color:var(--ink-soft); }
+
   .dots{ display:flex; gap:5px; margin:16px 0 22px; flex-wrap:wrap; }
   .dot{ width:9px; height:9px; border-radius:50%; background:var(--surface-2); border:1px solid var(--line); }
   .dot.filled{ background:var(--accent); border-color:var(--accent); }
@@ -212,6 +221,9 @@
     </div>
   </div>
 
+  <div class="pack-tabs" id="packTabs"></div>
+  <p class="pack-subtitle" id="packSubtitle"></p>
+
   <div class="dots" id="dotsRow"></div>
 
   <section class="panel" id="sessionPanel"></section>
@@ -322,24 +334,49 @@
     ]}
   ];
 
+  var MENTAL_DEFS = [
+    { key:"mental", label:"군인 정신", items:[
+      {en:"Winning here is a conscious decision.", ko:"여기서 이기는 것은 의식적인 선택입니다.", situation:"극한 훈련 중, 교관이 던지는 말", tip:"conscious decision(의식적인 결정)이 핵심이에요. 이기는 건 우연이 아니라 매 순간의 선택이라는 뜻이에요."},
+      {en:"Make up your mind whether you want to pass or choose to fail.", ko:"통과할지, 아니면 실패를 선택할지 마음을 정하세요.", situation:"포기 직전, 스스로에게 던져야 할 질문", tip:"choose to fail — 실패조차 스스로 선택하는 것이라는 뼈아픈 표현이에요. mind에 강세를 주세요."},
+      {en:"Take all this shaking and all this cold, and turn it into aggression.", ko:"이 떨림과 이 추위를 전부 받아들이고, 그것을 공격성으로 바꾸세요.", situation:"몸이 무너질 것 같은 순간, 그 상태를 무기로 바꾸라는 말", tip:"turn A into B(A를 B로 바꾸다) 패턴이에요. 두려움도 에너지로 바꿀 수 있다는 뜻이에요."},
+      {en:"You just proved to your body, through your mind, that you can push yourself further than you thought possible.", ko:"당신은 방금 마음을 통해 몸에게 증명했습니다. 생각했던 것보다 더 멀리 자신을 밀어붙일 수 있다는 것을요.", situation:"한계를 넘어선 직후, 그 경험의 의미를 짚어주는 말", tip:"push yourself further than you thought possible — 이 훈련 전체를 관통하는 핵심 문장이에요."},
+      {en:"Whatever you have to do, just find an excuse to win.", ko:"무엇을 해야 하든, 그냥 이길 핑계를 찾으세요.", situation:"승리에 대한 태도를 강조하는 말", tip:"find an excuse to win — 포기할 핑계 대신 이길 핑계를 찾으라는 역발상 표현이에요."},
+      {en:"Keep going. It pays to be a winner.", ko:"계속하세요. 승자가 되는 건 그만한 가치가 있습니다.", situation:"지쳐서 멈추고 싶을 때 되뇌는 말", tip:"it pays to be ___ — ___가 되는 건 보상이 따른다는 뜻의 자연스러운 패턴이에요."},
+      {en:"I hit my limit. So?", ko:"한계에 다다랐어요. — 그래서요?", situation:"한계를 이유로 대는 사람에게 되묻는 교관의 말", tip:"So? 는 짧지만 가장 강력한 반문이에요. 한계는 멈출 이유가 아니라는 뜻이 담겨 있어요."},
+      {en:"Are you absolutely sure? I'm positive.", ko:"정말 확실해요? — 확신해요.", situation:"자신의 결심을 다시 확인받는 순간", tip:"I'm positive는 I'm sure보다 훨씬 더 강하고 단호한 확신의 표현이에요."},
+      {en:"I have buddies I can depend on, and I want them to be able to depend on me too.", ko:"저에게는 의지할 수 있는 동료들이 있고, 저도 그들이 저에게 의지할 수 있으면 좋겠어요.", situation:"팀을 향한 책임감을 말하는 순간", tip:"depend on(의지하다)이 두 번 반복돼요. 신뢰는 서로 주고받는 것이라는 의미가 담겨 있어요."},
+      {en:"You guys are our band of brothers.", ko:"여러분은 우리의 밴드 오브 브라더스, 즉 전우입니다.", situation:"함께 훈련을 견뎌낸 이들을 부르는 말", tip:"band of brothers는 생사를 함께한 전우를 뜻하는 유명한 표현이에요."}
+    ]}
+  ];
+
+  var PACKS = [
+    { key:"main", label:"기본 커리큘럼", subtitle:"만남부터 응급상황까지, 선교지 기본 소통", modules: MODULE_DEFS },
+    { key:"mental", label:"멘탈 강화", subtitle:"Lone Survivor · 견뎌내는 자의 문장들", modules: MENTAL_DEFS }
+  ];
+
   var STAGE = { 1:"learning", 2:"learning", 3:"reviewing", 4:"reviewing", 5:"stabilizing", 6:"mastered" };
   var STAGE_LABEL = { learning:"학습중", reviewing:"복습중", stabilizing:"안정화", mastered:"마스터" };
   var INTERVALS = { 1:1, 2:2, 3:4, 4:8, 5:16, 6:32 };
   var MAX_DUE = 6;
   var REP_THRESHOLD = 3;
 
-  var BANK = [];
-  (function buildBank(){
-    var max = Math.max.apply(null, MODULE_DEFS.map(function(m){ return m.items.length; }));
+  var BANKS = {};
+  var PACK_MAP = {};
+  PACKS.forEach(function(pack){
+    PACK_MAP[pack.key] = pack;
+    var bank = [];
+    var max = Math.max.apply(null, pack.modules.map(function(m){ return m.items.length; }));
     for (var i = 0; i < max; i++){
-      MODULE_DEFS.forEach(function(mod){
+      pack.modules.forEach(function(mod){
         if (mod.items[i]){
           var it = mod.items[i];
-          BANK.push({ id: mod.key + "-" + i, mod: mod.key, modLabel: mod.label, en: it.en, ko: it.ko, situation: it.situation, tip: it.tip });
+          bank.push({ id: mod.key + "-" + i, mod: mod.key, modLabel: mod.label, en: it.en, ko: it.ko, situation: it.situation, tip: it.tip });
         }
       });
     }
-  })();
+    BANKS[pack.key] = bank;
+  });
+  var activePack = "main";
 
   // ---------- date helpers ----------
   function parseDate(s){ var p = s.split("-").map(Number); return new Date(p[0], p[1]-1, p[2]); }
@@ -351,8 +388,34 @@
   var STORAGE_KEY = "hanmunjang_state_v1";
   var storageMode = "local";
 
+  function defaultPackState(){
+    return { startDate: todayStr(), currentIndex: 0, cards: {} };
+  }
   function defaultState(){
-    return { startDate: todayStr(), currentIndex: 0, cards: {}, practiceDates: [], streak: 0 };
+    var packs = {};
+    PACKS.forEach(function(p){ packs[p.key] = defaultPackState(); });
+    return { activePack: "main", practiceDates: [], streak: 0, packs: packs };
+  }
+  function normalizeState(raw){
+    if (!raw) return defaultState();
+    if (!raw.packs){
+      // legacy flat shape from before theme packs existed
+      var migrated = defaultState();
+      migrated.practiceDates = raw.practiceDates || [];
+      migrated.streak = raw.streak || 0;
+      migrated.packs.main = {
+        startDate: raw.startDate || todayStr(),
+        currentIndex: typeof raw.currentIndex === "number" ? raw.currentIndex : 0,
+        cards: raw.cards || {}
+      };
+      return migrated;
+    }
+    PACKS.forEach(function(p){
+      if (!raw.packs[p.key]) raw.packs[p.key] = defaultPackState();
+    });
+    if (!raw.practiceDates) raw.practiceDates = [];
+    if (!raw.activePack || !PACK_MAP[raw.activePack]) raw.activePack = "main";
+    return raw;
   }
 
   function loadLocal(){
@@ -417,25 +480,29 @@
     state.streak = computeStreak();
   }
 
+  function pack(){ return state.packs[activePack]; }
+  function bank(){ return BANKS[activePack]; }
+
   function buildQueue(){
     var today = todayStr();
+    var p = pack(), b = bank();
     var due = [];
-    Object.keys(state.cards).forEach(function(id){
-      var c = state.cards[id];
+    Object.keys(p.cards).forEach(function(id){
+      var c = p.cards[id];
       if (c.nextDue <= today){
-        var bankItem = BANK.filter(function(b){ return b.id === id; })[0];
+        var bankItem = b.filter(function(x){ return x.id === id; })[0];
         if (bankItem) due.push({ type: "review", id: id, bankItem: bankItem, cardState: c });
       }
     });
-    due.sort(function(a, b){ return a.cardState.nextDue.localeCompare(b.cardState.nextDue) || a.cardState.box - b.cardState.box; });
+    due.sort(function(a, b2){ return a.cardState.nextDue.localeCompare(b2.cardState.nextDue) || a.cardState.box - b2.cardState.box; });
 
     var totalDue = due.length;
     due = due.slice(0, MAX_DUE);
 
-    var introducedToday = Object.keys(state.cards).some(function(id){ return state.cards[id].introducedOn === today; });
+    var introducedToday = Object.keys(p.cards).some(function(id){ return p.cards[id].introducedOn === today; });
     var queue = due.slice();
-    if (!introducedToday && state.currentIndex < BANK.length){
-      var candidate = BANK[state.currentIndex];
+    if (!introducedToday && p.currentIndex < b.length){
+      var candidate = b[p.currentIndex];
       queue.push({ type: "new", id: candidate.id, bankItem: candidate, cardState: null });
     }
     return { queue: queue, overflow: Math.max(0, totalDue - due.length) };
@@ -450,17 +517,30 @@
     speechSynthesis.onvoiceschanged = function(){ cb(); };
     setTimeout(cb, 400);
   }
+  var VOICE_BLACKLIST = ["albert","bad news","bahh","bells","boing","bubbles","cellos","wobble","deranged","good news","hysterical","jester","organ","superstar","trinoids","whisper","zarvox","junior","kathy","ralph","grandma","grandpa","flo","shelley","eddy"];
+  var VOICE_PRIORITY = ["alex","microsoft guy","microsoft christopher","microsoft andrew","tom","aaron","google uk english male","daniel","oliver","arthur","gordon","fred"];
+  function isBlacklistedVoice(name){
+    name = name.toLowerCase();
+    return VOICE_BLACKLIST.some(function(b){ return name.indexOf(b) !== -1; });
+  }
   function pickVoice(){
-    var voices = speechSynthesis.getVoices();
-    return voices.filter(function(v){ return /^en/.test(v.lang); })
-      .sort(function(a,b){ return (b.lang === "en-US") - (a.lang === "en-US"); })[0] || null;
+    var voices = speechSynthesis.getVoices().filter(function(v){ return /^en/.test(v.lang); });
+    var clean = voices.filter(function(v){ return !isBlacklistedVoice(v.name); });
+    var pool = clean.length ? clean : voices;
+    for (var i = 0; i < VOICE_PRIORITY.length; i++){
+      var want = VOICE_PRIORITY[i];
+      var found = pool.filter(function(v){ return v.name.toLowerCase().indexOf(want) !== -1; })[0];
+      if (found) return found;
+    }
+    var us = pool.filter(function(v){ return v.lang === "en-US"; });
+    return us[0] || pool[0] || null;
   }
   function speak(text, rate){
     if (!("speechSynthesis" in window)) return false;
     ensureVoices(function(){
       speechSynthesis.cancel();
       var u = new SpeechSynthesisUtterance(text);
-      u.lang = "en-US"; u.rate = rate || 0.95;
+      u.lang = "en-US"; u.rate = rate || 0.95; u.pitch = 0.88;
       var v = pickVoice(); if (v) u.voice = v;
       speechSynthesis.speak(u);
     });
@@ -489,9 +569,30 @@
 
   function el(html){ var d = document.createElement("div"); d.innerHTML = html.trim(); return d.firstChild; }
 
+  function renderPackTabs(){
+    var row = document.getElementById("packTabs");
+    row.innerHTML = "";
+    PACKS.forEach(function(p){
+      var btn = document.createElement("button");
+      btn.className = "pack-tab" + (p.key === activePack ? " active" : "");
+      btn.textContent = p.label;
+      btn.onclick = function(){
+        if (activePack === p.key) return;
+        activePack = p.key;
+        state.activePack = p.key;
+        persist(state);
+        repCardId = null; revealMap = {};
+        renderAll();
+      };
+      row.appendChild(btn);
+    });
+    document.getElementById("packSubtitle").textContent = PACK_MAP[activePack].subtitle;
+  }
+
   function renderHeader(){
     document.getElementById("streakN").textContent = state.streak;
-    document.getElementById("learnedN").textContent = Object.keys(state.cards).length;
+    document.getElementById("learnedN").textContent = Object.keys(pack().cards).length;
+    renderPackTabs();
     var dotsRow = document.getElementById("dotsRow");
     dotsRow.innerHTML = "";
     var today = todayStr();
@@ -519,11 +620,11 @@
     var queue = result.queue;
 
     if (queue.length === 0){
-      var doneBank = state.currentIndex >= BANK.length;
+      var doneBank = pack().currentIndex >= bank().length;
       panel.innerHTML =
         '<div class="complete">' +
-          '<div class="badge">' + (doneBank ? "1부 완주" : "오늘의 여정 완료") + '</div>' +
-          '<h2>' + (doneBank ? "60개 문장을 모두 배우셨어요." : "오늘 몫을 다 했어요.") + '</h2>' +
+          '<div class="badge">' + (doneBank ? "완주" : "오늘의 여정 완료") + '</div>' +
+          '<h2>' + (doneBank ? bank().length + "개 문장을 모두 배우셨어요." : "오늘 몫을 다 했어요.") + '</h2>' +
           '<p>' + (doneBank ? "복습은 계속 이어집니다. 다음 세트는 곧 추가될 예정이에요." : "내일 다시 새 문장과 복습이 기다리고 있어요.") + '</p>' +
         '</div>';
       return;
@@ -612,8 +713,9 @@
     var confirmBtn = document.getElementById("confirmBtn");
     if (confirmBtn) confirmBtn.onclick = function(){
       var today = todayStr();
-      state.cards[item.id] = { box: 1, nextDue: addDaysStr(today, INTERVALS[1]), introducedOn: today, lastResult: null };
-      state.currentIndex++;
+      var p = pack();
+      p.cards[item.id] = { box: 1, nextDue: addDaysStr(today, INTERVALS[1]), introducedOn: today, lastResult: null };
+      p.currentIndex++;
       markPracticedToday();
       persist(state);
       repCardId = null; revealMap = {};
@@ -627,7 +729,7 @@
 
   function rate(item, result){
     var today = todayStr();
-    var card = state.cards[item.id];
+    var card = pack().cards[item.id];
     card.box = result === "easy" ? Math.min(6, card.box + 1) : 1;
     card.nextDue = addDaysStr(today, INTERVALS[card.box]);
     card.lastResult = result;
@@ -639,8 +741,9 @@
 
   function renderWeekly(){
     var panel = document.getElementById("weeklyPanel");
-    var recent = Object.keys(state.cards)
-      .map(function(id){ return { id: id, c: state.cards[id] }; })
+    var p = pack(), b0 = bank();
+    var recent = Object.keys(p.cards)
+      .map(function(id){ return { id: id, c: p.cards[id] }; })
       .sort(function(a, b){ return b.c.introducedOn.localeCompare(a.c.introducedOn); })
       .slice(0, 7)
       .reverse();
@@ -648,7 +751,7 @@
     panel.style.display = "block";
     var html = '<h3 class="panel-title">최근에 배운 문장 모아 말하기</h3><ul class="week-list">';
     recent.forEach(function(r){
-      var b = BANK.filter(function(x){ return x.id === r.id; })[0];
+      var b = b0.filter(function(x){ return x.id === r.id; })[0];
       html += '<li><div class="en">' + b.en + '</div><div class="ko">' + b.ko + '</div></li>';
     });
     html += '</ul><button class="btn accent" id="playAllBtn" style="width:100%">순서대로 이어 듣기</button>';
@@ -657,11 +760,11 @@
       var i = 0;
       function next(){
         if (i >= recent.length) return;
-        var b = BANK.filter(function(x){ return x.id === recent[i].id; })[0];
+        var b = b0.filter(function(x){ return x.id === recent[i].id; })[0];
         ensureVoices(function(){
           speechSynthesis.cancel();
           var u = new SpeechSynthesisUtterance(b.en);
-          u.lang = "en-US"; u.rate = 0.9;
+          u.lang = "en-US"; u.rate = 0.9; u.pitch = 0.88;
           var v = pickVoice(); if (v) u.voice = v;
           u.onend = function(){ i++; setTimeout(next, 350); };
           speechSynthesis.speak(u);
@@ -673,9 +776,10 @@
 
   function renderCurriculum(){
     var body = document.getElementById("curriculumBody");
+    var p = pack();
     var html = "";
-    MODULE_DEFS.forEach(function(mod){
-      var learned = Object.keys(state.cards).filter(function(id){ return state.cards[id] && id.indexOf(mod.key + "-") === 0; }).length;
+    PACK_MAP[activePack].modules.forEach(function(mod){
+      var learned = Object.keys(p.cards).filter(function(id){ return p.cards[id] && id.indexOf(mod.key + "-") === 0; }).length;
       var pct = Math.round((learned / mod.items.length) * 100);
       html += '<div class="mod-row"><span class="name">' + mod.label + '</span><span class="bar"><span style="width:' + pct + '%"></span></span><span class="count">' + learned + '/' + mod.items.length + '</span></div>';
     });
@@ -690,10 +794,8 @@
   }
 
   loadState().then(function(s){
-    state = s;
-    if (!state.practiceDates) state.practiceDates = [];
-    if (typeof state.currentIndex !== "number") state.currentIndex = 0;
-    if (!state.cards) state.cards = {};
+    state = normalizeState(s);
+    activePack = state.activePack || "main";
     state.streak = computeStreak();
     renderAll();
   });
