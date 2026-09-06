@@ -1,0 +1,704 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#F2F1EC">
+<title>하루 한 문장</title>
+<meta name="description" content="매일 한 문장씩 소리내어 연습하며 전 세계 어디서든 통하는 영어 회화력을 기르는 간격 반복 훈련 도구">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;1,500&family=Noto+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+  :root{
+    --bg:#F2F1EC;
+    --surface:#FFFFFF;
+    --surface-2:#EAE6DB;
+    --ink:#212C33;
+    --ink-soft:#5B6A72;
+    --ink-faint:#8B979D;
+    --line:#DAD5C6;
+    --accent:#2E6E62;
+    --accent-ink:#F5FBF9;
+    --accent-soft:#DEEAE5;
+    --accent-soft-ink:#1F4A41;
+    --gold:#AD7A2C;
+    --gold-soft:#F1E4CB;
+    --gold-ink:#523C13;
+    --warn:#AE5A38;
+    --warn-soft:#F3E1D6;
+    --stage-learning-bg:#E4EFEA; --stage-learning-ink:#2C5C4F;
+    --stage-reviewing-bg:#BFDED3; --stage-reviewing-ink:#1D4B3D;
+    --stage-stabilizing-bg:#3F8672; --stage-stabilizing-ink:#EFFAF5;
+    --stage-mastered-bg:#AD7A2C; --stage-mastered-ink:#FBF3E4;
+    --shadow: 0 1px 2px rgba(33,44,51,0.05), 0 10px 28px -14px rgba(33,44,51,0.22);
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#141A1E; --surface:#1C252A; --surface-2:#232E33;
+      --ink:#ECE8DD; --ink-soft:#9FADB4; --ink-faint:#6C7A81;
+      --line:#2D383E;
+      --accent:#59B29F; --accent-ink:#0E1B18; --accent-soft:#20322D; --accent-soft-ink:#A9E0D0;
+      --gold:#E0AC5C; --gold-soft:#33291A; --gold-ink:#F4DDAF;
+      --warn:#E08462; --warn-soft:#3A241D;
+      --stage-learning-bg:#20322D; --stage-learning-ink:#9BD8C4;
+      --stage-reviewing-bg:#28453B; --stage-reviewing-ink:#BCEBD9;
+      --stage-stabilizing-bg:#4C9C87; --stage-stabilizing-ink:#0D1E1A;
+      --stage-mastered-bg:#E0AC5C; --stage-mastered-ink:#2A1D05;
+      --shadow: 0 1px 2px rgba(0,0,0,0.4), 0 10px 28px -14px rgba(0,0,0,0.65);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#141A1E; --surface:#1C252A; --surface-2:#232E33;
+    --ink:#ECE8DD; --ink-soft:#9FADB4; --ink-faint:#6C7A81;
+    --line:#2D383E;
+    --accent:#59B29F; --accent-ink:#0E1B18; --accent-soft:#20322D; --accent-soft-ink:#A9E0D0;
+    --gold:#E0AC5C; --gold-soft:#33291A; --gold-ink:#F4DDAF;
+    --warn:#E08462; --warn-soft:#3A241D;
+    --stage-learning-bg:#20322D; --stage-learning-ink:#9BD8C4;
+    --stage-reviewing-bg:#28453B; --stage-reviewing-ink:#BCEBD9;
+    --stage-stabilizing-bg:#4C9C87; --stage-stabilizing-ink:#0D1E1A;
+    --stage-mastered-bg:#E0AC5C; --stage-mastered-ink:#2A1D05;
+    --shadow: 0 1px 2px rgba(0,0,0,0.4), 0 10px 28px -14px rgba(0,0,0,0.65);
+    color-scheme: dark;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:"Noto Sans KR", system-ui, sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  button{ font-family:inherit; }
+  button:focus-visible, summary:focus-visible, a:focus-visible{
+    outline:2px solid var(--accent); outline-offset:2px;
+  }
+  @media (prefers-reduced-motion: reduce){ *{ animation-duration:0.001ms !important; transition-duration:0.001ms !important; } }
+
+  .wrap{ max-width:640px; margin:0 auto; padding:28px 18px 64px; }
+
+  /* header */
+  .top{ display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:6px; }
+  .brand{ display:flex; align-items:center; gap:10px; }
+  .brand h1{ font-family:"Lora", serif; font-weight:600; font-size:1.5rem; margin:0; letter-spacing:-0.01em; }
+  .tagline{ margin:2px 0 0; color:var(--ink-soft); font-size:0.86rem; }
+  .stats{ display:flex; gap:10px; }
+  .stat{ text-align:right; }
+  .stat .n{ font-family:"IBM Plex Mono", monospace; font-weight:600; font-size:1.15rem; font-variant-numeric:tabular-nums; }
+  .stat .l{ font-size:0.68rem; color:var(--ink-soft); letter-spacing:0.03em; }
+
+  .dots{ display:flex; gap:5px; margin:16px 0 22px; flex-wrap:wrap; }
+  .dot{ width:9px; height:9px; border-radius:50%; background:var(--surface-2); border:1px solid var(--line); }
+  .dot.filled{ background:var(--accent); border-color:var(--accent); }
+  .dot.today{ box-shadow:0 0 0 2px var(--bg), 0 0 0 3px var(--accent); }
+
+  section.panel{
+    background:var(--surface); border:1px solid var(--line); border-radius:14px;
+    box-shadow:var(--shadow); padding:22px; margin-bottom:16px;
+  }
+
+  /* session card */
+  .session-meta{ display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+  .kind-tag{ font-size:0.72rem; font-weight:600; letter-spacing:0.04em; padding:3px 9px; border-radius:999px; }
+  .kind-tag.new{ background:var(--accent-soft); color:var(--accent-soft-ink); }
+  .kind-tag.review{ background:var(--surface-2); color:var(--ink-soft); }
+  .stage-chip{ font-size:0.72rem; font-weight:600; padding:3px 9px; border-radius:999px; font-family:"IBM Plex Mono",monospace; }
+  .queue-count{ font-size:0.76rem; color:var(--ink-faint); }
+  .mod-label{ font-size:0.78rem; color:var(--ink-soft); margin-bottom:2px; }
+  .situation{ font-size:0.84rem; color:var(--ink-soft); font-style:italic; margin:0 0 14px; }
+
+  .en-sentence{
+    font-family:"Lora", serif; font-weight:600; font-style:italic;
+    font-size:clamp(1.4rem, 5vw, 1.9rem); line-height:1.4; text-wrap:balance;
+    margin:0 0 12px;
+  }
+  .ko-sentence{
+    font-size:1rem; color:var(--ink-soft); margin:0 0 16px;
+    padding-top:12px; border-top:1px dashed var(--line);
+  }
+  .reveal-btn{
+    background:var(--surface-2); border:1px solid var(--line); color:var(--ink-soft);
+    border-radius:8px; padding:8px 12px; font-size:0.86rem; cursor:pointer; margin-bottom:16px;
+  }
+  .tip-box{
+    background:var(--accent-soft); color:var(--accent-soft-ink); border-radius:10px;
+    padding:10px 13px; font-size:0.84rem; margin-bottom:18px; line-height:1.5;
+  }
+  .tip-box b{ font-weight:700; }
+
+  .audio-row{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px; }
+  .btn{
+    border-radius:9px; padding:9px 14px; font-size:0.86rem; font-weight:600;
+    cursor:pointer; border:1px solid var(--line); background:var(--surface); color:var(--ink);
+  }
+  .btn:hover{ border-color:var(--ink-faint); }
+  .btn.ghost{ background:transparent; }
+  .btn.accent{ background:var(--accent); color:var(--accent-ink); border-color:var(--accent); }
+  .btn.accent:hover{ opacity:0.92; }
+  .btn:disabled{ opacity:0.4; cursor:not-allowed; }
+
+  .practice-row{
+    display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+    background:var(--surface-2); border-radius:10px; padding:12px 14px; margin-bottom:16px;
+  }
+  .practice-row .n{ font-family:"IBM Plex Mono",monospace; font-weight:600; }
+  .practice-hint{ font-size:0.76rem; color:var(--ink-faint); }
+
+  .stt-result{ font-size:0.84rem; margin-top:8px; padding:10px 12px; background:var(--surface-2); border-radius:9px; }
+  .stt-result .match{ color:var(--accent); font-weight:600; }
+  .stt-result .miss{ color:var(--warn); text-decoration:line-through; opacity:0.8; }
+
+  .rate-row{ display:flex; gap:10px; margin-top:6px; }
+  .rate-row .btn{ flex:1; }
+  .btn.hard{ background:var(--warn-soft); border-color:var(--warn-soft); color:var(--warn); }
+  .btn.easy{ background:var(--accent-soft); border-color:var(--accent-soft); color:var(--accent-soft-ink); }
+
+  /* complete state */
+  .complete{ text-align:center; padding:12px 8px 4px; }
+  .complete .badge{ font-family:"IBM Plex Mono",monospace; font-size:0.76rem; color:var(--gold-ink); background:var(--gold-soft); display:inline-block; padding:5px 12px; border-radius:999px; margin-bottom:14px; letter-spacing:0.03em; }
+  .complete h2{ font-family:"Lora",serif; font-size:1.3rem; margin:0 0 8px; }
+  .complete p{ color:var(--ink-soft); font-size:0.9rem; margin:0 0 4px; }
+
+  /* weekly + curriculum */
+  h3.panel-title{ font-family:"Lora",serif; font-size:1.05rem; margin:0 0 14px; font-weight:600; }
+  .week-list{ list-style:none; margin:0 0 14px; padding:0; display:flex; flex-direction:column; gap:10px; }
+  .week-list li{ font-size:0.9rem; border-bottom:1px solid var(--line); padding-bottom:9px; }
+  .week-list li:last-child{ border-bottom:none; padding-bottom:0; }
+  .week-list .en{ font-family:"Lora",serif; font-style:italic; }
+  .week-list .ko{ color:var(--ink-soft); font-size:0.82rem; margin-top:2px; }
+
+  details.collapse{ border-top:1px solid var(--line); }
+  details.collapse:first-of-type{ border-top:none; }
+  details.collapse summary{
+    cursor:pointer; padding:16px 0; font-family:"Lora",serif; font-weight:600; font-size:1.02rem;
+    list-style:none; display:flex; align-items:center; justify-content:space-between;
+  }
+  details.collapse summary::-webkit-details-marker{ display:none; }
+  details.collapse summary .arrow{ transition:transform 0.15s ease; color:var(--ink-faint); font-family:"IBM Plex Mono",monospace; }
+  details.collapse[open] summary .arrow{ transform:rotate(90deg); }
+  details.collapse .body{ padding:0 0 20px; }
+
+  .mod-row{ display:flex; align-items:center; gap:12px; margin-bottom:11px; }
+  .mod-row .name{ flex:0 0 128px; font-size:0.84rem; color:var(--ink-soft); }
+  .mod-row .bar{ flex:1; height:8px; border-radius:99px; background:var(--surface-2); overflow:hidden; }
+  .mod-row .bar > span{ display:block; height:100%; background:var(--accent); border-radius:99px; }
+  .mod-row .count{ flex:0 0 40px; text-align:right; font-family:"IBM Plex Mono",monospace; font-size:0.78rem; color:var(--ink-faint); }
+
+  .method ul{ margin:0; padding-left:1.1em; display:flex; flex-direction:column; gap:12px; }
+  .method li{ font-size:0.88rem; line-height:1.6; color:var(--ink-soft); }
+  .method b{ color:var(--ink); }
+
+  footer{ text-align:center; font-size:0.78rem; color:var(--ink-faint); margin-top:26px; line-height:1.6; }
+  .storage-note{ text-align:center; font-size:0.72rem; color:var(--ink-faint); margin-top:10px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="brand">
+      <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true">
+        <circle cx="13" cy="13" r="10.5" fill="none" stroke="var(--accent)" stroke-width="1.4"/>
+        <path d="M2.7 13H23.3M13 2.7V23.3M6.4 6.4C9.6 9.2 16.4 9.2 19.6 6.4M6.4 19.6C9.6 16.8 16.4 16.8 19.6 19.6" fill="none" stroke="var(--accent)" stroke-width="1.1" opacity="0.7"/>
+      </svg>
+      <div>
+        <h1>하루 한 문장</h1>
+        <p class="tagline">어디서든 통하는 영어, 한 문장씩</p>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="n" id="streakN">0</div><div class="l">연속 일수</div></div>
+      <div class="stat"><div class="n" id="learnedN">0</div><div class="l">배운 문장</div></div>
+    </div>
+  </div>
+
+  <div class="dots" id="dotsRow"></div>
+
+  <section class="panel" id="sessionPanel"></section>
+
+  <section class="panel" id="weeklyPanel" style="display:none"></section>
+
+  <section class="panel">
+    <details class="collapse" id="curriculumDetails">
+      <summary>전체 커리큘럼 지도 <span class="arrow">›</span></summary>
+      <div class="body" id="curriculumBody"></div>
+    </details>
+    <details class="collapse">
+      <summary>이 훈련은 왜 이렇게 설계됐나요? <span class="arrow">›</span></summary>
+      <div class="body method">
+        <ul>
+          <li><b>간격 반복(스페이싱 효과).</b> 오늘 배운 문장은 내일, 그다음 2일 뒤, 4일 뒤, 8일 뒤... 점점 간격을 늘려가며 다시 떠올릴 때 장기 기억으로 남습니다. 그래서 사실 새 문장 하나보다 어제, 그제 배운 문장을 오늘 다시 말해보는 복습이 더 중요합니다.</li>
+          <li><b>교차 학습(인터리빙).</b> 자기소개, 스몰토크, 도움 요청, 환대, 믿음 나누기, 응급상황을 매일 번갈아 다루는 이유는 실제 대화가 이 모든 상황이 뒤섞여 일어나기 때문입니다. 한 주제만 몰아서 익히면 시험은 잘 봐도 실전에서는 당황하게 됩니다.</li>
+          <li><b>인출 연습 + 소리내어 말하기.</b> 눈으로 읽기만 하면 "아는 것 같은 착각"에 빠집니다. 뜻을 먼저 가리고 스스로 떠올려본 뒤, 반드시 입 밖으로 소리내어 말해야 실제 말하기 근육이 생깁니다. 그래서 평가 버튼은 최소 3번 말한 뒤에만 눌리도록 만들어 뒀습니다.</li>
+          <li><b>최소 단위 습관.</b> 하루 한 문장이라는 작은 약속은 부담 없이 시작할 수 있고, 몇 달 뒤 쌓인 복습량이 진짜 실력이 됩니다. 하루를 놓쳐서 연속 기록이 끊겨도 괜찮습니다. 그냥 오늘 한 문장부터 다시 시작하면 됩니다.</li>
+        </ul>
+      </div>
+    </details>
+  </section>
+
+  <footer>
+    지금 이 공부방은 혼자 쓰는 훈련 도구예요. 습관이 자리잡으면 CARE 안의 정식 영어 공부방으로 옮겨질 예정입니다.
+    <div class="storage-note" id="storageNote"></div>
+  </footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---------- content ----------
+  var MODULE_DEFS = [
+    { key:"intro", label:"만남과 자기소개", items:[
+      {en:"Hi, I'm Peter. It's so nice to meet you.", ko:"안녕하세요, 저는 피터예요. 만나서 정말 반가워요.", situation:"처음 인사할 때", tip:"미국인들은 my name is보다 실제로 I'm ___을 훨씬 더 많이 써요. so nice를 붙이면 훨씬 따뜻하게 들려요."},
+      {en:"I'm originally from South Korea.", ko:"저는 원래 한국 출신이에요.", situation:"출신을 말할 때", tip:"originally를 넣으면 '원래는'이라는 뉘앙스가 살아서, 지금 사는 곳과 대비해 설명할 때 자연스러워요."},
+      {en:"What's your name again? Sorry, I didn't catch it.", ko:"이름이 다시 뭐였죠? 죄송해요, 제가 못 들었어요.", situation:"이름을 놓쳤을 때", tip:"Sorry를 앞에 붙이는 게 미국식 예의예요. didn't catch it은 못 알아들었다는 뜻의 자연스러운 표현이에요."},
+      {en:"So, where are you from?", ko:"그런데, 어디서 오셨어요?", situation:"상대의 출신을 물을 때", tip:"문장 맨 앞의 So는 뜻은 없지만 대화를 자연스럽게 이어주는 미국인들의 습관적인 표현이에요."},
+      {en:"How long have you lived here?", ko:"여기서 얼마나 사셨어요?", situation:"현지인과 대화를 이어갈 때", tip:"나이를 묻는 것보다 훨씬 안전하고 자연스러운 스몰토크 질문이에요."},
+      {en:"Actually, this is my first time here.", ko:"사실, 여기는 처음이에요.", situation:"낯선 곳에 도착했을 때", tip:"Actually를 앞에 붙이면 '사실은'이라는 자연스러운 뉘앙스가 생겨요."},
+      {en:"I don't speak much English, but I'll do my best.", ko:"저는 영어를 잘 못하지만 최선을 다해볼게요.", situation:"영어 실력을 미리 알릴 때", tip:"I'll try보다 I'll do my best가 실제로 훨씬 더 많이 쓰이는 자연스러운 표현이에요."},
+      {en:"It's really nice to meet you.", ko:"만나서 정말 반가워요.", situation:"인사를 건넬 때", tip:"It's a pleasure to meet you는 교과서 표현이고, 실제로는 really nice를 훨씬 더 자주 써요."},
+      {en:"I'd really like to get to know you better.", ko:"당신을 더 잘 알아가고 싶어요.", situation:"관계를 시작하고 싶을 때", tip:"I hope we can be friends는 번역투에 가까워요. 미국인들은 관계에 대한 마음을 이렇게 표현해요."},
+      {en:"It was great talking with you.", ko:"이야기 나눠서 정말 좋았어요.", situation:"헤어질 때 인사", tip:"헤어질 때 쓰는 아주 흔한 마무리 인사예요."}
+    ]},
+    { key:"smalltalk", label:"일상 대화", items:[
+      {en:"How's your day going?", ko:"오늘 하루 어떻게 보내고 계세요?", situation:"가벼운 안부 인사", tip:"going을 자연스럽게 흘려 발음해보세요 (고우잉이 아니라 고인 느낌)."},
+      {en:"The weather's really nice today, isn't it?", ko:"오늘 날씨 정말 좋죠?", situation:"어디서나 통하는 대화 시작 멘트", tip:"문장 끝에 isn't it?을 붙이면 훨씬 대화체스럽고 자연스러워요."},
+      {en:"So, what do you do for work?", ko:"그럼, 무슨 일 하세요?", situation:"직업을 물을 때", tip:"What's your job?보다 이 표현이 실제로 훨씬 더 자연스럽고 흔해요."},
+      {en:"Do you have any kids?", ko:"자녀 있으세요?", situation:"가족 이야기를 시작할 때", tip:"children은 격식체예요. 일상 대화에서는 kids를 훨씬 더 많이 써요."},
+      {en:"I really like it here.", ko:"저는 여기가 정말 마음에 들어요.", situation:"칭찬하며 대화를 이어갈 때", tip:"I really like this place보다 I really like it here가 더 자연스럽고 흔하게 쓰여요."},
+      {en:"What do you like to do for fun?", ko:"취미로 뭐 하는 거 좋아하세요?", situation:"일상 이야기를 나눌 때", tip:"주말에 뭐 하냐는 질문보다 훨씬 자연스럽고 폭넓게 쓸 수 있는 스몰토크 질문이에요."},
+      {en:"Oh, that sounds really interesting!", ko:"오, 그거 정말 흥미롭네요!", situation:"맞장구칠 때", tip:"Oh를 앞에 붙이면 진짜 관심 있다는 느낌이 훨씬 잘 살아요."},
+      {en:"I'm still trying to figure out the culture here.", ko:"저는 아직 이곳 문화를 이해하려고 노력 중이에요.", situation:"실수했을 때나 낯선 상황에서", tip:"figure out은 '이해하려고 애쓰다'라는 뜻의 아주 자연스러운 구동사예요."},
+      {en:"Tell me more about that.", ko:"그것에 대해 좀 더 말해주세요.", situation:"관심을 보이며 대화를 이어갈 때", tip:"Can you tell me보다 짧게 말하는 이 표현이 실제 대화에서 훨씬 자연스럽고 흔해요."},
+      {en:"I had such a great time today.", ko:"오늘 정말 즐거웠어요.", situation:"헤어질 때 인사", tip:"such a를 붙이면 감정이 훨씬 더 생생하게 전달돼요."}
+    ]},
+    { key:"help", label:"도움 요청과 길찾기", items:[
+      {en:"Excuse me, could you help me for a second?", ko:"실례합니다, 잠깐 저 좀 도와주시겠어요?", situation:"도움을 요청할 때", tip:"for a second를 붙이면 상대의 부담을 덜어주는 자연스러운 표현이 돼요."},
+      {en:"I'm trying to find this address.", ko:"제가 이 주소를 찾고 있는데요.", situation:"길을 물을 때", tip:"I'm trying to find는 도움을 요청하는 상황에서 가장 자연스럽게 쓰이는 표현이에요."},
+      {en:"Sorry, could you say that one more time?", ko:"죄송한데, 한 번만 더 말씀해주시겠어요?", situation:"못 들었을 때", tip:"say that again보다 one more time이 실제 대화에서 훨씬 자주 쓰여요."},
+      {en:"Sorry, I'm not quite following you.", ko:"죄송한데, 제가 잘 이해가 안 돼서요.", situation:"이해하지 못했을 때", tip:"I don't understand는 너무 직설적으로 들릴 수 있어요. not quite following이 훨씬 부드러운 표현이에요."},
+      {en:"Would you mind speaking a little slower?", ko:"조금만 천천히 말씀해주실 수 있을까요?", situation:"말이 너무 빠를 때", tip:"Would you mind ~ing는 미국인들이 정중하게 부탁할 때 정말 많이 쓰는 패턴이에요."},
+      {en:"Excuse me, is there a restroom nearby?", ko:"실례합니다, 근처에 화장실이 있나요?", situation:"화장실을 찾을 때", tip:"공공장소에서는 bathroom보다 restroom이 더 예의 있고 자연스러운 표현이에요."},
+      {en:"How much is this?", ko:"이거 얼마예요?", situation:"물건 값을 물을 때", tip:"How much does this cost?보다 훨씬 짧고 자연스럽게 쓰이는 표현이에요."},
+      {en:"Is it far from here?", ko:"여기서 먼가요?", situation:"거리를 물을 때", tip:"far 발음은 혀를 뒤로 살짝 마세요."},
+      {en:"Would you mind writing that down for me?", ko:"그거 좀 적어주실 수 있을까요?", situation:"발음이나 숫자를 못 알아들을 때", tip:"Could you write it down보다 Would you mind ~ing가 더 부드럽고 예의 있게 들려요."},
+      {en:"Thank you so much, I really appreciate it.", ko:"정말 감사해요, 진심으로 감사드려요.", situation:"도움을 받은 뒤 감사 인사", tip:"I really appreciate it은 미국인들이 감사할 때 거의 습관처럼 붙이는 표현이에요."}
+    ]},
+    { key:"hospitality", label:"환대와 관계맺기", items:[
+      {en:"Please, come on in and have a seat.", ko:"들어오셔서 앉으세요.", situation:"손님을 맞이할 때", tip:"come on in과 have a seat은 손님을 맞이할 때 미국인들이 실제로 쓰는 자연스러운 표현이에요."},
+      {en:"Can I get you something to drink?", ko:"마실 것 좀 드릴까요?", situation:"대접할 때", tip:"호스트가 손님에게 쓰는 가장 대표적이고 자연스러운 표현이에요."},
+      {en:"Thanks so much for having me.", ko:"초대해 주셔서 정말 감사해요.", situation:"초대받았을 때", tip:"Thank you for inviting me보다 having me가 훨씬 더 자연스럽고 따뜻하게 들려요."},
+      {en:"I brought you something.", ko:"당신을 위해 뭔가 가져왔어요.", situation:"선물을 건넬 때", tip:"짧고 자연스러운 표현이에요. 선물을 건네며 말해보세요."},
+      {en:"Your family has been so kind to me.", ko:"당신 가족이 저에게 정말 친절하게 대해주셨어요.", situation:"가정을 방문했을 때", tip:"Your family is very kind보다 has been so kind to me가 실제 경험을 담아 훨씬 자연스러워요."},
+      {en:"I'd love to come back and visit again sometime.", ko:"나중에 다시 방문하고 싶어요.", situation:"방문을 마무리할 때", tip:"I'd love to visit you again보다 훨씬 자연스러운 흐름이에요."},
+      {en:"Just let me know if you need anything at all.", ko:"필요한 게 있으면 언제든 알려주세요.", situation:"곁에 있어주고 싶을 때", tip:"at all을 붙이면 진심 어린 배려가 더 잘 전달돼요."},
+      {en:"I really appreciate everything you've done for me.", ko:"저를 위해 해주신 모든 것에 정말 감사해요.", situation:"환대에 감사할 때", tip:"hospitality라는 단어를 직접 쓰지 않아도, 이 표현이 실제로 훨씬 더 자연스럽고 진심 있게 들려요."},
+      {en:"Can I give you a hand with that?", ko:"제가 좀 도와드려도 될까요?", situation:"먼저 도움을 건넬 때", tip:"give you a hand는 도와준다는 뜻의 아주 자연스러운 관용 표현이에요."},
+      {en:"Let's keep in touch.", ko:"계속 연락하고 지내요.", situation:"헤어지며 관계를 이어갈 때", tip:"stay in touch보다 keep in touch가 실제로 더 흔하게 쓰이는 표현이에요."}
+    ]},
+    { key:"faith", label:"믿음 나누기", items:[
+      {en:"I believe God loves you so much.", ko:"저는 하나님이 당신을 정말 많이 사랑하신다고 믿어요.", situation:"믿음을 처음 나눌 때", tip:"very much보다 so much가 실제 대화에서 훨씬 자연스럽고 흔하게 쓰여요."},
+      {en:"Would it be okay if I shared something with you?", ko:"제가 뭔가 나눠도 괜찮을까요?", situation:"대화를 열 때", tip:"Can I share something with you보다 훨씬 조심스럽고 예의 있게 들리는 표현이에요."},
+      {en:"I came here because of my faith.", ko:"저는 제 믿음 때문에 여기 왔어요.", situation:"방문 이유를 설명할 때", tip:"because of my faith를 또렷하게 말해보세요."},
+      {en:"Jesus really changed my life.", ko:"예수님은 제 삶을 정말 바꾸셨어요.", situation:"간증을 시작할 때", tip:"really를 넣으면 진심이 훨씬 더 잘 전달돼요."},
+      {en:"Would you like to hear my story sometime?", ko:"언젠가 제 이야기를 들어보시겠어요?", situation:"간증을 나누기 전", tip:"sometime을 붙이면 부담을 주지 않는 자연스러운 제안이 돼요."},
+      {en:"Can I pray for you?", ko:"당신을 위해 기도해도 될까요?", situation:"기도를 제안할 때", tip:"짧지만 미국 크리스천들이 실제로 그대로 쓰는 표현이에요. 억지로 바꾸지 않아도 됩니다."},
+      {en:"I'm really grateful for God's grace in my life.", ko:"제 삶 속 하나님의 은혜에 정말 감사해요.", situation:"감사를 표현할 때", tip:"in my life를 붙이면 훨씬 더 개인적이고 진솔하게 들려요."},
+      {en:"Can I ask what you believe about God?", ko:"하나님에 대해 어떻게 믿으시는지 물어봐도 될까요?", situation:"상대의 신앙을 물을 때", tip:"Can I ask를 앞에 붙이면 훨씬 조심스럽고 예의 있는 질문이 돼요."},
+      {en:"I'd love for you to come check out our gathering sometime.", ko:"언젠가 저희 모임에 한번 와보시면 좋겠어요.", situation:"모임에 초대할 때", tip:"come check out은 부담 없이 초대할 때 미국인들이 정말 자주 쓰는 표현이에요."},
+      {en:"I truly believe God has a plan for your life.", ko:"저는 하나님이 당신의 삶에 계획이 있다고 진심으로 믿어요.", situation:"위로하며 전할 때", tip:"truly를 넣으면 훨씬 진심이 담긴 문장이 돼요."}
+    ]},
+    { key:"travel", label:"여행과 응급상황", items:[
+      {en:"I think I need to see a doctor.", ko:"저 병원에 가봐야 할 것 같아요.", situation:"몸이 아플 때", tip:"I think를 앞에 붙이면 훨씬 부드럽고 자연스럽게 들려요."},
+      {en:"I'm not feeling well.", ko:"몸이 안 좋아요.", situation:"컨디션을 설명할 때", tip:"I don't feel well보다 I'm not feeling well이 실제로 더 자주 쓰이는 자연스러운 표현이에요."},
+      {en:"Could someone please call for help?", ko:"누가 좀 도움을 요청해 주시겠어요?", situation:"응급 상황일 때", tip:"급한 상황에서 주변 사람들에게 외칠 수 있는 자연스러운 표현이에요."},
+      {en:"Where's the nearest hospital?", ko:"가장 가까운 병원이 어디예요?", situation:"병원을 찾을 때", tip:"Where's처럼 줄여서 말하는 게 훨씬 자연스러워요."},
+      {en:"I think I lost my passport.", ko:"여권을 잃어버린 것 같아요.", situation:"여권을 분실했을 때", tip:"I think를 붙이면 당황스러운 상황에서도 침착하게 들려요."},
+      {en:"Is it safe to walk around here at night?", ko:"밤에 이 근처를 돌아다녀도 안전한가요?", situation:"안전을 확인할 때", tip:"walk around가 walk here보다 훨씬 자연스러운 표현이에요."},
+      {en:"I need to find somewhere to stay tonight.", ko:"오늘 밤 머물 곳을 찾아야 해요.", situation:"숙소를 구할 때", tip:"a place to stay보다 somewhere to stay가 구어체에서 더 자연스러워요."},
+      {en:"Could I borrow your phone? It's kind of an emergency.", ko:"전화 좀 빌려도 될까요? 좀 급한 일이라서요.", situation:"긴급 상황일 때", tip:"kind of를 붙이면 다급하면서도 예의를 잃지 않는 자연스러운 표현이 돼요."},
+      {en:"What time do you close?", ko:"몇 시에 문 닫으세요?", situation:"영업시간을 물을 때", tip:"What time does this close보다 상대에게 직접 묻는 이 표현이 훨씬 자연스러워요."},
+      {en:"Thank you so much for keeping me safe.", ko:"저를 안전하게 지켜주셔서 정말 감사해요.", situation:"도움을 받은 뒤", tip:"keeping me safe는 진심 어린 감사를 전하는 따뜻한 표현이에요."}
+    ]}
+  ];
+
+  var STAGE = { 1:"learning", 2:"learning", 3:"reviewing", 4:"reviewing", 5:"stabilizing", 6:"mastered" };
+  var STAGE_LABEL = { learning:"학습중", reviewing:"복습중", stabilizing:"안정화", mastered:"마스터" };
+  var INTERVALS = { 1:1, 2:2, 3:4, 4:8, 5:16, 6:32 };
+  var MAX_DUE = 6;
+  var REP_THRESHOLD = 3;
+
+  var BANK = [];
+  (function buildBank(){
+    var max = Math.max.apply(null, MODULE_DEFS.map(function(m){ return m.items.length; }));
+    for (var i = 0; i < max; i++){
+      MODULE_DEFS.forEach(function(mod){
+        if (mod.items[i]){
+          var it = mod.items[i];
+          BANK.push({ id: mod.key + "-" + i, mod: mod.key, modLabel: mod.label, en: it.en, ko: it.ko, situation: it.situation, tip: it.tip });
+        }
+      });
+    }
+  })();
+
+  // ---------- date helpers ----------
+  function parseDate(s){ var p = s.split("-").map(Number); return new Date(p[0], p[1]-1, p[2]); }
+  function fmtDate(d){ var y=d.getFullYear(), m=String(d.getMonth()+1).padStart(2,"0"), day=String(d.getDate()).padStart(2,"0"); return y+"-"+m+"-"+day; }
+  function todayStr(){ return fmtDate(new Date()); }
+  function addDaysStr(s, n){ var d = parseDate(s); d.setDate(d.getDate()+n); return fmtDate(d); }
+
+  // ---------- storage ----------
+  var STORAGE_KEY = "hanmunjang_state_v1";
+  var storageMode = "local";
+
+  function defaultState(){
+    return { startDate: todayStr(), currentIndex: 0, cards: {}, practiceDates: [], streak: 0 };
+  }
+
+  function loadLocal(){
+    try{
+      var raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch(e){ return null; }
+  }
+  function saveLocal(state){
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e){}
+  }
+
+  var dbRef = null;
+  function loadState(){
+    return Promise.resolve()
+      .then(function(){ return (window.claude && window.claude.use) ? window.claude.use("db") : null; })
+      .catch(function(){ return null; })
+      .then(function(db){
+        if (db){
+          dbRef = db;
+          storageMode = "db";
+          return db.doc("progress/state").get().then(function(snap){
+            return snap.exists ? snap.data() : (loadLocal() || defaultState());
+          }).catch(function(){ return loadLocal() || defaultState(); });
+        }
+        storageMode = "local";
+        return loadLocal() || defaultState();
+      });
+  }
+  function persist(state){
+    if (storageMode === "db" && dbRef){
+      dbRef.doc("progress/state").set(state).catch(function(){ saveLocal(state); });
+    } else {
+      saveLocal(state);
+    }
+  }
+
+  // ---------- state logic ----------
+  var state = defaultState();
+
+  function computeStreak(){
+    var set = {};
+    state.practiceDates.forEach(function(d){ set[d] = true; });
+    var today = todayStr();
+    var cursor = set[today] ? parseDate(today) : addDaysStr(today, -1);
+    if (typeof cursor === "string") cursor = parseDate(cursor);
+    var streak = 0;
+    while (set[fmtDate(cursor)]){
+      streak++;
+      cursor.setDate(cursor.getDate() - 1);
+    }
+    return streak;
+  }
+
+  function markPracticedToday(){
+    var today = todayStr();
+    if (state.practiceDates.indexOf(today) === -1){
+      state.practiceDates.push(today);
+      state.practiceDates.sort();
+      if (state.practiceDates.length > 120) state.practiceDates = state.practiceDates.slice(-120);
+    }
+    state.streak = computeStreak();
+  }
+
+  function buildQueue(){
+    var today = todayStr();
+    var due = [];
+    Object.keys(state.cards).forEach(function(id){
+      var c = state.cards[id];
+      if (c.nextDue <= today){
+        var bankItem = BANK.filter(function(b){ return b.id === id; })[0];
+        if (bankItem) due.push({ type: "review", id: id, bankItem: bankItem, cardState: c });
+      }
+    });
+    due.sort(function(a, b){ return a.cardState.nextDue.localeCompare(b.cardState.nextDue) || a.cardState.box - b.cardState.box; });
+
+    var totalDue = due.length;
+    due = due.slice(0, MAX_DUE);
+
+    var introducedToday = Object.keys(state.cards).some(function(id){ return state.cards[id].introducedOn === today; });
+    var queue = due.slice();
+    if (!introducedToday && state.currentIndex < BANK.length){
+      var candidate = BANK[state.currentIndex];
+      queue.push({ type: "new", id: candidate.id, bankItem: candidate, cardState: null });
+    }
+    return { queue: queue, overflow: Math.max(0, totalDue - due.length) };
+  }
+
+  // ---------- speech ----------
+  var voicesReady = false;
+  function ensureVoices(cb){
+    if (!("speechSynthesis" in window)) { cb(); return; }
+    var v = speechSynthesis.getVoices();
+    if (v.length){ cb(); return; }
+    speechSynthesis.onvoiceschanged = function(){ cb(); };
+    setTimeout(cb, 400);
+  }
+  function pickVoice(){
+    var voices = speechSynthesis.getVoices();
+    return voices.filter(function(v){ return /^en/.test(v.lang); })
+      .sort(function(a,b){ return (b.lang === "en-US") - (a.lang === "en-US"); })[0] || null;
+  }
+  function speak(text, rate){
+    if (!("speechSynthesis" in window)) return false;
+    ensureVoices(function(){
+      speechSynthesis.cancel();
+      var u = new SpeechSynthesisUtterance(text);
+      u.lang = "en-US"; u.rate = rate || 0.95;
+      var v = pickVoice(); if (v) u.voice = v;
+      speechSynthesis.speak(u);
+    });
+    return true;
+  }
+
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  function normalize(s){ return s.toLowerCase().replace(/[.,!?']/g, "").trim().split(/\s+/); }
+  function runSTT(target, onResult, onError){
+    if (!SR) { onError("unsupported"); return; }
+    var rec = new SR();
+    rec.lang = "en-US"; rec.interimResults = false; rec.maxAlternatives = 1;
+    rec.onresult = function(e){
+      var heard = e.results[0][0].transcript;
+      var t = normalize(target), h = normalize(heard);
+      var matched = t.map(function(w){ return h.indexOf(w) !== -1; });
+      var score = Math.round((matched.filter(Boolean).length / t.length) * 100);
+      onResult({ heard: heard, words: t, matched: matched, score: score });
+    };
+    rec.onerror = function(e){ onError(e.error || "error"); };
+    try{ rec.start(); } catch(e){ onError("error"); }
+  }
+
+  // ---------- render ----------
+  var repCount = 0, repCardId = null, revealMap = {};
+
+  function el(html){ var d = document.createElement("div"); d.innerHTML = html.trim(); return d.firstChild; }
+
+  function renderHeader(){
+    document.getElementById("streakN").textContent = state.streak;
+    document.getElementById("learnedN").textContent = Object.keys(state.cards).length;
+    var dotsRow = document.getElementById("dotsRow");
+    dotsRow.innerHTML = "";
+    var today = todayStr();
+    var set = {}; state.practiceDates.forEach(function(d){ set[d] = true; });
+    var cursor = parseDate(today);
+    var days = [];
+    for (var i = 13; i >= 0; i--){
+      var d = new Date(cursor); d.setDate(d.getDate() - i);
+      days.push(fmtDate(d));
+    }
+    days.forEach(function(d){
+      var dot = document.createElement("div");
+      dot.className = "dot" + (set[d] ? " filled" : "") + (d === today ? " today" : "");
+      dot.title = d;
+      dotsRow.appendChild(dot);
+    });
+    document.getElementById("storageNote").textContent = storageMode === "db"
+      ? "진행 상황은 자동으로 저장되고 있어요."
+      : "지금은 이 브라우저에만 저장되고 있어요.";
+  }
+
+  function renderSession(){
+    var panel = document.getElementById("sessionPanel");
+    var result = buildQueue();
+    var queue = result.queue;
+
+    if (queue.length === 0){
+      var doneBank = state.currentIndex >= BANK.length;
+      panel.innerHTML =
+        '<div class="complete">' +
+          '<div class="badge">' + (doneBank ? "1부 완주" : "오늘의 여정 완료") + '</div>' +
+          '<h2>' + (doneBank ? "60개 문장을 모두 배우셨어요." : "오늘 몫을 다 했어요.") + '</h2>' +
+          '<p>' + (doneBank ? "복습은 계속 이어집니다. 다음 세트는 곧 추가될 예정이에요." : "내일 다시 새 문장과 복습이 기다리고 있어요.") + '</p>' +
+        '</div>';
+      return;
+    }
+
+    var item = queue[0];
+    if (repCardId !== item.id){ repCardId = item.id; repCount = 0; }
+    var isNew = item.type === "new";
+    var stage = item.cardState ? STAGE[item.cardState.box] : null;
+    var revealed = isNew || revealMap[item.id];
+
+    var html = '';
+    html += '<div class="session-meta">';
+    html += '<span class="kind-tag ' + (isNew ? "new" : "review") + '">' + (isNew ? "새 문장" : "복습 · box " + item.cardState.box) + '</span>';
+    if (!isNew) html += '<span class="stage-chip" style="background:var(--stage-' + stage + '-bg);color:var(--stage-' + stage + '-ink)">' + STAGE_LABEL[stage] + '</span>';
+    html += '<span class="queue-count">오늘 남은 문장 ' + queue.length + '개' + (result.overflow ? ' · 내일 +' + result.overflow : '') + '</span>';
+    html += '</div>';
+    html += '<div class="mod-label">' + item.bankItem.modLabel + '</div>';
+    html += '<p class="situation">' + item.bankItem.situation + '</p>';
+    html += '<p class="en-sentence">' + item.bankItem.en + '</p>';
+    if (revealed){
+      html += '<p class="ko-sentence">' + item.bankItem.ko + '</p>';
+    } else {
+      html += '<button class="reveal-btn" id="revealBtn">뜻 보기 (먼저 스스로 떠올려보세요)</button>';
+    }
+    html += '<div class="tip-box"><b>포인트.</b> ' + item.bankItem.tip + '</div>';
+    html += '<div class="audio-row">';
+    html += '<button class="btn" id="playBtn">듣기</button>';
+    html += '<button class="btn ghost" id="playSlowBtn">천천히 듣기</button>';
+    html += (SR ? '<button class="btn ghost" id="sttBtn">발음 확인 (베타)</button>' : '');
+    html += '</div>';
+    html += '<div id="sttResult"></div>';
+    html += '<div class="practice-row">';
+    html += '<button class="btn" id="repBtn">소리내어 말하기</button>';
+    html += '<span class="n" id="repN">' + repCount + ' / 5</span>';
+    html += '<span class="practice-hint">' + (repCount < REP_THRESHOLD ? (REP_THRESHOLD - repCount) + '번 더 말하면 다음으로 넘어갈 수 있어요' : '이제 평가할 수 있어요') + '</span>';
+    html += '</div>';
+
+    if (isNew){
+      html += '<button class="btn accent" id="confirmBtn" ' + (repCount < REP_THRESHOLD ? "disabled" : "") + ' style="width:100%">오늘의 문장으로 저장하기</button>';
+    } else {
+      html += '<div class="rate-row">';
+      html += '<button class="btn hard" id="hardBtn" ' + (repCount < REP_THRESHOLD ? "disabled" : "") + '>어려웠어요</button>';
+      html += '<button class="btn easy" id="easyBtn" ' + (repCount < REP_THRESHOLD ? "disabled" : "") + '>쉬웠어요</button>';
+      html += '</div>';
+    }
+
+    panel.innerHTML = html;
+
+    var revealBtn = document.getElementById("revealBtn");
+    if (revealBtn) revealBtn.onclick = function(){ revealMap[item.id] = true; renderSession(); };
+
+    document.getElementById("playBtn").onclick = function(){ speak(item.bankItem.en, 0.95); };
+    document.getElementById("playSlowBtn").onclick = function(){ speak(item.bankItem.en, 0.62); };
+
+    var sttBtn = document.getElementById("sttBtn");
+    if (sttBtn) sttBtn.onclick = function(){
+      sttBtn.disabled = true; sttBtn.textContent = "듣는 중...";
+      runSTT(item.bankItem.en, function(res){
+        sttBtn.disabled = false; sttBtn.textContent = "발음 확인 (베타)";
+        var spans = res.words.map(function(w, i){
+          return '<span class="' + (res.matched[i] ? "match" : "miss") + '">' + w + '</span>';
+        }).join(" ");
+        document.getElementById("sttResult").innerHTML =
+          '<div class="stt-result">인식된 문장: "' + res.heard + '"<br>일치율 ' + res.score + '% &nbsp; ' + spans + '</div>';
+      }, function(err){
+        sttBtn.disabled = false; sttBtn.textContent = "발음 확인 (베타)";
+        var msg = err === "unsupported" ? "이 브라우저는 음성 인식을 지원하지 않아요. 그냥 소리내어 말해보세요." :
+                   err === "not-allowed" ? "마이크 권한이 필요해요." : "다시 시도해보세요.";
+        document.getElementById("sttResult").innerHTML = '<div class="stt-result">' + msg + '</div>';
+      });
+    };
+
+    document.getElementById("repBtn").onclick = function(){
+      repCount++;
+      document.getElementById("repN").textContent = repCount + " / 5";
+      var hint = document.querySelector(".practice-hint");
+      if (hint) hint.textContent = repCount < REP_THRESHOLD ? (REP_THRESHOLD - repCount) + "번 더 말하면 다음으로 넘어갈 수 있어요" : "이제 평가할 수 있어요";
+      if (repCount === REP_THRESHOLD){
+        ["confirmBtn","hardBtn","easyBtn"].forEach(function(id){
+          var b = document.getElementById(id); if (b) b.disabled = false;
+        });
+      }
+    };
+
+    var confirmBtn = document.getElementById("confirmBtn");
+    if (confirmBtn) confirmBtn.onclick = function(){
+      var today = todayStr();
+      state.cards[item.id] = { box: 1, nextDue: addDaysStr(today, INTERVALS[1]), introducedOn: today, lastResult: null };
+      state.currentIndex++;
+      markPracticedToday();
+      persist(state);
+      repCardId = null; revealMap = {};
+      renderAll();
+    };
+    var hardBtn = document.getElementById("hardBtn");
+    if (hardBtn) hardBtn.onclick = function(){ rate(item, "hard"); };
+    var easyBtn = document.getElementById("easyBtn");
+    if (easyBtn) easyBtn.onclick = function(){ rate(item, "easy"); };
+  }
+
+  function rate(item, result){
+    var today = todayStr();
+    var card = state.cards[item.id];
+    card.box = result === "easy" ? Math.min(6, card.box + 1) : 1;
+    card.nextDue = addDaysStr(today, INTERVALS[card.box]);
+    card.lastResult = result;
+    markPracticedToday();
+    persist(state);
+    repCardId = null; revealMap[item.id] = false;
+    renderAll();
+  }
+
+  function renderWeekly(){
+    var panel = document.getElementById("weeklyPanel");
+    var recent = Object.keys(state.cards)
+      .map(function(id){ return { id: id, c: state.cards[id] }; })
+      .sort(function(a, b){ return b.c.introducedOn.localeCompare(a.c.introducedOn); })
+      .slice(0, 7)
+      .reverse();
+    if (recent.length < 2){ panel.style.display = "none"; return; }
+    panel.style.display = "block";
+    var html = '<h3 class="panel-title">최근에 배운 문장 모아 말하기</h3><ul class="week-list">';
+    recent.forEach(function(r){
+      var b = BANK.filter(function(x){ return x.id === r.id; })[0];
+      html += '<li><div class="en">' + b.en + '</div><div class="ko">' + b.ko + '</div></li>';
+    });
+    html += '</ul><button class="btn accent" id="playAllBtn" style="width:100%">순서대로 이어 듣기</button>';
+    panel.innerHTML = html;
+    document.getElementById("playAllBtn").onclick = function(){
+      var i = 0;
+      function next(){
+        if (i >= recent.length) return;
+        var b = BANK.filter(function(x){ return x.id === recent[i].id; })[0];
+        ensureVoices(function(){
+          speechSynthesis.cancel();
+          var u = new SpeechSynthesisUtterance(b.en);
+          u.lang = "en-US"; u.rate = 0.9;
+          var v = pickVoice(); if (v) u.voice = v;
+          u.onend = function(){ i++; setTimeout(next, 350); };
+          speechSynthesis.speak(u);
+        });
+      }
+      next();
+    };
+  }
+
+  function renderCurriculum(){
+    var body = document.getElementById("curriculumBody");
+    var html = "";
+    MODULE_DEFS.forEach(function(mod){
+      var learned = Object.keys(state.cards).filter(function(id){ return state.cards[id] && id.indexOf(mod.key + "-") === 0; }).length;
+      var pct = Math.round((learned / mod.items.length) * 100);
+      html += '<div class="mod-row"><span class="name">' + mod.label + '</span><span class="bar"><span style="width:' + pct + '%"></span></span><span class="count">' + learned + '/' + mod.items.length + '</span></div>';
+    });
+    body.innerHTML = html;
+  }
+
+  function renderAll(){
+    renderHeader();
+    renderSession();
+    renderWeekly();
+    renderCurriculum();
+  }
+
+  loadState().then(function(s){
+    state = s;
+    if (!state.practiceDates) state.practiceDates = [];
+    if (typeof state.currentIndex !== "number") state.currentIndex = 0;
+    if (!state.cards) state.cards = {};
+    state.streak = computeStreak();
+    renderAll();
+  });
+})();
+</script>
+
+</body>
+</html>
