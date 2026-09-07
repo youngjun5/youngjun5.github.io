@@ -22,6 +22,7 @@ self.addEventListener("fetch", (e) => {
   const url = new URL(e.request.url);
   if (url.origin !== location.origin) return;
   if (url.pathname.indexOf("/carenote/") === 0) return;   // 다른 방(앱)의 서비스워커 몫
+  if (url.pathname.indexOf("/gear/") === 0) return;        // 자주 갱신되는 데이터 — 캐시 없이 항상 최신으로
 
   const isPage = e.request.mode === "navigate" || url.pathname.endsWith("/") || url.pathname.endsWith("index.html");
   if (isPage) {
