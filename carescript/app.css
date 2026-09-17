@@ -205,3 +205,11 @@ label.f>span{display:block;font-size:11px;color:var(--tx3);font-weight:700;lette
 .syncdot.off{background:var(--tx3)}
 .syncdot.err{background:var(--warn)}
 .hidden{display:none!important}
+
+/* 파일 끌어다 놓기 */
+body.dropping::after{
+  content:'📄  여기에 놓으면 대본으로 불러옵니다';
+  position:fixed; inset:12px; z-index:500; border:3px dashed var(--ac); border-radius:20px;
+  background:rgba(255,176,46,.10); color:var(--ac); font-size:18px; font-weight:800;
+  display:grid; place-items:center; pointer-events:none; backdrop-filter:blur(2px);
+}

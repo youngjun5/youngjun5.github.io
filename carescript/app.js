@@ -347,30 +347,310 @@ function matchLine(spoken, lines, cursor){
    ============================================================ */
 function parseScript(raw){
   const src = String(raw||'').replace(/\r/g,'').split('\n');
-  const out=[]; let pendingWho=null;
+  const out=[]; let pendingWho=null, whoUsed=false;
   const push=(type,who,text)=>{ text=text.trim(); if(text) out.push({id:uid(),type,who:who||'',text,done:false,post:false,dev:null,note:''}); };
+  const nextFilled = i => { for(let k=i+1;k<src.length;k++){ const t=src[k].trim(); if(t) return t; } return ''; };
+
   for(let i=0;i<src.length;i++){
     const raw1=src[i], line=raw1.trim();
-    if(!line){ pendingWho=null; continue; }
+    // 빈 줄: 아직 대사를 못 받은 인물 이름은 살려둔다 (PDF·OCR은 줄 간격이 제멋대로)
+    if(!line){ if(whoUsed) pendingWho=null; continue; }
+
+    // "이름: 대사"
     let m = line.match(/^([^:：\n]{1,14})\s*[:：]\s*(.+)$/);
-    if(m && !/^https?$/i.test(m[1])){ push('d', m[1].trim(), m[2]); pendingWho=null; continue; }
-    if(/^(S#|s#|씬|SCENE|scene|#)\s*\d/.test(line)){ push('a','씬', line); pendingWho=null; continue; }
-    if(/^[\(（\[【].*[\)）\]】]$/.test(line)){
-      if(pendingWho) push('a', pendingWho, line); else push('a','지문', line);
-      continue;
-    }
-    // 시나리오 형식: 짧은 줄(이름) + 다음 줄(대사)
-    const next = (src[i+1]||'').trim();
-    const looksName = line.length<=12 && !/[.?!,]$/.test(line) && !/\s{2,}/.test(line) && next;
+    if(m && !/^https?$/i.test(m[1])){ push('d', m[1].trim(), m[2]); pendingWho=null; whoUsed=false; continue; }
+
+    // 씬 헤딩 (OCR이 S를 5/$로 잘못 읽는 경우까지)
+    if(/^([Ss5$]\s*#|씬|SCENE|scene|#)\s*\d/.test(line)){ push('a','씬', line); pendingWho=null; whoUsed=false; continue; }
+
+    // 괄호 지문
+    if(/^[\(（\[【].*[\)）\]】]$/.test(line)){ push('a', pendingWho && !whoUsed ? pendingWho : '지문', line); continue; }
+
+    // 시나리오 형식: 짧은 줄(인물 이름) + 뒤따르는 대사
+    const nxt = nextFilled(i);
     const indented = /^\s{2,}|^\t/.test(raw1);
-    if(looksName && !indented && /^[가-힣A-Za-z0-9 ()]+$/.test(line)){
+    const looksName = line.length<=12 && !/[.?!,]$/.test(line) && !/\s{2,}/.test(line) && nxt
+                      && /^[가-힣A-Za-z0-9 ()·\/]+$/.test(line);
+    if(looksName && !indented && !(pendingWho && !whoUsed)){
       pendingWho = line.replace(/\(.*?\)/g,'').trim();
+      whoUsed = false;
       continue;
     }
-    if(pendingWho){ push('d', pendingWho, line); if(!next) pendingWho=null; continue; }
+
+    if(pendingWho){ push('d', pendingWho, line); whoUsed=true; continue; }
     push('a','지문', line);
   }
   return out;
+}
+
+/* ============================================================
+   3-B) 문서 불러오기 — PDF / 워드 / 한글(HWPX) / 페이지스 / 이미지(OCR)
+   ============================================================ */
+const CDN = {
+  pdf    : 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js',
+  pdfwork: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js',
+  /* 한글(CJK) PDF는 CMap 파일이 있어야 글자를 읽습니다 */
+  cmap   : 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/cmaps/',
+  zip    : 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js',
+  ocr    : 'https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js'
+};
+const ACCEPT = '.txt,.md,.fountain,.fdx,.csv,.rtf,.pdf,.docx,.doc,.hwpx,.hwp,.pages,.png,.jpg,.jpeg,.heic,.webp,.gif,.tiff,.bmp,text/plain,application/pdf,image/*';
+
+const _loaded = {};
+function loadLib(url){
+  if(_loaded[url]) return _loaded[url];
+  return _loaded[url] = new Promise((res,rej)=>{
+    const s=document.createElement('script');
+    s.src=url; s.onload=res;
+    s.onerror=()=>{ delete _loaded[url]; rej(new Error('NETWORK')); };
+    document.head.appendChild(s);
+  });
+}
+/* 진행 상황 모달 */
+function busyBox(title){
+  modal(`<h3>${esc(title)}</h3><div class="desc" id="busymsg">준비 중…</div>
+    <div style="height:6px;background:var(--bg3);border-radius:3px;overflow:hidden;margin:8px 0 4px">
+      <div id="busybar" style="height:100%;width:0;background:linear-gradient(90deg,var(--ac),var(--ac2));transition:width .3s"></div>
+    </div>`);
+  $('#modal-root').onclick=null;
+  return {
+    set(msg, pct){ const m=$('#busymsg'); if(m) m.textContent=msg;
+      const b=$('#busybar'); if(b && pct!=null) b.style.width=Math.max(2,Math.min(100,pct*100))+'%'; },
+    close(){ closeModal(); }
+  };
+}
+const dec = b => new TextDecoder('utf-8').decode(b);
+function xmlText(xml, tagRe, breakRe){
+  // 태그 제거 + 문단 단위 줄바꿈
+  // 원본 XML 자체의 들여쓰기/줄바꿈을 먼저 없애야 문단마다 빈 줄이 끼지 않는다
+  let s = xml.replace(/[\r\n]+\s*/g, '');
+  s = s.replace(breakRe, '\n');
+  s = s.replace(/<[^>]+>/g, '');
+  s = s.replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&').replace(/&quot;/g,'"').replace(/&apos;/g,"'").replace(/&#(\d+);/g,(m,d)=>String.fromCharCode(+d));
+  return s.replace(/[ \t]+\n/g,'\n').replace(/\n{3,}/g,'\n\n').trim();
+}
+
+/* --- PDF --- */
+let _pdfReady = null;
+async function pdfLib(){
+  if(_pdfReady) return _pdfReady;
+  return _pdfReady = (async()=>{
+    await loadLib(CDN.pdf);
+    const lib = window.pdfjsLib;
+    // 교차출처 워커는 직접 못 띄우므로 blob 으로 감싸서 로드
+    try{
+      lib.GlobalWorkerOptions.workerSrc = URL.createObjectURL(
+        new Blob([`importScripts(${JSON.stringify(CDN.pdfwork)});`], {type:'application/javascript'}));
+    }catch(_){ lib.GlobalWorkerOptions.workerSrc = CDN.pdfwork; }
+    return lib;
+  })();
+}
+async function pdfToText(buf, ui){
+  const lib = await pdfLib();
+  const doc = await lib.getDocument({
+    data:buf, cMapUrl:CDN.cmap, cMapPacked:true,
+    disableFontFace:true, useSystemFonts:false, isEvalSupported:false
+  }).promise;
+  const pages=[];
+  for(let p=1;p<=doc.numPages;p++){
+    ui && ui.set(`PDF 읽는 중… ${p}/${doc.numPages}쪽`, p/doc.numPages);
+    const page = await doc.getPage(p);
+    const tc = await page.getTextContent();
+    const rows=[];
+    for(const it of tc.items){
+      if(!it.str || !it.str.trim()) continue;
+      const x=it.transform[4], y=it.transform[5];
+      let row = rows.find(r=>Math.abs(r.y-y)<4);
+      if(!row){ row={y, items:[]}; rows.push(row); }
+      row.items.push({x, s:it.str});
+    }
+    rows.sort((a,b)=>b.y-a.y);
+    const lines=[]; let prevY=null;
+    for(const r of rows){
+      r.items.sort((a,b)=>a.x-b.x);
+      let t='';
+      r.items.forEach((it,i)=>{
+        if(i && it.x - (r.items[i-1].x) > 12 && !/\s$/.test(t)) t+=' ';
+        t+=it.s;
+      });
+      t=t.replace(/\s+/g,' ')
+         .replace(/\s+([,.?!…·:;%)\]}」』>])/g,'$1')    // 문장부호 앞 공백 제거
+         .replace(/([(\[{「『<])\s+/g,'$1')
+         .trim();
+      if(!t) continue;
+      if(prevY!==null && (prevY-r.y) > 22) lines.push('');   // 문단 사이 빈 줄
+      lines.push(t); prevY=r.y;
+    }
+    pages.push(lines.join('\n'));
+  }
+  const out = pages.join('\n\n').trim();
+  if(out.replace(/\s/g,'').length < 20) throw new Error('SCANNED');   // 텍스트 없는 스캔본
+  return out;
+}
+
+/* --- 이미지 OCR --- */
+async function imageToText(file, ui){
+  ui && ui.set('글자 인식 엔진 준비 중… (처음 한 번만 조금 걸려요)', 0.05);
+  await loadLib(CDN.ocr);
+  const r = await window.Tesseract.recognize(file, 'kor+eng', {
+    logger: m => { if(m.status==='recognizing text') ui && ui.set(`글자 인식 중… ${Math.round(m.progress*100)}%`, 0.3+m.progress*0.7); }
+  });
+  return (r.data.text||'').replace(/[ \t]+/g,' ').replace(/\n{3,}/g,'\n\n').trim();
+}
+
+/* --- 문서 파일 → 텍스트 --- */
+async function fileToText(file, ui){
+  const name=file.name||'', ext=(name.split('.').pop()||'').toLowerCase();
+  const isImg = /^(png|jpg|jpeg|heic|heif|webp|gif|tiff|tif|bmp)$/.test(ext) || (file.type||'').startsWith('image/');
+
+  if(/^(txt|md|markdown|fountain|csv)$/.test(ext)) return await file.text();
+  if(ext==='rtf'){
+    const t = await file.text();
+    return t.replace(/\\'([0-9a-f]{2})/gi,'').replace(/\{\\[^}]*\}/g,'').replace(/\\[a-z]+\d* ?/gi,'')
+            .replace(/[{}]/g,'').replace(/\n{3,}/g,'\n\n').trim();
+  }
+  if(ext==='fdx'){
+    const t=await file.text();
+    try{
+      const doc=new DOMParser().parseFromString(t,'text/xml');
+      return [...doc.querySelectorAll('Paragraph')].map(p=>{
+        const ty=p.getAttribute('Type')||'';
+        const tx=[...p.querySelectorAll('Text')].map(x=>x.textContent).join('');
+        if(!tx.trim()) return '';
+        return ty==='Character' ? tx.trim() : ty==='Dialogue' ? tx.trim() : tx.trim();
+      }).join('\n');
+    }catch(_){ return t; }
+  }
+  if(ext==='pdf'){
+    ui && ui.set('PDF 여는 중…', 0.1);
+    try{ return await pdfToText(await file.arrayBuffer(), ui); }
+    catch(e){
+      if(e.message==='SCANNED'){
+        ui && ui.set('글자층이 없는 스캔 PDF — 이미지로 인식합니다', 0.2);
+        return await pdfScanToText(await file.arrayBuffer(), ui);
+      }
+      throw e;
+    }
+  }
+  if(isImg){ return await imageToText(file, ui); }
+
+  if(ext==='docx' || ext==='hwpx' || ext==='pages' || ext==='key' || ext==='numbers'){
+    ui && ui.set('문서 여는 중…', 0.15);
+    await loadLib(CDN.zip);
+    const zip = await window.JSZip.loadAsync(await file.arrayBuffer());
+
+    if(ext==='docx'){
+      const f = zip.file('word/document.xml');
+      if(!f) throw new Error('BADDOC');
+      return xmlText(await f.async('string'), null, /<\/w:p>|<w:br\s*\/?>/g);
+    }
+    if(ext==='hwpx'){
+      const names = Object.keys(zip.files).filter(n=>/Contents\/section\d+\.xml$/i.test(n)).sort();
+      if(!names.length) throw new Error('BADDOC');
+      const parts=[];
+      for(const n of names) parts.push(xmlText(await zip.file(n).async('string'), null, /<\/hp:p>|<hp:lineBreak\s*\/?>/g));
+      return parts.join('\n\n');
+    }
+    // Pages / Keynote / Numbers → 번들 안의 미리보기 PDF 사용
+    const prev = Object.keys(zip.files).find(n=>/(^|\/)(QuickLook\/)?[Pp]review\.pdf$/.test(n));
+    if(prev){
+      ui && ui.set('페이지스 문서 읽는 중…', 0.3);
+      return await pdfToText(await zip.file(prev).async('arraybuffer'), ui);
+    }
+    throw new Error('PAGES_NOPREVIEW');
+  }
+
+  if(ext==='hwp') throw new Error('HWP_OLD');
+  if(ext==='doc') throw new Error('DOC_OLD');
+
+  // 알 수 없는 형식 — 텍스트로 시도
+  const t = await file.text();
+  if(/[\x00-\x08\x0e-\x1f]/.test(t.slice(0,400))) throw new Error('UNKNOWN');
+  return t;
+}
+
+/* 스캔 PDF → 페이지를 그림으로 렌더 후 OCR */
+async function pdfScanToText(buf, ui){
+  const lib = await pdfLib(); await loadLib(CDN.ocr);
+  const doc = await lib.getDocument({data:buf, cMapUrl:CDN.cmap, cMapPacked:true}).promise;
+  const max=Math.min(doc.numPages, 20), out=[];
+  for(let p=1;p<=max;p++){
+    ui && ui.set(`스캔 ${p}/${max}쪽 글자 인식 중…`, p/max);
+    const page=await doc.getPage(p);
+    const vp=page.getViewport({scale:2});
+    const cv=document.createElement('canvas'); cv.width=vp.width; cv.height=vp.height;
+    await page.render({canvasContext:cv.getContext('2d'), viewport:vp}).promise;
+    const blob=await new Promise(r=>cv.toBlob(r,'image/png'));
+    const r=await window.Tesseract.recognize(blob,'kor+eng');
+    out.push((r.data.text||'').trim());
+  }
+  if(doc.numPages>max) out.push(`\n(※ ${max}쪽까지만 인식했습니다)`);
+  return out.join('\n\n');
+}
+
+const IMPORT_ERR = {
+  NETWORK: ['인터넷 연결이 필요해요','PDF·워드·한글·이미지를 여는 도구를 내려받아야 합니다. 와이파이에 연결한 뒤 다시 시도하거나, 대본을 복사해서 <b>📋 붙여넣기</b>로 넣어주세요.'],
+  HWP_OLD: ['구형 한글 파일(.hwp)은 열 수 없어요','한글에서 <b>파일 → 다른 이름으로 저장</b> → 형식을 <b>HWPX</b> 또는 <b>PDF</b>로 저장한 뒤 그 파일을 올려주세요.'],
+  DOC_OLD: ['구형 워드 파일(.doc)은 열 수 없어요','워드에서 <b>.docx</b> 또는 <b>PDF</b>로 저장한 뒤 올려주세요.'],
+  PAGES_NOPREVIEW: ['이 페이지스 문서는 미리보기가 없어요','페이지스에서 <b>파일 → 보내기 → PDF</b> 로 내보낸 뒤 그 PDF를 올려주세요.'],
+  BADDOC: ['문서를 읽지 못했어요','파일이 손상되었거나 지원하지 않는 형태입니다. PDF로 저장해서 올려보세요.'],
+  UNKNOWN: ['지원하지 않는 형식이에요','PDF · 워드(.docx) · 한글(.hwpx) · 페이지스 · 이미지 · 텍스트 파일을 올릴 수 있습니다.'],
+  SCANNED: ['글자를 찾지 못했어요','스캔본이라면 이미지로 저장해서 올리면 글자 인식을 시도합니다.']
+};
+function importError(code, detail){
+  const [t,d] = IMPORT_ERR[code] || ['불러오지 못했어요', esc(detail||'알 수 없는 오류')];
+  modal(`<h3>${esc(t)}</h3><div class="desc" style="line-height:1.8">${d}</div>
+    <div class="foot"><button class="btn pri" data-mod="ok" style="flex:1">확인</button></div>`);
+  $('#modal-root').onclick=e=>{ if(e.target.closest('[data-mod]')||e.target.classList.contains('mask')) closeModal(); };
+}
+
+/* 파일 선택 → 텍스트 추출 → 대본 반영 */
+async function importDocument(file){
+  const s = getSheet(R.sid); if(!s) return;
+  const ui = busyBox(`📄 ${file.name}`);
+  let text='';
+  try{
+    text = await fileToText(file, ui);
+  }catch(e){
+    ui.close();
+    importError(e.message, e.message);
+    console.warn('[carescript] import', e);
+    return;
+  }
+  ui.close();
+  if(!text || !text.trim()){ importError('SCANNED'); return; }
+
+  const parsed = parseScript(text);
+  const dCnt = parsed.filter(l=>l.type==='d').length;
+  const who = [...new Set(parsed.filter(l=>l.type==='d').map(l=>l.who))].filter(Boolean);
+  if(!parsed.length){ importError('UNKNOWN'); return; }
+
+  modal(`<h3>이렇게 읽었어요</h3>
+    <div class="desc">${esc(file.name)}</div>
+    <div class="stat" style="margin-bottom:12px">
+      <div class="s"><b>${dCnt}</b><i>대사</i></div>
+      <div class="s"><b>${parsed.length-dCnt}</b><i>지문</i></div>
+      <div class="s"><b>${who.length}</b><i>인물</i></div>
+    </div>
+    ${who.length?`<div class="sec"><h3>인식된 인물</h3><div class="chips">${who.slice(0,14).map(w=>`<span class="chip ro mini">${esc(w)}</span>`).join('')}</div></div>`:''}
+    <div class="card" style="max-height:34vh;overflow-y:auto;font-size:13.5px;line-height:1.75">
+      ${parsed.slice(0,40).map(l=>l.type==='d'
+        ? `<div><b style="color:var(--ac)">${esc(l.who)}</b> ${esc(l.text.slice(0,60))}</div>`
+        : `<div style="color:var(--tx3);font-style:italic">${esc(l.text.slice(0,60))}</div>`).join('')}
+      ${parsed.length>40?`<div style="color:var(--tx3);margin-top:6px">… 외 ${parsed.length-40}줄</div>`:''}
+    </div>
+    <div style="font-size:12px;color:var(--tx3);margin-top:10px">인물이 잘못 잡혔으면 불러온 뒤 대사 왼쪽 이름을 눌러 고칠 수 있어요.</div>
+    <div class="foot"><button class="btn" data-mod="cancel">취소</button><button class="btn pri" data-mod="ok">대본으로 넣기</button></div>`);
+  $('#modal-root').onclick=async e=>{
+    if(e.target.classList.contains('mask')) return closeModal();
+    const b=e.target.closest('[data-mod]'); if(!b) return;
+    if(b.dataset.mod==='cancel') return closeModal();
+    closeModal();
+    if((s.lines||[]).length && !(await confirmBox('기존 대본 교체?',`현재 ${s.lines.length}줄이 있습니다.`,'교체'))) return;
+    s.lines=parsed; s.scriptName=file.name; touch(s); save();
+    go({tab:'script', editing:null});
+    toast(`${parsed.length}줄 불러옴`,'ok');
+  };
 }
 
 /* ============================================================
@@ -573,6 +853,7 @@ function sheetInfo(s){
     <div class="row" style="gap:8px;flex-wrap:wrap">
       ${s.scriptUrl?`<button class="btn sm" data-act="openlink">↗ 대본 열기</button>`:''}
       <button class="btn sm" data-act="importfile">📄 파일에서 대본 불러오기</button>
+      <span style="font-size:11.5px;color:var(--tx3);width:100%;margin-top:4px">PDF · 워드(.docx) · 한글(.hwpx) · 페이지스 · 이미지(사진 글자 인식) · 텍스트</span>
       <button class="btn sm" data-act="paste">📋 대본 붙여넣기</button>
     </div>
   </div>
@@ -607,7 +888,7 @@ function sheetScript(s){
     <button class="btn sm ${ENDCHK?'pri':''}" data-act="endchk" title="같은 문장 안에서 같은 어미가 반복되면 글자 위에 빨간 점으로 표시">⚠️ 어미검사 ${ENDCHK?'ON':'OFF'}</button>
     <div class="spacer"></div>
     <button class="btn sm" data-act="paste">📋 붙여넣기</button>
-    <button class="btn sm" data-act="importfile">📄 파일</button>
+    <button class="btn sm" data-act="importfile">📄 파일 불러오기</button>
     <button class="btn sm" data-act="addline">＋ 대사</button>
   </div>
   <div class="lines" id="lines">${L.length? L.map((l,i)=>lineHTML(l,i)).join('') :
@@ -944,7 +1225,7 @@ document.addEventListener('click', async e=>{
 
     /* --- 대본 가져오기 --- */
     case 'paste': {
-      const r=await ask({title:'대본 붙여넣기', desc:'“이름: 대사” 또는 시나리오 형식(이름 줄 + 대사 줄)을 자동 인식합니다.',
+      const r=await ask({title:'대본 붙여넣기', desc:'“이름: 대사” 또는 시나리오 형식(이름 줄 + 대사 줄)을 자동 인식합니다. 파일이면 📄 파일 불러오기를 쓰세요.',
         fields:[{k:'raw',label:'대본 원문',type:'textarea',rows:12,ph:'준호: 어제 내가 작업을 해서, 오늘 일어나서 피곤해\n미영: 그러게 말이야'}], ok:'불러오기'});
       if(r?.raw){
         const parsed=parseScript(r.raw);
@@ -954,24 +1235,8 @@ document.addEventListener('click', async e=>{
       }
       break; }
     case 'importfile': {
-      const inp=document.createElement('input'); inp.type='file'; inp.accept='.txt,.md,.fdx,.fountain,.csv,text/plain';
-      inp.onchange=async()=>{
-        const file=inp.files[0]; if(!file) return;
-        let txt=await file.text();
-        if(/\.fdx$/i.test(file.name)){
-          try{ const doc=new DOMParser().parseFromString(txt,'text/xml');
-            txt=[...doc.querySelectorAll('Paragraph')].map(p=>{
-              const ty=p.getAttribute('Type')||''; const tx=[...p.querySelectorAll('Text')].map(x=>x.textContent).join('');
-              if(!tx.trim()) return '';
-              return ty==='Character' ? tx.trim() : ty==='Dialogue' ? '  '+tx.trim() : tx.trim();
-            }).join('\n');
-          }catch(_){}
-        }
-        const parsed=parseScript(txt);
-        s.scriptName=file.name;
-        if(parsed.length){ s.lines=parsed; toast(`${file.name} · ${parsed.length}줄 불러옴`,'ok'); }
-        touch(s); save(); go({tab:'script'});
-      };
+      const inp=document.createElement('input'); inp.type='file'; inp.accept=ACCEPT;
+      inp.onchange=()=>{ const file=inp.files[0]; if(file) importDocument(file); };
       inp.click(); break; }
 
     /* --- 음성 --- */
@@ -1126,4 +1391,17 @@ render();
 Sync.connect();
 setInterval(()=>{ if(Sync.state!=='on' && Sync.backend!=='off') Sync.connect(); }, 20000);
 window.addEventListener('beforeunload', ()=>save(false));
+
+/* 파일을 화면에 끌어다 놓아도 대본으로 불러오기 */
+document.addEventListener('dragover', e=>{
+  if(!e.dataTransfer || ![...e.dataTransfer.types].includes('Files')) return;
+  e.preventDefault(); document.body.classList.add('dropping');
+});
+document.addEventListener('dragleave', e=>{ if(e.relatedTarget===null) document.body.classList.remove('dropping'); });
+document.addEventListener('drop', e=>{
+  if(!e.dataTransfer || !e.dataTransfer.files.length) return;
+  e.preventDefault(); document.body.classList.remove('dropping');
+  if(R.v!=='sheet'){ toast('기록을 먼저 연 뒤 파일을 놓아주세요','warn'); return; }
+  importDocument(e.dataTransfer.files[0]);
+});
 console.log('%c케어스크립트 ready','color:#ffb02e;font-weight:bold');
