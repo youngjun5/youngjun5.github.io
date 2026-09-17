@@ -25,6 +25,7 @@ self.addEventListener("fetch", (e) => {
   if (url.pathname.indexOf("/gear/") === 0) return;        // 자주 갱신되는 데이터 — 캐시 없이 항상 최신으로
   if (url.pathname.indexOf("/shoots/") === 0) return;       // 촬영 프로젝트 — 캐시 없이 항상 최신으로
   if (url.pathname.indexOf("/torah/") === 0) return;         // 토라포션 데이터 — 캐시 없이 항상 최신으로
+  if (url.pathname.indexOf("/carescript/") === 0) return;     // 케어스크립트 — 실시간 데이터, 캐시 없이 항상 최신으로
 
   const isPage = e.request.mode === "navigate" || url.pathname.endsWith("/") || url.pathname.endsWith("index.html");
   if (isPage) {

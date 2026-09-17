@@ -1,0 +1,10 @@
+{
+  "name": "케어스크립트",
+  "short_name": "케어스크립트",
+  "start_url": "/carescript/",
+  "scope": "/carescript/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#101216",
+  "theme_color": "#101216"
+}
