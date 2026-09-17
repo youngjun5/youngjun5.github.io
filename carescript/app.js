@@ -407,6 +407,12 @@ function topbar(title, sub, left, right){
   </div>`;
 }
 const backBtn = act => `<button class="iconbtn" data-act="${act}">‹</button>`;
+// 홈 화면(앱의 최상위)에서 누르는 "뒤로" — 앱 안에는 더 갈 곳이 없으니
+// 스튜디오 허브(다른 앱들 모아놓은 곳)로 나가는 실제 링크.
+// 홈스크린에 케어스크립트를 단독 앱으로 설치해서 바로 여기로 들어온 경우,
+// 브라우저 히스토리 자체가 없어서 "잘못 들어왔을 때 다른 앱으로" 갈 방법이
+// 이거 말곤 없었음 — 그래서 앱을 통째로 꺼야 했던 것.
+const hubBtn = `<a class="iconbtn" href="../" title="전체 앱 목록으로">‹</a>`;
 
 /* ---------- 홈 ---------- */
 function viewHome(){
@@ -414,7 +420,7 @@ function viewHome(){
   const ps = alive(DB.projects).filter(p=> R.folder==='all' ? true : R.folder==='none' ? !p.folderId : p.folderId===R.folder)
                                .sort((a,b)=>(b.updatedAt||'').localeCompare(a.updatedAt||''));
   return topbar('케어스크립트','현장 스크립터 · CARE SCRIPT',
-    `<div class="brand"><div class="dot">CS</div></div>`,
+    `${hubBtn}<div class="brand"><div class="dot">CS</div></div>`,
     `<button class="iconbtn" data-act="settings">⚙︎</button>`)
   + `<div class="content">
       <div class="folderbar">
