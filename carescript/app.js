@@ -356,24 +356,30 @@ function matchLine(spoken, lines, cursor){
    ============================================================ */
 function parseScript(raw){
   const src = String(raw||'').replace(/\r/g,'').split('\n');
-  const out=[]; let pendingWho=null, whoUsed=false;
-  const push=(type,who,text)=>{ text=text.trim(); if(text) out.push({id:uid(),type,who:who||'',text,done:false,post:false,dev:null,note:''}); };
+  const out=[]; let pendingWho=null, whoUsed=false, prevBlank=true;
+  const push=(type,who,text,attach)=>{ text=text.trim(); if(text) out.push({id:uid(),type,who:who||'',text,done:false,post:false,dev:null,note:'',attach:attach||null}); };
   const nextFilled = i => { for(let k=i+1;k<src.length;k++){ const t=src[k].trim(); if(t) return t; } return ''; };
 
   for(let i=0;i<src.length;i++){
     const raw1=src[i], line=raw1.trim();
     // 빈 줄: 아직 대사를 못 받은 인물 이름은 살려둔다 (PDF·OCR은 줄 간격이 제멋대로)
-    if(!line){ if(whoUsed) pendingWho=null; continue; }
+    if(!line){ if(whoUsed) pendingWho=null; prevBlank=true; continue; }
 
     // "이름: 대사"
     let m = line.match(/^([^:：\n]{1,14})\s*[:：]\s*(.+)$/);
-    if(m && !/^https?$/i.test(m[1])){ push('d', m[1].trim(), m[2]); pendingWho=null; whoUsed=false; continue; }
+    if(m && !/^https?$/i.test(m[1])){ push('d', m[1].trim(), m[2]); pendingWho=null; whoUsed=false; prevBlank=false; continue; }
 
     // 씬 헤딩 (OCR이 S를 5/$로 잘못 읽는 경우까지)
-    if(/^([Ss5$]\s*#|씬|SCENE|scene|#)\s*\d/.test(line)){ push('a','씬', line); pendingWho=null; whoUsed=false; continue; }
+    if(/^([Ss5$]\s*#|씬|SCENE|scene|#)\s*\d/.test(line)){ push('a','씬', line); pendingWho=null; whoUsed=false; prevBlank=false; continue; }
 
-    // 괄호 지문
-    if(/^[\(（\[【].*[\)）\]】]$/.test(line)){ push('a', pendingWho && !whoUsed ? pendingWho : '지문', line); continue; }
+    // 괄호 지문 — 대사에 딸린 것이면 그 대사에 붙인다
+    if(/^[\(（\[【].*[\)）\]】]$/.test(line)){
+      const attach = (pendingWho && !whoUsed) ? 'down'          // 인물 이름 바로 뒤 → 다음 대사 앞에 붙음
+                   : (!prevBlank && out.length && out[out.length-1].type==='d') ? 'up'  // 대사 바로 뒤 → 그 대사에 붙음
+                   : null;
+      push('a', pendingWho && !whoUsed ? pendingWho : '지문', line, attach);
+      prevBlank=false; continue;
+    }
 
     // 시나리오 형식: 짧은 줄(인물 이름) + 뒤따르는 대사
     const nxt = nextFilled(i);
@@ -382,12 +388,12 @@ function parseScript(raw){
                       && /^[가-힣A-Za-z0-9 ()·\/]+$/.test(line);
     if(looksName && !indented && !(pendingWho && !whoUsed)){
       pendingWho = line.replace(/\(.*?\)/g,'').trim();
-      whoUsed = false;
+      whoUsed = false; prevBlank=false;
       continue;
     }
 
-    if(pendingWho){ push('d', pendingWho, line); whoUsed=true; continue; }
-    push('a','지문', line);
+    if(pendingWho){ push('d', pendingWho, line); whoUsed=true; prevBlank=false; continue; }
+    push('a','지문', line); prevBlank=false;
   }
   return out;
 }
@@ -934,7 +940,7 @@ function viewSheet(){
             <button class="btn sm" data-act="paste">붙여넣기</button>
             <button class="btn sm" data-act="addline">＋ 대사</button>
           </div>
-          <div class="lines" id="lines">${L.length? L.map((l,i)=>lineHTML(l,i)).join('')
+          <div class="lines" id="lines">${L.length? linesHTML(L)
             : `<div class="empty"><div class="big">＋</div><div>대본을 불러오거나 붙여넣으세요<br><span style="font-size:12px">PDF · 워드 · 한글(hwpx) · 페이지스 · 이미지</span></div></div>`}</div>
         </div>
       </div>
@@ -948,16 +954,40 @@ function viewSheet(){
   ${micPanel()}`;
 }
 
-function lineHTML(l,i){
+/* 대사 + 그 대사에 딸린 지문을 한 칸으로 묶는다 */
+function groupLines(L){
+  const rows=[]; let down=[];
+  L.forEach((l,i)=>{
+    if(l.type==='a' && l.attach==='down'){ down.push(l); return; }
+    if(l.type==='a' && l.attach==='up' && rows.length && rows[rows.length-1].main.type==='d'){
+      rows[rows.length-1].after.push(l); return;
+    }
+    rows.push({main:l, before:down, after:[]});
+    down=[];
+  });
+  down.forEach(l=>rows.push({main:l, before:[], after:[]}));
+  return rows;
+}
+function linesHTML(L){ return groupLines(L).map(r=>lineHTML(r)).join(''); }
+
+function stageHTML(l){
+  return `<div class="stage" data-id="${l.id}">${esc(l.text)}<button class="tiny" data-act="detach" data-v="${l.id}" title="따로 떼기">떼기</button></div>`;
+}
+
+function lineHTML(row){
+  const l = row.main, before = row.before||[], after = row.after||[];
   const a = l.type==='d' ? analyzeEnding(l.text) : {marks:[],warns:[]};
   const editing = R.editing===l.id;
-  return `<div class="ln ${l.type==='a'?'dir':''} ${l.done?'done':''} ${l.dev?'dev':''}" data-id="${l.id}" data-i="${i}">
-    <div class="who" data-act="editwho" data-v="${l.id}">${esc(l.who|| (l.type==='a'?'지문':'?'))}</div>
+  const isDir = l.type==='a';
+  return `<div class="ln ${isDir?'dir':''} ${l.done?'done':''} ${l.dev?'dev':''}" data-id="${l.id}">
+    <div class="who" data-act="editwho" data-v="${l.id}">${esc(l.who|| (isDir?'지문':'?'))}</div>
     <div class="body">
+      ${before.map(stageHTML).join('')}
       ${editing
         ? `<textarea data-line="${l.id}" data-act="linetext">${esc(l.text)}</textarea>
            <div class="row" style="margin-top:6px;gap:6px"><button class="btn sm pri" data-act="linedone">확인</button><button class="btn sm dan" data-act="delline" data-v="${l.id}">삭제</button></div>`
         : `<div class="tx" data-act="editline" data-v="${l.id}">${markedHTML(l.text, a.marks)}</div>`}
+      ${after.map(stageHTML).join('')}
       ${a.warns.length?`<div class="warnrow">● ${a.warns.map(w=>esc(w)).join(' · ')}<button class="btn sm" data-act="fixhint" data-v="${l.id}">고치기</button></div>`:''}
       ${l.dev?`<div class="devrow">실제 친 대사 : “${esc(l.dev.spoken)}” <b>(일치율 ${Math.round(l.dev.score*100)}%)</b>
         <button class="btn sm" data-act="applydev" data-v="${l.id}">대본에 반영</button>
@@ -965,8 +995,10 @@ function lineHTML(l,i){
       ${l.note?`<div class="note">${esc(l.note)}</div>`:''}
     </div>
     <div class="acts">
-      ${l.type==='d'?`<button class="${l.done?'on':''}" data-act="toggledone" data-v="${l.id}" title="친 대사">${l.done?'✓':'○'}</button>
-      <button class="${l.post?'on':''}" data-act="togglepost" data-v="${l.id}" title="후시녹음">후</button>`:''}
+      ${isDir
+        ? (l.who==='씬' ? '' : `<button data-act="attachup" data-v="${l.id}" title="바로 위 대사에 붙이기">↑붙이기</button>`)
+        : `<button class="${l.done?'on':''}" data-act="toggledone" data-v="${l.id}" title="친 대사">${l.done?'✓':'○'}</button>
+           <button class="${l.post?'on':''}" data-act="togglepost" data-v="${l.id}" title="후시녹음">후</button>`}
       <button data-act="linenote" data-v="${l.id}" title="메모">메모</button>
     </div>
   </div>`;
@@ -1043,7 +1075,7 @@ const Voice = {
     touch(s); save();
     refreshLines();
     const el = $(`.ln[data-id="${l.id}"]`);
-    if(el){ el.scrollIntoView({block:'center',behavior:'smooth'}); el.animate([{opacity:.35},{opacity:1}],{duration:700}); }
+    if(el){ el.scrollIntoView({block:'center',behavior:'smooth'}); el.animate([{opacity:.3},{opacity:1}],{duration:700}); }
   },
   paint(){
     const b=$('#micbtn'); if(b) b.className='btnmic '+(this.on?'on':'');
@@ -1058,7 +1090,7 @@ const Voice = {
 function refreshLines(){
   const c=$('#lines'); if(!c) return;
   const s=getSheet(R.sid); if(!s) return;
-  c.innerHTML = (s.lines||[]).map((l,i)=>lineHTML(l,i)).join('');
+  c.innerHTML = linesHTML(s.lines||[]);
   // 상단 통계 갱신
   const body=$('#sheetbody'); if(body){
     const tmp=document.createElement('div'); tmp.innerHTML=sheetScript(s);
@@ -1284,6 +1316,15 @@ document.addEventListener('click', async e=>{
       touch(s); save(); refreshLines(); toast('대본에 반영됨 · 특이사항에 "대본 수정" 추가'); break; }
     case 'cleardev': { const l=s.lines.find(x=>x.id===v); l.dev=null; touch(s); save(); refreshLines(); break; }
     case 'fixhint': fixHint(v); break;
+    case 'attachup': {
+      const L=s.lines||[], i=L.findIndex(x=>x.id===v);
+      // 바로 앞의 대사를 찾아 그 대사에 붙인다
+      let k=i-1; while(k>=0 && L[k].type==='a' && L[k].attach) k--;
+      if(k<0 || L[k].type!=='d'){ toast('붙일 대사가 위에 없습니다','warn'); break; }
+      L[i].attach='up'; touch(s); save(); refreshLines(); break; }
+    case 'detach': {
+      const l=(s.lines||[]).find(x=>x.id===v); if(!l) break;
+      l.attach=null; l.who='지문'; touch(s); save(); refreshLines(); break; }
     case 'endchk': ENDCHK=!ENDCHK; localStorage.setItem('carescript.endchk', ENDCHK?'1':'0');
       render(); toast(ENDCHK?'어미 반복 검사 켜짐':'어미 반복 검사 꺼짐'); break;
     case 'resetdone': (s.lines||[]).forEach(l=>{l.done=false;l.dev=null;}); Voice.cursor=-1; touch(s); save(); refreshLines(); break;
