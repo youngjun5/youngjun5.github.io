@@ -2,6 +2,7 @@
    케어스크립트 (CARE SCRIPT) — 현장 스크립터 전용 앱
    ============================================================ */
 'use strict';
+const BUILD = '260917.1731';
 
 /* ---------- 유틸 ---------- */
 const $  = (s,r=document)=>r.querySelector(s);
@@ -950,7 +951,7 @@ function viewSheet(){
           </div>
           <div class="lines" id="lines">${L.length? linesHTML(PG.lines)
             : `<div class="empty"><div class="big">＋</div><div>대본을 불러오거나 붙여넣으세요<br><span style="font-size:12px">PDF · 워드 · 한글(hwpx) · 페이지스 · 이미지</span></div></div>`}</div>
-          ${L.length? pagerHTML(PAGES, pi) : ''}
+          ${L.length? pagerHTML(PAGES, pi, L.some(isScene)) : ''}
         </div>
       </div>
 
@@ -968,15 +969,36 @@ function viewSheet(){
    씬 제목과, 사용자가 [떼기]로 분리한 것(attach:'none')만 독립 줄. */
 const isScene = l => l.type==='a' && l.who==='씬';
 
-/* 대본을 씬 단위로 페이지 분할 (A4 용지처럼 넘겨 보기) */
+/* 대본 페이지 분할 (A4 용지처럼 넘겨 보기)
+   · 씬 표시(S#)가 있으면 씬 하나가 한 쪽
+   · 씬 표시가 없는 대본이면 A4 한 장 분량(대사 LINES_PER_PAGE개)씩 끊는다 */
+let LINES_PER_PAGE = parseInt(localStorage.getItem('carescript.pagelines')||'20',10);
 function pagesOf(lines){
-  const L=lines||[], pages=[]; let cur=null;
+  const L=lines||[], pages=[];
+  if(!L.length) return [{title:null, lines:[]}];
+
+  if(L.some(isScene)){
+    let cur=null;
+    L.forEach(l=>{
+      if(isScene(l)){ cur={title:l.text, lines:[l]}; pages.push(cur); return; }
+      if(!cur){ cur={title:null, lines:[]}; pages.push(cur); }
+      cur.lines.push(l);
+    });
+    return pages.length?pages:[{title:null, lines:[]}];
+  }
+
+  let cur={title:null, lines:[]}, cnt=0;
   L.forEach(l=>{
-    if(isScene(l)){ cur={title:l.text, lines:[l]}; pages.push(cur); return; }
-    if(!cur){ cur={title:null, lines:[]}; pages.push(cur); }
+    if(cnt>=LINES_PER_PAGE && l.type==='d'){ pages.push(cur); cur={title:null, lines:[]}; cnt=0; }
     cur.lines.push(l);
+    if(l.type==='d') cnt++;
   });
-  if(!pages.length) pages.push({title:null, lines:[]});
+  if(cur.lines.length) pages.push(cur);
+  // 쪽 이름 = 그 쪽 첫 대사
+  pages.forEach(p=>{
+    const f=p.lines.find(x=>x.type==='d') || p.lines[0];
+    if(f) p.title = (f.who?f.who+' — ':'') + f.text.replace(/^\([^)]*\)\s*/,'').slice(0,20);
+  });
   return pages;
 }
 const pageOfLine = (lines,id)=> pagesOf(lines).findIndex(p=>p.lines.some(l=>l.id===id));
@@ -1041,9 +1063,9 @@ function lineHTML(row){
   </div>`;
 }
 
-function pagerHTML(pages, pi){
+function pagerHTML(pages, pi, hasScene){
   const n=pages.length;
-  const label = p => p.title ? p.title.replace(/\s+/g,' ').slice(0,28) : '앞부분';
+  const label = p => (p.title||'').replace(/\s+/g,' ').slice(0,26) || '앞부분';
   return `<div class="pager">
     <button class="pgbtn" data-act="pageprev" ${pi<=0?'disabled':''}>‹ 이전</button>
     <select class="pgsel" data-act="pagego">${
@@ -1051,7 +1073,11 @@ function pagerHTML(pages, pi){
     }</select>
     <span class="pgno2"><b>${pi+1}</b> / ${n} 쪽</span>
     <button class="pgbtn" data-act="pagenext" ${pi>=n-1?'disabled':''}>다음 ›</button>
-  </div>`;
+  </div>
+  ${hasScene ? `<div class="pghint">씬(S#) 단위로 나눴습니다</div>`
+             : `<div class="pghint">씬 표시가 없는 대본이라 <b>한 쪽에 대사 ${LINES_PER_PAGE}개</b>씩 나눴습니다
+                  <button class="tinybtn" data-act="pagelines" data-v="-5">－</button>
+                  <button class="tinybtn" data-act="pagelines" data-v="5">＋</button></div>`}`;
 }
 
 function micPanel(){
@@ -1380,6 +1406,10 @@ document.addEventListener('click', async e=>{
     case 'detach': {
       const l=(s.lines||[]).find(x=>x.id===v); if(!l) break;
       l.attach='none'; l.who='지문'; touch(s); save(); refreshLines(); break; }
+    case 'pagelines': {
+      LINES_PER_PAGE = Math.max(5, Math.min(80, LINES_PER_PAGE + (+v)));
+      localStorage.setItem('carescript.pagelines', LINES_PER_PAGE);
+      go({page:0}); toast(`한 쪽에 대사 ${LINES_PER_PAGE}개`); break; }
     case 'pageprev': go({page:Math.max(0,(R.page||0)-1)}); break;
     case 'pagenext': go({page:(R.page||0)+1}); break;
     case 'endchk': ENDCHK=!ENDCHK; localStorage.setItem('carescript.endchk', ENDCHK?'1':'0');
@@ -1531,7 +1561,8 @@ function openSettings(){
         <button class="btn" data-x="backup">전체 백업(JSON)</button>
         <button class="btn" data-x="restore">백업 복원</button>
       </div>
-      <div style="font-size:12px;color:var(--tx3)">프로젝트 ${alive(DB.projects).length} · 기록 ${alive(DB.sheets).length} · 기기ID ${DB.device.slice(0,5)}</div>
+      <div style="font-size:12px;color:var(--tx3)">프로젝트 ${alive(DB.projects).length} · 용지 ${alive(DB.sheets).length} · 버전 ${typeof BUILD!=='undefined'?BUILD:'-'}</div>
+      <button class="btn" data-x="hardreload">최신 버전으로 다시 불러오기</button>
     </div>
     <div class="foot"><button class="btn pri" data-mod="ok" style="flex:1">닫기</button></div>`);
   $('#modal-root').onclick=async e=>{
@@ -1546,6 +1577,10 @@ function openSettings(){
       case 'sb': Sync.setHub(''); closeModal(); toast('케어센터 서버로 연결 중…'); break;
       case 'theme': { const n=document.documentElement.dataset.theme==='dark'?'light':'dark';
         document.documentElement.dataset.theme=n; localStorage.setItem('carescript.theme',n); closeModal(); break; }
+      case 'hardreload': {
+        if('caches' in window){ try{ (await caches.keys()).forEach(k=>caches.delete(k)); }catch(_){} }
+        location.replace(location.pathname+'?r='+Date.now());
+        break; }
       case 'backup': download(`케어스크립트_백업_${today()}.json`, JSON.stringify(DB,null,1), 'application/json'); break;
       case 'restore': {
         const inp=document.createElement('input'); inp.type='file'; inp.accept='.json';
