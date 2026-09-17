@@ -825,19 +825,20 @@ function sta(s,k,ph,rows=3){
   return `<textarea data-act="inp" data-k="${k}" rows="${rows}" placeholder="${esc(ph||'')}">${esc(s[k]||'')}</textarea>`;
 }
 /* 작성자가 ＋ 로 채우고 ✎ 로 지우는 칩 */
-function chipsU(field, sel){
+function chipsU(field, sel, mode){
   const list = DB.presets[field] || [];
   const editing = R.editChips === field;
-  return `<div class="chips">${
-    list.map(v=> editing
+  const items = list.map(v=> editing
       ? `<button class="chip mini del" data-act="delpreset" data-f="${esc(field)}" data-v="${esc(v)}">${esc(v)}<span class="x">✕</span></button>`
       : `<button class="chip mini ${sel.includes(v)?'on':''}" data-act="chip" data-f="${esc(field)}" data-v="${esc(v)}">${esc(v)}</button>`
-    ).join('')
-  }${editing
+    ).join('');
+  const tools = editing
       ? `<button class="chip mini add" data-act="editchips" data-f="">완료</button>`
       : `<button class="chip mini add" data-act="addpreset" data-f="${esc(field)}">＋</button>${
-          list.length?`<button class="chip mini add" data-act="editchips" data-f="${esc(field)}" title="항목 지우기">✎</button>`:''}`
-  }</div>`;
+          list.length?`<button class="chip mini add" data-act="editchips" data-f="${esc(field)}" title="항목 지우기">✎</button>`:''}`;
+  // 'row' 모드: 항목은 가로로 넘기고 ＋·✎ 는 오른쪽에 고정
+  if(mode==='row') return `<div class="chiprow"><div class="chips scroll">${items}</div><div class="chiptools">${tools}</div></div>`;
+  return `<div class="chips">${items}${tools}</div>`;
 }
 /* 용지에 인쇄된 고정 항목 */
 function chipsF(field, sel, cls='mini'){
@@ -895,7 +896,7 @@ function viewSheet(){
       <!-- 2행: Film / Lens / Filter / Exp / Roll -->
       <div class="grid r2">
         ${['film','lens','filter','exp'].map(k=>`
-          <div class="cell kv"><span class="lb">${FIELD_LABEL[k]}</span>${chipsU(k, s[k]||[])}</div>`).join('')}
+          <div class="cell kv"><span class="lb">${FIELD_LABEL[k]}</span>${chipsU(k, s[k]||[], 'row')}</div>`).join('')}
         <div class="cell kv"><span class="lb">Roll</span><input data-act="inp" data-k="roll" value="${esc(s.roll||'')}"></div>
       </div>
 
@@ -954,18 +955,30 @@ function viewSheet(){
   ${micPanel()}`;
 }
 
-/* 대사 + 그 대사에 딸린 지문을 한 칸으로 묶는다 */
+/* 지문은 기본적으로 대사 단락 안에 들어간다.
+   앞에 대사가 있으면 그 대사 뒤에, 없으면 다음 대사 앞에 붙는다.
+   씬 제목과, 사용자가 [떼기]로 분리한 것(attach:'none')만 독립 줄. */
+const isScene = l => l.type==='a' && l.who==='씬';
 function groupLines(L){
   const rows=[]; let down=[];
-  L.forEach((l,i)=>{
-    if(l.type==='a' && l.attach==='down'){ down.push(l); return; }
-    if(l.type==='a' && l.attach==='up' && rows.length && rows[rows.length-1].main.type==='d'){
-      rows[rows.length-1].after.push(l); return;
+  const lastRow = ()=> rows.length ? rows[rows.length-1] : null;
+  const flushDown = ()=>{ down.forEach(x=>rows.push({main:x, before:[], after:[], loose:true})); down=[]; };
+
+  L.forEach(l=>{
+    const dir = l.type==='a' && !isScene(l) && l.attach!=='none';
+    if(dir){
+      const prev = lastRow();
+      if(l.attach==='down'){ down.push(l); return; }
+      if(l.attach==='up' || (l.attach==null && prev && prev.main.type==='d')){
+        if(prev && prev.main.type==='d'){ prev.after.push(l); return; }
+      }
+      down.push(l); return;                       // 앞에 대사가 없으면 다음 대사 앞에
     }
-    rows.push({main:l, before:down, after:[]});
-    down=[];
+    if(l.type==='d'){ rows.push({main:l, before:down, after:[]}); down=[]; return; }
+    flushDown();                                   // 씬 제목·분리된 지문
+    rows.push({main:l, before:[], after:[], loose:true});
   });
-  down.forEach(l=>rows.push({main:l, before:[], after:[]}));
+  flushDown();
   return rows;
 }
 function linesHTML(L){ return groupLines(L).map(r=>lineHTML(r)).join(''); }
@@ -973,13 +986,15 @@ function linesHTML(L){ return groupLines(L).map(r=>lineHTML(r)).join(''); }
 function stageHTML(l){
   return `<div class="stage" data-id="${l.id}">${esc(l.text)}<button class="tiny" data-act="detach" data-v="${l.id}" title="따로 떼기">떼기</button></div>`;
 }
+/* 지문 단락 분리/합치기 */
 
 function lineHTML(row){
   const l = row.main, before = row.before||[], after = row.after||[];
   const a = l.type==='d' ? analyzeEnding(l.text) : {marks:[],warns:[]};
   const editing = R.editing===l.id;
   const isDir = l.type==='a';
-  return `<div class="ln ${isDir?'dir':''} ${l.done?'done':''} ${l.dev?'dev':''}" data-id="${l.id}">
+  const scene = isScene(l);
+  return `<div class="ln ${isDir?'dir':''} ${scene?'scene':''} ${l.done?'done':''} ${l.dev?'dev':''}" data-id="${l.id}">
     <div class="who" data-act="editwho" data-v="${l.id}">${esc(l.who|| (isDir?'지문':'?'))}</div>
     <div class="body">
       ${before.map(stageHTML).join('')}
@@ -996,7 +1011,7 @@ function lineHTML(row){
     </div>
     <div class="acts">
       ${isDir
-        ? (l.who==='씬' ? '' : `<button data-act="attachup" data-v="${l.id}" title="바로 위 대사에 붙이기">↑붙이기</button>`)
+        ? (scene ? '' : `<button data-act="attachup" data-v="${l.id}" title="대사 단락 안으로 넣기">합치기</button>`)
         : `<button class="${l.done?'on':''}" data-act="toggledone" data-v="${l.id}" title="친 대사">${l.done?'✓':'○'}</button>
            <button class="${l.post?'on':''}" data-act="togglepost" data-v="${l.id}" title="후시녹음">후</button>`}
       <button data-act="linenote" data-v="${l.id}" title="메모">메모</button>
@@ -1317,14 +1332,11 @@ document.addEventListener('click', async e=>{
     case 'cleardev': { const l=s.lines.find(x=>x.id===v); l.dev=null; touch(s); save(); refreshLines(); break; }
     case 'fixhint': fixHint(v); break;
     case 'attachup': {
-      const L=s.lines||[], i=L.findIndex(x=>x.id===v);
-      // 바로 앞의 대사를 찾아 그 대사에 붙인다
-      let k=i-1; while(k>=0 && L[k].type==='a' && L[k].attach) k--;
-      if(k<0 || L[k].type!=='d'){ toast('붙일 대사가 위에 없습니다','warn'); break; }
-      L[i].attach='up'; touch(s); save(); refreshLines(); break; }
+      const l=(s.lines||[]).find(x=>x.id===v); if(!l) break;
+      l.attach=null; touch(s); save(); refreshLines(); break; }   // 자동 배치로 되돌림
     case 'detach': {
       const l=(s.lines||[]).find(x=>x.id===v); if(!l) break;
-      l.attach=null; l.who='지문'; touch(s); save(); refreshLines(); break; }
+      l.attach='none'; l.who='지문'; touch(s); save(); refreshLines(); break; }
     case 'endchk': ENDCHK=!ENDCHK; localStorage.setItem('carescript.endchk', ENDCHK?'1':'0');
       render(); toast(ENDCHK?'어미 반복 검사 켜짐':'어미 반복 검사 꺼짐'); break;
     case 'resetdone': (s.lines||[]).forEach(l=>{l.done=false;l.dev=null;}); Voice.cursor=-1; touch(s); save(); refreshLines(); break;
