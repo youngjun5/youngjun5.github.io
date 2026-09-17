@@ -358,3 +358,21 @@ body.dropping::after{
   font-size:18px;font-weight:800;font-style:normal;color:var(--tx);
   letter-spacing:.01em;line-height:1.4;padding-top:0
 }
+
+/* 대본 페이지 넘김 */
+.pager{
+  display:flex;align-items:center;gap:8px;margin-top:8px;padding-top:8px;
+  border-top:1px solid var(--tx)
+}
+.pgbtn{
+  border:1px solid var(--tx);border-radius:7px;padding:6px 12px;font-size:13px;font-weight:700;
+  color:var(--tx);background:var(--bg);flex:0 0 auto
+}
+.pgbtn:active{background:var(--ac);color:var(--acfg)}
+.pgbtn[disabled]{opacity:.28;pointer-events:none}
+.pgsel{
+  flex:1;min-width:0;border:1px solid var(--line);border-radius:7px;padding:6px 8px;
+  font-size:13px;background:var(--bg);color:var(--tx)
+}
+.pgno2{font-size:13px;color:var(--tx2);flex:0 0 auto;white-space:nowrap}
+.pgno2 b{font-size:16px;color:var(--tx);font-weight:800}

@@ -663,7 +663,7 @@ async function importDocument(file){
     closeModal();
     if((s.lines||[]).length && !(await confirmBox('기존 대본 교체?',`현재 ${s.lines.length}줄이 있습니다.`,'교체'))) return;
     s.lines=parsed; s.scriptName=file.name; touch(s); save();
-    go({tab:'script', editing:null});
+    go({tab:'script', editing:null, page:0});
     toast(`${parsed.length}줄 불러옴`,'ok');
   };
 }
@@ -672,7 +672,7 @@ async function importDocument(file){
    4) 라우팅 & 렌더
    ============================================================ */
 let R = { v:'home', folder:'all', pid:null, sid:null, tab:'script',
-          fopen:false, filters:{date:[],scene:[],cut:[],flags:[]}, editing:null, q:'', editChips:null };
+          fopen:false, filters:{date:[],scene:[],cut:[],flags:[]}, editing:null, q:'', editChips:null, page:0 };
 
 function go(patch){ Object.assign(R,patch); render(); window.scrollTo(0,0); }
 
@@ -790,6 +790,9 @@ function sheetCard(s){
   const L=s.lines||[], d=L.filter(l=>l.type==='d');
   const done=d.filter(l=>l.done).length, post=L.filter(l=>l.post).length, dev=L.filter(l=>l.dev).length;
   let warn=0; if(ENDCHK) d.forEach(l=>{ if(analyzeEnding(l.text).warns.length) warn++; });
+  const PAGES = pagesOf(L);
+  const pi = Math.max(0, Math.min(R.page||0, PAGES.length-1));
+  const PG = PAGES[pi];
   return `<div class="scard" data-act="opensheet" data-v="${s.id}">
     <div class="sc"><b>${esc(s.scene||'–')}</b><i>S#</i><b style="margin-top:3px">${esc(s.cut||'–')}</b><i>C#</i></div>
     <div class="mid">
@@ -854,6 +857,9 @@ function viewSheet(){
   const L=s.lines||[], d=L.filter(l=>l.type==='d');
   const done=d.filter(l=>l.done).length, post=L.filter(l=>l.post).length, dev=L.filter(l=>l.dev).length;
   let warn=0; if(ENDCHK) d.forEach(l=>{ if(analyzeEnding(l.text).warns.length) warn++; });
+  const PAGES = pagesOf(L);
+  const pi = Math.max(0, Math.min(R.page||0, PAGES.length-1));
+  const PG = PAGES[pi];
 
   return topbar(`S#${s.scene||'–'}  C#${s.cut||'–'}`, `${p.name||''}${s.date?' · '+s.date:''}`,
       backBtn('backproject'), `<button class="iconbtn" data-act="theme">◐</button><button class="iconbtn" data-act="sheetmenu">⋯</button>`)
@@ -942,8 +948,9 @@ function viewSheet(){
             <button class="btn sm" data-act="paste">붙여넣기</button>
             <button class="btn sm" data-act="addline">＋ 대사</button>
           </div>
-          <div class="lines" id="lines">${L.length? linesHTML(L)
+          <div class="lines" id="lines">${L.length? linesHTML(PG.lines)
             : `<div class="empty"><div class="big">＋</div><div>대본을 불러오거나 붙여넣으세요<br><span style="font-size:12px">PDF · 워드 · 한글(hwpx) · 페이지스 · 이미지</span></div></div>`}</div>
+          ${L.length? pagerHTML(PAGES, pi) : ''}
         </div>
       </div>
 
@@ -960,6 +967,19 @@ function viewSheet(){
    앞에 대사가 있으면 그 대사 뒤에, 없으면 다음 대사 앞에 붙는다.
    씬 제목과, 사용자가 [떼기]로 분리한 것(attach:'none')만 독립 줄. */
 const isScene = l => l.type==='a' && l.who==='씬';
+
+/* 대본을 씬 단위로 페이지 분할 (A4 용지처럼 넘겨 보기) */
+function pagesOf(lines){
+  const L=lines||[], pages=[]; let cur=null;
+  L.forEach(l=>{
+    if(isScene(l)){ cur={title:l.text, lines:[l]}; pages.push(cur); return; }
+    if(!cur){ cur={title:null, lines:[]}; pages.push(cur); }
+    cur.lines.push(l);
+  });
+  if(!pages.length) pages.push({title:null, lines:[]});
+  return pages;
+}
+const pageOfLine = (lines,id)=> pagesOf(lines).findIndex(p=>p.lines.some(l=>l.id===id));
 function groupLines(L){
   const rows=[]; let down=[];
   const lastRow = ()=> rows.length ? rows[rows.length-1] : null;
@@ -1018,6 +1038,19 @@ function lineHTML(row){
            <button class="${l.post?'on':''}" data-act="togglepost" data-v="${l.id}" title="후시녹음">후</button>`}
       <button data-act="linenote" data-v="${l.id}" title="메모">메모</button>
     </div>
+  </div>`;
+}
+
+function pagerHTML(pages, pi){
+  const n=pages.length;
+  const label = p => p.title ? p.title.replace(/\s+/g,' ').slice(0,28) : '앞부분';
+  return `<div class="pager">
+    <button class="pgbtn" data-act="pageprev" ${pi<=0?'disabled':''}>‹ 이전</button>
+    <select class="pgsel" data-act="pagego">${
+      pages.map((p,i)=>`<option value="${i}" ${i===pi?'selected':''}>${i+1}. ${esc(label(p))}</option>`).join('')
+    }</select>
+    <span class="pgno2"><b>${pi+1}</b> / ${n} 쪽</span>
+    <button class="pgbtn" data-act="pagenext" ${pi>=n-1?'disabled':''}>다음 ›</button>
   </div>`;
 }
 
@@ -1090,7 +1123,8 @@ const Voice = {
     else { l.dev = { spoken, score:best.sc }; }
     this.cursor = best.i;
     touch(s); save();
-    refreshLines();
+    const pg = pageOfLine(s.lines, l.id);
+    if(pg>=0 && pg!==(R.page||0)){ go({page:pg}); } else { refreshLines(); }
     const el = $(`.ln[data-id="${l.id}"]`);
     if(el){ el.scrollIntoView({block:'center',behavior:'smooth'}); el.animate([{opacity:.3},{opacity:1}],{duration:700}); }
   },
@@ -1107,13 +1141,20 @@ const Voice = {
 function refreshLines(){
   const c=$('#lines'); if(!c) return;
   const s=getSheet(R.sid); if(!s) return;
-  c.innerHTML = linesHTML(s.lines||[]);
-  // 상단 통계 갱신
-  const body=$('#sheetbody'); if(body){
-    const tmp=document.createElement('div'); tmp.innerHTML=sheetScript(s);
-    const oldS=$('.stat'), newS=tmp.querySelector('.stat');
-    if(oldS&&newS) oldS.innerHTML=newS.innerHTML;
-  }
+  const L=s.lines||[];
+  const pages=pagesOf(L);
+  const pi=Math.max(0, Math.min(R.page||0, pages.length-1));
+  c.innerHTML = linesHTML(pages[pi].lines);
+
+  // 통계 갱신 (전체 기준)
+  const d=L.filter(l=>l.type==='d');
+  const done=d.filter(l=>l.done).length, post=L.filter(l=>l.post).length, dev=L.filter(l=>l.dev).length;
+  let warn=0; if(ENDCHK) d.forEach(l=>{ if(analyzeEnding(l.text).warns.length) warn++; });
+  const b=$$('.cell.script .stat .s b');
+  if(b.length>=5){ b[0].textContent=d.length; b[1].textContent=done; b[2].textContent=post;
+                   b[3].textContent=dev; b[4].textContent=ENDCHK?warn:'–'; }
+  // 사운드 칸의 후시 표시 개수
+  const pl=$('.postlist'); if(pl) pl.textContent=`후시 표시 ${post}개 — 대사 옆 [후] 버튼`;
 }
 
 /* ============================================================
@@ -1224,7 +1265,7 @@ document.addEventListener('click', async e=>{
     case 'home': go({v:'home',sid:null,pid:null}); break;
     case 'backproject': Voice.on&&Voice.stop(); go({v:'project',sid:null,editing:null}); break;
     case 'openproject': go({v:'project',pid:v,filters:{date:[],scene:[],cut:[],flags:[]},q:''}); break;
-    case 'opensheet': go({v:'sheet',sid:v,tab:'script',editing:null}); Voice.cursor=-1; break;
+    case 'opensheet': go({v:'sheet',sid:v,tab:'script',editing:null,page:0}); Voice.cursor=-1; break;
     case 'tab': go({tab:v,editing:null}); break;
     case 'folder': go({folder:v}); break;
     case 'maskclose': if(e.target.classList.contains('mask')) closeModal(); break;
@@ -1339,6 +1380,8 @@ document.addEventListener('click', async e=>{
     case 'detach': {
       const l=(s.lines||[]).find(x=>x.id===v); if(!l) break;
       l.attach='none'; l.who='지문'; touch(s); save(); refreshLines(); break; }
+    case 'pageprev': go({page:Math.max(0,(R.page||0)-1)}); break;
+    case 'pagenext': go({page:(R.page||0)+1}); break;
     case 'endchk': ENDCHK=!ENDCHK; localStorage.setItem('carescript.endchk', ENDCHK?'1':'0');
       render(); toast(ENDCHK?'어미 반복 검사 켜짐':'어미 반복 검사 꺼짐'); break;
     case 'resetdone': (s.lines||[]).forEach(l=>{l.done=false;l.dev=null;}); Voice.cursor=-1; touch(s); save(); refreshLines(); break;
@@ -1351,7 +1394,7 @@ document.addEventListener('click', async e=>{
         const parsed=parseScript(r.raw);
         if(!parsed.length){ toast('인식된 대사가 없어요','warn'); break; }
         if((s.lines||[]).length && !(await confirmBox('기존 대본 교체?',`현재 ${s.lines.length}줄이 있습니다.`,'교체'))) break;
-        s.lines=parsed; touch(s); save(); go({tab:'script',editing:null}); toast(`${parsed.length}줄 불러옴`,'ok');
+        s.lines=parsed; touch(s); save(); go({tab:'script',editing:null,page:0}); toast(`${parsed.length}줄 불러옴`,'ok');
       }
       break; }
     case 'importfile': {
@@ -1422,6 +1465,7 @@ document.addEventListener('input', e=>{
     if(l){ l.text=t.value; touch(s); save(); autoGrow(t); }
   }
   else if(act==='search'){ R.q=t.value; clearTimeout(window.__st); window.__st=setTimeout(()=>{ const c=$('.slist')||$('.empty'); render(); const i=$('[data-act="search"]'); i&&(i.focus(),i.setSelectionRange(i.value.length,i.value.length)); },350); }
+  else if(act==='pagego'){ go({page:+t.value}); }
   else if(act==='thr'){ Voice.thr=t.value/100; localStorage.setItem('carescript.thr',Voice.thr); const v=$('#thrv'); v&&(v.textContent=t.value+'%'); }
 });
 
