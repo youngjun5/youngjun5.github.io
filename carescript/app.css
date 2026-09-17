@@ -332,10 +332,6 @@ body.dropping::after{
   .grid.r3{grid-template-columns:1fr}
 }
 
-/* 항목 삭제 모드 */
-.chip.del{border-color:var(--mark);color:var(--mark);border-style:dashed}
-.chip.del .x{margin-left:6px;font-size:10px;opacity:.9}
-.chip.del:active{background:var(--mark);color:var(--bg);border-style:solid}
 
 /* 대사에 딸린 지문 — 같은 단락 안에 이어서 읽히도록 (분리선·회색 없음) */
 .ln .stage{
@@ -391,3 +387,17 @@ body.dropping::after{
   font-size:12.5px; font-weight:600; background:var(--bg); color:var(--tx)
 }
 .scripthead{gap:6px}
+
+/* 칩 우측 상단 − (바로 삭제) */
+.chip{position:relative}
+.chips{padding-top:7px}
+.chip.hasdel{overflow:visible}
+.chip .minus{
+  position:absolute; top:-7px; right:-6px;
+  width:18px; height:18px; border-radius:50%;
+  border:1px solid var(--mark); background:var(--bg); color:var(--mark);
+  font-size:13px; font-weight:800; line-height:16px; text-align:center;
+  display:block; z-index:2
+}
+.chip.on .minus{background:var(--bg)}
+.chip .minus:active{background:var(--mark);color:var(--bg)}

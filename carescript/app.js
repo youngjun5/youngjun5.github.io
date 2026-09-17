@@ -2,7 +2,7 @@
    케어스크립트 (CARE SCRIPT) — 현장 스크립터 전용 앱
    ============================================================ */
 'use strict';
-const BUILD = '260917.1734';
+const BUILD = '260917.1742';
 
 /* ---------- 유틸 ---------- */
 const $  = (s,r=document)=>r.querySelector(s);
@@ -673,13 +673,21 @@ async function importDocument(file){
    4) 라우팅 & 렌더
    ============================================================ */
 let R = { v:'home', folder:'all', pid:null, sid:null, tab:'script',
-          fopen:false, filters:{date:[],scene:[],cut:[],flags:[]}, editing:null, q:'', editChips:null, page:0 };
+          fopen:false, filters:{date:[],scene:[],cut:[],flags:[]}, editing:null, q:'', page:0 };
 
-function go(patch){ Object.assign(R,patch); render(); window.scrollTo(0,0); }
+function go(patch){ Object.assign(R,patch); render(); }
 
+/* 같은 화면 안에서 다시 그릴 때는 스크롤 위치를 유지한다
+   (페이지 넘김 · 항목 토글 때 맨 위로 튕기지 않도록) */
+let _lastView = '';
 function render(){
   const app=$('#app');
+  const key = R.v+':'+(R.sid||'')+':'+(R.pid||'');
+  const prev = $('.content');
+  const keep = (prev && _lastView===key) ? prev.scrollTop : 0;
   app.innerHTML = R.v==='home' ? viewHome() : R.v==='project' ? viewProject() : viewSheet();
+  _lastView = key;
+  const cur = $('.content'); if(cur && keep) cur.scrollTop = keep;
   paintSync();
   if(R.v==='sheet'){ Voice.paint(); $$('.paper textarea').forEach(autoGrow); }
   if(R.editing){ const ta=$(`textarea[data-line="${R.editing}"]`); if(ta){ ta.focus(); ta.setSelectionRange(ta.value.length,ta.value.length); autoGrow(ta);} }
@@ -828,22 +836,17 @@ function sin(s,k,ph,type='text',cls=''){
 function sta(s,k,ph,rows=3){
   return `<textarea data-act="inp" data-k="${k}" rows="${rows}" placeholder="${esc(ph||'')}">${esc(s[k]||'')}</textarea>`;
 }
-/* 작성자가 ＋ 로 채우고 ✎ 로 지우는 칩 */
+/* 작성자가 채우는 칩 — 칩마다 우측 상단 − 로 바로 삭제 */
 function chipsU(field, sel, mode){
   const list = DB.presets[field] || [];
-  const editing = R.editChips === field;
-  const items = list.map(v=> editing
-      ? `<button class="chip mini del" data-act="delpreset" data-f="${esc(field)}" data-v="${esc(v)}">${esc(v)}<span class="x">✕</span></button>`
-      : `<button class="chip mini ${sel.includes(v)?'on':''}" data-act="chip" data-f="${esc(field)}" data-v="${esc(v)}">${esc(v)}</button>`
-    ).join('');
-  const tools = editing
-      ? `<button class="chip mini add" data-act="editchips" data-f="">완료</button>`
-      : `<button class="chip mini add" data-act="addpreset" data-f="${esc(field)}">＋</button>${
-          list.length?`<button class="chip mini add" data-act="editchips" data-f="${esc(field)}" title="항목 지우기">✎</button>`:''}`;
-  // 'row' 모드: 항목은 가로로 넘기고 ＋·✎ 는 오른쪽에 고정
+  const items = list.map(v=>
+    `<button class="chip mini hasdel ${sel.includes(v)?'on':''}" data-act="chip" data-f="${esc(field)}" data-v="${esc(v)}">${esc(v)}<span class="minus" data-act="delpreset" data-f="${esc(field)}" data-v="${esc(v)}" title="이 항목 삭제">−</span></button>`
+  ).join('');
+  const tools = `<button class="chip mini add" data-act="addpreset" data-f="${esc(field)}" title="항목 추가">＋</button>`;
   if(mode==='row') return `<div class="chiprow"><div class="chips scroll">${items}</div><div class="chiptools">${tools}</div></div>`;
   return `<div class="chips">${items}${tools}</div>`;
 }
+
 /* 용지에 인쇄된 고정 항목 */
 function chipsF(field, sel, cls='mini'){
   return `<div class="chips">${
@@ -1363,7 +1366,6 @@ document.addEventListener('click', async e=>{
       const arr = s[f] ||= [];
       const i=arr.indexOf(v); i<0?arr.push(v):arr.splice(i,1);
       touch(s); save(); t.classList.toggle('on'); break; }
-    case 'editchips': go({editChips: f || null}); break;
     case 'delpreset': {
       const usedIn = alive(DB.sheets).filter(x=>(x[f]||[]).includes(v));
       const ok = await confirmBox(`'${v}' 항목 삭제`,
