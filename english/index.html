@@ -78,6 +78,14 @@
 
   .wrap{ max-width:640px; margin:0 auto; padding:28px 18px 64px; }
 
+  /* 스튜디오 허브로 돌아가는 링크 — 단독 앱으로 설치해서 바로 들어온 경우
+     이거 말곤 다른 앱으로 돌아갈 방법이 없었음 */
+  .backlink{
+    display:inline-flex; align-items:center; gap:4px; font-size:0.82rem; font-weight:600;
+    color:var(--ink-soft); margin-bottom:14px;
+  }
+  .backlink:hover{ color:var(--ink); }
+
   /* header */
   .top{ display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:6px; }
   .brand{ display:flex; align-items:center; gap:10px; }
@@ -204,6 +212,7 @@
 </head>
 <body>
 <div class="wrap">
+  <a class="backlink" href="../">‹ 스튜디오</a>
   <div class="top">
     <div class="brand">
       <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true">
