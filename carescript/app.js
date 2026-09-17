@@ -26,10 +26,7 @@ const FIELD_LABEL = {
   light:'조명', sound:'사운드', flags:'특이사항'
 };
 const FIXED = {
-  timeOfDay:['M','D','E','N'],
-  lightSrc :['S','O','L'],
-  camPos   :['Tracking','Fix','Pan'],
-  trans    :['F.I','W.I','O.L','Cut->cut','O.L 2','W.O','F.O']
+  camPos:['Tracking','Fix','Pan']
 };
 const emptyPresets = ()=> Object.fromEntries(MULTI.map(k=>[k,[]]));
 
@@ -422,7 +419,7 @@ function loadLib(url){
 function busyBox(title){
   modal(`<h3>${esc(title)}</h3><div class="desc" id="busymsg">준비 중…</div>
     <div style="height:6px;background:var(--bg3);border-radius:3px;overflow:hidden;margin:8px 0 4px">
-      <div id="busybar" style="height:100%;width:0;background:linear-gradient(90deg,var(--ac),var(--ac2));transition:width .3s"></div>
+      <div id="busybar" style="height:100%;width:0;background:var(--ac);transition:width .3s"></div>
     </div>`);
   $('#modal-root').onclick=null;
   return {
@@ -669,7 +666,7 @@ async function importDocument(file){
    4) 라우팅 & 렌더
    ============================================================ */
 let R = { v:'home', folder:'all', pid:null, sid:null, tab:'script',
-          fopen:false, filters:{date:[],scene:[],cut:[],flags:[]}, editing:null, q:'' };
+          fopen:false, filters:{date:[],scene:[],cut:[],flags:[]}, editing:null, q:'', editChips:null };
 
 function go(patch){ Object.assign(R,patch); render(); window.scrollTo(0,0); }
 
@@ -787,7 +784,6 @@ function sheetCard(s){
   const L=s.lines||[], d=L.filter(l=>l.type==='d');
   const done=d.filter(l=>l.done).length, post=L.filter(l=>l.post).length, dev=L.filter(l=>l.dev).length;
   let warn=0; if(ENDCHK) d.forEach(l=>{ if(analyzeEnding(l.text).warns.length) warn++; });
-  const ok=(s.takes||[]).filter(t=>t.ok==='OK').length, ng=(s.takes||[]).filter(t=>t.ok==='NG').length;
   return `<div class="scard" data-act="opensheet" data-v="${s.id}">
     <div class="sc"><b>${esc(s.scene||'–')}</b><i>S#</i><b style="margin-top:3px">${esc(s.cut||'–')}</b><i>C#</i></div>
     <div class="mid">
@@ -800,8 +796,6 @@ function sheetCard(s){
         ${(s.lens||[]).length?`<span>${esc(s.lens.join('·'))}</span>`:''}
       </div>
       <div class="tags">
-        ${ok?`<span class="pill solid">OK ${ok}</span>`:''}
-        ${ng?`<span class="pill dash">NG ${ng}</span>`:''}
         ${d.length?`<span class="pill ${done===d.length?'solid':''}">대사 ${done}/${d.length}</span>`:''}
         ${post?`<span class="pill dash">후시 ${post}</span>`:''}
         ${dev?`<span class="pill dash">불일치 ${dev}</span>`:''}
@@ -824,12 +818,20 @@ function sin(s,k,ph,type='text',cls=''){
 function sta(s,k,ph,rows=3){
   return `<textarea data-act="inp" data-k="${k}" rows="${rows}" placeholder="${esc(ph||'')}">${esc(s[k]||'')}</textarea>`;
 }
-/* 작성자가 ＋ 로 채우는 칩 */
+/* 작성자가 ＋ 로 채우고 ✎ 로 지우는 칩 */
 function chipsU(field, sel){
   const list = DB.presets[field] || [];
+  const editing = R.editChips === field;
   return `<div class="chips">${
-    list.map(v=>`<button class="chip mini ${sel.includes(v)?'on':''}" data-act="chip" data-f="${esc(field)}" data-v="${esc(v)}">${esc(v)}</button>`).join('')
-  }<button class="chip mini add" data-act="addpreset" data-f="${esc(field)}">＋</button></div>`;
+    list.map(v=> editing
+      ? `<button class="chip mini del" data-act="delpreset" data-f="${esc(field)}" data-v="${esc(v)}">${esc(v)}<span class="x">✕</span></button>`
+      : `<button class="chip mini ${sel.includes(v)?'on':''}" data-act="chip" data-f="${esc(field)}" data-v="${esc(v)}">${esc(v)}</button>`
+    ).join('')
+  }${editing
+      ? `<button class="chip mini add" data-act="editchips" data-f="">완료</button>`
+      : `<button class="chip mini add" data-act="addpreset" data-f="${esc(field)}">＋</button>${
+          list.length?`<button class="chip mini add" data-act="editchips" data-f="${esc(field)}" title="항목 지우기">✎</button>`:''}`
+  }</div>`;
 }
 /* 용지에 인쇄된 고정 항목 */
 function chipsF(field, sel, cls='mini'){
@@ -882,10 +884,6 @@ function viewSheet(){
           <span class="lb" style="margin-top:6px">조명</span>
           ${chipsU('light', s.light||[])}
         </div>
-        <div class="cell mden">
-          ${chipsF('timeOfDay', s.timeOfDay||[], 'sq')}
-          ${chipsF('lightSrc',  s.lightSrc ||[], 'sq')}
-        </div>
       </div>
 
       <!-- 2행: Film / Lens / Filter / Exp / Roll -->
@@ -895,72 +893,49 @@ function viewSheet(){
         <div class="cell kv"><span class="lb">Roll</span><input data-act="inp" data-k="roll" value="${esc(s.roll||'')}"></div>
       </div>
 
-      <!-- 본문: 좌(연결/카메라위치/사운드) · 우(지문과 대사) -->
-      <div class="grid body">
-        <div class="col left">
-          <div class="cell">
-            <h5>연결 / Continuity</h5>
-            ${sta(s,'continuity','앞뒤 컷 연결 — 의상·소품·동선·시선 방향 등',5)}
-            <span class="lb" style="margin-top:8px">특이사항</span>
-            ${chipsU('flags', s.flags||[])}
-          </div>
-          <div class="cell">
-            <h5>카메라 위치 &lt;Tracking / Fix / Pan&gt;</h5>
-            ${chipsF('camPos', s.camPos||[])}
-            ${sta(s,'camPosNote','카메라 움직임·앵글·사이즈',5)}
-          </div>
-          <div class="cell">
-            <h5>사운드</h5>
-            ${chipsU('sound', s.sound||[])}
-            <h6>동시녹음</h6>
-            ${sta(s,'soundNote','룸톤 · 후시 필요 컷 · 노이즈',3)}
-            ${post?`<div class="postlist">후시 표시 ${post}개 — 대사 옆 [후] 버튼</div>`.replace('','') :''}
-          </div>
+      <!-- 상단 3단: 연결 / 카메라 위치 / 사운드 -->
+      <div class="grid r3">
+        <div class="cell">
+          <h5>연결 / Continuity</h5>
+          ${sta(s,'continuity','앞뒤 컷 연결 — 의상·소품·동선·시선 방향 등',4)}
+          <span class="lb" style="margin-top:8px">특이사항</span>
+          ${chipsU('flags', s.flags||[])}
         </div>
-
-        <div class="col right">
-          <div class="cell script">
-            <h5>지문과 대사 / Action &amp; Dialogue</h5>
-            <div class="stat">
-              <div class="s"><b>${d.length}</b><i>대사</i></div>
-              <div class="s"><b>${done}</b><i>친 대사</i></div>
-              <div class="s"><b>${post}</b><i>후시</i></div>
-              <div class="s"><b>${dev}</b><i>불일치</i></div>
-              <div class="s markbox" data-act="endchk"><b>${ENDCHK?warn:'–'}</b><i>어미반복</i></div>
-            </div>
-            <div class="scripthead">
-              ${s.scriptName?`<span class="pill">${esc(s.scriptName)}</span>`:''}
-              ${s.scriptUrl?`<button class="btn sm" data-act="openlink">대본 열기 ↗</button>`:''}
-              <button class="btn sm ${ENDCHK?'pri':''}" data-act="endchk" title="같은 문장 안에서 같은 어미가 반복되면 글자 위에 빨간 점">어미검사 ${ENDCHK?'ON':'OFF'}</button>
-              <div class="spacer"></div>
-              <button class="btn sm" data-act="importfile">파일 불러오기</button>
-              <button class="btn sm" data-act="paste">붙여넣기</button>
-              <button class="btn sm" data-act="addline">＋ 대사</button>
-            </div>
-            <div class="lines" id="lines">${L.length? L.map((l,i)=>lineHTML(l,i)).join('')
-              : `<div class="empty"><div class="big">＋</div><div>대본을 불러오거나 붙여넣으세요<br><span style="font-size:12px">PDF · 워드 · 한글(hwpx) · 페이지스 · 이미지</span></div></div>`}</div>
-            <div class="scriptlink">
-              <label class="f"><span>대본 파일 링크</span><input data-act="inp" data-k="scriptUrl" value="${esc(s.scriptUrl||'')}" placeholder="드라이브 · 노션 · 로컬 경로"></label>
-            </div>
-          </div>
-          <div class="cell trans">${chipsF('trans', s.trans||[], 'tr')}</div>
+        <div class="cell">
+          <h5>카메라 위치 &lt;Tracking / Fix / Pan&gt;</h5>
+          ${chipsF('camPos', s.camPos||[])}
+          ${sta(s,'camPosNote','카메라 움직임 · 앵글 · 사이즈',4)}
+        </div>
+        <div class="cell">
+          <h5>사운드</h5>
+          ${chipsU('sound', s.sound||[])}
+          <h6>동시녹음</h6>
+          ${sta(s,'soundNote','룸톤 · 후시 필요 컷 · 노이즈',3)}
+          ${post?`<div class="postlist">후시 표시 ${post}개 — 대사 옆 [후] 버튼</div>`:''}
         </div>
       </div>
 
-      <!-- 테이크 표 -->
-      <div class="takes">
-        <div class="trow head"><div>T#</div><div>OK/NG</div><div>TIME</div><div>내용</div><div>Slate</div></div>
-        ${(s.takes||[]).map((t,i)=>`
-          <div class="trow" data-tk="${t.id}">
-            <div>${i+1}</div>
-            <div><button class="okng ${t.ok==='OK'?'ok':t.ok==='NG'?'ng':''}" data-act="takeok" data-v="${t.id}">${t.ok||'–'}</button></div>
-            <div><input data-act="take" data-v="${t.id}" data-k="time" value="${esc(t.time||'')}" placeholder="00:00"></div>
-            <div><input data-act="take" data-v="${t.id}" data-k="note" value="${esc(t.note||'')}"></div>
-            <div><input data-act="take" data-v="${t.id}" data-k="slate" value="${esc(t.slate||'')}"></div>
-          </div>`).join('')}
-        <div class="takefoot">
-          <button class="btn sm" data-act="addtake">＋ 테이크</button>
-          ${(s.takes||[]).length?`<button class="btn sm dan" data-act="deltake">마지막 줄 삭제</button>`:''}
+      <!-- 지문과 대사 : 페이지 전체 폭 -->
+      <div class="grid full">
+        <div class="cell script">
+          <h5>지문과 대사 / Action &amp; Dialogue</h5>
+          <div class="stat">
+            <div class="s"><b>${d.length}</b><i>대사</i></div>
+            <div class="s"><b>${done}</b><i>친 대사</i></div>
+            <div class="s"><b>${post}</b><i>후시</i></div>
+            <div class="s"><b>${dev}</b><i>불일치</i></div>
+            <div class="s markbox" data-act="endchk"><b>${ENDCHK?warn:'–'}</b><i>어미반복</i></div>
+          </div>
+          <div class="scripthead">
+            ${s.scriptName?`<span class="pill">${esc(s.scriptName)}</span>`:''}
+            <button class="btn sm ${ENDCHK?'pri':''}" data-act="endchk" title="같은 문장 안에서 같은 어미가 반복되면 글자 위에 빨간 점">어미검사 ${ENDCHK?'ON':'OFF'}</button>
+            <div class="spacer"></div>
+            <button class="btn sm" data-act="importfile">파일 불러오기</button>
+            <button class="btn sm" data-act="paste">붙여넣기</button>
+            <button class="btn sm" data-act="addline">＋ 대사</button>
+          </div>
+          <div class="lines" id="lines">${L.length? L.map((l,i)=>lineHTML(l,i)).join('')
+            : `<div class="empty"><div class="big">＋</div><div>대본을 불러오거나 붙여넣으세요<br><span style="font-size:12px">PDF · 워드 · 한글(hwpx) · 페이지스 · 이미지</span></div></div>`}</div>
         </div>
       </div>
 
@@ -1068,7 +1043,7 @@ const Voice = {
     touch(s); save();
     refreshLines();
     const el = $(`.ln[data-id="${l.id}"]`);
-    if(el){ el.scrollIntoView({block:'center',behavior:'smooth'}); el.animate([{background:'rgba(255,176,46,.25)'},{background:'transparent'}],{duration:900}); }
+    if(el){ el.scrollIntoView({block:'center',behavior:'smooth'}); el.animate([{opacity:.35},{opacity:1}],{duration:700}); }
   },
   paint(){
     const b=$('#micbtn'); if(b) b.className='btnmic '+(this.on?'on':'');
@@ -1181,10 +1156,10 @@ function newSheetFrom(base){
     scene: base?.scene||'', cut: base? String((parseInt(base.cut,10)||0)+1) : '', cutDesc:'',
     temp: base?.temp||'', roll: base?.roll||'',
     continuity:'', camPosNote:'', soundNote:'', notes:'',
-    scriptUrl: base?.scriptUrl||'', scriptName: base?.scriptName||'',
-    lines:[], takes:[{id:uid(),ok:'',time:'',note:'',slate:''}]
+    scriptName: base?.scriptName||'',
+    lines:[]
   };
-  [...MULTI, 'timeOfDay','lightSrc','camPos','trans'].forEach(k=> s[k] = base ? [...(base[k]||[])] : []);
+  [...MULTI, 'camPos'].forEach(k=> s[k] = base ? [...(base[k]||[])] : []);
   if(base) s.flags=[];
   DB.sheets.push(s); save();
   return s;
@@ -1263,20 +1238,22 @@ document.addEventListener('click', async e=>{
     case 'theme': { const n=document.documentElement.dataset.theme==='dark'?'light':'dark';
       document.documentElement.dataset.theme=n; localStorage.setItem('carescript.theme',n); break; }
 
-    /* --- 테이크 표 --- */
-    case 'addtake': (s.takes ||= []).push({id:uid(),ok:'',time:'',note:'',slate:''}); touch(s); save(); render(); break;
-    case 'deltake': if(s.takes && s.takes.length){ s.takes.pop(); touch(s); save(); render(); } break;
-    case 'takeok': { const tk=(s.takes||[]).find(x=>x.id===v); if(!tk) break;
-      tk.ok = tk.ok==='' ? 'OK' : tk.ok==='OK' ? 'NG' : '';
-      touch(s); save(); t.className='okng '+(tk.ok==='OK'?'ok':tk.ok==='NG'?'ng':''); t.textContent=tk.ok||'–'; break; }
-    case 'openlink': { const u=s.scriptUrl; if(!u) break;
-      window.open(/^https?:/.test(u)?u:('file://'+u),'_blank'); break; }
 
     /* --- 멀티셀렉트 --- */
     case 'chip': {
       const arr = s[f] ||= [];
       const i=arr.indexOf(v); i<0?arr.push(v):arr.splice(i,1);
       touch(s); save(); t.classList.toggle('on'); break; }
+    case 'editchips': go({editChips: f || null}); break;
+    case 'delpreset': {
+      const usedIn = alive(DB.sheets).filter(x=>(x[f]||[]).includes(v));
+      const ok = await confirmBox(`'${v}' 항목 삭제`,
+        usedIn.length ? `이 항목을 쓰고 있는 용지 ${usedIn.length}장에서도 함께 빠집니다.` : '목록에서 지웁니다.');
+      if(!ok) break;
+      DB.presets[f] = (DB.presets[f]||[]).filter(x=>x!==v);
+      usedIn.forEach(x=>{ x[f]=x[f].filter(y=>y!==v); touch(x); });
+      save(); render(); toast(`'${v}' 삭제됨`);
+      break; }
     case 'addpreset': {
       const r = await ask({title:FIELD_LABEL[f]+' 항목 추가', desc:'추가한 항목은 모든 기록에서 계속 쓸 수 있어요.', fields:[{k:'v',label:'항목 이름'}]});
       if(r?.v){ (DB.presets[f] ||= []).push(r.v); (s[f] ||= []).push(r.v); touch(s); save(); render(); }
@@ -1358,7 +1335,7 @@ document.addEventListener('click', async e=>{
         scene:'12',cut:'3',take:'2',title:'준호 방에서 전화 받는 컷',temp:'18',weather:['흐림'],camera:['FX3'],fps:['24'],
         shutter:['1/48'],iso:['800'],wb:['5600K'],codec:['S-Log3'],reso:['4K DCI'],lens:['35mm','85mm'],
         light:['아푸투레 300X','디퓨전'],sound:['동시녹음','룸톤 수음'],flags:['OK','애드립'],
-        scriptUrl:'',scriptName:'3고_샘플.fdx',notes:'배우 애드립 있었음 — 후시 검토',lines:parseScript(raw)};
+        scriptName:'3고_샘플.fdx',notes:'배우 애드립 있었음 — 후시 검토',lines:parseScript(raw)};
       sh.lines[5].post=true;
       DB.folders.push(f); DB.projects.push(p); DB.sheets.push(sh);
       save(); go({v:'sheet',sid:sh.id,tab:'script'});
@@ -1383,10 +1360,7 @@ document.addEventListener('input', e=>{
     if(y.length===2 && m.length>=1 && d.length>=1) s.date=`20${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`;
     touch(s); save();
   }
-  else if(act==='take'){
-    const s=getSheet(R.sid); const tk=(s.takes||[]).find(x=>x.id===t.dataset.v);
-    if(tk){ tk[t.dataset.k]=t.value; touch(s); save(); }
-  }
+
   else if(act==='linetext'){
     const s=getSheet(R.sid); const l=s.lines.find(x=>x.id===t.dataset.line);
     if(l){ l.text=t.value; touch(s); save(); autoGrow(t); }
