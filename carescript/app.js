@@ -2,7 +2,7 @@
    케어스크립트 (CARE SCRIPT) — 현장 스크립터 전용 앱
    ============================================================ */
 'use strict';
-const BUILD = '260917.1731';
+const BUILD = '260917.1734';
 
 /* ---------- 유틸 ---------- */
 const $  = (s,r=document)=>r.querySelector(s);
@@ -944,6 +944,9 @@ function viewSheet(){
           <div class="scripthead">
             ${s.scriptName?`<span class="pill">${esc(s.scriptName)}</span>`:''}
             <button class="btn sm ${ENDCHK?'pri':''}" data-act="endchk" title="같은 문장 안에서 같은 어미가 반복되면 글자 위에 빨간 점">어미검사 ${ENDCHK?'ON':'OFF'}</button>
+            ${L.length>0 ? `<select class="scenesel" data-act="pagego" title="필요한 씬으로 바로 이동">
+              ${PAGES.map((p,i)=>`<option value="${i}" ${i===pi?'selected':''}>${esc((p.title||'앞부분').replace(/\s+/g,' ').slice(0,30))}</option>`).join('')}
+            </select>` : ''}
             <div class="spacer"></div>
             <button class="btn sm" data-act="importfile">파일 불러오기</button>
             <button class="btn sm" data-act="paste">붙여넣기</button>
