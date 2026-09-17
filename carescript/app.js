@@ -680,7 +680,7 @@ function render(){
   const app=$('#app');
   app.innerHTML = R.v==='home' ? viewHome() : R.v==='project' ? viewProject() : viewSheet();
   paintSync();
-  if(R.v==='sheet') Voice.paint();
+  if(R.v==='sheet'){ Voice.paint(); $$('.paper textarea').forEach(autoGrow); }
   if(R.editing){ const ta=$(`textarea[data-line="${R.editing}"]`); if(ta){ ta.focus(); ta.setSelectionRange(ta.value.length,ta.value.length); autoGrow(ta);} }
 }
 function autoGrow(ta){ ta.style.height='auto'; ta.style.height=(ta.scrollHeight+4)+'px'; }
@@ -886,10 +886,11 @@ function viewSheet(){
         <div class="cell desc">${sta(s,'cutDesc','컷 설명',2)}</div>
         <div class="cell wx">
           <span class="lb">날씨 / 광선</span>
-          ${chipsU('weather', s.weather||[])}
-          <div class="tmp"><input type="number" data-act="inp" data-k="temp" value="${esc(s.temp||'')}" placeholder="기온"><span>℃</span></div>
-          <span class="lb" style="margin-top:6px">조명</span>
-          ${chipsU('light', s.light||[])}
+          <div class="wxrow">${chipsU('weather', s.weather||[], 'row')}
+            <div class="tmp"><input type="number" data-act="inp" data-k="temp" value="${esc(s.temp||'')}" placeholder="–"><span>℃</span></div>
+          </div>
+          <span class="lb">조명</span>
+          ${chipsU('light', s.light||[], 'row')}
         </div>
       </div>
 
@@ -904,20 +905,20 @@ function viewSheet(){
       <div class="grid r3">
         <div class="cell">
           <h5>연결 / Continuity</h5>
-          ${sta(s,'continuity','앞뒤 컷 연결 — 의상·소품·동선·시선 방향 등',4)}
+          ${sta(s,'continuity','앞뒤 컷 연결 — 의상·소품·동선·시선 방향 등',2)}
           <span class="lb" style="margin-top:8px">특이사항</span>
           ${chipsU('flags', s.flags||[])}
         </div>
         <div class="cell">
           <h5>카메라 위치 &lt;Tracking / Fix / Pan&gt;</h5>
           ${chipsF('camPos', s.camPos||[])}
-          ${sta(s,'camPosNote','카메라 움직임 · 앵글 · 사이즈',4)}
+          ${sta(s,'camPosNote','카메라 움직임 · 앵글 · 사이즈',2)}
         </div>
         <div class="cell">
           <h5>사운드</h5>
           ${chipsU('sound', s.sound||[])}
           <h6>동시녹음</h6>
-          ${sta(s,'soundNote','룸톤 · 후시 필요 컷 · 노이즈',3)}
+          ${sta(s,'soundNote','룸톤 · 후시 필요 컷 · 노이즈',2)}
           ${post?`<div class="postlist">후시 표시 ${post}개 — 대사 옆 [후] 버튼</div>`:''}
         </div>
       </div>
@@ -986,6 +987,7 @@ function linesHTML(L){ return groupLines(L).map(r=>lineHTML(r)).join(''); }
 function stageHTML(l){
   return `<div class="stage" data-id="${l.id}">${esc(l.text)}<button class="tiny" data-act="detach" data-v="${l.id}" title="따로 떼기">떼기</button></div>`;
 }
+/* 지문은 대사와 같은 단락 안에서 이어져 보이게 (CSS .stage 참고) */
 /* 지문 단락 분리/합치기 */
 
 function lineHTML(row){
@@ -1404,7 +1406,8 @@ document.addEventListener('click', async e=>{
 document.addEventListener('input', e=>{
   const t=e.target.closest('[data-act]'); if(!t) return;
   const act=t.dataset.act;
-  if(act==='inp'){ const s=getSheet(R.sid); if(!s) return; s[t.dataset.k]=t.value; touch(s); save(); }
+  if(act==='inp'){ const s=getSheet(R.sid); if(!s) return; s[t.dataset.k]=t.value; touch(s); save();
+    if(t.tagName==='TEXTAREA' && t.closest('.paper')) autoGrow(t); }
   else if(act==='pinp'){ const s=getSheet(R.sid); const p=s&&getProject(s.projectId); if(!p) return; p[t.dataset.k]=t.value; touch(p); save(); }
   else if(act==='dpart'){
     const s=getSheet(R.sid); if(!s) return;
