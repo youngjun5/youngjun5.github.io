@@ -249,8 +249,9 @@
       <div class="body method">
         <ul>
           <li><b>간격 반복(스페이싱 효과).</b> 오늘 배운 문장은 내일, 그다음 2일 뒤, 4일 뒤, 8일 뒤... 점점 간격을 늘려가며 다시 떠올릴 때 장기 기억으로 남습니다. 그래서 사실 새 문장 하나보다 어제, 그제 배운 문장을 오늘 다시 말해보는 복습이 더 중요합니다.</li>
-          <li><b>교차 학습(인터리빙).</b> 자기소개, 스몰토크, 도움 요청, 환대, 믿음 나누기, 응급상황을 매일 번갈아 다루는 이유는 실제 대화가 이 모든 상황이 뒤섞여 일어나기 때문입니다. 한 주제만 몰아서 익히면 시험은 잘 봐도 실전에서는 당황하게 됩니다.</li>
+          <li><b>교차 학습(인터리빙).</b> 자기소개, 일상 대화, 맞장구, 되묻기, 도움 요청, 환대, 믿음 나누기, 응급상황, 가게와 식당, 감정 표현, 약속 잡기, 함께 일하기 — 12가지 상황을 매일 번갈아 다루는 이유는 실제 대화가 이 모든 상황이 뒤섞여 일어나기 때문입니다. 한 주제만 몰아서 익히면 시험은 잘 봐도 실전에서는 당황하게 됩니다.</li>
           <li><b>인출 연습 + 소리내어 말하기.</b> 눈으로 읽기만 하면 "아는 것 같은 착각"에 빠집니다. 뜻을 먼저 가리고 스스로 떠올려본 뒤, 반드시 입 밖으로 소리내어 말해야 실제 말하기 근육이 생깁니다. 그래서 평가 버튼은 최소 3번 말한 뒤에만 눌리도록 만들어 뒀습니다.</li>
+          <li><b>빈도 우선 선별.</b> 여기 담긴 문장은 예쁜 문장이 아니라 <b>실제로 가장 자주 쓰이는</b> 문장입니다. 원어민 대화 코퍼스 연구에서 반복 확인된 고빈도 표현(I don't know if, you have to, that makes sense처럼 통째로 굳어져 쓰이는 덩어리 표현)을 기준으로 360개를 골랐습니다. 한 문장을 외우면 그 자리에서 바로 써먹을 수 있어야 의미가 있으니까요.</li>
           <li><b>최소 단위 습관.</b> 하루 한 문장이라는 작은 약속은 부담 없이 시작할 수 있고, 몇 달 뒤 쌓인 복습량이 진짜 실력이 됩니다. 하루를 놓쳐서 연속 기록이 끊겨도 괜찮습니다. 그냥 오늘 한 문장부터 다시 시작하면 됩니다.</li>
         </ul>
       </div>
@@ -358,10 +359,14 @@
     ]}
   ];
 
-  var PACKS = [
+  // 앱에 내장된 최소 세트 — 네트워크가 안 될 때만 쓰이는 비상용이에요.
+  // 실제 문장은 sentences.json에서 불러오고, 그 파일만 갈아끼우면 앱 수정 없이 커리큘럼이 늘어납니다.
+  var FALLBACK_PACKS = [
     { key:"main", label:"기본 커리큘럼", subtitle:"만남부터 응급상황까지, 선교지 기본 소통", modules: MODULE_DEFS },
     { key:"mental", label:"멘탈 강화", subtitle:"Lone Survivor · 견뎌내는 자의 문장들", modules: MENTAL_DEFS }
   ];
+  var PACKS = FALLBACK_PACKS;
+  var bankVersion = "";
 
   var STAGE = { 1:"learning", 2:"learning", 3:"reviewing", 4:"reviewing", 5:"stabilizing", 6:"mastered" };
   var STAGE_LABEL = { learning:"학습중", reviewing:"복습중", stabilizing:"안정화", mastered:"마스터" };
@@ -371,21 +376,60 @@
 
   var BANKS = {};
   var PACK_MAP = {};
-  PACKS.forEach(function(pack){
-    PACK_MAP[pack.key] = pack;
-    var bank = [];
-    var max = Math.max.apply(null, pack.modules.map(function(m){ return m.items.length; }));
-    for (var i = 0; i < max; i++){
-      pack.modules.forEach(function(mod){
-        if (mod.items[i]){
-          var it = mod.items[i];
-          bank.push({ id: mod.key + "-" + i, mod: mod.key, modLabel: mod.label, en: it.en, ko: it.ko, situation: it.situation, tip: it.tip });
-        }
-      });
-    }
-    BANKS[pack.key] = bank;
-  });
+  // 모듈을 번갈아 뽑아 섞는다(인터리빙): 하루하루 다른 상황의 문장이 나오게 하는 핵심.
+  function buildBanks(){
+    BANKS = {};
+    PACK_MAP = {};
+    PACKS.forEach(function(pack){
+      PACK_MAP[pack.key] = pack;
+      var bank = [];
+      var max = Math.max.apply(null, pack.modules.map(function(m){ return m.items.length; }));
+      for (var i = 0; i < max; i++){
+        pack.modules.forEach(function(mod){
+          if (mod.items[i]){
+            var it = mod.items[i];
+            bank.push({ id: mod.key + "-" + i, mod: mod.key, modLabel: mod.label, en: it.en, ko: it.ko, situation: it.situation, tip: it.tip });
+          }
+        });
+      }
+      BANKS[pack.key] = bank;
+    });
+  }
+  buildBanks();
   var activePack = "main";
+
+  // ---------- 문장 데이터 불러오기 ----------
+  // sentences.json을 항상 최신으로 받아오고(no-store), 받은 건 로컬에 캐시해둬서
+  // 비행기 모드나 오프라인에서도 마지막으로 받은 커리큘럼을 그대로 쓸 수 있게 한다.
+  var SENTENCES_URL = "sentences.json";
+  var SENTENCES_CACHE_KEY = "hanmunjang_sentences_v1";
+
+  function applySentenceData(data){
+    if (!data || !data.packs || !data.packs.length) return false;
+    for (var i = 0; i < data.packs.length; i++){
+      var pk = data.packs[i];
+      if (!pk.key || !pk.modules || !pk.modules.length) return false;
+    }
+    PACKS = data.packs;
+    bankVersion = data.version || "";
+    buildBanks();
+    return true;
+  }
+
+  function loadSentences(){
+    return fetch(SENTENCES_URL + "?v=" + Date.now(), { cache: "no-store" })
+      .then(function(r){ if (!r.ok) throw new Error("http " + r.status); return r.json(); })
+      .then(function(data){
+        if (!applySentenceData(data)) throw new Error("invalid data");
+        try{ localStorage.setItem(SENTENCES_CACHE_KEY, JSON.stringify(data)); } catch(e){}
+      })
+      .catch(function(){
+        try{
+          var cached = localStorage.getItem(SENTENCES_CACHE_KEY);
+          if (cached) applySentenceData(JSON.parse(cached));
+        } catch(e){}
+      });
+  }
 
   // ---------- date helpers ----------
   function parseDate(s){ var p = s.split("-").map(Number); return new Date(p[0], p[1]-1, p[2]); }
@@ -510,8 +554,20 @@
 
     var introducedToday = Object.keys(p.cards).some(function(id){ return p.cards[id].introducedOn === today; });
     var queue = due.slice();
-    if (!introducedToday && p.currentIndex < b.length){
-      var candidate = b[p.currentIndex];
+    if (!introducedToday && b.length){
+      // 날짜가 바뀌면 오늘의 새 문장도 저절로 넘어간다.
+      // 어제 띄워둔 문장을 끝내지 않았어도 하루에 딱 한 칸만 움직이므로 건너뛰는 문장은 없다.
+      if (p.newShownIndex !== p.currentIndex){
+        p.newShownIndex = p.currentIndex;
+        p.newShownOn = today;
+        persist(state);
+      } else if (p.newShownOn && p.newShownOn < today){
+        p.currentIndex = (p.currentIndex + 1) % b.length;
+        p.newShownIndex = p.currentIndex;
+        p.newShownOn = today;
+        persist(state);
+      }
+      var candidate = b[p.currentIndex % b.length];
       queue.push({ type: "new", id: candidate.id, bankItem: candidate, cardState: null });
     }
     return { queue: queue, overflow: Math.max(0, totalDue - due.length) };
@@ -618,9 +674,11 @@
       dot.title = d;
       dotsRow.appendChild(dot);
     });
-    document.getElementById("storageNote").textContent = storageMode === "db"
-      ? "진행 상황은 자동으로 저장되고 있어요."
-      : "지금은 이 브라우저에만 저장되고 있어요.";
+    var totalSentences = 0;
+    Object.keys(BANKS).forEach(function(k){ totalSentences += BANKS[k].length; });
+    document.getElementById("storageNote").textContent =
+      (storageMode === "db" ? "진행 상황은 자동으로 저장되고 있어요." : "지금은 이 브라우저에만 저장되고 있어요.") +
+      " · 문장 " + totalSentences + "개" + (bankVersion ? " (" + bankVersion + " 기준)" : "");
   }
 
   function renderSession(){
@@ -629,12 +687,12 @@
     var queue = result.queue;
 
     if (queue.length === 0){
-      var doneBank = pack().currentIndex >= bank().length;
+      var learnedAll = Object.keys(pack().cards).length >= bank().length && bank().length > 0;
       panel.innerHTML =
         '<div class="complete">' +
-          '<div class="badge">' + (doneBank ? "완주" : "오늘의 여정 완료") + '</div>' +
-          '<h2>' + (doneBank ? bank().length + "개 문장을 모두 배우셨어요." : "오늘 몫을 다 했어요.") + '</h2>' +
-          '<p>' + (doneBank ? "복습은 계속 이어집니다. 다음 세트는 곧 추가될 예정이에요." : "내일 다시 새 문장과 복습이 기다리고 있어요.") + '</p>' +
+          '<div class="badge">' + (learnedAll ? "완주" : "오늘의 여정 완료") + '</div>' +
+          '<h2>' + (learnedAll ? bank().length + "개 문장을 모두 배우셨어요." : "오늘 몫을 다 했어요.") + '</h2>' +
+          '<p>' + (learnedAll ? "이제 처음 문장부터 한 바퀴 더 돌며 복습합니다." : "내일 다시 새 문장과 복습이 기다리고 있어요.") + '</p>' +
         '</div>';
       return;
     }
@@ -724,7 +782,10 @@
       var today = todayStr();
       var p = pack();
       p.cards[item.id] = { box: 1, nextDue: addDaysStr(today, INTERVALS[1]), introducedOn: today, lastResult: null };
-      p.currentIndex++;
+      var bLen = bank().length || 1;
+      p.currentIndex = (p.currentIndex + 1) % bLen;
+      p.newShownIndex = p.currentIndex;
+      p.newShownOn = today;
       markPracticedToday();
       persist(state);
       repCardId = null; revealMap = {};
@@ -802,7 +863,7 @@
     renderCurriculum();
   }
 
-  loadState().then(function(s){
+  loadSentences().then(loadState).then(function(s){
     state = normalizeState(s);
     activePack = state.activePack || "main";
     state.streak = computeStreak();

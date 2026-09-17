@@ -1,0 +1,2378 @@
+{
+ "version": "2026-09-17",
+ "note": "코퍼스 빈도(Biber 계열 lexical bundle 연구)와 실사용 회화 자료를 근거로 고른 고빈도 표현. 모듈을 번갈아 배치해 매일 다른 상황의 문장이 나오도록 설계.",
+ "packs": [
+  {
+   "key": "main",
+   "label": "기본 커리큘럼",
+   "subtitle": "만남부터 응급상황까지, 가장 많이 쓰는 실전 문장 360개",
+   "modules": [
+    {
+     "key": "intro",
+     "label": "만남과 자기소개",
+     "items": [
+      {
+       "en": "Hi, I'm Peter. It's so nice to meet you.",
+       "ko": "안녕하세요, 저는 피터예요. 만나서 정말 반가워요.",
+       "situation": "처음 인사할 때",
+       "tip": "미국인들은 my name is보다 실제로 I'm ___을 훨씬 더 많이 써요. so nice를 붙이면 훨씬 따뜻하게 들려요."
+      },
+      {
+       "en": "I'm originally from South Korea.",
+       "ko": "저는 원래 한국 출신이에요.",
+       "situation": "출신을 말할 때",
+       "tip": "originally를 넣으면 '원래는'이라는 뉘앙스가 살아서, 지금 사는 곳과 대비해 설명할 때 자연스러워요."
+      },
+      {
+       "en": "What's your name again? Sorry, I didn't catch it.",
+       "ko": "이름이 다시 뭐였죠? 죄송해요, 제가 못 들었어요.",
+       "situation": "이름을 놓쳤을 때",
+       "tip": "Sorry를 앞에 붙이는 게 미국식 예의예요. didn't catch it은 못 알아들었다는 뜻의 자연스러운 표현이에요."
+      },
+      {
+       "en": "So, where are you from?",
+       "ko": "그런데, 어디서 오셨어요?",
+       "situation": "상대의 출신을 물을 때",
+       "tip": "문장 맨 앞의 So는 뜻은 없지만 대화를 자연스럽게 이어주는 미국인들의 습관적인 표현이에요."
+      },
+      {
+       "en": "How long have you lived here?",
+       "ko": "여기서 얼마나 사셨어요?",
+       "situation": "현지인과 대화를 이어갈 때",
+       "tip": "나이를 묻는 것보다 훨씬 안전하고 자연스러운 스몰토크 질문이에요."
+      },
+      {
+       "en": "Actually, this is my first time here.",
+       "ko": "사실, 여기는 처음이에요.",
+       "situation": "낯선 곳에 도착했을 때",
+       "tip": "Actually를 앞에 붙이면 '사실은'이라는 자연스러운 뉘앙스가 생겨요."
+      },
+      {
+       "en": "I don't speak much English, but I'll do my best.",
+       "ko": "저는 영어를 잘 못하지만 최선을 다해볼게요.",
+       "situation": "영어 실력을 미리 알릴 때",
+       "tip": "I'll try보다 I'll do my best가 실제로 훨씬 더 많이 쓰이는 자연스러운 표현이에요."
+      },
+      {
+       "en": "It's really nice to meet you.",
+       "ko": "만나서 정말 반가워요.",
+       "situation": "인사를 건넬 때",
+       "tip": "It's a pleasure to meet you는 교과서 표현이고, 실제로는 really nice를 훨씬 더 자주 써요."
+      },
+      {
+       "en": "I'd really like to get to know you better.",
+       "ko": "당신을 더 잘 알아가고 싶어요.",
+       "situation": "관계를 시작하고 싶을 때",
+       "tip": "I hope we can be friends는 번역투에 가까워요. 미국인들은 관계에 대한 마음을 이렇게 표현해요."
+      },
+      {
+       "en": "It was great talking with you.",
+       "ko": "이야기 나눠서 정말 좋았어요.",
+       "situation": "헤어질 때 인사",
+       "tip": "헤어질 때 쓰는 아주 흔한 마무리 인사예요."
+      },
+      {
+       "en": "Nice to finally meet you in person.",
+       "ko": "드디어 직접 만나뵙게 되어 반가워요.",
+       "situation": "연락만 주고받다 처음 만날 때",
+       "tip": "in person(직접, 대면으로)은 화상·메신저로만 알던 사이를 만날 때 거의 공식처럼 쓰는 표현이에요."
+      },
+      {
+       "en": "I've heard a lot about you.",
+       "ko": "말씀 많이 들었어요.",
+       "situation": "소개받아 만났을 때",
+       "tip": "짧지만 상대를 기분 좋게 만드는 마법 같은 첫인사예요. 뒤에 all good things를 붙이면 더 유쾌해져요."
+      },
+      {
+       "en": "How do you two know each other?",
+       "ko": "두 분은 어떻게 아는 사이예요?",
+       "situation": "함께 온 사람들에게",
+       "tip": "you two(두 분)는 아주 구어적인 표현이에요. 모임에서 대화를 자연스럽게 확장시켜주는 질문이에요."
+      },
+      {
+       "en": "I'm here with my friend.",
+       "ko": "저는 친구랑 같이 왔어요.",
+       "situation": "누구와 왔는지 설명할 때",
+       "tip": "I came with보다 I'm here with가 지금 그 자리에 함께 있다는 느낌이 더 살아나요."
+      },
+      {
+       "en": "Sorry, have we met before?",
+       "ko": "죄송한데, 저희 전에 만난 적 있나요?",
+       "situation": "낯이 익은 사람에게",
+       "tip": "기억이 가물가물할 때 무례하지 않게 확인하는 가장 안전한 문장이에요."
+      },
+      {
+       "en": "I'm Peter. And you are?",
+       "ko": "저는 피터예요. 그쪽은요?",
+       "situation": "이름을 자연스럽게 되물을 때",
+       "tip": "And you are? 는 끝을 올려 말해요. What's your name?보다 훨씬 부드럽고 세련되게 들려요."
+      },
+      {
+       "en": "Please, just call me Peter.",
+       "ko": "그냥 피터라고 불러주세요.",
+       "situation": "편하게 부르라고 할 때",
+       "tip": "이름이 어렵거나 호칭이 애매할 때 거리감을 확 줄여주는 한마디예요."
+      },
+      {
+       "en": "What should I call you?",
+       "ko": "제가 어떻게 불러드리면 될까요?",
+       "situation": "호칭을 정할 때",
+       "tip": "상대를 존중하는 느낌이 담긴 질문이에요. 직함으로 불러야 할지 이름으로 불러야 할지 애매할 때 쓰세요."
+      },
+      {
+       "en": "I'm still learning English, so please bear with me.",
+       "ko": "제가 아직 영어를 배우는 중이라, 조금만 이해해 주세요.",
+       "situation": "대화를 시작하기 전 양해를 구할 때",
+       "tip": "bear with me는 '잠시만 참고 기다려 달라'는 뜻의 아주 자연스러운 관용표현이에요. 이 한마디면 상대가 속도를 늦춰줘요."
+      },
+      {
+       "en": "I've been here for about three months.",
+       "ko": "여기 온 지 세 달쯤 됐어요.",
+       "situation": "체류 기간을 말할 때",
+       "tip": "about을 넣어 대략적으로 말하는 게 훨씬 자연스러워요. three months 자리에 a week, two years 등을 바꿔 쓰세요."
+      },
+      {
+       "en": "I'm just visiting for a little while.",
+       "ko": "저는 잠깐 방문 중이에요.",
+       "situation": "단기 체류를 설명할 때",
+       "tip": "for a little while은 '잠시 동안'이라는 뜻으로, 기간을 정확히 말하고 싶지 않을 때 딱 좋아요."
+      },
+      {
+       "en": "I live just down the street.",
+       "ko": "저는 바로 이 길 아래쪽에 살아요.",
+       "situation": "사는 곳이 가깝다고 말할 때",
+       "tip": "just down the street은 '엎어지면 코 닿을 거리'라는 느낌의 흔한 표현이에요."
+      },
+      {
+       "en": "So, what brings you here?",
+       "ko": "그런데, 여긴 어쩐 일로 오셨어요?",
+       "situation": "상대가 온 이유를 물을 때",
+       "tip": "Why did you come here?는 따지는 듯 들릴 수 있어요. What brings you here?가 훨씬 부드럽고 흔한 표현이에요."
+      },
+      {
+       "en": "I came here with my church.",
+       "ko": "저는 교회와 함께 여기 왔어요.",
+       "situation": "방문 목적을 설명할 때",
+       "tip": "with my church 하나로 단기선교·봉사 맥락이 자연스럽게 전달돼요."
+      },
+      {
+       "en": "It's a small world, isn't it?",
+       "ko": "세상 참 좁죠?",
+       "situation": "뜻밖의 공통점을 발견했을 때",
+       "tip": "우연히 아는 사람이나 같은 고향이 겹칠 때 쓰는 만국 공통의 표현이에요."
+      },
+      {
+       "en": "Do you mind if I join you?",
+       "ko": "제가 같이 껴도 될까요?",
+       "situation": "대화나 자리에 합류할 때",
+       "tip": "Do you mind if...?로 물으면 '아니요(No)'가 승낙이라는 점을 기억하세요. 보통은 Not at all!이라고 답해줘요."
+      },
+      {
+       "en": "Is this seat taken?",
+       "ko": "이 자리 누가 앉나요?",
+       "situation": "빈자리에 앉기 전",
+       "tip": "Can I sit here?보다 이 표현이 훨씬 자연스럽고 예의 있게 들려요. 카페·식당·교회 어디서나 통해요."
+      },
+      {
+       "en": "I don't think we've met. I'm Peter.",
+       "ko": "우리 아직 인사 안 한 것 같네요. 저는 피터예요.",
+       "situation": "모임에서 먼저 다가갈 때",
+       "tip": "미국에서는 먼저 손 내밀고 이렇게 말하는 게 아주 자연스러워요. 소극적으로 기다릴 필요 없어요."
+      },
+      {
+       "en": "Let me introduce you to my friend.",
+       "ko": "제 친구를 소개해 드릴게요.",
+       "situation": "사람을 이어줄 때",
+       "tip": "Let me ___는 '제가 ~해드릴게요'라는 뜻으로 호의를 표현하는 가장 흔한 패턴이에요."
+      },
+      {
+       "en": "I'm so glad we got to meet.",
+       "ko": "우리가 만나게 되어서 정말 기뻐요.",
+       "situation": "만남을 마무리하며",
+       "tip": "got to meet(만나게 되었다)에는 '기회가 닿아서'라는 감사의 뉘앙스가 들어 있어요."
+      }
+     ]
+    },
+    {
+     "key": "smalltalk",
+     "label": "일상 대화",
+     "items": [
+      {
+       "en": "How's your day going?",
+       "ko": "오늘 하루 어떻게 보내고 계세요?",
+       "situation": "가벼운 안부 인사",
+       "tip": "going을 자연스럽게 흘려 발음해보세요 (고우잉이 아니라 고인 느낌)."
+      },
+      {
+       "en": "The weather's really nice today, isn't it?",
+       "ko": "오늘 날씨 정말 좋죠?",
+       "situation": "어디서나 통하는 대화 시작 멘트",
+       "tip": "문장 끝에 isn't it?을 붙이면 훨씬 대화체스럽고 자연스러워요."
+      },
+      {
+       "en": "So, what do you do for work?",
+       "ko": "그럼, 무슨 일 하세요?",
+       "situation": "직업을 물을 때",
+       "tip": "What's your job?보다 이 표현이 실제로 훨씬 더 자연스럽고 흔해요."
+      },
+      {
+       "en": "Do you have any kids?",
+       "ko": "자녀 있으세요?",
+       "situation": "가족 이야기를 시작할 때",
+       "tip": "children은 격식체예요. 일상 대화에서는 kids를 훨씬 더 많이 써요."
+      },
+      {
+       "en": "I really like it here.",
+       "ko": "저는 여기가 정말 마음에 들어요.",
+       "situation": "칭찬하며 대화를 이어갈 때",
+       "tip": "I really like this place보다 I really like it here가 더 자연스럽고 흔하게 쓰여요."
+      },
+      {
+       "en": "What do you like to do for fun?",
+       "ko": "취미로 뭐 하는 거 좋아하세요?",
+       "situation": "일상 이야기를 나눌 때",
+       "tip": "주말에 뭐 하냐는 질문보다 훨씬 자연스럽고 폭넓게 쓸 수 있는 스몰토크 질문이에요."
+      },
+      {
+       "en": "Oh, that sounds really interesting!",
+       "ko": "오, 그거 정말 흥미롭네요!",
+       "situation": "맞장구칠 때",
+       "tip": "Oh를 앞에 붙이면 진짜 관심 있다는 느낌이 훨씬 잘 살아요."
+      },
+      {
+       "en": "I'm still trying to figure out the culture here.",
+       "ko": "저는 아직 이곳 문화를 이해하려고 노력 중이에요.",
+       "situation": "실수했을 때나 낯선 상황에서",
+       "tip": "figure out은 '이해하려고 애쓰다'라는 뜻의 아주 자연스러운 구동사예요."
+      },
+      {
+       "en": "Tell me more about that.",
+       "ko": "그것에 대해 좀 더 말해주세요.",
+       "situation": "관심을 보이며 대화를 이어갈 때",
+       "tip": "Can you tell me보다 짧게 말하는 이 표현이 실제 대화에서 훨씬 자연스럽고 흔해요."
+      },
+      {
+       "en": "I had such a great time today.",
+       "ko": "오늘 정말 즐거웠어요.",
+       "situation": "헤어질 때 인사",
+       "tip": "such a를 붙이면 감정이 훨씬 더 생생하게 전달돼요."
+      },
+      {
+       "en": "Hey, how's it going?",
+       "ko": "안녕하세요, 잘 지내세요?",
+       "situation": "가장 흔한 캐주얼 인사",
+       "tip": "영어권에서 Hello보다 압도적으로 많이 쓰이는 인사예요. 사실 진짜 안부를 묻는 게 아니라 Good, you?로 받으면 돼요."
+      },
+      {
+       "en": "What's up?",
+       "ko": "뭐 하고 지내요?",
+       "situation": "친한 사이의 인사",
+       "tip": "질문 같지만 그냥 인사예요. Not much, you? 또는 Hey! 로 받으면 충분해요."
+      },
+      {
+       "en": "How've you been?",
+       "ko": "그동안 어떻게 지내셨어요?",
+       "situation": "오랜만에 만났을 때",
+       "tip": "How are you?와 달리 '지난번 본 이후로'라는 시간이 담겨 있어요. 오랜만에 만난 사람에게만 쓰세요."
+      },
+      {
+       "en": "Long time no see!",
+       "ko": "오랜만이에요!",
+       "situation": "오랜만에 마주쳤을 때",
+       "tip": "문법적으로는 어색해 보이지만 원어민들이 정말 그대로 쓰는 굳어진 표현이에요."
+      },
+      {
+       "en": "How was your weekend?",
+       "ko": "주말 어떻게 보내셨어요?",
+       "situation": "월요일 아침 인사",
+       "tip": "영어권에서 월요일에 가장 많이 오가는 질문이에요. 미리 한두 문장 답을 준비해두면 든든해요."
+      },
+      {
+       "en": "Did you do anything fun this weekend?",
+       "ko": "주말에 재밌는 거 하셨어요?",
+       "situation": "주말 이야기를 물을 때",
+       "tip": "anything fun을 붙이면 상대가 대답하기 훨씬 편해져요."
+      },
+      {
+       "en": "What have you been up to lately?",
+       "ko": "요즘 뭐 하고 지내세요?",
+       "situation": "근황을 물을 때",
+       "tip": "be up to는 '~하며 지내다'라는 뜻이에요. 근황을 묻는 가장 자연스러운 표현이에요."
+      },
+      {
+       "en": "It's been a crazy week.",
+       "ko": "이번 주 정말 정신없었어요.",
+       "situation": "근황을 답할 때",
+       "tip": "crazy는 '미친'이 아니라 '정신없는, 바쁜'이라는 뜻으로 일상에서 아주 흔하게 쓰여요."
+      },
+      {
+       "en": "Can't complain.",
+       "ko": "뭐, 나쁘지 않아요.",
+       "situation": "안부 질문에 답할 때",
+       "tip": "직역하면 '불평할 수 없다'지만 실제로는 '그럭저럭 괜찮아요'라는 여유 있는 대답이에요."
+      },
+      {
+       "en": "Pretty good. How about you?",
+       "ko": "꽤 괜찮아요. 그쪽은요?",
+       "situation": "안부에 답하고 되물을 때",
+       "tip": "안부를 받으면 반드시 되묻는 게 영어권 대화의 기본 리듬이에요. How about you?를 습관으로 만드세요."
+      },
+      {
+       "en": "I know, right?",
+       "ko": "그러니까요, 그쵸?",
+       "situation": "강하게 공감할 때",
+       "tip": "원어민이 하루에도 몇 번씩 쓰는 맞장구예요. right?의 끝을 살짝 올려주세요."
+      },
+      {
+       "en": "Same here.",
+       "ko": "저도 그래요.",
+       "situation": "같은 생각임을 밝힐 때",
+       "tip": "Me too보다 조금 더 어른스럽고 자연스럽게 들리는 표현이에요."
+      },
+      {
+       "en": "That's so true.",
+       "ko": "진짜 맞는 말이에요.",
+       "situation": "상대 말에 동의할 때",
+       "tip": "You are right는 평가하는 느낌이 있어요. That's so true가 훨씬 대화답게 들려요."
+      },
+      {
+       "en": "How's the family doing?",
+       "ko": "가족분들은 잘 지내시죠?",
+       "situation": "아는 사이의 안부 인사",
+       "tip": "가족 안부를 묻는 건 관계를 깊게 만드는 가장 쉬운 방법이에요. 이름을 알면 How's Sarah doing?처럼 써보세요."
+      },
+      {
+       "en": "Do you come here often?",
+       "ko": "여기 자주 오세요?",
+       "situation": "같은 장소에서 자주 보는 사람에게",
+       "tip": "카페, 교회, 헬스장처럼 반복해서 마주치는 공간에서 대화를 트는 표현이에요."
+      },
+      {
+       "en": "What part of town do you live in?",
+       "ko": "동네 어느 쪽에 사세요?",
+       "situation": "사는 곳을 물을 때",
+       "tip": "Where do you live?는 다소 사적으로 들릴 수 있어요. what part of town은 부담이 훨씬 적어요."
+      },
+      {
+       "en": "Have you been here long?",
+       "ko": "여기 오래 계셨어요?",
+       "situation": "장소나 모임에서 대화를 열 때",
+       "tip": "짧은 질문 하나로 자연스럽게 대화가 시작돼요. 줄 서 있을 때도 쓸 수 있어요."
+      },
+      {
+       "en": "I was just thinking the same thing.",
+       "ko": "저도 딱 같은 생각 하고 있었어요.",
+       "situation": "생각이 겹쳤을 때",
+       "tip": "just를 넣으면 '방금'이라는 생생함이 살아나요. 대화의 온도를 확 올려주는 문장이에요."
+      },
+      {
+       "en": "Anyway, how about you?",
+       "ko": "그건 그렇고, 그쪽은 어때요?",
+       "situation": "내 이야기를 마치고 넘길 때",
+       "tip": "Anyway는 화제를 자연스럽게 전환하는 신호예요. 혼자 오래 말했다 싶을 때 쓰세요."
+      },
+      {
+       "en": "We should catch up sometime.",
+       "ko": "언제 한번 얼굴 보고 이야기해요.",
+       "situation": "헤어지며 다음을 기약할 때",
+       "tip": "catch up은 '밀린 이야기를 나누다'라는 뜻이에요. 사교적인 마무리 인사로 아주 흔해요."
+      }
+     ]
+    },
+    {
+     "key": "react",
+     "label": "맞장구와 반응",
+     "items": [
+      {
+       "en": "That makes sense.",
+       "ko": "그거 말 되네요.",
+       "situation": "상대 설명을 이해했을 때",
+       "tip": "영어 대화에서 가장 자주 쓰이는 반응 중 하나예요. I understand보다 훨씬 자연스러워요."
+      },
+      {
+       "en": "Sounds good.",
+       "ko": "좋아요.",
+       "situation": "제안에 동의할 때",
+       "tip": "만능 승낙 표현이에요. 문자, 이메일, 대면 어디서나 그대로 씁니다."
+      },
+      {
+       "en": "That works for me.",
+       "ko": "저는 그거 괜찮아요.",
+       "situation": "일정이나 계획에 동의할 때",
+       "tip": "시간이나 장소를 정할 때 원어민이 습관처럼 쓰는 답변이에요."
+      },
+      {
+       "en": "Fair enough.",
+       "ko": "그럴 만하네요.",
+       "situation": "상대 입장을 받아들일 때",
+       "tip": "완전히 동의하진 않아도 '납득했다'는 성숙한 반응이에요. 짧지만 아주 자주 쓰여요."
+      },
+      {
+       "en": "No worries.",
+       "ko": "괜찮아요, 신경 쓰지 마세요.",
+       "situation": "사과나 감사를 받았을 때",
+       "tip": "You're welcome과 It's okay를 한 번에 대신하는 만능 표현이에요."
+      },
+      {
+       "en": "Good point.",
+       "ko": "좋은 지적이에요.",
+       "situation": "상대 말이 타당할 때",
+       "tip": "토론이나 회의에서 상대를 존중하며 동의할 때 쓰는 짧고 강력한 표현이에요."
+      },
+      {
+       "en": "Got it.",
+       "ko": "알겠어요.",
+       "situation": "설명이나 지시를 이해했을 때",
+       "tip": "I understand는 다소 딱딱해요. 현장에서는 Got it 한마디면 충분해요."
+      },
+      {
+       "en": "No kidding!",
+       "ko": "진짜요?!",
+       "situation": "놀라운 이야기를 들었을 때",
+       "tip": "직역은 '농담 아니지'지만 실제로는 '헐, 진짜요?'라는 놀람의 리액션이에요."
+      },
+      {
+       "en": "You've got to be kidding me.",
+       "ko": "설마 농담이죠.",
+       "situation": "믿기 힘든 일을 들었을 때",
+       "tip": "놀람과 황당함을 동시에 표현해요. 상황에 따라 유쾌하게도 답답하게도 들려요."
+      },
+      {
+       "en": "That's awesome!",
+       "ko": "완전 멋지네요!",
+       "situation": "좋은 소식을 들었을 때",
+       "tip": "미국 일상에서 Great보다도 자주 쓰이는 칭찬 리액션이에요."
+      },
+      {
+       "en": "Oh wow, really?",
+       "ko": "우와, 정말요?",
+       "situation": "이야기에 반응할 때",
+       "tip": "영어 대화는 듣는 사람의 리액션으로 굴러가요. 조용히 듣기만 하면 관심 없다고 오해받을 수 있어요."
+      },
+      {
+       "en": "I'm so happy for you.",
+       "ko": "정말 잘됐네요, 제 일처럼 기뻐요.",
+       "situation": "상대에게 좋은 일이 생겼을 때",
+       "tip": "for you가 핵심이에요. 내 기쁨이 아니라 상대를 위한 기쁨이라는 따뜻한 표현이에요."
+      },
+      {
+       "en": "I'm really sorry to hear that.",
+       "ko": "그런 일이 있었다니 정말 안타깝네요.",
+       "situation": "안 좋은 소식을 들었을 때",
+       "tip": "이때의 sorry는 사과가 아니라 위로예요. 슬픈 소식에 대한 거의 정해진 응답이에요."
+      },
+      {
+       "en": "That must have been so hard.",
+       "ko": "정말 힘드셨겠어요.",
+       "situation": "상대의 아픔에 공감할 때",
+       "tip": "must have been은 '틀림없이 ~했겠다'는 뜻으로 공감을 표현하는 핵심 패턴이에요."
+      },
+      {
+       "en": "I totally get it.",
+       "ko": "완전 이해해요.",
+       "situation": "깊이 공감할 때",
+       "tip": "get은 여기서 '이해하다'예요. totally를 붙이면 진심이 훨씬 잘 전달돼요."
+      },
+      {
+       "en": "I feel the same way.",
+       "ko": "저도 같은 마음이에요.",
+       "situation": "감정에 동의할 때",
+       "tip": "의견이 아니라 마음에 공감할 때 쓰는 표현이라 훨씬 따뜻하게 들려요."
+      },
+      {
+       "en": "Absolutely.",
+       "ko": "그럼요, 당연하죠.",
+       "situation": "강하게 동의할 때",
+       "tip": "Yes 한마디보다 훨씬 확실하고 적극적인 느낌을 줘요."
+      },
+      {
+       "en": "Exactly.",
+       "ko": "바로 그거예요.",
+       "situation": "내 생각과 정확히 일치할 때",
+       "tip": "한 단어로 강한 동의를 전하는 원어민의 단골 표현이에요."
+      },
+      {
+       "en": "I'm not so sure about that.",
+       "ko": "그건 좀 잘 모르겠어요.",
+       "situation": "부드럽게 반대할 때",
+       "tip": "I disagree는 너무 직설적이에요. 이 표현이면 상대 기분을 상하지 않게 다른 의견을 낼 수 있어요."
+      },
+      {
+       "en": "I see what you mean.",
+       "ko": "무슨 말인지 알겠어요.",
+       "situation": "상대 관점을 인정할 때",
+       "tip": "동의까지는 아니어도 이해했다는 신호예요. 대화를 부드럽게 이어가 줘요."
+      },
+      {
+       "en": "That's a relief.",
+       "ko": "다행이네요.",
+       "situation": "걱정이 풀렸을 때",
+       "tip": "relief는 '안도'예요. 나쁜 소식인 줄 알았다가 아닐 때 딱 쓰는 표현이에요."
+      },
+      {
+       "en": "Wow, congratulations!",
+       "ko": "우와, 축하해요!",
+       "situation": "축하할 때",
+       "tip": "congratulation이 아니라 항상 복수형 congratulations예요. 줄여서 Congrats!도 아주 흔해요."
+      },
+      {
+       "en": "Good for you!",
+       "ko": "잘됐네요!",
+       "situation": "상대의 성취를 축하할 때",
+       "tip": "말투가 중요해요. 밝게 말하면 진심 어린 축하지만, 비꼬듯 말하면 반대 뜻이 되니 표정과 톤을 밝게 하세요."
+      },
+      {
+       "en": "That's too bad.",
+       "ko": "그거 참 아쉽네요.",
+       "situation": "작은 실망에 반응할 때",
+       "tip": "가벼운 안타까움에 쓰는 표현이에요. 큰 슬픔에는 I'm so sorry를 쓰세요."
+      },
+      {
+       "en": "Oh, I had no idea.",
+       "ko": "아, 전혀 몰랐어요.",
+       "situation": "처음 듣는 사실일 때",
+       "tip": "I didn't know보다 놀람의 감정이 훨씬 잘 담기는 표현이에요."
+      },
+      {
+       "en": "Well, that figures.",
+       "ko": "그럴 줄 알았어요.",
+       "situation": "예상했던 일이 벌어졌을 때",
+       "tip": "figure는 여기서 '말이 된다, 예상대로다'라는 뜻이에요. 약간의 체념이 섞인 유머러스한 반응이에요."
+      },
+      {
+       "en": "Don't worry about it.",
+       "ko": "신경 쓰지 마세요.",
+       "situation": "상대가 미안해할 때",
+       "tip": "상대의 사과를 가볍게 풀어주는 가장 흔한 표현이에요."
+      },
+      {
+       "en": "That's a great idea.",
+       "ko": "정말 좋은 생각이에요.",
+       "situation": "제안을 칭찬할 때",
+       "tip": "회의, 계획, 일상 어디서나 쓰이는 긍정 반응이에요."
+      },
+      {
+       "en": "Seriously?",
+       "ko": "진심이에요?",
+       "situation": "믿기 어려울 때",
+       "tip": "한 단어로 놀람을 표현해요. 끝을 올려 말하면 놀람, 내려 말하면 황당함이 돼요."
+      },
+      {
+       "en": "Thanks for letting me know.",
+       "ko": "알려주셔서 감사해요.",
+       "situation": "정보를 전해 들었을 때",
+       "tip": "정보 공유에 대한 감사 표현으로 이메일·문자·대화 모두에서 아주 자주 쓰여요."
+      }
+     ]
+    },
+    {
+     "key": "clarify",
+     "label": "못 알아들었을 때",
+     "items": [
+      {
+       "en": "Sorry, what was that?",
+       "ko": "죄송해요, 뭐라고 하셨죠?",
+       "situation": "말을 놓쳤을 때",
+       "tip": "What? 한마디는 무례하게 들려요. Sorry를 붙인 이 문장이 가장 안전하고 흔한 되묻기예요."
+      },
+      {
+       "en": "I didn't catch that.",
+       "ko": "제가 못 알아들었어요.",
+       "situation": "빠른 말을 놓쳤을 때",
+       "tip": "catch는 '알아듣다'예요. 안 들렸다는 걸 자책하지 않고 자연스럽게 알리는 표현이에요."
+      },
+      {
+       "en": "Could you say that again?",
+       "ko": "다시 한 번 말씀해 주시겠어요?",
+       "situation": "반복을 요청할 때",
+       "tip": "Repeat please는 명령처럼 들려요. Could you로 시작하면 정중해져요."
+      },
+      {
+       "en": "What do you mean?",
+       "ko": "무슨 뜻이에요?",
+       "situation": "의도를 확인할 때",
+       "tip": "짧고 직접적이지만 아주 흔해요. 부드럽게 하려면 앞에 Sorry,를 붙이세요."
+      },
+      {
+       "en": "I'm not sure I follow.",
+       "ko": "제가 잘 따라가지 못하겠어요.",
+       "situation": "이해가 안 될 때",
+       "tip": "follow는 '이해하다'라는 뜻으로도 써요. I don't understand보다 훨씬 부드러워요."
+      },
+      {
+       "en": "Sorry, are you saying I should wait here?",
+       "ko": "죄송한데, 제가 여기서 기다려야 한다는 말씀이신가요?",
+       "situation": "이해한 내용을 확인할 때",
+       "tip": "Are you saying ___? 패턴으로 들은 내용을 되짚으면 오해를 막을 수 있어요."
+      },
+      {
+       "en": "Just to be clear, we're meeting at six?",
+       "ko": "확실히 하자면, 우리 여섯 시에 만나는 거죠?",
+       "situation": "약속이나 지시를 재확인할 때",
+       "tip": "Just to be clear는 확인 질문을 부드럽게 여는 아주 유용한 도입구예요."
+      },
+      {
+       "en": "Could you go over that one more time?",
+       "ko": "그거 한 번만 더 짚어주시겠어요?",
+       "situation": "설명을 다시 듣고 싶을 때",
+       "tip": "go over는 '처음부터 다시 훑어주다'라는 뜻이에요. 설명이 길었을 때 딱 맞아요."
+      },
+      {
+       "en": "How do you spell that?",
+       "ko": "철자가 어떻게 되나요?",
+       "situation": "이름이나 지명을 들었을 때",
+       "tip": "발음만으로 못 알아들을 때 최고의 해결책이에요. 받아적을 준비를 하고 물으세요."
+      },
+      {
+       "en": "What does that mean?",
+       "ko": "그게 무슨 뜻이에요?",
+       "situation": "모르는 단어를 들었을 때",
+       "tip": "모르는 걸 바로 묻는 게 가장 빠른 학습법이에요. 원어민들도 서로에게 자주 물어요."
+      },
+      {
+       "en": "How do you say this in English?",
+       "ko": "이건 영어로 뭐라고 해요?",
+       "situation": "단어가 생각나지 않을 때",
+       "tip": "물건을 가리키며 이 문장을 쓰면 대화가 끊기지 않아요. 가장 실용적인 문장 중 하나예요."
+      },
+      {
+       "en": "Sorry, I'm still learning English.",
+       "ko": "죄송해요, 제가 아직 영어를 배우는 중이에요.",
+       "situation": "의사소통이 막혔을 때",
+       "tip": "이 한마디면 대부분의 사람이 속도를 늦추고 더 쉽게 말해줘요. 부끄러워할 필요 전혀 없어요."
+      },
+      {
+       "en": "Could you speak a little slower, please?",
+       "ko": "조금만 천천히 말씀해 주시겠어요?",
+       "situation": "말이 너무 빠를 때",
+       "tip": "a little을 넣으면 요구가 훨씬 부드러워져요. please는 문장 끝에 붙이는 게 자연스러워요."
+      },
+      {
+       "en": "Is that how you say it?",
+       "ko": "이렇게 말하는 게 맞나요?",
+       "situation": "발음을 확인할 때",
+       "tip": "따라 말한 뒤 이 문장을 덧붙이면 대부분 친절하게 고쳐줘요. 실력이 가장 빨리 느는 습관이에요."
+      },
+      {
+       "en": "Did I say that right?",
+       "ko": "제가 제대로 말한 거 맞나요?",
+       "situation": "내 표현을 점검할 때",
+       "tip": "틀릴까 봐 숨기기보다 이렇게 물으면 상대도 편하게 교정해줄 수 있어요."
+      },
+      {
+       "en": "What's the word for this?",
+       "ko": "이건 뭐라고 부르나요?",
+       "situation": "사물의 이름을 물을 때",
+       "tip": "손으로 가리키며 쓰면 백 마디 설명보다 빨라요."
+      },
+      {
+       "en": "Sorry, my English isn't great.",
+       "ko": "죄송해요, 제가 영어를 잘 못해요.",
+       "situation": "미리 양해를 구할 때",
+       "tip": "자책하는 말투 대신 웃으며 가볍게 말하세요. 대부분 That's okay! 하고 도와줘요."
+      },
+      {
+       "en": "Could you write it down for me?",
+       "ko": "그거 좀 적어주실 수 있을까요?",
+       "situation": "주소, 숫자, 이름을 들을 때",
+       "tip": "숫자와 고유명사는 듣기가 가장 어려워요. 적어달라고 하는 게 가장 확실한 방법이에요."
+      },
+      {
+       "en": "I think I understand, but let me make sure.",
+       "ko": "이해한 것 같은데, 확실히 해둘게요.",
+       "situation": "중요한 내용을 확인할 때",
+       "tip": "make sure는 '확실히 하다'예요. 중요한 약속이나 지시에서 실수를 막아줘요."
+      },
+      {
+       "en": "So, if I understood correctly, we leave at eight?",
+       "ko": "그러니까 제가 제대로 이해했다면, 여덟 시에 출발하는 거죠?",
+       "situation": "내용을 요약해 확인할 때",
+       "tip": "들은 내용을 내 말로 다시 말해보는 건 최고의 확인법이자 최고의 영어 연습이에요."
+      },
+      {
+       "en": "Sorry, I zoned out for a second.",
+       "ko": "죄송해요, 잠깐 딴생각했어요.",
+       "situation": "집중이 흐트러졌을 때",
+       "tip": "zone out은 '멍해지다'라는 뜻의 아주 구어적인 표현이에요. 솔직하게 말하면 오히려 편해져요."
+      },
+      {
+       "en": "Could you repeat the last part?",
+       "ko": "마지막 부분만 다시 말씀해 주시겠어요?",
+       "situation": "일부만 놓쳤을 때",
+       "tip": "전체를 다시 듣지 않고 필요한 부분만 짚어 요청하면 서로 편해요."
+      },
+      {
+       "en": "What's that called again?",
+       "ko": "그거 이름이 뭐였죠?",
+       "situation": "들었는데 잊었을 때",
+       "tip": "again을 붙이면 '전에 들었지만 잊었다'는 뉘앙스가 살아나 훨씬 자연스러워요."
+      },
+      {
+       "en": "I'm sorry, I don't know that word.",
+       "ko": "죄송해요, 그 단어를 제가 몰라요.",
+       "situation": "모르는 단어가 나왔을 때",
+       "tip": "아는 척하고 넘어가면 대화가 산으로 가요. 솔직하게 묻는 게 훨씬 빠릅니다."
+      },
+      {
+       "en": "Does that make sense?",
+       "ko": "제 말이 이해가 되나요?",
+       "situation": "내가 설명한 뒤",
+       "tip": "내 영어가 통했는지 확인하는 표현이에요. 원어민도 설명 끝에 습관처럼 붙여요."
+      },
+      {
+       "en": "Am I making sense?",
+       "ko": "제가 말이 되게 말하고 있나요?",
+       "situation": "길게 설명한 뒤",
+       "tip": "조금 더 겸손한 뉘앙스예요. 설명이 꼬였다고 느낄 때 쓰면 분위기가 부드러워져요."
+      },
+      {
+       "en": "Sorry, I mixed up my words.",
+       "ko": "죄송해요, 제가 말을 섞어버렸네요.",
+       "situation": "말이 꼬였을 때",
+       "tip": "mix up은 '헷갈려 뒤섞다'예요. 실수를 자연스럽게 인정하고 넘어가는 표현이에요."
+      },
+      {
+       "en": "Let me try that again.",
+       "ko": "다시 한 번 말해볼게요.",
+       "situation": "내 말을 고쳐 말할 때",
+       "tip": "말이 꼬였을 때 포기하지 말고 이 문장으로 다시 시작하세요. 원어민도 똑같이 해요."
+      },
+      {
+       "en": "How do you pronounce this?",
+       "ko": "이건 어떻게 발음해요?",
+       "situation": "글자를 보며 물을 때",
+       "tip": "메뉴판, 간판, 이름표를 가리키며 쓰기 좋아요. 대화의 좋은 소재도 돼요."
+      },
+      {
+       "en": "Thanks for being patient with me.",
+       "ko": "기다려주셔서 감사해요.",
+       "situation": "천천히 대화해준 상대에게",
+       "tip": "대화가 끝날 때 이 한마디를 건네면 관계가 훨씬 따뜻해져요."
+      }
+     ]
+    },
+    {
+     "key": "help",
+     "label": "도움 요청과 길찾기",
+     "items": [
+      {
+       "en": "Excuse me, could you help me for a second?",
+       "ko": "실례합니다, 잠깐 저 좀 도와주시겠어요?",
+       "situation": "도움을 요청할 때",
+       "tip": "for a second를 붙이면 상대의 부담을 덜어주는 자연스러운 표현이 돼요."
+      },
+      {
+       "en": "I'm trying to find this address.",
+       "ko": "제가 이 주소를 찾고 있는데요.",
+       "situation": "길을 물을 때",
+       "tip": "I'm trying to find는 도움을 요청하는 상황에서 가장 자연스럽게 쓰이는 표현이에요."
+      },
+      {
+       "en": "Sorry, could you say that one more time?",
+       "ko": "죄송한데, 한 번만 더 말씀해주시겠어요?",
+       "situation": "못 들었을 때",
+       "tip": "say that again보다 one more time이 실제 대화에서 훨씬 자주 쓰여요."
+      },
+      {
+       "en": "Sorry, I'm not quite following you.",
+       "ko": "죄송한데, 제가 잘 이해가 안 돼서요.",
+       "situation": "이해하지 못했을 때",
+       "tip": "I don't understand는 너무 직설적으로 들릴 수 있어요. not quite following이 훨씬 부드러운 표현이에요."
+      },
+      {
+       "en": "Would you mind speaking a little slower?",
+       "ko": "조금만 천천히 말씀해주실 수 있을까요?",
+       "situation": "말이 너무 빠를 때",
+       "tip": "Would you mind ~ing는 미국인들이 정중하게 부탁할 때 정말 많이 쓰는 패턴이에요."
+      },
+      {
+       "en": "Excuse me, is there a restroom nearby?",
+       "ko": "실례합니다, 근처에 화장실이 있나요?",
+       "situation": "화장실을 찾을 때",
+       "tip": "공공장소에서는 bathroom보다 restroom이 더 예의 있고 자연스러운 표현이에요."
+      },
+      {
+       "en": "How much is this?",
+       "ko": "이거 얼마예요?",
+       "situation": "물건 값을 물을 때",
+       "tip": "How much does this cost?보다 훨씬 짧고 자연스럽게 쓰이는 표현이에요."
+      },
+      {
+       "en": "Is it far from here?",
+       "ko": "여기서 먼가요?",
+       "situation": "거리를 물을 때",
+       "tip": "far 발음은 혀를 뒤로 살짝 마세요."
+      },
+      {
+       "en": "Would you mind writing that down for me?",
+       "ko": "그거 좀 적어주실 수 있을까요?",
+       "situation": "발음이나 숫자를 못 알아들을 때",
+       "tip": "Could you write it down보다 Would you mind ~ing가 더 부드럽고 예의 있게 들려요."
+      },
+      {
+       "en": "Thank you so much, I really appreciate it.",
+       "ko": "정말 감사해요, 진심으로 감사드려요.",
+       "situation": "도움을 받은 뒤 감사 인사",
+       "tip": "I really appreciate it은 미국인들이 감사할 때 거의 습관처럼 붙이는 표현이에요."
+      },
+      {
+       "en": "Excuse me, do you know where the station is?",
+       "ko": "실례합니다, 역이 어디인지 아세요?",
+       "situation": "위치를 물을 때",
+       "tip": "Where is the station?보다 Do you know where...?로 감싸면 훨씬 정중하게 들려요."
+      },
+      {
+       "en": "Could you point me in the right direction?",
+       "ko": "어느 쪽으로 가야 하는지 알려주시겠어요?",
+       "situation": "방향을 물을 때",
+       "tip": "자세한 설명을 못 알아들을까 걱정될 때, 손으로 가리켜 달라는 뜻이 담긴 실용적인 표현이에요."
+      },
+      {
+       "en": "Am I going the right way?",
+       "ko": "제가 맞는 방향으로 가고 있는 건가요?",
+       "situation": "가는 도중 확인할 때",
+       "tip": "길을 헤맬 때 지나가는 사람에게 짧게 확인할 수 있는 문장이에요."
+      },
+      {
+       "en": "How do I get to the bus station?",
+       "ko": "버스 정류장은 어떻게 가나요?",
+       "situation": "이동 방법을 물을 때",
+       "tip": "How do I get to ___? 는 목적지만 바꾸면 되는 만능 길찾기 패턴이에요."
+      },
+      {
+       "en": "Is there a bus that goes there?",
+       "ko": "거기 가는 버스가 있나요?",
+       "situation": "대중교통을 물을 때",
+       "tip": "bus 자리에 train, subway를 넣어 그대로 쓸 수 있어요."
+      },
+      {
+       "en": "How long does it take to get there?",
+       "ko": "거기까지 얼마나 걸려요?",
+       "situation": "소요 시간을 물을 때",
+       "tip": "take는 시간이 '걸리다'라는 뜻이에요. 여행에서 가장 자주 쓰는 질문 중 하나예요."
+      },
+      {
+       "en": "Could you show me on the map?",
+       "ko": "지도에서 좀 보여주시겠어요?",
+       "situation": "설명이 어려울 때",
+       "tip": "휴대폰 지도를 내밀며 말하면 언어 장벽이 한 번에 해결돼요."
+      },
+      {
+       "en": "I think I'm lost.",
+       "ko": "제가 길을 잃은 것 같아요.",
+       "situation": "헤매고 있을 때",
+       "tip": "I think를 앞에 붙이면 당황스러운 상황에서도 침착하고 부드럽게 들려요."
+      },
+      {
+       "en": "Do you know if there's a pharmacy around here?",
+       "ko": "이 근처에 약국이 있는지 아세요?",
+       "situation": "시설을 찾을 때",
+       "tip": "around here는 '이 근처'라는 뜻이에요. pharmacy 자리에 필요한 장소를 넣으세요."
+      },
+      {
+       "en": "Is it within walking distance?",
+       "ko": "걸어갈 만한 거리인가요?",
+       "situation": "걸어갈지 판단할 때",
+       "tip": "within walking distance는 '걸어서 갈 수 있는 거리'라는 뜻의 굳어진 표현이에요."
+      },
+      {
+       "en": "Which way is downtown?",
+       "ko": "시내는 어느 쪽인가요?",
+       "situation": "큰 방향을 물을 때",
+       "tip": "Which way is ___? 는 가장 짧고 빠른 길찾기 질문이에요."
+      },
+      {
+       "en": "Could you call a taxi for me?",
+       "ko": "택시 좀 불러주시겠어요?",
+       "situation": "호텔이나 가게에서",
+       "tip": "직원에게 부탁할 때 아주 흔하게 쓰여요. 앱이 안 될 때 꼭 필요한 문장이에요."
+      },
+      {
+       "en": "Do you mind if I ask you something?",
+       "ko": "뭐 하나 여쭤봐도 될까요?",
+       "situation": "질문을 꺼내기 전",
+       "tip": "본론 앞에 이 문장을 두면 상대가 마음의 준비를 할 수 있어 훨씬 부드러워요."
+      },
+      {
+       "en": "Sorry to bother you, but could you help me?",
+       "ko": "번거롭게 해서 죄송한데, 좀 도와주시겠어요?",
+       "situation": "바빠 보이는 사람에게",
+       "tip": "Sorry to bother you는 부탁의 문을 여는 가장 정중한 표현이에요."
+      },
+      {
+       "en": "Would you be able to help me with this?",
+       "ko": "이것 좀 도와주실 수 있을까요?",
+       "situation": "조심스럽게 부탁할 때",
+       "tip": "Can you?보다 Would you be able to?가 훨씬 정중하고 부담을 덜어줘요."
+      },
+      {
+       "en": "Do you need a hand?",
+       "ko": "도와드릴까요?",
+       "situation": "먼저 도움을 건넬 때",
+       "tip": "need a hand는 '일손이 필요하다'는 뜻이에요. 짐을 든 사람에게 건네기 좋은 한마디예요."
+      },
+      {
+       "en": "Can you walk me through it?",
+       "ko": "차근차근 설명해 주시겠어요?",
+       "situation": "방법을 배울 때",
+       "tip": "walk someone through는 '단계별로 안내하다'라는 뜻이에요. 일터에서 정말 자주 쓰여요."
+      },
+      {
+       "en": "I could really use your help.",
+       "ko": "당신 도움이 정말 필요해요.",
+       "situation": "진심으로 도움을 청할 때",
+       "tip": "could use는 '있으면 정말 좋겠다'는 뜻이에요. 부담스럽지 않게 도움을 청하는 표현이에요."
+      },
+      {
+       "en": "Thanks, you've been a huge help.",
+       "ko": "감사해요, 정말 큰 도움이 됐어요.",
+       "situation": "도움을 받은 뒤",
+       "tip": "a huge help는 상대의 수고를 크게 인정해주는 따뜻한 마무리예요."
+      },
+      {
+       "en": "I don't know what I would have done without you.",
+       "ko": "당신이 없었으면 어쩔 뻔했는지 모르겠어요.",
+       "situation": "큰 도움을 받았을 때",
+       "tip": "진심 어린 감사를 전하는 문장이에요. 한 번 외워두면 결정적인 순간에 쓸 수 있어요."
+      }
+     ]
+    },
+    {
+     "key": "hospitality",
+     "label": "환대와 관계맺기",
+     "items": [
+      {
+       "en": "Please, come on in and have a seat.",
+       "ko": "들어오셔서 앉으세요.",
+       "situation": "손님을 맞이할 때",
+       "tip": "come on in과 have a seat은 손님을 맞이할 때 미국인들이 실제로 쓰는 자연스러운 표현이에요."
+      },
+      {
+       "en": "Can I get you something to drink?",
+       "ko": "마실 것 좀 드릴까요?",
+       "situation": "대접할 때",
+       "tip": "호스트가 손님에게 쓰는 가장 대표적이고 자연스러운 표현이에요."
+      },
+      {
+       "en": "Thanks so much for having me.",
+       "ko": "초대해 주셔서 정말 감사해요.",
+       "situation": "초대받았을 때",
+       "tip": "Thank you for inviting me보다 having me가 훨씬 더 자연스럽고 따뜻하게 들려요."
+      },
+      {
+       "en": "I brought you something.",
+       "ko": "당신을 위해 뭔가 가져왔어요.",
+       "situation": "선물을 건넬 때",
+       "tip": "짧고 자연스러운 표현이에요. 선물을 건네며 말해보세요."
+      },
+      {
+       "en": "Your family has been so kind to me.",
+       "ko": "당신 가족이 저에게 정말 친절하게 대해주셨어요.",
+       "situation": "가정을 방문했을 때",
+       "tip": "Your family is very kind보다 has been so kind to me가 실제 경험을 담아 훨씬 자연스러워요."
+      },
+      {
+       "en": "I'd love to come back and visit again sometime.",
+       "ko": "나중에 다시 방문하고 싶어요.",
+       "situation": "방문을 마무리할 때",
+       "tip": "I'd love to visit you again보다 훨씬 자연스러운 흐름이에요."
+      },
+      {
+       "en": "Just let me know if you need anything at all.",
+       "ko": "필요한 게 있으면 언제든 알려주세요.",
+       "situation": "곁에 있어주고 싶을 때",
+       "tip": "at all을 붙이면 진심 어린 배려가 더 잘 전달돼요."
+      },
+      {
+       "en": "I really appreciate everything you've done for me.",
+       "ko": "저를 위해 해주신 모든 것에 정말 감사해요.",
+       "situation": "환대에 감사할 때",
+       "tip": "hospitality라는 단어를 직접 쓰지 않아도, 이 표현이 실제로 훨씬 더 자연스럽고 진심 있게 들려요."
+      },
+      {
+       "en": "Can I give you a hand with that?",
+       "ko": "제가 좀 도와드려도 될까요?",
+       "situation": "먼저 도움을 건넬 때",
+       "tip": "give you a hand는 도와준다는 뜻의 아주 자연스러운 관용 표현이에요."
+      },
+      {
+       "en": "Let's keep in touch.",
+       "ko": "계속 연락하고 지내요.",
+       "situation": "헤어지며 관계를 이어갈 때",
+       "tip": "stay in touch보다 keep in touch가 실제로 더 흔하게 쓰이는 표현이에요."
+      },
+      {
+       "en": "Make yourself at home.",
+       "ko": "편하게 계세요.",
+       "situation": "손님이 집에 들어왔을 때",
+       "tip": "'내 집처럼 편히'라는 뜻의 굳어진 환대 표현이에요. 거의 이 형태 그대로만 써요."
+      },
+      {
+       "en": "Would you like some more?",
+       "ko": "더 드시겠어요?",
+       "situation": "음식을 권할 때",
+       "tip": "Eat more는 명령처럼 들려요. Would you like로 물어야 권유가 돼요."
+      },
+      {
+       "en": "Help yourself.",
+       "ko": "편하게 가져다 드세요.",
+       "situation": "음식을 자유롭게 먹으라고 할 때",
+       "tip": "짧지만 아주 따뜻한 표현이에요. 뷔페식으로 차렸을 때 딱 맞아요."
+      },
+      {
+       "en": "Dinner's ready!",
+       "ko": "저녁 다 됐어요!",
+       "situation": "식사를 부를 때",
+       "tip": "가족이나 손님을 식탁으로 부를 때 그대로 쓰는 표현이에요."
+      },
+      {
+       "en": "This is delicious. Did you make it yourself?",
+       "ko": "정말 맛있어요. 직접 만드신 거예요?",
+       "situation": "음식을 칭찬할 때",
+       "tip": "맛 칭찬에 질문을 더하면 대화가 이어져요. 요리 이야기는 어디서나 통하는 소재예요."
+      },
+      {
+       "en": "Thank you for the wonderful meal.",
+       "ko": "훌륭한 식사 감사합니다.",
+       "situation": "식사를 마치고",
+       "tip": "영어에는 '잘 먹었습니다'가 따로 없어요. 이 문장이 그 자리를 대신해요."
+      },
+      {
+       "en": "You're always welcome here.",
+       "ko": "언제든 오셔도 환영이에요.",
+       "situation": "관계를 열어둘 때",
+       "tip": "always를 넣으면 일회성 인사가 아니라 지속되는 환대가 돼요."
+      },
+      {
+       "en": "Come visit us anytime.",
+       "ko": "언제든 놀러 오세요.",
+       "situation": "헤어지며 초대할 때",
+       "tip": "us를 쓰면 가족 전체의 환영이라는 따뜻함이 담겨요."
+      },
+      {
+       "en": "Let me walk you out.",
+       "ko": "제가 배웅해 드릴게요.",
+       "situation": "손님을 보낼 때",
+       "tip": "walk someone out은 문까지 함께 나가주는 것을 뜻해요. 작지만 큰 배려예요."
+      },
+      {
+       "en": "Drive safe, okay?",
+       "ko": "운전 조심히 하세요.",
+       "situation": "차로 떠나는 사람에게",
+       "tip": "문법적으로는 safely지만 실제 회화에서는 Drive safe라고 말해요."
+      },
+      {
+       "en": "Text me when you get home.",
+       "ko": "집에 도착하면 문자 주세요.",
+       "situation": "밤늦게 헤어질 때",
+       "tip": "상대를 걱정하는 마음을 전하는 아주 일상적인 표현이에요."
+      },
+      {
+       "en": "I'd love to have you over sometime.",
+       "ko": "언제 한번 저희 집에 초대하고 싶어요.",
+       "situation": "먼저 초대할 때",
+       "tip": "have someone over는 '집에 초대하다'라는 뜻의 자연스러운 표현이에요."
+      },
+      {
+       "en": "Are you free this weekend?",
+       "ko": "이번 주말에 시간 되세요?",
+       "situation": "약속을 제안할 때",
+       "tip": "관계를 한 단계 진전시키는 문장이에요. 거절당해도 부담 없는 가벼운 질문이에요."
+      },
+      {
+       "en": "Would you like to grab coffee sometime?",
+       "ko": "언제 커피 한잔 하실래요?",
+       "situation": "친해지고 싶을 때",
+       "tip": "grab은 '가볍게 하다'라는 뉘앙스예요. 부담 없는 만남 제안의 정석이에요."
+      },
+      {
+       "en": "It's on me.",
+       "ko": "제가 낼게요.",
+       "situation": "계산할 때",
+       "tip": "I will pay보다 훨씬 자연스럽고 멋있게 들리는 표현이에요."
+      },
+      {
+       "en": "Let me get this one.",
+       "ko": "이번엔 제가 낼게요.",
+       "situation": "번갈아 계산할 때",
+       "tip": "this one에 '이번 차례'라는 뜻이 담겨 다음엔 상대가 낼 여지를 남겨줘요."
+      },
+      {
+       "en": "Thank you for thinking of me.",
+       "ko": "저를 생각해 주셔서 감사해요.",
+       "situation": "선물이나 배려를 받았을 때",
+       "tip": "물건보다 마음에 감사하는 표현이라 훨씬 깊은 인상을 남겨요."
+      },
+      {
+       "en": "Oh, you didn't have to do that.",
+       "ko": "이렇게까지 안 하셔도 되는데요.",
+       "situation": "과분한 대접을 받았을 때",
+       "tip": "거절이 아니라 고마움의 표현이에요. 뒤에 Thank you so much를 붙여주세요."
+      },
+      {
+       "en": "I really enjoy spending time with you.",
+       "ko": "당신과 함께하는 시간이 정말 좋아요.",
+       "situation": "관계를 깊게 할 때",
+       "tip": "spend time with는 '시간을 함께 보내다'라는 뜻이에요. 부담 없이 애정을 전하는 문장이에요."
+      },
+      {
+       "en": "You mean a lot to me.",
+       "ko": "당신은 저에게 정말 소중한 사람이에요.",
+       "situation": "마음을 진심으로 전할 때",
+       "tip": "짧지만 아주 강력한 문장이에요. 아껴 뒀다가 진심일 때 쓰세요."
+      }
+     ]
+    },
+    {
+     "key": "faith",
+     "label": "믿음 나누기",
+     "items": [
+      {
+       "en": "I believe God loves you so much.",
+       "ko": "저는 하나님이 당신을 정말 많이 사랑하신다고 믿어요.",
+       "situation": "믿음을 처음 나눌 때",
+       "tip": "very much보다 so much가 실제 대화에서 훨씬 자연스럽고 흔하게 쓰여요."
+      },
+      {
+       "en": "Would it be okay if I shared something with you?",
+       "ko": "제가 뭔가 나눠도 괜찮을까요?",
+       "situation": "대화를 열 때",
+       "tip": "Can I share something with you보다 훨씬 조심스럽고 예의 있게 들리는 표현이에요."
+      },
+      {
+       "en": "I came here because of my faith.",
+       "ko": "저는 제 믿음 때문에 여기 왔어요.",
+       "situation": "방문 이유를 설명할 때",
+       "tip": "because of my faith를 또렷하게 말해보세요."
+      },
+      {
+       "en": "Jesus really changed my life.",
+       "ko": "예수님은 제 삶을 정말 바꾸셨어요.",
+       "situation": "간증을 시작할 때",
+       "tip": "really를 넣으면 진심이 훨씬 더 잘 전달돼요."
+      },
+      {
+       "en": "Would you like to hear my story sometime?",
+       "ko": "언젠가 제 이야기를 들어보시겠어요?",
+       "situation": "간증을 나누기 전",
+       "tip": "sometime을 붙이면 부담을 주지 않는 자연스러운 제안이 돼요."
+      },
+      {
+       "en": "Can I pray for you?",
+       "ko": "당신을 위해 기도해도 될까요?",
+       "situation": "기도를 제안할 때",
+       "tip": "짧지만 미국 크리스천들이 실제로 그대로 쓰는 표현이에요. 억지로 바꾸지 않아도 됩니다."
+      },
+      {
+       "en": "I'm really grateful for God's grace in my life.",
+       "ko": "제 삶 속 하나님의 은혜에 정말 감사해요.",
+       "situation": "감사를 표현할 때",
+       "tip": "in my life를 붙이면 훨씬 더 개인적이고 진솔하게 들려요."
+      },
+      {
+       "en": "Can I ask what you believe about God?",
+       "ko": "하나님에 대해 어떻게 믿으시는지 물어봐도 될까요?",
+       "situation": "상대의 신앙을 물을 때",
+       "tip": "Can I ask를 앞에 붙이면 훨씬 조심스럽고 예의 있는 질문이 돼요."
+      },
+      {
+       "en": "I'd love for you to come check out our gathering sometime.",
+       "ko": "언젠가 저희 모임에 한번 와보시면 좋겠어요.",
+       "situation": "모임에 초대할 때",
+       "tip": "come check out은 부담 없이 초대할 때 미국인들이 정말 자주 쓰는 표현이에요."
+      },
+      {
+       "en": "I truly believe God has a plan for your life.",
+       "ko": "저는 하나님이 당신의 삶에 계획이 있다고 진심으로 믿어요.",
+       "situation": "위로하며 전할 때",
+       "tip": "truly를 넣으면 훨씬 진심이 담긴 문장이 돼요."
+      },
+      {
+       "en": "How can I pray for you?",
+       "ko": "제가 무엇을 위해 기도해 드릴까요?",
+       "situation": "기도 제목을 물을 때",
+       "tip": "Can I pray?가 허락을 구하는 거라면, How can I pray는 이미 마음을 열어준 사람에게 쓰는 다음 단계예요."
+      },
+      {
+       "en": "I've been praying for you.",
+       "ko": "제가 당신을 위해 계속 기도해 왔어요.",
+       "situation": "오랜만에 만났을 때",
+       "tip": "현재완료진행형이 '지금까지 쭉'이라는 시간을 담아줘요. 듣는 사람 마음이 움직이는 문장이에요."
+      },
+      {
+       "en": "God really answered my prayer.",
+       "ko": "하나님이 제 기도에 정말 응답하셨어요.",
+       "situation": "간증을 나눌 때",
+       "tip": "answer a prayer는 '기도에 응답하다'라는 굳어진 표현이에요."
+      },
+      {
+       "en": "I'm trusting God with this.",
+       "ko": "저는 이 일을 하나님께 맡기고 있어요.",
+       "situation": "불확실한 상황을 이야기할 때",
+       "tip": "trust God with ___는 '~를 하나님께 맡기다'라는 뜻이에요. 걱정거리를 말할 때 자연스럽게 써요."
+      },
+      {
+       "en": "God has been so good to me.",
+       "ko": "하나님이 저에게 정말 선하셨어요.",
+       "situation": "감사를 나눌 때",
+       "tip": "영어권 신앙인들이 일상에서 거의 관용구처럼 쓰는 표현이에요."
+      },
+      {
+       "en": "Do you go to church anywhere?",
+       "ko": "혹시 다니시는 교회가 있으세요?",
+       "situation": "신앙 배경을 물을 때",
+       "tip": "Are you a Christian?은 다소 직접적이에요. 이 질문이 훨씬 부드럽게 문을 열어줘요."
+      },
+      {
+       "en": "What's your church like?",
+       "ko": "다니시는 교회는 어떤 곳이에요?",
+       "situation": "대화를 이어갈 때",
+       "tip": "What is ___ like?는 '어떤 느낌인지' 묻는 패턴이에요. 상대가 편하게 이야기하게 만들어요."
+      },
+      {
+       "en": "I'd love to invite you to church this Sunday.",
+       "ko": "이번 주일에 교회에 초대하고 싶어요.",
+       "situation": "교회로 초대할 때",
+       "tip": "I'd love to로 시작하면 강요가 아니라 마음의 표현이 돼요."
+      },
+      {
+       "en": "Church starts at ten. Would you like to come with me?",
+       "ko": "예배는 열 시에 시작해요. 저랑 같이 가실래요?",
+       "situation": "구체적으로 초대할 때",
+       "tip": "구체적인 시간을 알려주고 함께 가자고 하면 초대의 실현 가능성이 훨씬 높아져요."
+      },
+      {
+       "en": "I believe God brought me here for a reason.",
+       "ko": "저는 하나님이 이유가 있어 저를 여기 보내셨다고 믿어요.",
+       "situation": "부르심을 나눌 때",
+       "tip": "for a reason은 '다 이유가 있어서'라는 뜻으로 영어권에서 아주 자주 쓰여요."
+      },
+      {
+       "en": "I don't have all the answers, but I know God is with me.",
+       "ko": "제가 모든 답을 아는 건 아니지만, 하나님이 저와 함께하신다는 건 알아요.",
+       "situation": "어려운 질문을 받았을 때",
+       "tip": "모른다고 솔직히 인정하는 게 오히려 신뢰를 줘요. 완벽한 답보다 진솔함이 통해요."
+      },
+      {
+       "en": "That's a really good question. Let me think about it.",
+       "ko": "정말 좋은 질문이에요. 좀 생각해 볼게요.",
+       "situation": "답하기 어려운 질문에",
+       "tip": "급하게 답하지 않아도 괜찮아요. 이 문장은 대화를 지키면서 시간을 벌어줘요."
+      },
+      {
+       "en": "Thank you for being so open with me.",
+       "ko": "저에게 마음을 열어주셔서 감사해요.",
+       "situation": "깊은 대화를 나눈 뒤",
+       "tip": "open은 '솔직한, 열린'이라는 뜻이에요. 상대의 용기를 인정해주는 표현이에요."
+      },
+      {
+       "en": "I'm not here to argue. I just want you to know you're loved.",
+       "ko": "저는 논쟁하러 온 게 아니에요. 그저 당신이 사랑받고 있다는 걸 알려드리고 싶어요.",
+       "situation": "의견이 부딪칠 때",
+       "tip": "긴장된 대화를 단번에 풀어주는 문장이에요. 천천히, 진심을 담아 말하세요."
+      },
+      {
+       "en": "God saw me at my lowest and didn't walk away.",
+       "ko": "하나님은 제가 가장 밑바닥에 있을 때 저를 보시고도 떠나지 않으셨어요.",
+       "situation": "간증의 핵심을 나눌 때",
+       "tip": "at my lowest는 '내 인생의 가장 낮은 때'라는 뜻이에요. 짧지만 강한 간증 문장이에요."
+      },
+      {
+       "en": "I used to feel completely empty inside.",
+       "ko": "저는 예전엔 속이 완전히 텅 빈 것 같았어요.",
+       "situation": "과거를 이야기할 때",
+       "tip": "used to는 '예전엔 ~했었다'는 뜻이에요. 지금은 다르다는 대비가 자연스럽게 생겨요."
+      },
+      {
+       "en": "I found real peace for the first time.",
+       "ko": "저는 처음으로 진짜 평안을 찾았어요.",
+       "situation": "변화를 설명할 때",
+       "tip": "real peace라는 표현이 종교적 용어보다 훨씬 널리 공감을 얻어요."
+      },
+      {
+       "en": "Would it be okay if we prayed about it together right now?",
+       "ko": "지금 여기서 함께 기도해도 괜찮을까요?",
+       "situation": "그 자리에서 기도할 때",
+       "tip": "right now를 붙이면 '나중에'로 미뤄지지 않아요. 마음이 열린 순간을 놓치지 마세요."
+      },
+      {
+       "en": "God bless you.",
+       "ko": "하나님의 축복이 함께하시길 바라요.",
+       "situation": "헤어질 때 인사",
+       "tip": "영어권에서는 신앙이 없는 사람에게도 흔히 건네는 따뜻한 인사예요."
+      },
+      {
+       "en": "I'll be praying for you and your family.",
+       "ko": "당신과 가족을 위해 기도할게요.",
+       "situation": "대화를 마무리할 때",
+       "tip": "말로만 끝내지 말고 실제로 기도하세요. 다음에 만났을 때 이어 물어보면 관계가 깊어져요."
+      }
+     ]
+    },
+    {
+     "key": "travel",
+     "label": "여행과 응급상황",
+     "items": [
+      {
+       "en": "I think I need to see a doctor.",
+       "ko": "저 병원에 가봐야 할 것 같아요.",
+       "situation": "몸이 아플 때",
+       "tip": "I think를 앞에 붙이면 훨씬 부드럽고 자연스럽게 들려요."
+      },
+      {
+       "en": "I'm not feeling well.",
+       "ko": "몸이 안 좋아요.",
+       "situation": "컨디션을 설명할 때",
+       "tip": "I don't feel well보다 I'm not feeling well이 실제로 더 자주 쓰이는 자연스러운 표현이에요."
+      },
+      {
+       "en": "Could someone please call for help?",
+       "ko": "누가 좀 도움을 요청해 주시겠어요?",
+       "situation": "응급 상황일 때",
+       "tip": "급한 상황에서 주변 사람들에게 외칠 수 있는 자연스러운 표현이에요."
+      },
+      {
+       "en": "Where's the nearest hospital?",
+       "ko": "가장 가까운 병원이 어디예요?",
+       "situation": "병원을 찾을 때",
+       "tip": "Where's처럼 줄여서 말하는 게 훨씬 자연스러워요."
+      },
+      {
+       "en": "I think I lost my passport.",
+       "ko": "여권을 잃어버린 것 같아요.",
+       "situation": "여권을 분실했을 때",
+       "tip": "I think를 붙이면 당황스러운 상황에서도 침착하게 들려요."
+      },
+      {
+       "en": "Is it safe to walk around here at night?",
+       "ko": "밤에 이 근처를 돌아다녀도 안전한가요?",
+       "situation": "안전을 확인할 때",
+       "tip": "walk around가 walk here보다 훨씬 자연스러운 표현이에요."
+      },
+      {
+       "en": "I need to find somewhere to stay tonight.",
+       "ko": "오늘 밤 머물 곳을 찾아야 해요.",
+       "situation": "숙소를 구할 때",
+       "tip": "a place to stay보다 somewhere to stay가 구어체에서 더 자연스러워요."
+      },
+      {
+       "en": "Could I borrow your phone? It's kind of an emergency.",
+       "ko": "전화 좀 빌려도 될까요? 좀 급한 일이라서요.",
+       "situation": "긴급 상황일 때",
+       "tip": "kind of를 붙이면 다급하면서도 예의를 잃지 않는 자연스러운 표현이 돼요."
+      },
+      {
+       "en": "What time do you close?",
+       "ko": "몇 시에 문 닫으세요?",
+       "situation": "영업시간을 물을 때",
+       "tip": "What time does this close보다 상대에게 직접 묻는 이 표현이 훨씬 자연스러워요."
+      },
+      {
+       "en": "Thank you so much for keeping me safe.",
+       "ko": "저를 안전하게 지켜주셔서 정말 감사해요.",
+       "situation": "도움을 받은 뒤",
+       "tip": "keeping me safe는 진심 어린 감사를 전하는 따뜻한 표현이에요."
+      },
+      {
+       "en": "I need help, please!",
+       "ko": "도와주세요!",
+       "situation": "급박한 상황에서",
+       "tip": "급할수록 짧고 분명하게. 이 문장이면 주변 사람들이 바로 반응해요."
+      },
+      {
+       "en": "Please call 911.",
+       "ko": "911에 전화해 주세요.",
+       "situation": "응급 상황 신고",
+       "tip": "미국 응급번호는 911이에요. nine-one-one이라고 읽어요. 나라마다 다르니 도착하면 꼭 확인하세요."
+      },
+      {
+       "en": "Someone is hurt.",
+       "ko": "다친 사람이 있어요.",
+       "situation": "사고 현장에서",
+       "tip": "짧고 명확한 신고 문장이에요. 뒤에 위치를 덧붙이면 더 좋아요."
+      },
+      {
+       "en": "I'm allergic to peanuts.",
+       "ko": "저는 땅콩 알레르기가 있어요.",
+       "situation": "식당이나 병원에서",
+       "tip": "be allergic to ___ 는 생명과 직결된 문장이에요. 본인의 알레르기를 넣어 꼭 외워두세요."
+      },
+      {
+       "en": "I have to take medicine every day.",
+       "ko": "저는 매일 약을 먹어야 해요.",
+       "situation": "복용 중인 약을 알릴 때",
+       "tip": "medicine은 take(먹다)와 함께 써요. eat medicine은 틀린 표현이에요."
+      },
+      {
+       "en": "Where's the nearest pharmacy?",
+       "ko": "가장 가까운 약국이 어디예요?",
+       "situation": "약이 필요할 때",
+       "tip": "미국에서는 drugstore라고도 해요. CVS, Walgreens 같은 체인이 대표적이에요."
+      },
+      {
+       "en": "I've had a headache since this morning.",
+       "ko": "아침부터 머리가 아팠어요.",
+       "situation": "증상을 설명할 때",
+       "tip": "I've had ___ since ___ 는 증상이 언제부터 계속됐는지 설명하는 필수 패턴이에요."
+      },
+      {
+       "en": "It hurts right here.",
+       "ko": "바로 여기가 아파요.",
+       "situation": "아픈 곳을 가리킬 때",
+       "tip": "손으로 짚으며 말하세요. 어려운 의학 용어를 몰라도 통하는 가장 확실한 방법이에요."
+      },
+      {
+       "en": "I think I sprained my ankle.",
+       "ko": "발목을 삔 것 같아요.",
+       "situation": "다쳤을 때",
+       "tip": "sprain은 '삐다'예요. break(부러지다), cut(베이다)과 함께 알아두면 좋아요."
+      },
+      {
+       "en": "Do I need a prescription for this?",
+       "ko": "이건 처방전이 필요한가요?",
+       "situation": "약국에서",
+       "tip": "prescription(처방전)은 해외 약국에서 반드시 마주치는 단어예요."
+      },
+      {
+       "en": "My phone is dead.",
+       "ko": "휴대폰 배터리가 다 됐어요.",
+       "situation": "배터리가 나갔을 때",
+       "tip": "battery is empty가 아니라 phone is dead라고 해요. 원어민이 쓰는 그대로예요."
+      },
+      {
+       "en": "Is there Wi-Fi here?",
+       "ko": "여기 와이파이 되나요?",
+       "situation": "카페나 숙소에서",
+       "tip": "'와이파이'가 아니라 '와이 파이'에 가깝게 발음해요. 뒤에 What's the password?를 이어 쓰세요."
+      },
+      {
+       "en": "Could I charge my phone somewhere?",
+       "ko": "어디서 휴대폰 충전할 수 있을까요?",
+       "situation": "충전이 급할 때",
+       "tip": "charge는 '충전하다'예요. 낯선 곳에서 정말 자주 필요한 문장이에요."
+      },
+      {
+       "en": "My flight got canceled.",
+       "ko": "제 항공편이 취소됐어요.",
+       "situation": "공항에서",
+       "tip": "got + 과거분사는 '~당했다'는 뜻이에요. was canceled보다 구어에서 더 자주 쓰여요."
+      },
+      {
+       "en": "Which gate is it?",
+       "ko": "몇 번 게이트인가요?",
+       "situation": "탑승구를 찾을 때",
+       "tip": "공항에서 가장 짧고 유용한 질문이에요. 탑승권을 보여주며 물으면 확실해요."
+      },
+      {
+       "en": "I missed my connection.",
+       "ko": "환승 비행기를 놓쳤어요.",
+       "situation": "경유지에서",
+       "tip": "connection은 '연결 항공편'이에요. 이 한마디면 직원이 바로 상황을 이해해요."
+      },
+      {
+       "en": "Where do I pick up my luggage?",
+       "ko": "짐은 어디서 찾나요?",
+       "situation": "도착 후",
+       "tip": "수하물 찾는 곳은 baggage claim이에요. 표지판에서 이 단어를 찾으세요."
+      },
+      {
+       "en": "My bag didn't come out.",
+       "ko": "제 가방이 안 나왔어요.",
+       "situation": "수하물 분실",
+       "tip": "컨베이어에서 짐이 안 나올 때 그대로 쓰는 문장이에요. 바로 직원에게 말하세요."
+      },
+      {
+       "en": "I'd like to report a stolen wallet.",
+       "ko": "지갑 도난 신고를 하고 싶어요.",
+       "situation": "경찰서에서",
+       "tip": "report는 '신고하다'예요. 보험 청구에는 경찰 신고서(police report)가 꼭 필요해요."
+      },
+      {
+       "en": "Could you help me find the Korean embassy?",
+       "ko": "한국 대사관 찾는 걸 도와주시겠어요?",
+       "situation": "큰 문제가 생겼을 때",
+       "tip": "embassy(대사관)는 해외에서 마지막 안전망이에요. 출국 전 연락처를 저장해 두세요."
+      }
+     ]
+    },
+    {
+     "key": "daily",
+     "label": "가게와 식당, 일상 볼일",
+     "items": [
+      {
+       "en": "Can I get a coffee, please?",
+       "ko": "커피 하나 주시겠어요?",
+       "situation": "주문할 때",
+       "tip": "미국 카페 주문의 표준 문장이에요. I want는 다소 무례하게 들릴 수 있어요."
+      },
+      {
+       "en": "I'll have the same.",
+       "ko": "저도 같은 걸로 할게요.",
+       "situation": "함께 주문할 때",
+       "tip": "메뉴를 고민할 시간이 없을 때 쓰는 한마디예요. 아주 자연스러워요."
+      },
+      {
+       "en": "Just water is fine, thanks.",
+       "ko": "그냥 물이면 돼요, 감사합니다.",
+       "situation": "음료를 사양할 때",
+       "tip": "is fine은 '그걸로 충분하다'는 뜻이에요. 정중한 사양 표현이에요."
+      },
+      {
+       "en": "Could I see the menu?",
+       "ko": "메뉴판 좀 볼 수 있을까요?",
+       "situation": "자리에 앉은 뒤",
+       "tip": "Give me the menu는 명령조예요. Could I see로 물어야 자연스러워요."
+      },
+      {
+       "en": "What do you recommend?",
+       "ko": "뭐가 맛있어요?",
+       "situation": "메뉴를 고를 때",
+       "tip": "직원과 대화를 트고 현지 음식을 알게 되는 가장 좋은 질문이에요."
+      },
+      {
+       "en": "I'll take this one.",
+       "ko": "이걸로 할게요.",
+       "situation": "물건을 고를 때",
+       "tip": "손으로 가리키며 쓰면 이름을 몰라도 통해요. 만능 구매 문장이에요."
+      },
+      {
+       "en": "Do you have this in a different size?",
+       "ko": "이거 다른 사이즈 있나요?",
+       "situation": "옷 가게에서",
+       "tip": "size 자리에 color를 넣으면 색상 문의가 돼요."
+      },
+      {
+       "en": "Can I try this on?",
+       "ko": "이거 입어봐도 될까요?",
+       "situation": "옷을 고를 때",
+       "tip": "try on은 '착용해 보다'예요. 신발, 모자에도 똑같이 써요."
+      },
+      {
+       "en": "Where's the fitting room?",
+       "ko": "탈의실이 어디예요?",
+       "situation": "옷을 입어볼 때",
+       "tip": "미국에서는 fitting room 또는 dressing room이라고 해요."
+      },
+      {
+       "en": "Do you take cards?",
+       "ko": "카드 되나요?",
+       "situation": "계산할 때",
+       "tip": "Can I pay by card?도 되지만 Do you take cards?가 더 짧고 흔해요."
+      },
+      {
+       "en": "Could I get a receipt?",
+       "ko": "영수증 좀 주시겠어요?",
+       "situation": "계산 후",
+       "tip": "receipt의 p는 소리 내지 않아요. '리씻'에 가깝게 발음해요."
+      },
+      {
+       "en": "Can I get this to go?",
+       "ko": "이거 포장해 주시겠어요?",
+       "situation": "테이크아웃할 때",
+       "tip": "to go가 '포장'이에요. 매장에서 먹으면 for here라고 해요."
+      },
+      {
+       "en": "Could we get the check, please?",
+       "ko": "계산서 좀 주시겠어요?",
+       "situation": "식사를 마친 뒤",
+       "tip": "미국에서는 check, 영국에서는 bill이에요. 자리에서 계산하는 문화라 꼭 필요해요."
+      },
+      {
+       "en": "Can we split the bill?",
+       "ko": "각자 계산할 수 있을까요?",
+       "situation": "나눠 낼 때",
+       "tip": "split the bill은 '더치페이'예요. Dutch pay는 영어에 없는 표현이에요."
+      },
+      {
+       "en": "Keep the change.",
+       "ko": "거스름돈은 됐어요.",
+       "situation": "팁을 줄 때",
+       "tip": "현금 결제 시 팁을 주는 흔한 방법이에요. 미국 식당 팁은 보통 15~20%예요."
+      },
+      {
+       "en": "I'm just looking, thanks.",
+       "ko": "그냥 둘러보는 중이에요, 감사합니다.",
+       "situation": "점원이 다가왔을 때",
+       "tip": "부담스럽지 않게 거절하는 표준 문장이에요. 웃으며 말하면 충분해요."
+      },
+      {
+       "en": "Is this on sale?",
+       "ko": "이거 할인 중인가요?",
+       "situation": "가격을 확인할 때",
+       "tip": "on sale은 '할인 중', for sale은 '판매 중'이에요. 헷갈리기 쉬우니 주의하세요."
+      },
+      {
+       "en": "Do you have any left?",
+       "ko": "남은 거 있나요?",
+       "situation": "품절을 확인할 때",
+       "tip": "left는 '남아 있는'이라는 뜻이에요. 짧지만 아주 자주 쓰여요."
+      },
+      {
+       "en": "I'd like to return this.",
+       "ko": "이거 반품하고 싶어요.",
+       "situation": "교환·환불할 때",
+       "tip": "영수증(receipt)을 함께 내밀면 훨씬 빨라요. 교환은 exchange예요."
+      },
+      {
+       "en": "Excuse me, I think there's a mistake on the bill.",
+       "ko": "실례합니다, 계산서에 착오가 있는 것 같아요.",
+       "situation": "금액이 이상할 때",
+       "tip": "You are wrong 대신 there's a mistake라고 하면 상대를 탓하지 않게 돼요."
+      },
+      {
+       "en": "Could I get a bag?",
+       "ko": "봉투 하나 주시겠어요?",
+       "situation": "계산 후",
+       "tip": "미국은 봉투가 유료인 곳도 많아요. paper or plastic? 이라고 되물으면 종이냐 비닐이냐는 뜻이에요."
+      },
+      {
+       "en": "Sorry, I'm in line.",
+       "ko": "죄송한데, 저 줄 서 있는 거예요.",
+       "situation": "새치기를 당했을 때",
+       "tip": "미국에서는 in line, 영국에서는 in the queue라고 해요. 부드럽지만 분명하게 말하세요."
+      },
+      {
+       "en": "Go ahead, I'm not in a hurry.",
+       "ko": "먼저 하세요, 저는 안 급해요.",
+       "situation": "순서를 양보할 때",
+       "tip": "Go ahead는 '먼저 하세요'라는 뜻으로 일상에서 정말 자주 쓰여요."
+      },
+      {
+       "en": "Do you know what time you close?",
+       "ko": "몇 시에 문 닫는지 아세요?",
+       "situation": "영업시간 확인",
+       "tip": "Do you know를 앞에 붙이면 질문이 훨씬 부드러워져요."
+      },
+      {
+       "en": "Is this seat free?",
+       "ko": "이 자리 비어 있나요?",
+       "situation": "카페나 식당에서",
+       "tip": "Is this seat taken?과 뜻은 같지만 대답의 yes/no가 반대가 되니 잘 들으세요."
+      },
+      {
+       "en": "Could you make it a little less spicy?",
+       "ko": "조금만 덜 맵게 해주실 수 있을까요?",
+       "situation": "음식을 조절할 때",
+       "tip": "a little을 넣으면 요청이 부드러워져요. less salty, less sweet으로 바꿔 쓸 수 있어요."
+      },
+      {
+       "en": "I don't eat pork.",
+       "ko": "저는 돼지고기를 안 먹어요.",
+       "situation": "식단을 알릴 때",
+       "tip": "종교나 건강상 제한을 알릴 때 쓰는 담백한 문장이에요. I'm vegetarian도 함께 알아두세요."
+      },
+      {
+       "en": "It was really good, thank you.",
+       "ko": "정말 맛있었어요, 감사합니다.",
+       "situation": "식사를 마치고",
+       "tip": "식당을 나서며 이 한마디를 건네면 서로 기분이 좋아져요."
+      },
+      {
+       "en": "Could I get some more napkins?",
+       "ko": "냅킨 좀 더 주시겠어요?",
+       "situation": "추가 요청할 때",
+       "tip": "some more를 쓰면 부탁이 부드러워져요. napkins 자리를 바꿔 다양하게 쓰세요."
+      },
+      {
+       "en": "You're all set.",
+       "ko": "다 됐습니다.",
+       "situation": "직원이 마무리해줄 때",
+       "tip": "내가 말하기보다 듣게 되는 문장이에요. '준비 완료, 이제 가셔도 돼요'라는 뜻이에요."
+      }
+     ]
+    },
+    {
+     "key": "feel",
+     "label": "감정과 상태 표현",
+     "items": [
+      {
+       "en": "I'm beat.",
+       "ko": "완전 지쳤어요.",
+       "situation": "많이 피곤할 때",
+       "tip": "I'm tired보다 훨씬 생생한 구어 표현이에요. 하루를 마칠 때 자주 써요."
+      },
+      {
+       "en": "I'm swamped right now.",
+       "ko": "지금 일이 너무 많아요.",
+       "situation": "바쁠 때",
+       "tip": "swamp는 '늪'이에요. 일에 파묻혀 있다는 느낌의 아주 흔한 표현이에요."
+      },
+      {
+       "en": "I'm a little under the weather.",
+       "ko": "몸이 좀 안 좋아요.",
+       "situation": "컨디션이 나쁠 때",
+       "tip": "직역하면 '날씨 아래'지만 실제로는 '몸이 찌뿌둥하다'는 뜻이에요."
+      },
+      {
+       "en": "I'm really nervous about it.",
+       "ko": "그것 때문에 정말 긴장돼요.",
+       "situation": "앞둔 일이 부담될 때",
+       "tip": "be nervous about ___ 로 긴장의 대상을 붙여 말해요."
+      },
+      {
+       "en": "I'm so excited!",
+       "ko": "정말 신나요!",
+       "situation": "기대될 때",
+       "tip": "excited는 사람이 느끼는 감정, exciting은 그렇게 만드는 대상이에요. I'm exciting은 틀린 표현이에요."
+      },
+      {
+       "en": "I'm kind of homesick.",
+       "ko": "좀 향수병이 있어요.",
+       "situation": "타지 생활이 힘들 때",
+       "tip": "kind of를 붙이면 감정을 과장하지 않고 솔직하게 전할 수 있어요."
+      },
+      {
+       "en": "I miss my family.",
+       "ko": "가족이 보고 싶어요.",
+       "situation": "그리움을 표현할 때",
+       "tip": "miss는 '그리워하다'예요. 짧지만 누구나 공감하는 문장이에요."
+      },
+      {
+       "en": "I'm having a rough day.",
+       "ko": "오늘 좀 힘든 하루예요.",
+       "situation": "기분이 안 좋을 때",
+       "tip": "rough는 '힘든, 거친'이라는 뜻이에요. 구체적인 이유를 말하지 않아도 통해요."
+      },
+      {
+       "en": "I feel much better now.",
+       "ko": "이제 훨씬 나아졌어요.",
+       "situation": "회복했을 때",
+       "tip": "much를 넣으면 비교가 강조돼요. 걱정해준 사람에게 꼭 전해주세요."
+      },
+      {
+       "en": "That really made my day.",
+       "ko": "그 덕분에 오늘 하루가 정말 좋았어요.",
+       "situation": "기분 좋은 일이 있었을 때",
+       "tip": "make one's day는 '하루를 행복하게 만들다'라는 뜻이에요. 최고의 칭찬 중 하나예요."
+      },
+      {
+       "en": "I'm so relieved.",
+       "ko": "정말 마음이 놓여요.",
+       "situation": "걱정이 풀렸을 때",
+       "tip": "relieved는 '안도한'이에요. 결과를 기다리다 좋은 소식을 들었을 때 딱 맞아요."
+      },
+      {
+       "en": "I'm worried about him.",
+       "ko": "그 사람이 걱정돼요.",
+       "situation": "누군가를 염려할 때",
+       "tip": "be worried about ___ 로 걱정의 대상을 말해요. 관계를 깊게 하는 문장이에요."
+      },
+      {
+       "en": "I'm proud of you.",
+       "ko": "당신이 정말 자랑스러워요.",
+       "situation": "격려하고 칭찬할 때",
+       "tip": "영어권에서는 친구 사이에도 아주 흔하게 쓰는 따뜻한 말이에요."
+      },
+      {
+       "en": "I'm a little confused.",
+       "ko": "좀 헷갈려요.",
+       "situation": "상황이 이해가 안 될 때",
+       "tip": "I don't understand보다 부드럽게 도움을 청하는 신호가 돼요."
+      },
+      {
+       "en": "I'm not really in the mood today.",
+       "ko": "오늘은 좀 그럴 기분이 아니에요.",
+       "situation": "제안을 정중히 거절할 때",
+       "tip": "in the mood는 '~할 기분이다'예요. 이유를 길게 설명하지 않아도 되는 표현이에요."
+      },
+      {
+       "en": "I need a break.",
+       "ko": "좀 쉬어야겠어요.",
+       "situation": "지쳤을 때",
+       "tip": "break는 짧은 휴식이에요. 커피 마시러 가자는 신호로도 쓰여요."
+      },
+      {
+       "en": "I couldn't sleep last night.",
+       "ko": "어젯밤에 잠을 못 잤어요.",
+       "situation": "피곤한 이유를 말할 때",
+       "tip": "시차 적응 중이라면 뒤에 I think it's jet lag를 붙여보세요."
+      },
+      {
+       "en": "I'm starving.",
+       "ko": "배고파 죽겠어요.",
+       "situation": "많이 배고플 때",
+       "tip": "I'm hungry보다 훨씬 생생해요. 식사 제안으로 자연스럽게 이어지는 표현이에요."
+      },
+      {
+       "en": "I'm getting used to it.",
+       "ko": "점점 익숙해지고 있어요.",
+       "situation": "적응 중일 때",
+       "tip": "get used to ___ 는 '~에 익숙해지다'예요. 새 환경 이야기에서 꼭 나오는 패턴이에요."
+      },
+      {
+       "en": "It slipped my mind.",
+       "ko": "깜빡했어요.",
+       "situation": "잊어버렸을 때",
+       "tip": "I forgot보다 부드러워요. '의도치 않게 놓쳤다'는 뉘앙스가 담겨요."
+      },
+      {
+       "en": "I'm so embarrassed.",
+       "ko": "너무 부끄러워요.",
+       "situation": "창피한 실수를 했을 때",
+       "tip": "embarrassed는 '창피한', ashamed는 '떳떳하지 못한'이에요. 일상 실수에는 embarrassed를 쓰세요."
+      },
+      {
+       "en": "I didn't mean it that way.",
+       "ko": "그런 뜻으로 한 말이 아니었어요.",
+       "situation": "오해가 생겼을 때",
+       "tip": "외국어로 말하다 보면 의도와 다르게 전달될 때가 있어요. 이 문장이 관계를 지켜줘요."
+      },
+      {
+       "en": "I feel bad about it.",
+       "ko": "그 일이 마음에 걸려요.",
+       "situation": "미안함이 남았을 때",
+       "tip": "feel bad는 몸이 아픈 게 아니라 마음이 불편하다는 뜻이에요."
+      },
+      {
+       "en": "I'm really grateful for you.",
+       "ko": "당신이 있어서 정말 감사해요.",
+       "situation": "고마움을 전할 때",
+       "tip": "grateful for는 구체적인 일에도, 사람 자체에도 쓸 수 있어요."
+      },
+      {
+       "en": "I'm looking forward to it.",
+       "ko": "정말 기대하고 있어요.",
+       "situation": "약속을 앞두고",
+       "tip": "look forward to 뒤에는 명사나 -ing가 와요. to 다음에 동사원형을 쓰지 않도록 주의하세요."
+      },
+      {
+       "en": "Honestly, I'm a little scared.",
+       "ko": "솔직히 조금 두려워요.",
+       "situation": "불안을 나눌 때",
+       "tip": "Honestly로 시작하면 진솔한 대화의 문이 열려요. 약함을 보이는 게 관계를 깊게 해요."
+      },
+      {
+       "en": "That means a lot to me.",
+       "ko": "그 말이 저에겐 정말 큰 의미예요.",
+       "situation": "위로나 칭찬을 받았을 때",
+       "tip": "Thank you 뒤에 붙이면 감사가 몇 배로 깊어져요."
+      },
+      {
+       "en": "I'm okay, really.",
+       "ko": "저 괜찮아요, 진짜예요.",
+       "situation": "걱정을 덜어줄 때",
+       "tip": "really를 뒤에 붙이면 진심이라는 게 전달돼요."
+      },
+      {
+       "en": "I just need some time.",
+       "ko": "시간이 좀 필요할 뿐이에요.",
+       "situation": "혼자 정리하고 싶을 때",
+       "tip": "거절이 아니라 '지금은 아니다'라는 뜻이에요. 상대를 밀어내지 않는 표현이에요."
+      },
+      {
+       "en": "I'm happy right where I am.",
+       "ko": "저는 지금 이 자리가 좋아요.",
+       "situation": "만족을 표현할 때",
+       "tip": "right where I am은 '바로 지금 여기'예요. 감사가 담긴 성숙한 표현이에요."
+      }
+     ]
+    },
+    {
+     "key": "plan",
+     "label": "약속과 시간, 계획",
+     "items": [
+      {
+       "en": "Are you free tomorrow?",
+       "ko": "내일 시간 되세요?",
+       "situation": "약속을 잡을 때",
+       "tip": "free는 '한가한'이라는 뜻이에요. 약속 잡기의 가장 기본 문장이에요."
+      },
+      {
+       "en": "What time works for you?",
+       "ko": "몇 시가 편하세요?",
+       "situation": "시간을 맞출 때",
+       "tip": "work for you는 '당신에게 괜찮다'는 뜻이에요. 상대를 배려하는 질문이에요."
+      },
+      {
+       "en": "Does Friday work?",
+       "ko": "금요일 괜찮으세요?",
+       "situation": "날짜를 제안할 때",
+       "tip": "짧게 Does ___ work? 만으로 충분해요. 원어민이 문자로 정말 자주 쓰는 형태예요."
+      },
+      {
+       "en": "Let's say around seven.",
+       "ko": "일곱 시쯤으로 하죠.",
+       "situation": "시간을 정할 때",
+       "tip": "Let's say는 '~로 하자'라고 제안하는 표현이고, around는 '쯤'이에요."
+      },
+      {
+       "en": "I'll be there in ten minutes.",
+       "ko": "십 분 뒤에 도착해요.",
+       "situation": "이동 중에",
+       "tip": "in ten minutes는 '지금부터 십 분 후'예요. after를 쓰면 어색해요."
+      },
+      {
+       "en": "I'm running late, sorry.",
+       "ko": "조금 늦을 것 같아요, 죄송해요.",
+       "situation": "늦을 때",
+       "tip": "running late는 '예정보다 늦어지는 중'이에요. 미리 보내면 신뢰를 지킬 수 있어요."
+      },
+      {
+       "en": "Something came up.",
+       "ko": "갑자기 일이 생겼어요.",
+       "situation": "약속을 못 지킬 때",
+       "tip": "구체적 이유를 말하지 않아도 되는 정중한 표현이에요. 원어민이 정말 자주 써요."
+      },
+      {
+       "en": "Can we reschedule?",
+       "ko": "일정을 다시 잡을 수 있을까요?",
+       "situation": "약속을 미룰 때",
+       "tip": "cancel(취소)이 아니라 reschedule(다시 잡기)이라고 하면 관계가 이어져요."
+      },
+      {
+       "en": "I'll let you know.",
+       "ko": "알려드릴게요.",
+       "situation": "확답을 미룰 때",
+       "tip": "바로 답하기 어려울 때 쓰는 만능 표현이에요. 단, 꼭 다시 연락하세요."
+      },
+      {
+       "en": "I'll keep you posted.",
+       "ko": "진행 상황 계속 알려드릴게요.",
+       "situation": "소식을 전하기로 할 때",
+       "tip": "keep someone posted는 '계속 업데이트해주다'라는 뜻이에요. 일터에서 특히 자주 쓰여요."
+      },
+      {
+       "en": "Let me check my schedule.",
+       "ko": "일정 좀 확인해 볼게요.",
+       "situation": "바로 답하기 어려울 때",
+       "tip": "Let me check는 시간을 버는 가장 자연스러운 표현이에요."
+      },
+      {
+       "en": "Sounds like a plan.",
+       "ko": "그렇게 하죠, 좋아요.",
+       "situation": "계획에 합의할 때",
+       "tip": "계획이 정해졌을 때 쓰는 유쾌한 마무리 표현이에요."
+      },
+      {
+       "en": "See you then!",
+       "ko": "그때 봬요!",
+       "situation": "약속을 마무리할 때",
+       "tip": "시간이 정해진 뒤 쓰는 인사예요. See you later보다 구체적이에요."
+      },
+      {
+       "en": "Where should we meet?",
+       "ko": "어디서 만날까요?",
+       "situation": "장소를 정할 때",
+       "tip": "should를 쓰면 함께 정하자는 뉘앙스가 생겨요."
+      },
+      {
+       "en": "I'll pick you up at six.",
+       "ko": "여섯 시에 데리러 갈게요.",
+       "situation": "차로 태워줄 때",
+       "tip": "pick up은 '데리러 가다', drop off는 '내려주다'예요. 함께 외워두세요."
+      },
+      {
+       "en": "I'm on my way.",
+       "ko": "지금 가는 중이에요.",
+       "situation": "출발했을 때",
+       "tip": "문자로 OMW라고 줄여 쓰기도 해요. 가장 자주 쓰이는 이동 알림이에요."
+      },
+      {
+       "en": "I'm almost there.",
+       "ko": "거의 다 왔어요.",
+       "situation": "도착 직전",
+       "tip": "기다리는 사람을 안심시키는 한마디예요."
+      },
+      {
+       "en": "Take your time.",
+       "ko": "천천히 하세요.",
+       "situation": "기다려줄 때",
+       "tip": "상대의 부담을 덜어주는 배려의 표현이에요. 서두르지 않아도 된다는 뜻이에요."
+      },
+      {
+       "en": "No rush.",
+       "ko": "급할 거 없어요.",
+       "situation": "여유를 줄 때",
+       "tip": "부탁을 하면서 뒤에 붙이면 훨씬 부드러워져요."
+      },
+      {
+       "en": "Whenever you get a chance.",
+       "ko": "시간 되실 때 언제든요.",
+       "situation": "부탁에 여유를 줄 때",
+       "tip": "급하지 않은 부탁에 붙이는 표현이에요. 상대가 훨씬 편하게 받아들여요."
+      },
+      {
+       "en": "Let's touch base next week.",
+       "ko": "다음 주에 한번 이야기 나눠요.",
+       "situation": "후속 논의를 약속할 때",
+       "tip": "touch base는 '간단히 상황을 공유하다'라는 뜻이에요. 일터에서 아주 흔해요."
+      },
+      {
+       "en": "Can I get back to you on that?",
+       "ko": "그건 나중에 다시 말씀드려도 될까요?",
+       "situation": "즉답이 어려울 때",
+       "tip": "get back to you는 '나중에 답을 주다'예요. 거절이 아니라 시간을 구하는 표현이에요."
+      },
+      {
+       "en": "I should get going.",
+       "ko": "이제 가봐야겠어요.",
+       "situation": "자리를 뜰 때",
+       "tip": "갑자기 일어나면 어색해요. 이 문장으로 신호를 준 뒤 인사하는 게 자연스러워요."
+      },
+      {
+       "en": "I'm gonna head out.",
+       "ko": "저 이제 나갈게요.",
+       "situation": "편한 사이에서 떠날 때",
+       "tip": "head out은 '출발하다, 나서다'예요. gonna는 going to의 구어체예요."
+      },
+      {
+       "en": "Let's call it a day.",
+       "ko": "오늘은 여기까지 하죠.",
+       "situation": "일을 마칠 때",
+       "tip": "현장이나 사무실에서 하루 작업을 마무리할 때 그대로 쓰는 표현이에요."
+      },
+      {
+       "en": "We'll cross that bridge when we get there.",
+       "ko": "그건 그때 가서 생각해요.",
+       "situation": "먼 걱정을 미룰 때",
+       "tip": "닥치지 않은 문제로 걱정하는 사람에게 건네는 지혜로운 관용표현이에요."
+      },
+      {
+       "en": "Let me think about it.",
+       "ko": "좀 생각해 볼게요.",
+       "situation": "결정을 미룰 때",
+       "tip": "부드러운 거절로도, 진짜 고민의 표현으로도 쓰여요. 상황이 알아서 알려줘요."
+      },
+      {
+       "en": "I can't make it, but thanks for asking.",
+       "ko": "저는 못 갈 것 같아요, 그래도 물어봐 주셔서 감사해요.",
+       "situation": "초대를 거절할 때",
+       "tip": "거절 뒤에 감사를 붙이는 게 핵심이에요. 관계가 상하지 않아요."
+      },
+      {
+       "en": "Count me in.",
+       "ko": "저도 낄게요.",
+       "situation": "함께하겠다고 할 때",
+       "tip": "짧고 경쾌한 참여 선언이에요. 반대는 Count me out이에요."
+      },
+      {
+       "en": "I'm free all afternoon.",
+       "ko": "저는 오후 내내 시간 돼요.",
+       "situation": "여유를 알릴 때",
+       "tip": "all afternoon, all day처럼 시간 범위를 붙여 쓰면 조율이 빨라져요."
+      }
+     ]
+    },
+    {
+     "key": "work",
+     "label": "함께 일하기",
+     "items": [
+      {
+       "en": "Could you give me a hand with this?",
+       "ko": "이것 좀 도와주시겠어요?",
+       "situation": "일손이 필요할 때",
+       "tip": "give me a hand는 '손을 보태다'라는 뜻이에요. 현장에서 가장 많이 쓰는 부탁이에요."
+      },
+      {
+       "en": "What do you want me to do?",
+       "ko": "제가 뭘 하면 될까요?",
+       "situation": "지시를 기다릴 때",
+       "tip": "want me to ___ 는 '내가 ~하기를 원하다'예요. 일을 배울 때 가장 유용한 질문이에요."
+      },
+      {
+       "en": "Where do you want this?",
+       "ko": "이거 어디에 둘까요?",
+       "situation": "물건을 옮길 때",
+       "tip": "짧지만 현장에서 하루에도 수십 번 쓰이는 문장이에요."
+      },
+      {
+       "en": "I'm on it.",
+       "ko": "바로 할게요.",
+       "situation": "지시를 받았을 때",
+       "tip": "세 단어로 신뢰를 주는 표현이에요. I will do it보다 훨씬 능동적으로 들려요."
+      },
+      {
+       "en": "Leave it to me.",
+       "ko": "저한테 맡기세요.",
+       "situation": "책임지고 맡을 때",
+       "tip": "자신감 있는 표현이에요. 확실히 해낼 수 있을 때만 쓰세요."
+      },
+      {
+       "en": "Just let me know if you need anything.",
+       "ko": "필요한 거 있으면 언제든 말씀하세요.",
+       "situation": "도움을 열어둘 때",
+       "tip": "일터에서든 손님에게든 두루 통하는 배려의 표현이에요."
+      },
+      {
+       "en": "Do you want me to help?",
+       "ko": "제가 도와드릴까요?",
+       "situation": "먼저 손을 내밀 때",
+       "tip": "Can I help you?보다 더 구체적으로 행동을 제안하는 느낌이에요."
+      },
+      {
+       "en": "How can I help?",
+       "ko": "어떻게 도와드리면 될까요?",
+       "situation": "도움을 자청할 때",
+       "tip": "도울지 말지가 아니라 '어떻게 도울지'를 묻기 때문에 훨씬 적극적으로 들려요."
+      },
+      {
+       "en": "I'll take care of it.",
+       "ko": "제가 처리할게요.",
+       "situation": "일을 맡을 때",
+       "tip": "take care of는 '알아서 처리하다'예요. 일터에서 가장 자주 쓰이는 표현 중 하나예요."
+      },
+      {
+       "en": "Just let me know when you're ready.",
+       "ko": "준비되시면 말씀해 주세요.",
+       "situation": "상대를 기다릴 때",
+       "tip": "촬영이나 작업 현장에서 호흡을 맞출 때 딱 맞는 문장이에요."
+      },
+      {
+       "en": "Are we good to go?",
+       "ko": "이제 시작해도 될까요?",
+       "situation": "준비 상태를 확인할 때",
+       "tip": "good to go는 '준비 완료'라는 뜻이에요. 현장에서 정말 자주 들려요."
+      },
+      {
+       "en": "We're on track.",
+       "ko": "계획대로 잘 가고 있어요.",
+       "situation": "진행 상황을 보고할 때",
+       "tip": "on track은 '궤도 위에 있다', 즉 일정대로라는 뜻이에요."
+      },
+      {
+       "en": "Let me double-check.",
+       "ko": "제가 한 번 더 확인해 볼게요.",
+       "situation": "확인이 필요할 때",
+       "tip": "double-check는 '재확인하다'예요. 실수를 줄이는 프로의 습관이자 표현이에요."
+      },
+      {
+       "en": "I think we're almost done.",
+       "ko": "거의 다 된 것 같아요.",
+       "situation": "마무리 단계에서",
+       "tip": "almost done은 '거의 끝났다'예요. 팀에 진행 상황을 알리는 짧은 보고예요."
+      },
+      {
+       "en": "Can you hold this for a second?",
+       "ko": "이것 좀 잠깐 들어주시겠어요?",
+       "situation": "손이 모자랄 때",
+       "tip": "for a second를 붙이면 '잠깐만'이라는 가벼움이 생겨 부탁이 편해져요."
+      },
+      {
+       "en": "Could you move a little to the left?",
+       "ko": "왼쪽으로 조금만 이동해 주시겠어요?",
+       "situation": "위치를 조정할 때",
+       "tip": "촬영이나 사진에서 꼭 필요한 문장이에요. left를 right, back, forward로 바꿔 쓰세요."
+      },
+      {
+       "en": "Is this okay?",
+       "ko": "이렇게 하면 될까요?",
+       "situation": "확인받을 때",
+       "tip": "짧게 묻고 바로 고치는 게 현장에서는 최고의 소통이에요."
+      },
+      {
+       "en": "Let's try it one more time.",
+       "ko": "한 번만 더 해봐요.",
+       "situation": "다시 시도할 때",
+       "tip": "실패를 탓하지 않고 다음 기회를 여는 표현이에요."
+      },
+      {
+       "en": "That's perfect, thank you.",
+       "ko": "완벽해요, 감사합니다.",
+       "situation": "결과가 좋을 때",
+       "tip": "짧은 확인과 감사가 팀 분위기를 만들어요. 아끼지 말고 쓰세요."
+      },
+      {
+       "en": "Nice work, everyone.",
+       "ko": "다들 수고 많았어요.",
+       "situation": "일을 마쳤을 때",
+       "tip": "영어에는 '수고하셨습니다'가 따로 없어요. Nice work나 Great job이 그 자리를 대신해요."
+      },
+      {
+       "en": "Sorry, that was my fault.",
+       "ko": "죄송해요, 제 잘못이에요.",
+       "situation": "실수를 인정할 때",
+       "tip": "빠르고 담백하게 인정하면 오히려 신뢰가 올라가요. 길게 변명하지 마세요."
+      },
+      {
+       "en": "I'll fix it right now.",
+       "ko": "지금 바로 고칠게요.",
+       "situation": "문제를 바로잡을 때",
+       "tip": "사과 뒤에 바로 이 문장을 붙이면 책임감이 완성돼요."
+      },
+      {
+       "en": "Do you have a minute?",
+       "ko": "잠깐 시간 있으세요?",
+       "situation": "대화를 요청할 때",
+       "tip": "바쁜 사람에게 말을 걸 때의 표준 서두예요."
+      },
+      {
+       "en": "Can I ask you something real quick?",
+       "ko": "빠르게 하나만 여쭤봐도 될까요?",
+       "situation": "짧게 물을 때",
+       "tip": "real quick은 '아주 잠깐'이라는 구어 표현이에요. 상대의 부담을 확 줄여줘요."
+      },
+      {
+       "en": "What do you think?",
+       "ko": "어떻게 생각하세요?",
+       "situation": "의견을 구할 때",
+       "tip": "세 단어로 상대를 존중하는 표현이에요. 회의에서 분위기를 여는 질문이에요."
+      },
+      {
+       "en": "I'm not sure. What would you do?",
+       "ko": "잘 모르겠어요. 당신이라면 어떻게 하시겠어요?",
+       "situation": "조언을 구할 때",
+       "tip": "모른다고 인정하고 지혜를 구하는 문장이에요. 관계도 실력도 함께 자라요."
+      },
+      {
+       "en": "Whatever works for you.",
+       "ko": "편하신 대로 하세요.",
+       "situation": "상대에게 맞출 때",
+       "tip": "유연함을 보여주는 표현이에요. 다만 모든 결정에 쓰면 무책임해 보일 수 있어요."
+      },
+      {
+       "en": "It's up to you.",
+       "ko": "당신이 결정하세요.",
+       "situation": "결정을 넘길 때",
+       "tip": "be up to someone은 '~에게 달려 있다'예요. 상대를 존중하는 표현이에요."
+      },
+      {
+       "en": "Thanks for jumping in.",
+       "ko": "도와주러 나서주셔서 감사해요.",
+       "situation": "누군가 도와줬을 때",
+       "tip": "jump in은 '중간에 뛰어들어 돕다'라는 뜻이에요. 자발적인 도움에 대한 감사예요."
+      },
+      {
+       "en": "We couldn't have done it without you.",
+       "ko": "당신 없었으면 못 해냈을 거예요.",
+       "situation": "팀에 감사할 때",
+       "tip": "가정법 표현이지만 통째로 외워 쓰세요. 팀원에게 건네는 최고의 인정이에요."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "key": "mental",
+   "label": "멘탈 강화",
+   "subtitle": "Lone Survivor · 견뎌내는 자의 문장들",
+   "modules": [
+    {
+     "key": "mental",
+     "label": "군인 정신",
+     "items": [
+      {
+       "en": "Winning here is a conscious decision.",
+       "ko": "여기서 이기는 것은 의식적인 선택입니다.",
+       "situation": "극한 훈련 중, 교관이 던지는 말",
+       "tip": "conscious decision(의식적인 결정)이 핵심이에요. 이기는 건 우연이 아니라 매 순간의 선택이라는 뜻이에요."
+      },
+      {
+       "en": "Make up your mind whether you want to pass or choose to fail.",
+       "ko": "통과할지, 아니면 실패를 선택할지 마음을 정하세요.",
+       "situation": "포기 직전, 스스로에게 던져야 할 질문",
+       "tip": "choose to fail — 실패조차 스스로 선택하는 것이라는 뼈아픈 표현이에요. mind에 강세를 주세요."
+      },
+      {
+       "en": "Take all this shaking and all this cold, and turn it into aggression.",
+       "ko": "이 떨림과 이 추위를 전부 받아들이고, 그것을 공격성으로 바꾸세요.",
+       "situation": "몸이 무너질 것 같은 순간, 그 상태를 무기로 바꾸라는 말",
+       "tip": "turn A into B(A를 B로 바꾸다) 패턴이에요. 두려움도 에너지로 바꿀 수 있다는 뜻이에요."
+      },
+      {
+       "en": "You just proved to your body, through your mind, that you can push yourself further than you thought possible.",
+       "ko": "당신은 방금 마음을 통해 몸에게 증명했습니다. 생각했던 것보다 더 멀리 자신을 밀어붙일 수 있다는 것을요.",
+       "situation": "한계를 넘어선 직후, 그 경험의 의미를 짚어주는 말",
+       "tip": "push yourself further than you thought possible — 이 훈련 전체를 관통하는 핵심 문장이에요."
+      },
+      {
+       "en": "Whatever you have to do, just find an excuse to win.",
+       "ko": "무엇을 해야 하든, 그냥 이길 핑계를 찾으세요.",
+       "situation": "승리에 대한 태도를 강조하는 말",
+       "tip": "find an excuse to win — 포기할 핑계 대신 이길 핑계를 찾으라는 역발상 표현이에요."
+      },
+      {
+       "en": "Keep going. It pays to be a winner.",
+       "ko": "계속하세요. 승자가 되는 건 그만한 가치가 있습니다.",
+       "situation": "지쳐서 멈추고 싶을 때 되뇌는 말",
+       "tip": "it pays to be ___ — ___가 되는 건 보상이 따른다는 뜻의 자연스러운 패턴이에요."
+      },
+      {
+       "en": "I hit my limit. So?",
+       "ko": "한계에 다다랐어요. — 그래서요?",
+       "situation": "한계를 이유로 대는 사람에게 되묻는 교관의 말",
+       "tip": "So? 는 짧지만 가장 강력한 반문이에요. 한계는 멈출 이유가 아니라는 뜻이 담겨 있어요."
+      },
+      {
+       "en": "Are you absolutely sure? I'm positive.",
+       "ko": "정말 확실해요? — 확신해요.",
+       "situation": "자신의 결심을 다시 확인받는 순간",
+       "tip": "I'm positive는 I'm sure보다 훨씬 더 강하고 단호한 확신의 표현이에요."
+      },
+      {
+       "en": "I have buddies I can depend on, and I want them to be able to depend on me too.",
+       "ko": "저에게는 의지할 수 있는 동료들이 있고, 저도 그들이 저에게 의지할 수 있으면 좋겠어요.",
+       "situation": "팀을 향한 책임감을 말하는 순간",
+       "tip": "depend on(의지하다)이 두 번 반복돼요. 신뢰는 서로 주고받는 것이라는 의미가 담겨 있어요."
+      },
+      {
+       "en": "You guys are our band of brothers.",
+       "ko": "여러분은 우리의 밴드 오브 브라더스, 즉 전우입니다.",
+       "situation": "함께 훈련을 견뎌낸 이들을 부르는 말",
+       "tip": "band of brothers는 생사를 함께한 전우를 뜻하는 유명한 표현이에요."
+      },
+      {
+       "en": "The only easy day was yesterday.",
+       "ko": "쉬웠던 날은 어제뿐이었다.",
+       "situation": "오늘이 더 힘들 거라고 각오할 때",
+       "tip": "미 해군 특수부대의 가장 유명한 구호예요. 오늘은 늘 어제보다 힘들다는 뜻이에요."
+      },
+      {
+       "en": "Get comfortable being uncomfortable.",
+       "ko": "불편함에 익숙해지세요.",
+       "situation": "힘든 환경을 견뎌야 할 때",
+       "tip": "comfortable과 uncomfortable을 나란히 쓴 역설 표현이에요. 성장은 늘 불편한 자리에서 일어나요."
+      },
+      {
+       "en": "Slow is smooth, and smooth is fast.",
+       "ko": "천천히 하면 매끄러워지고, 매끄러워지면 빨라진다.",
+       "situation": "조급해질 때 되새기는 말",
+       "tip": "급할수록 기본을 지키라는 뜻이에요. 실전 훈련에서 자주 인용되는 격언이에요."
+      },
+      {
+       "en": "Don't quit on a bad day.",
+       "ko": "힘든 날에 그만두지 마세요.",
+       "situation": "포기하고 싶은 순간",
+       "tip": "결정은 최악의 순간이 아니라 회복한 뒤에 내리라는 지혜예요."
+      },
+      {
+       "en": "One more step. That's all you need right now.",
+       "ko": "한 걸음만 더. 지금 필요한 건 그것뿐이에요.",
+       "situation": "끝이 보이지 않을 때",
+       "tip": "전체를 보지 말고 눈앞의 한 걸음만 보라는 뜻이에요. 실제로 가장 잘 통하는 방법이에요."
+      },
+      {
+       "en": "Discipline is doing what needs to be done, even when you don't want to.",
+       "ko": "규율이란 하기 싫을 때도 해야 할 일을 하는 것입니다.",
+       "situation": "의욕이 없는 날",
+       "tip": "동기(motivation)가 아니라 규율(discipline)이 사람을 끌고 간다는 뜻이에요."
+      },
+      {
+       "en": "Pain is temporary. Quitting lasts forever.",
+       "ko": "고통은 잠시지만, 포기는 영원히 남습니다.",
+       "situation": "버티기 힘들 때",
+       "tip": "temporary(일시적인)와 forever(영원히)의 대비가 핵심이에요."
+      },
+      {
+       "en": "Nobody cares. Work harder.",
+       "ko": "아무도 신경 쓰지 않는다. 더 열심히 해라.",
+       "situation": "변명하고 싶어질 때",
+       "tip": "차갑게 들리지만 변명을 끊어내는 데 가장 효과적인 문장이에요."
+      },
+      {
+       "en": "Embrace the suck.",
+       "ko": "이 고통을 끌어안아라.",
+       "situation": "피할 수 없는 상황에서",
+       "tip": "미군에서 널리 쓰이는 속어예요. suck(최악인 상황)을 받아들이고 나아가라는 뜻이에요."
+      },
+      {
+       "en": "You're better than you think you are, and you can do more than you think you can.",
+       "ko": "당신은 스스로 생각하는 것보다 더 강하고, 할 수 있다고 믿는 것보다 더 많은 것을 해낼 수 있습니다.",
+       "situation": "자신을 의심할 때",
+       "tip": "than you think(당신이 생각하는 것보다)가 두 번 반복돼요. 스스로에 대한 평가가 늘 과소평가라는 뜻이에요."
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}
