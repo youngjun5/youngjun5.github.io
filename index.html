@@ -4,14 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#17181b">
-<meta name="description" content="케어코너즈 STUDIO — 돌보고, 변화시켜, 삶의 모든 영역을 예수 그리스도처럼. 팀이 쓰는 도구를 한곳에">
+<meta name="description" content="CARECENTER — 돌보고, 변화시켜, 삶의 모든 영역을 예수 그리스도처럼. 팀이 쓰는 도구를 한곳에">
 <link rel="manifest" href="./manifest.json">
 <link rel="icon" href="./icon-192.png">
 <link rel="apple-touch-icon" href="./apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="STUDIO">
-<title>STUDIO</title>
+<meta name="apple-mobile-web-app-title" content="CARECENTER">
+<title>CARECENTER</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
@@ -27,10 +27,10 @@
     --ink: #e7e8ea;
     --ink-soft: #9a9ea6;
     --ink-faint: #6b6f78;
-    --accent: #5ba0d8;
-    --accent-soft: rgba(91,160,216,0.14);
+    --accent: #c3c6cc;
+    --accent-soft: rgba(231,232,234,0.07);
     --accent-ink: #0d1520;
-    --amber: #e0ab4c;
+    --amber: #9aa0a8;
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; }
@@ -59,7 +59,7 @@
     font-family: "Bricolage Grotesque", sans-serif; font-weight: 700; font-size: 17px;
     letter-spacing: 0.01em;
   }
-  .wordmark .dot { color: var(--accent); }
+  .wordmark .dot { color: var(--ink-faint); }
   header .owner {
     margin-left: auto; font: 500 12px "IBM Plex Mono", monospace; color: var(--ink-faint);
     letter-spacing: 0.02em;
@@ -68,23 +68,16 @@
   main { padding: clamp(28px, 6vw, 64px) clamp(20px, 5vw, 56px) 64px; max-width: 1080px; margin: 0 auto; }
 
   /* ── 비전 히어로 ── */
-  .hero { max-width: 840px; margin-bottom: clamp(38px, 6.5vw, 64px); }
-  .hero .eyebrow {
-    font: 600 11px "IBM Plex Mono", monospace; letter-spacing: 0.16em; text-transform: uppercase;
-    color: var(--accent); margin: 0 0 clamp(14px, 2.4vw, 20px);
-    display: flex; align-items: center; gap: 9px;
-  }
-  .hero .eyebrow::after {
-    content: ""; height: 1px; flex: 1; background: var(--hair); max-width: 180px;
-  }
+  .hero { max-width: 840px; margin-bottom: clamp(40px, 7vw, 72px); }
   .hero h1 { margin: 0; }
+  .hero .vsub:first-child { margin-top: 0; }
   .hero .vline {
     display: block;
     font-family: "Bricolage Grotesque", sans-serif; font-weight: 700;
     font-size: clamp(29px, 7.2vw, 54px); line-height: 1.04; letter-spacing: -0.021em;
-    text-wrap: balance;
+    text-wrap: balance; color: var(--ink-faint);
   }
-  .hero .vline em { font-style: normal; color: var(--accent); }
+  .hero .vline em { font-style: normal; color: var(--ink); }
   .hero .vsub {
     display: block; margin-top: clamp(11px, 1.8vw, 16px);
     font: 600 clamp(11.5px, 2.2vw, 14px) "IBM Plex Sans", sans-serif;
@@ -96,28 +89,21 @@
     text-wrap: pretty;
   }
 
-  /* ── 도구 섹션 ── */
-  .sectionhead { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
-  .sectionhead h2 {
-    font-family: "Bricolage Grotesque", sans-serif; font-weight: 700; font-size: 17px; margin: 0;
-  }
-  .sectionhead p { margin: 0; color: var(--ink-faint); font-size: 13px; }
-
-  .rooms { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+  .rooms { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 14px; }
 
   .room {
     position: relative; display: flex; flex-direction: column; gap: 14px;
     background: var(--surface); border: 1px solid var(--hair); border-radius: 14px;
-    padding: 20px; min-height: 168px;
+    padding: 20px; min-height: 132px;
     transition: border-color .15s ease, transform .15s ease, background .15s ease;
   }
   a.room:hover { border-color: var(--hair-strong); transform: translateY(-2px); background: var(--surface-2); }
-  a.room:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  a.room:focus-visible { outline: 2px solid var(--ink-soft); outline-offset: 2px; }
 
   .room-icon {
     width: 38px; height: 38px; border-radius: 10px;
     display: flex; align-items: center; justify-content: center; flex: none;
-    background: var(--accent-soft); color: var(--accent);
+    background: var(--surface-2); color: var(--ink-soft);
   }
   .room-icon svg { width: 19px; height: 19px; }
   .room.disabled .room-icon { background: var(--surface-2); color: var(--ink-faint); }
@@ -136,11 +122,11 @@
     font: 600 10.5px "IBM Plex Mono", monospace; letter-spacing: 0.06em; text-transform: uppercase;
     padding: 3px 8px; border-radius: 999px;
   }
-  .status.live { color: #6fbf85; background: rgba(111,191,133,0.12); }
-  .status.soon { color: var(--amber); background: rgba(224,171,76,0.12); }
+  .status.live { color: var(--ink-soft); background: rgba(231,232,234,0.07); }
+  .status.soon { color: var(--ink-faint); background: rgba(231,232,234,0.05); }
 
   .arrow { color: var(--ink-faint); transition: transform .15s ease, color .15s ease; }
-  a.room:hover .arrow { color: var(--accent); transform: translateX(2px); }
+  a.room:hover .arrow { color: var(--ink); transform: translateX(2px); }
 
   footer {
     padding: 20px clamp(20px, 5vw, 56px) 40px; color: var(--ink-faint); font-size: 12px;
@@ -156,29 +142,20 @@
 
 <header>
   <div class="mark"><img src="./mark-256.png" alt=""></div>
-  <span class="wordmark">STUDIO<span class="dot">.</span></span>
+  <span class="wordmark">CARECENTER<span class="dot">.</span></span>
   <span class="owner">youngjun</span>
 </header>
 
 <main>
   <section class="hero">
-    <p class="eyebrow">케어코너즈</p>
     <h1>
       <span class="vline">TO <em>CARE</em>, <em>CHANGE</em>, AND <em>CONQUER</em></span>
       <span class="vsub">EVERY CORNER OF OUR LIVES<br>LIKE JESUS CHRIST</span>
     </h1>
-    <p class="vko">돌보고, 변화시켜, 우리의 삶의 모든 영역을 예수 그리스도처럼 다스린다</p>
   </section>
-
-  <div class="sectionhead">
-    <h2>도구</h2>
-    <p>카드를 누르면 해당 앱으로 이동해요</p>
-  </div>
 
   <div class="rooms" id="rooms"></div>
 </main>
-
-<footer>이 화면 자체도 홈 화면에 설치할 수 있어요 — 브라우저 메뉴에서 "설치" 또는 "홈 화면에 추가"를 찾아보세요.</footer>
 
 <script>
   var ICONS = {
@@ -260,12 +237,11 @@
     if (!disabled) { el.href = r.href; }
     el.innerHTML =
       '<div class="room-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">' + ICONS[r.icon] + '</svg></div>' +
-      '<div class="room-body"><h2 class="room-title"></h2><p class="room-desc"></p></div>' +
+      '<div class="room-body"><h2 class="room-title"></h2></div>' +
       '<div class="room-foot"><span class="status ' + r.status + '"></span>' +
       (disabled ? '' : '<svg class="arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 3l5 5-5 5"/></svg>') +
       '</div>';
     el.querySelector(".room-title").textContent = r.title;
-    el.querySelector(".room-desc").textContent = r.desc;
     el.querySelector(".status").textContent = r.status === "live" ? "열려있음" : "준비 중";
     wrap.appendChild(el);
   });

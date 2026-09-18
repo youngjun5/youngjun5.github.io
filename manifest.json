@@ -1,7 +1,7 @@
 {
-  "name": "STUDIO",
-  "short_name": "STUDIO",
-  "description": "개인 제작 도구 스튜디오 — 케어노트, 화상채팅 등 모든 도구가 모이는 곳",
+  "name": "CARECENTER",
+  "short_name": "CARECENTER",
+  "description": "케어코너즈 팀이 쓰는 도구를 한곳에 — 케어노트, 팀 달력, 장비, 촬영 등",
   "start_url": "./",
   "scope": "/",
   "id": "/",
