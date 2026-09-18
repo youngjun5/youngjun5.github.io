@@ -89,12 +89,12 @@
     text-wrap: pretty;
   }
 
-  .rooms { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 14px; }
+  .rooms { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
 
   .room {
     position: relative; display: flex; flex-direction: column; gap: 14px;
     background: var(--surface); border: 1px solid var(--hair); border-radius: 14px;
-    padding: 20px; min-height: 132px;
+    padding: 20px; min-height: 150px;
     transition: border-color .15s ease, transform .15s ease, background .15s ease;
   }
   a.room:hover { border-color: var(--hair-strong); transform: translateY(-2px); background: var(--surface-2); }
@@ -173,56 +173,56 @@
   var ROOMS = [
     {
       title: "케어노트",
-      desc: "팀 비주얼 보드 — 콘티·기획 정리, 실시간 공유",
+      desc: "콘티·기획을 모으는 팀 보드",
       href: "https://youngjun5.github.io/carenote/",
       icon: "note",
       status: "live"
     },
     {
       title: "팀 달력",
-      desc: "케어코너즈 일정 타임라인 — 프로젝트별 마감·마일스톤, 실시간 수정",
+      desc: "프로젝트 일정 타임라인",
       href: "https://youngjun5.github.io/calendar/",
       icon: "calendar",
       status: "live"
     },
     {
       title: "장비",
-      desc: "CARECENTER GEAR — 촬영 장비 목록, 카테고리·사진으로 바로 확인",
+      desc: "촬영 장비 목록",
       href: "https://youngjun5.github.io/gear/",
       icon: "gear",
       status: "live"
     },
     {
       title: "촬영",
-      desc: "CARECENTER 촬영 — 프로젝트별 작전 지시서, 타임테이블·포지션·장비",
+      desc: "프로젝트별 촬영 지시서",
       href: "https://youngjun5.github.io/shoots/",
       icon: "clapper",
       status: "live"
     },
     {
       title: "케어스크립트",
-      desc: "촬영 현장 스크립터 — 씬·컷 기록, 대사 음성 체크, 어미 반복 검사",
+      desc: "촬영 현장 기록용 스크립터",
       href: "https://youngjun5.github.io/carescript/",
       icon: "script",
       status: "live"
     },
     {
       title: "토라포션",
-      desc: "CARECENTER 토라포션 — 주차별 토라 포션 묵상, 히브리 절기, 오메르 카운트",
+      desc: "주차별 토라 포션 묵상",
       href: "https://youngjun5.github.io/torah/",
       icon: "scroll",
       status: "live"
     },
     {
       title: "영어 공부방",
-      desc: "하루 한 문장 — 선교를 위한 매일 영어 말하기 훈련",
+      desc: "하루 한 문장 영어 훈련",
       href: "https://youngjun5.github.io/english/",
       icon: "lang",
       status: "live"
     },
     {
       title: "화상채팅",
-      desc: "CARECENTER MEET — 팀 화상회의 룸",
+      desc: "팀 화상회의 룸",
       href: "https://carecenter-meet.youngjun981221.workers.dev/",
       icon: "video",
       status: "live"
@@ -237,11 +237,12 @@
     if (!disabled) { el.href = r.href; }
     el.innerHTML =
       '<div class="room-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">' + ICONS[r.icon] + '</svg></div>' +
-      '<div class="room-body"><h2 class="room-title"></h2></div>' +
+      '<div class="room-body"><h2 class="room-title"></h2><p class="room-desc"></p></div>' +
       '<div class="room-foot"><span class="status ' + r.status + '"></span>' +
       (disabled ? '' : '<svg class="arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 3l5 5-5 5"/></svg>') +
       '</div>';
     el.querySelector(".room-title").textContent = r.title;
+    el.querySelector(".room-desc").textContent = r.desc;
     el.querySelector(".status").textContent = r.status === "live" ? "열려있음" : "준비 중";
     wrap.appendChild(el);
   });
