@@ -249,6 +249,7 @@ h1 .rangeTxt:hover{color:var(--accent-2)}
   color:var(--gc);
   border-left:3px solid var(--gc);
 }
+.calbar:hover{background:color-mix(in srgb, var(--gc) 34%, var(--surface))}
 .calbar.cutL{border-top-left-radius:0;border-bottom-left-radius:0;border-left-width:1px;padding-left:6px}
 .calbar.cutR{border-top-right-radius:0;border-bottom-right-radius:0}
 .calbar.cancelled{opacity:.5;text-decoration:line-through}
@@ -256,6 +257,7 @@ h1 .rangeTxt:hover{color:var(--accent-2)}
 .calbar.single{
   background:none;border-left:none;padding-left:3px;color:var(--ink-soft);
 }
+.calbar.single:hover{background:color-mix(in srgb, var(--gc) 16%, transparent);color:var(--ink)}
 .calbar.single::before{
   content:''; display:inline-block; width:6px; height:6px; border-radius:50%;
   background:var(--gc); margin-right:5px; vertical-align:middle;
@@ -305,7 +307,8 @@ td.del{width:26px;padding-right:0;text-align:right}
 /* 편집 패널 */
 .panel{position:fixed;right:16px;bottom:16px;width:min(310px,calc(100vw - 32px));background:var(--surface);
   border:1px solid var(--hair-strong);border-radius:13px;padding:15px;z-index:50;display:none;
-  box-shadow:0 18px 50px rgba(0,0,0,.35)}
+  box-shadow:0 18px 50px rgba(0,0,0,.35);
+  border-top:4px solid var(--pc, var(--accent))} /* 어느 프로젝트를 고치는 건지 막대 색과 맞춰 바로 알 수 있게 */
 .panel.on{display:block}
 .panel h3{margin:0 0 12px;font-size:13px;color:var(--ink-soft);font-weight:500}
 .fld{margin-bottom:10px}
@@ -968,6 +971,8 @@ function openPanel(r){
   document.getElementById('pKind').value=r.kind;
   document.getElementById('pEndWrap').style.visibility=r.kind==='milestone'?'hidden':'visible';
   syncDoneBtn(r);
+  var pair=findPair(r.id);
+  P.style.setProperty('--pc', pair ? groupColor(pair.g) : 'var(--accent)');
   P.classList.add('on');render();
 }
 function closePanel(){P.classList.remove('on');cur=null;sel=null;render();}
