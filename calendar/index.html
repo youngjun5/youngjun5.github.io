@@ -218,36 +218,30 @@ h1 .rangeTxt:hover{color:var(--accent-2)}
 .calwkrow span:first-child{color:var(--today)}
 .calwkrow span:last-child{color:var(--accent-2)}
 .calgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
-.calday{aspect-ratio:1/1.05;border-radius:10px;background:var(--surface);border:1px solid transparent;padding:6px 5px;display:flex;flex-direction:column;gap:3px;min-width:0;cursor:pointer}
+.calday{min-height:82px;border-radius:10px;background:var(--surface);border:1px solid transparent;padding:5px 4px;display:flex;flex-direction:column;gap:2px;min-width:0;cursor:pointer}
 .calday:hover{border-color:var(--hair-strong)}
-.calday.other{opacity:.3}
+.calday.other{opacity:.35}
 .calday.today{border-color:var(--today)}
 .calday.sel{background:var(--accent-soft);border-color:var(--accent)}
-.calday .num{font:600 12.5px "IBM Plex Mono",monospace;color:var(--ink-soft)}
+.calday .num{font:600 11.5px "IBM Plex Mono",monospace;color:var(--ink-soft);padding:0 2px 1px}
 .calday.today .num{color:var(--today);font-weight:800}
-.caldots{display:flex;flex-wrap:wrap;gap:2px}
-.caldot{width:6px;height:6px;border-radius:50%;flex:none;background:var(--bar)}
-.caldot.active,.caldot.due{background:var(--accent)}
-.caldot.milestone{background:var(--accent);border-radius:2px;transform:rotate(45deg)}
-.caldot.cancelled{background:transparent;border:1px solid var(--hair-strong)}
-.caldot.blocked{background:transparent;border:1px dashed var(--hair-strong)}
-.caldot.done{background:var(--done);opacity:.6}
-.calmore{font:600 9px "IBM Plex Mono",monospace;color:var(--ink-faint)}
+.calevs{display:flex;flex-direction:column;gap:2px;min-width:0}
+.calevline{
+  font:500 10.5px "IBM Plex Sans",sans-serif; line-height:1.5; padding:1px 5px; border-radius:4px;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:var(--ink);
+  background:var(--surface-2); border-left:2.5px solid var(--bar);
+}
+.calevline:hover{background:var(--hair)}
+.calevline.active,.calevline.due{border-left-color:var(--accent);background:var(--accent-soft);color:var(--accent-2)}
+.calevline.milestone{border-left-color:var(--accent);background:var(--accent-soft);color:var(--accent-2);font-weight:600}
+.calevline.cancelled{border-left-color:var(--hair-strong);color:var(--ink-faint);text-decoration:line-through}
+.calevline.blocked{border-left-color:var(--hair-strong);color:var(--ink-faint)}
+.calevline.done{border-left-color:var(--done);color:var(--ink-faint);text-decoration:line-through;text-decoration-color:var(--hair-strong)}
+.calmore{font:600 9.5px "IBM Plex Mono",monospace;color:var(--ink-faint);padding:0 2px}
 
-.caldaypanel{margin-top:24px}
-.caldaypanel .head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-.caldaypanel .head h3{font-family:"Bricolage Grotesque",sans-serif;font-weight:700;font-size:15px;margin:0}
+.caladdrow{display:flex;justify-content:center;margin:14px 0 0}
 .caladdbtn{display:flex;align-items:center;gap:5px;font:600 12.5px "IBM Plex Sans",sans-serif;color:var(--accent-2);background:var(--accent-soft);padding:6px 13px;border-radius:999px}
 .caladdbtn:hover{opacity:.85}
-.calevlist{display:flex;flex-direction:column;gap:8px}
-.calev{display:flex;align-items:flex-start;gap:10px;background:var(--surface);border:1px solid var(--hair);border-radius:12px;padding:11px 13px;cursor:pointer}
-.calev:hover{border-color:var(--hair-strong)}
-.calev .bar2{width:3px;align-self:stretch;border-radius:3px;flex:none}
-.calev .body{flex:1;min-width:0}
-.calev .title{font:600 14px "IBM Plex Sans",sans-serif;margin-bottom:2px}
-.calev.done .title{color:var(--ink-faint);text-decoration:line-through;text-decoration-color:var(--hair-strong)}
-.calev .meta{font:500 11.5px "IBM Plex Mono",monospace;color:var(--ink-faint);display:flex;gap:8px;flex-wrap:wrap}
-.calempty{text-align:center;color:var(--ink-faint);padding:24px 0;font-size:13px}
 
 /* 주요 시점 */
 .sec{margin-top:58px}
@@ -383,9 +377,8 @@ td.del{width:26px;padding-right:0;text-align:right}
     <div class="calwkrow"><span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span></div>
     <div class="calgrid" id="calGrid"></div>
 
-    <div class="caldaypanel">
-      <div class="head"><h3 id="calDayLabel"></h3><button class="caladdbtn" id="calAddBtn">＋ 일정 추가</button></div>
-      <div class="calevlist" id="calEvList"></div>
+    <div class="caladdrow">
+      <button class="caladdbtn" id="calAddBtn">＋ <span id="calAddLabel">오늘</span>에 일정 추가</button>
     </div>
   </div>
 </div>
@@ -1011,40 +1004,29 @@ function renderCalendar(){
   }
 
   var todayStr=iso(today0);
+  var MAXLINES=3;
   grid.innerHTML='';
   cells.forEach(function(c,idx){
     var dateStr=c.y+'-'+String(c.m+1).padStart(2,'0')+'-'+String(c.d).padStart(2,'0');
-    var dow=idx%7;
     var div=document.createElement('div');
     div.className='calday'+(c.other?' other':'')+(dateStr===todayStr?' today':'')+(dateStr===calSel?' sel':'');
     var dayList=dayRows(dateStr);
-    var shown=dayList.slice(0,4);
-    div.innerHTML='<div class="num">'+c.d+'</div><div class="caldots">'+
-      shown.map(function(x){return '<span class="caldot '+x.r.kind+(x.r.done?' done':'')+'"></span>';}).join('')+
-      '</div>'+(dayList.length>4?'<div class="calmore">+'+(dayList.length-4)+'</div>':'');
+    var shown=dayList.slice(0,MAXLINES);
+    div.innerHTML='<div class="num">'+c.d+'</div><div class="calevs">'+
+      shown.map(function(x){
+        var r=x.r;
+        return '<div class="calevline '+r.kind+(r.done?' done':'')+'" data-id="'+r.id+'" title="'+esc(r.label)+'">'+esc(r.label)+'</div>';
+      }).join('')+
+      '</div>'+(dayList.length>MAXLINES?'<div class="calmore">+'+(dayList.length-MAXLINES)+'개 더</div>':'');
+    div.querySelectorAll('.calevline').forEach(function(el){
+      el.onclick=function(e){ e.stopPropagation(); var r=findRow(el.dataset.id); if(r)openPanel(r); };
+    });
     div.onclick=function(){ calSel=dateStr; if(c.other){calY=c.y;calM=c.m;} renderCalendar(); };
     grid.appendChild(div);
   });
 
   var sd=D(calSel), dow2=['일','월','화','수','목','금','토'][sd.getDay()];
-  document.getElementById('calDayLabel').textContent=(sd.getMonth()+1)+'월 '+sd.getDate()+'일 ('+dow2+')';
-  var list=dayRows(calSel);
-  var evEl=document.getElementById('calEvList');
-  if(!list.length){
-    evEl.innerHTML='<p class="calempty">이 날엔 일정이 없어요.</p>';
-  }else{
-    evEl.innerHTML=list.map(function(x){
-      var r=x.r;
-      return '<div class="calev'+(r.done?' done':'')+'" data-id="'+r.id+'">'+
-        '<div class="bar2 sw '+r.kind+(r.kind==='milestone'?' mstone':'')+'"></div>'+
-        '<div class="body"><div class="title">'+esc(r.label)+'</div>'+
-        '<div class="meta"><span>'+esc(x.g.name)+'</span>'+(r.owner?'<span>'+esc(r.owner)+'</span>':'')+'<span>'+whenText(r)+'</span></div></div>'+
-      '</div>';
-    }).join('');
-    evEl.querySelectorAll('.calev').forEach(function(el){
-      el.onclick=function(){ var r=findRow(el.dataset.id); if(r)openPanel(r); };
-    });
-  }
+  document.getElementById('calAddLabel').textContent=(sd.getMonth()+1)+'월 '+sd.getDate()+'일('+dow2+')';
 }
 
 document.getElementById('calPrev').onclick=function(){ calM--; if(calM<0){calM=11;calY--;} renderCalendar(); };
