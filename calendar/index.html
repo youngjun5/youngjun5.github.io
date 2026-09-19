@@ -140,6 +140,15 @@ h1 .rangeTxt:hover{color:var(--accent-2)}
   position:sticky;left:0;width:fit-content;z-index:7;background:var(--ground);padding-right:14px}
 .grp-meta{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink-faint);flex:none}
 .grp-name{font-weight:600;font-size:14.5px;color:var(--accent-2);letter-spacing:-.005em}
+.grp-toggle{
+  width:20px;height:20px;flex:none;display:inline-flex;align-items:center;justify-content:center;
+  color:var(--ink-faint);border-radius:6px;
+}
+.grp-toggle:hover{color:var(--ink);background:var(--hover)}
+.grp-toggle svg{transition:transform .12s ease}
+.grp.collapsed .grp-toggle svg{transform:rotate(-90deg)}
+.grp.collapsed{padding-top:14px}
+.grp.collapsed:first-of-type{padding-top:22px}
 .lane{position:relative;height:var(--lane-h);display:flex;align-items:center}
 .lbl{width:var(--label-w);flex:none;padding-right:14px;font-size:13.5px;color:var(--ink-soft);
   line-height:1.35;display:flex;align-items:center;gap:5px;
@@ -633,6 +642,13 @@ function renderMonths(){
 
 function ce(el,ph){ el.setAttribute('contenteditable','plaintext-only'); if(ph)el.dataset.ph=ph; return el; }
 
+/* 프로젝트 접기/펼치기 — 이 기기에만 저장되는 개인 취향(서버 동기화 안 함).
+   프로젝트가 계속 늘어나면 스크롤이 너무 길어지니, 안 보고 싶은
+   프로젝트는 접어서 헤더 한 줄로 줄일 수 있게 함. */
+var COLLAPSED = (function(){ try{ return JSON.parse(localStorage.getItem('carecal:collapsed'))||{}; }catch(e){ return {}; } })();
+function saveCollapsed(){ try{ localStorage.setItem('carecal:collapsed', JSON.stringify(COLLAPSED)); }catch(e){} }
+function toggleCollapsed(gid){ COLLAPSED[gid]=!COLLAPSED[gid]; saveCollapsed(); renderLanes(); }
+
 function renderLanes(){
   var el=document.getElementById('lanes');
   el.innerHTML='';
@@ -650,8 +666,13 @@ function renderLanes(){
 
   var hiddenN=0;
   S.groups.forEach(function(g){
-    var gd=document.createElement('div');gd.className='grp';
+    var isCollapsed=!!COLLAPSED[g.id];
+    var gd=document.createElement('div');gd.className='grp'+(isCollapsed?' collapsed':'');
     var gh=document.createElement('div');gh.className='grp-head';
+    var gt=document.createElement('button');gt.className='grp-toggle';gt.title=isCollapsed?'펼치기':'접기';
+    gt.innerHTML='<svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2l5 4-5 4"/></svg>';
+    gt.onclick=function(){ toggleCollapsed(g.id); };
+    gh.appendChild(gt);
     var gn=document.createElement('div');gn.className='grp-name';gn.textContent=g.name;
     gn.dataset.grp=g.id;gn.dataset.f='name';ce(gn,'프로젝트 이름');
     gh.appendChild(gn);
@@ -663,6 +684,10 @@ function renderLanes(){
     gd.appendChild(gh);
 
     var shown=0;
+    if(isCollapsed){
+      el.appendChild(gd);
+      return;
+    }
     g.rows.forEach(function(r){
       if(VIEW!=='all'&&!inView(r)){hiddenN++;return;}
       shown++;
