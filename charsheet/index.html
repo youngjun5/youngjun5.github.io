@@ -229,7 +229,27 @@ var DEFAULT_COLORS = ['#a9c6e0','#5b8ab8','#243b52','#d9dbe0'];
   });
 })();
 
-/* ── 사진 슬롯 렌더 — 클릭할 때마다 임시 input을 만들어 파일 선택창을 띄움 ── */
+/* 파일 선택창을 여는 input은 반드시 DOM에 실제로 붙어있어야 함 —
+   붙이지 않고 만들어서 바로 .click()만 하면 사파리/모바일에서 몇 번
+   쓰다가 이유 없이 선택창이 안 뜨는 문제가 생김(여러 번 재현 확인).
+   그래서 매번 body에 잠깐 붙였다가 다 쓰면 지우는 방식으로 통일. */
+function pickImage(cb){
+  var input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'image/png,image/jpeg,image/jpg,.png,.jpg,.jpeg';
+  input.style.cssText = 'position:fixed;left:-9999px;top:-9999px;';
+  input.onchange = function(e){
+    var file = e.target.files[0];
+    if(file){
+      loadImage(file, cb);
+    }
+    if(input.parentNode) input.parentNode.removeChild(input);
+  };
+  document.body.appendChild(input);
+  input.click();
+}
+
+/* ── 사진 슬롯 렌더 — 클릭하면 그 칸에 바로 넣을 사진을 고름 ── */
 function makeSlot2(s){
   var el = document.createElement('div');
   el.className = 'slot';
@@ -241,18 +261,10 @@ function makeSlot2(s){
       '<div class="'+(p?'slbl':'lbl')+'">'+s.label+'</div>';
   }
   el.onclick = function(){
-    var input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'image/png,image/jpeg,image/jpg,.png,.jpg,.jpeg';
-    input.onchange = function(e){
-      var file = e.target.files[0];
-      if(!file) return;
-      loadImage(file, function(img, dataUrl){
-        photos[s.id] = { img: img, dataUrl: dataUrl };
-        render();
-      });
-    };
-    input.click();
+    pickImage(function(img, dataUrl){
+      photos[s.id] = { img: img, dataUrl: dataUrl };
+      render();
+    });
   };
   return el;
 }
@@ -283,15 +295,7 @@ function renderDetailList(){
     slotEl.className = 'slot' + (it.dataUrl ? ' filled' : '');
     slotEl.innerHTML = it.dataUrl ? '<img src="'+it.dataUrl+'">' : '<div class="ph">＋</div>';
     slotEl.onclick = function(){
-      var input = document.createElement('input');
-      input.type = 'file';
-      input.accept = 'image/png,image/jpeg,image/jpg,.png,.jpg,.jpeg';
-      input.onchange = function(e){
-        var file = e.target.files[0];
-        if(!file) return;
-        loadImage(file, function(img, dataUrl){ it.img = img; it.dataUrl = dataUrl; renderDetailList(); });
-      };
-      input.click();
+      pickImage(function(img, dataUrl){ it.img = img; it.dataUrl = dataUrl; renderDetailList(); });
     };
     var labelInput = document.createElement('input');
     labelInput.type = 'text';
