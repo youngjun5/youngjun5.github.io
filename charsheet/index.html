@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#17181b">
+<meta name="description" content="CARECENTER 캐릭터 시트 — 인물/캐릭터 사진을 올리면 각도별로 정리된 참고 시트를 만들어줌">
+<link rel="manifest" href="../manifest.json">
+<link rel="icon" href="../icon-192.png">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="캐릭터 시트">
+<title>캐릭터 시트 · CARECENTER</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+<style>
+  :root {
+    color-scheme: dark;
+    --ground: #121316;
+    --surface: #1b1c20;
+    --surface-2: #202227;
+    --hair: rgba(231,232,234,0.10);
+    --hair-strong: rgba(231,232,234,0.22);
+    --ink: #e7e8ea;
+    --ink-soft: #9a9ea6;
+    --ink-faint: #6b6f78;
+    --accent: #5ba0d8;
+    --accent-soft: rgba(91,160,216,0.14);
+    --accent-ink: #0d1520;
+    --amber: #e0ab4c;
+    --green: #6fbf85;
+    --red: #d9736c;
+    --safe-t: env(safe-area-inset-top, 0px);
+    --safe-b: env(safe-area-inset-bottom, 0px);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--ground); color: var(--ink);
+    font: 15px/1.5 "IBM Plex Sans", system-ui, sans-serif;
+    height: 100dvh; overflow: hidden;
+    display: flex; flex-direction: column;
+  }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+
+  .topbar {
+    display: flex; align-items: center; gap: 10px; flex: 0 0 auto;
+    padding: calc(10px + var(--safe-t)) 16px 10px;
+    background: var(--surface); border-bottom: 1px solid var(--hair);
+    position: sticky; top: 0; z-index: 50;
+  }
+  .topbar h1 { font-family: "Bricolage Grotesque", sans-serif; font-weight: 800; font-size: 18px; margin: 0; letter-spacing: -0.02em; }
+  .topbar .sub { font-size: 11.5px; color: var(--ink-faint); font-weight: 500; }
+  .iconbtn { width: 38px; height: 38px; border-radius: 10px; flex: none; display: grid; place-items: center; font-size: 20px; color: var(--ink); background: var(--surface-2); }
+  .iconbtn:active { background: var(--hair); }
+  .spacer { flex: 1; }
+  .modeldot { width: 7px; height: 7px; border-radius: 50%; background: var(--ink-faint); flex: none; }
+  .modeldot.on { background: var(--green); }
+  .modeldot.err { background: var(--red); }
+
+  .content { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 16px 16px calc(40px + var(--safe-b)); max-width: 900px; margin: 0 auto; width: 100%; }
+
+  .step { margin-bottom: 28px; }
+  .step h2 { font-family: "Bricolage Grotesque", sans-serif; font-size: 15px; margin: 0 0 4px; display: flex; align-items: center; gap: 8px; }
+  .step h2 .n { width: 20px; height: 20px; border-radius: 50%; background: var(--accent-soft); color: var(--accent); font: 700 11px "IBM Plex Mono", monospace; display: inline-flex; align-items: center; justify-content: center; flex: none; }
+  .step .hint { font-size: 12.5px; color: var(--ink-faint); margin: 0 0 12px 28px; }
+
+  .drop {
+    border: 1.5px dashed var(--hair-strong); border-radius: 14px; padding: 28px 16px; text-align: center;
+    cursor: pointer; transition: border-color .15s, background .15s;
+  }
+  .drop:hover, .drop.over { border-color: var(--accent); background: var(--accent-soft); }
+  .drop .ic { font-size: 26px; margin-bottom: 8px; }
+  .drop .t1 { font-weight: 600; font-size: 14px; }
+  .drop .t2 { font-size: 12px; color: var(--ink-faint); margin-top: 3px; }
+  #fileInput { display: none; }
+
+  .thumbs { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 10px; margin-top: 14px; }
+  .thumb { position: relative; border-radius: 10px; overflow: hidden; background: var(--surface); border: 1px solid var(--hair); aspect-ratio: 3/4; cursor: grab; }
+  .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .thumb .tag {
+    position: absolute; left: 4px; bottom: 4px; font: 600 10px "IBM Plex Mono", monospace;
+    padding: 2px 6px; border-radius: 999px; background: rgba(0,0,0,0.6); color: #fff;
+  }
+  .thumb .tag.front { background: rgba(91,160,216,0.85); }
+  .thumb .tag.threeq { background: rgba(167,139,216,0.85); }
+  .thumb .tag.side { background: rgba(224,171,76,0.85); }
+  .thumb .tag.unk { background: rgba(0,0,0,0.6); }
+  .thumb .rm {
+    position: absolute; right: 4px; top: 4px; width: 20px; height: 20px; border-radius: 50%;
+    background: rgba(0,0,0,0.6); color: #fff; font-size: 12px; display: flex; align-items: center; justify-content: center;
+  }
+  .thumb .analyzing { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.4); font-size: 10px; color: var(--ink-faint); }
+
+  .slotgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
+  .slot {
+    border: 1.5px dashed var(--hair-strong); border-radius: 12px; aspect-ratio: 3/4; position: relative;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+    background: var(--surface); transition: border-color .12s, background .12s;
+  }
+  .slot.over { border-color: var(--accent); background: var(--accent-soft); }
+  .slot .lbl { font: 600 11px "IBM Plex Sans", sans-serif; color: var(--ink-faint); }
+  .slot .ph { font-size: 20px; color: var(--ink-faint); opacity: .5; }
+  .slot img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 10px; }
+  .slot .slbl {
+    position: absolute; left: 6px; bottom: 6px; font: 700 10.5px "IBM Plex Sans", sans-serif;
+    padding: 2px 7px; border-radius: 999px; background: rgba(0,0,0,0.6); color: #fff;
+  }
+  .slot .clr {
+    position: absolute; right: 4px; top: 4px; width: 20px; height: 20px; border-radius: 50%;
+    background: rgba(0,0,0,0.6); color: #fff; font-size: 12px; display: flex; align-items: center; justify-content: center;
+  }
+  .slot.filled { border-style: solid; border-color: var(--hair); }
+
+  .genbtn {
+    width: 100%; padding: 13px; border-radius: 12px; background: var(--accent); color: var(--accent-ink);
+    font-weight: 700; font-size: 14.5px; text-align: center; margin-top: 16px;
+  }
+  .genbtn:disabled { opacity: .4; cursor: not-allowed; }
+  .genbtn:active:not(:disabled) { opacity: .85; }
+
+  #sheetCanvas { width: 100%; border-radius: 12px; border: 1px solid var(--hair); background: #fff; display: block; }
+  .dlbtn {
+    display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; padding: 12px;
+    border-radius: 12px; background: var(--surface-2); border: 1px solid var(--hair-strong); font-weight: 600; font-size: 14px; margin-top: 12px;
+  }
+  .dlbtn:hover { border-color: var(--accent); color: var(--accent); }
+
+
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a class="iconbtn" href="../" title="전체 앱 목록으로">‹</a>
+  <div><h1>캐릭터 시트</h1><div class="sub">인물/캐릭터 참고 시트 만들기</div></div>
+  <div class="spacer"></div>
+  <div class="modeldot" id="modelDot" title="얼굴 분석 모델 상태"></div>
+</div>
+
+<main class="content">
+  <div class="step">
+    <h2><span class="n">1</span>사진 올리기</h2>
+    <p class="hint">PNG·JPEG·JPG·스크린샷 전부 가능해요. 여러 장 한 번에 올릴 수 있어요.</p>
+    <div class="drop" id="drop">
+      <div class="ic">📷</div>
+      <div class="t1">눌러서 사진 선택 (또는 여기에 끌어다 놓기)</div>
+      <div class="t2">얼굴이 보이는 사진일수록 각도 자동 인식이 잘 돼요</div>
+    </div>
+    <input type="file" id="fileInput" accept="image/png,image/jpeg,image/jpg,.png,.jpg,.jpeg" multiple>
+    <div class="thumbs" id="thumbs"></div>
+  </div>
+
+  <div class="step">
+    <h2><span class="n">2</span>각도 배치</h2>
+    <p class="hint">자동으로 각도를 추정해 아래 칸에 넣어봤어요 — 잘못 들어간 사진은 끌어서 다른 칸으로 옮기면 돼요. 빈 칸은 그냥 비워둬도 괜찮아요.</p>
+    <div class="slotgrid" id="slotgrid"></div>
+  </div>
+
+  <div class="step">
+    <h2><span class="n">3</span>시트 생성</h2>
+    <button class="genbtn" id="genBtn" disabled>먼저 사진을 칸에 넣어주세요</button>
+    <canvas id="sheetCanvas" hidden></canvas>
+    <button class="dlbtn" id="dlBtn" hidden>⬇ PNG로 다운로드</button>
+  </div>
+</main>
+
+<script>
+'use strict';
+var $ = function(s){ return document.querySelector(s); };
+var $$ = function(s){ return [].slice.call(document.querySelectorAll(s)); };
+
+/* ---------- 슬롯 정의 (시장조사 기준 "최소 구도") ---------- */
+var SLOTS = [
+  { id: 'front', label: '정면' },
+  { id: 'threeq', label: '반측면(3/4)' },
+  { id: 'side', label: '측면' },
+  { id: 'back', label: '후면' },
+  { id: 'face', label: '얼굴 클로즈업' },
+  { id: 'extra', label: '기타' }
+];
+
+var photos = {}; // id -> {img: HTMLImageElement, dataUrl, tag}
+var slotAssign = {}; // slotId -> photoId
+var pid = 0;
+
+/* ---------- 얼굴 각도 자동 추정 (face-api.js, 전부 브라우저 안에서 처리) ---------- */
+var modelsReady = false;
+(function loadModels(){
+  var MODEL_URL = 'https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js-models@master';
+  Promise.all([
+    faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL + '/tiny_face_detector'),
+    faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL + '/face_landmark_68')
+  ]).then(function(){
+    modelsReady = true;
+    $('#modelDot').classList.add('on');
+    $('#modelDot').title = '얼굴 분석 모델 준비됨';
+  }).catch(function(e){
+    console.error(e);
+    $('#modelDot').classList.add('err');
+    $('#modelDot').title = '얼굴 분석 모델을 못 불러왔어요 — 자동 분류 없이 수동으로 배치해주세요';
+  });
+})();
+
+function estimateAngle(img){
+  if(!modelsReady) return Promise.resolve('unk');
+  return faceapi.detectSingleFace(img, new faceapi.TinyFaceDetectorOptions())
+    .withFaceLandmarks()
+    .then(function(res){
+      if(!res) return 'unk';
+      var box = res.detection.box;
+      var nose = res.landmarks.getNose();
+      var noseX = nose[3].x; // 콧대 끝 근처
+      var faceCenter = box.x + box.width/2;
+      var offset = (noseX - faceCenter) / box.width; // -0.5~0.5 정도, 0이면 정면
+      var a = Math.abs(offset);
+      if(a < 0.06) return 'front';
+      if(a < 0.16) return 'threeq';
+      return 'side';
+    })
+    .catch(function(){ return 'unk'; });
+}
+var TAG_LABEL = { front:'정면 추정', threeq:'3/4 추정', side:'측면 추정', unk:'미인식' };
+var TAG_TO_SLOT = { front:'front', threeq:'threeq', side:'side', unk:null };
+
+/* ---------- 업로드 ---------- */
+var drop = $('#drop'), fileInput = $('#fileInput');
+drop.onclick = function(){ fileInput.click(); };
+fileInput.onchange = function(e){ handleFiles(e.target.files); fileInput.value=''; };
+['dragover','dragenter'].forEach(function(ev){ drop.addEventListener(ev, function(e){ e.preventDefault(); drop.classList.add('over'); }); });
+['dragleave','drop'].forEach(function(ev){ drop.addEventListener(ev, function(e){ e.preventDefault(); drop.classList.remove('over'); }); });
+drop.addEventListener('drop', function(e){ handleFiles(e.dataTransfer.files); });
+
+function handleFiles(fileList){
+  var files = [].slice.call(fileList).filter(function(f){ return /^image\//.test(f.type) || /\.(png|jpe?g)$/i.test(f.name); });
+  files.forEach(addPhoto);
+}
+
+function addPhoto(file){
+  var id = 'p' + (pid++);
+  var reader = new FileReader();
+  reader.onload = function(e){
+    var img = new Image();
+    img.onload = function(){
+      photos[id] = { img: img, dataUrl: e.target.result, tag: 'unk' };
+      renderThumbs();
+      estimateAngle(img).then(function(tag){
+        if(!photos[id]) return;
+        photos[id].tag = tag;
+        renderThumbs();
+        autoAssign(id, tag);
+        renderSlots();
+      });
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function autoAssign(pidKey, tag){
+  var slotId = TAG_TO_SLOT[tag];
+  if(!slotId) return;
+  if(slotAssign[slotId]) return; // 이미 그 칸이 차있으면 자동배정 안 함(수동으로 옮기게)
+  slotAssign[slotId] = pidKey;
+}
+
+function removePhoto(id){
+  delete photos[id];
+  Object.keys(slotAssign).forEach(function(s){ if(slotAssign[s]===id) delete slotAssign[s]; });
+  renderThumbs(); renderSlots();
+}
+
+function renderThumbs(){
+  var wrap = $('#thumbs');
+  wrap.innerHTML = '';
+  Object.keys(photos).forEach(function(id){
+    var p = photos[id];
+    var el = document.createElement('div');
+    el.className = 'thumb';
+    el.draggable = true;
+    el.dataset.id = id;
+    el.innerHTML = '<img src="'+p.dataUrl+'">' +
+      (p.tag==='unk' && !modelsReady ? '' : '<span class="tag '+p.tag+'">'+TAG_LABEL[p.tag]+'</span>') +
+      '<button class="rm" data-id="'+id+'">×</button>';
+    el.addEventListener('dragstart', function(e){ e.dataTransfer.setData('text/plain', id); });
+    wrap.appendChild(el);
+  });
+  wrap.querySelectorAll('.rm').forEach(function(b){
+    b.onclick = function(e){ e.stopPropagation(); removePhoto(b.dataset.id); };
+  });
+}
+
+/* ---------- 슬롯 배치 ---------- */
+function renderSlots(){
+  var wrap = $('#slotgrid');
+  wrap.innerHTML = '';
+  SLOTS.forEach(function(s){
+    var pidHere = slotAssign[s.id];
+    var el = document.createElement('div');
+    el.className = 'slot' + (pidHere ? ' filled' : '');
+    el.dataset.slot = s.id;
+    if(pidHere && photos[pidHere]){
+      el.innerHTML = '<img src="'+photos[pidHere].dataUrl+'">' +
+        '<span class="slbl">'+s.label+'</span>' +
+        '<button class="clr" data-slot="'+s.id+'">×</button>';
+    } else {
+      el.innerHTML = '<div class="ph">＋</div><div class="lbl">'+s.label+'</div>';
+    }
+    el.addEventListener('dragover', function(e){ e.preventDefault(); el.classList.add('over'); });
+    el.addEventListener('dragleave', function(){ el.classList.remove('over'); });
+    el.addEventListener('drop', function(e){
+      e.preventDefault(); el.classList.remove('over');
+      var id = e.dataTransfer.getData('text/plain');
+      if(photos[id]){ slotAssign[s.id] = id; renderSlots(); }
+    });
+    wrap.appendChild(el);
+  });
+  wrap.querySelectorAll('.clr').forEach(function(b){
+    b.onclick = function(e){ e.stopPropagation(); delete slotAssign[b.dataset.slot]; renderSlots(); };
+  });
+  var filledCount = Object.keys(slotAssign).filter(function(k){return slotAssign[k];}).length;
+  var gen = $('#genBtn');
+  gen.disabled = filledCount === 0;
+  gen.textContent = filledCount === 0 ? '먼저 사진을 칸에 넣어주세요' : '시트 생성 (' + filledCount + '컷)';
+}
+renderSlots();
+
+/* ---------- 시트 생성 (캔버스) ---------- */
+$('#genBtn').onclick = function(){
+  var filled = SLOTS.filter(function(s){ return slotAssign[s.id] && photos[slotAssign[s.id]]; });
+  if(!filled.length) return;
+
+  var cols = Math.min(filled.length, 4);
+  var rows = Math.ceil(filled.length / cols);
+  var cellW = 360, cellH = 480, pad = 24, labelH = 40, titleH = 64;
+
+  var canvas = $('#sheetCanvas');
+  canvas.width = cols*cellW + pad*(cols+1);
+  canvas.height = titleH + rows*(cellH+labelH) + pad*(rows+1);
+  var ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  ctx.fillStyle = '#141416';
+  ctx.font = '700 26px "Bricolage Grotesque", sans-serif';
+  ctx.fillText('CHARACTER SHEET', pad, 42);
+  ctx.fillStyle = '#8a8f98';
+  ctx.font = '500 13px "IBM Plex Mono", monospace';
+  ctx.fillText('CARECENTER · ' + new Date().toISOString().slice(0,10), pad, 60);
+
+  filled.forEach(function(s, i){
+    var col = i % cols, row = Math.floor(i/cols);
+    var x = pad + col*(cellW+pad);
+    var y = titleH + pad + row*(cellH+labelH+pad);
+    var img = photos[slotAssign[s.id]].img;
+
+    // 셀 배경
+    ctx.fillStyle = '#f2f2f4';
+    ctx.fillRect(x, y, cellW, cellH);
+
+    // object-fit: cover 방식으로 그리기
+    var ir = img.width / img.height, cr = cellW / cellH;
+    var sx, sy, sw, sh;
+    if(ir > cr){ sh = img.height; sw = sh*cr; sx = (img.width-sw)/2; sy = 0; }
+    else { sw = img.width; sh = sw/cr; sx = 0; sy = (img.height-sh)/2; }
+    ctx.drawImage(img, sx, sy, sw, sh, x, y, cellW, cellH);
+
+    ctx.strokeStyle = '#dcdce0'; ctx.lineWidth = 1;
+    ctx.strokeRect(x+0.5, y+0.5, cellW-1, cellH-1);
+
+    ctx.fillStyle = '#141416';
+    ctx.font = '700 16px "IBM Plex Sans", sans-serif';
+    ctx.fillText(s.label, x, y+cellH+24);
+  });
+
+  canvas.hidden = false;
+  $('#dlBtn').hidden = false;
+  canvas.scrollIntoView({behavior:'smooth', block:'center'});
+};
+
+$('#dlBtn').onclick = function(){
+  var canvas = $('#sheetCanvas');
+  var a = document.createElement('a');
+  a.href = canvas.toDataURL('image/png');
+  a.download = '캐릭터시트_' + new Date().toISOString().slice(0,10) + '.png';
+  document.body.appendChild(a); a.click(); a.remove();
+};
+
+</script>
+</body>
+</html>
