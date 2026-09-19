@@ -217,27 +217,28 @@ h1 .rangeTxt:hover{color:var(--accent-2)}
 .calwkrow span{text-align:center;font:600 11px "IBM Plex Mono",monospace;color:var(--ink-faint);padding:6px 0}
 .calwkrow span:first-child{color:var(--today)}
 .calwkrow span:last-child{color:var(--accent-2)}
-.calgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
-.calday{min-height:82px;border-radius:10px;background:var(--surface);border:1px solid transparent;padding:5px 4px;display:flex;flex-direction:column;gap:2px;min-width:0;cursor:pointer}
-.calday:hover{border-color:var(--hair-strong)}
-.calday.other{opacity:.35}
-.calday.today{border-color:var(--today)}
-.calday.sel{background:var(--accent-soft);border-color:var(--accent)}
-.calday .num{font:600 11.5px "IBM Plex Mono",monospace;color:var(--ink-soft);padding:0 2px 1px}
-.calday.today .num{color:var(--today);font-weight:800}
-.calevs{display:flex;flex-direction:column;gap:2px;min-width:0}
-.calevline{
-  font:500 10.5px "IBM Plex Sans",sans-serif; line-height:1.5; padding:1px 5px; border-radius:4px;
-  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:var(--ink);
-  background:var(--surface-2); border-left:2.5px solid var(--bar);
+/* 달력: 한 주가 통째로 하나의 블록 — 날짜 숫자 줄 + 그 밑에 프로젝트 색상 막대들.
+   같은 일정이 여러 날 이어질 땐 시작일에만 글자가 보이고, 그 다음날부턴
+   끝나는 날까지 색깔 막대만 쭉 이어짐(주가 바뀌면 다음 줄에서 계속). */
+.calgrid{display:flex;flex-direction:column;gap:10px}
+.calweek{display:flex;flex-direction:column;gap:2px}
+.calnums{display:grid;grid-template-columns:repeat(7,1fr)}
+.calnum{min-height:20px;border-radius:6px;padding:2px 6px 1px;cursor:pointer;font:600 11.5px "IBM Plex Mono",monospace;color:var(--ink-soft)}
+.calnum:hover{background:var(--hair)}
+.calnum.other{opacity:.35}
+.calnum.today{color:var(--today);font-weight:800}
+.calnum.sel{background:var(--accent-soft)}
+.callanes{display:flex;flex-direction:column;gap:2px}
+.callane{display:grid;grid-template-columns:repeat(7,1fr);gap:0 3px;min-height:17px}
+.calbar{
+  border-radius:5px;padding:1px 7px;font:500 10.5px "IBM Plex Sans",sans-serif;line-height:1.55;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#fff;cursor:pointer;
 }
-.calevline:hover{background:var(--hair)}
-.calevline.active,.calevline.due{border-left-color:var(--accent);background:var(--accent-soft);color:var(--accent-2)}
-.calevline.milestone{border-left-color:var(--accent);background:var(--accent-soft);color:var(--accent-2);font-weight:600}
-.calevline.cancelled{border-left-color:var(--hair-strong);color:var(--ink-faint);text-decoration:line-through}
-.calevline.blocked{border-left-color:var(--hair-strong);color:var(--ink-faint)}
-.calevline.done{border-left-color:var(--done);color:var(--ink-faint);text-decoration:line-through;text-decoration-color:var(--hair-strong)}
-.calmore{font:600 9.5px "IBM Plex Mono",monospace;color:var(--ink-faint);padding:0 2px}
+.calbar.cutL{border-top-left-radius:0;border-bottom-left-radius:0;padding-left:5px}
+.calbar.cutR{border-top-right-radius:0;border-bottom-right-radius:0}
+.calbar.cancelled{opacity:.5;text-decoration:line-through}
+.calbar.done{opacity:.5;text-decoration:line-through}
+.calmore{grid-column:1/8;font:600 9.5px "IBM Plex Mono",monospace;color:var(--ink-faint);padding:0 4px}
 
 .caladdrow{display:flex;justify-content:center;margin:14px 0 0}
 .caladdbtn{display:flex;align-items:center;gap:5px;font:600 12.5px "IBM Plex Sans",sans-serif;color:var(--accent-2);background:var(--accent-soft);padding:6px 13px;border-radius:999px}
@@ -981,6 +982,11 @@ function dayRows(dateStr){
   }).sort(function(a,b){ return (a.r.kind==='milestone'?0:1)-(b.r.kind==='milestone'?0:1); });
 }
 
+/* 프로젝트마다 고정된 색 하나 — 같은 프로젝트 막대는 늘 같은 색이라
+   여러 날 이어지거나 다른 프로젝트와 겹쳐도 한눈에 구분됨 */
+var GROUP_COLORS=['#5ba0d8','#a78bd8','#e0ab4c','#6fbf85','#d9736c','#4fb8b0','#c48fd0','#9aa5c9'];
+function groupColor(g){ var idx=S.groups.indexOf(g); return GROUP_COLORS[idx<0?0:idx%GROUP_COLORS.length]; }
+
 function renderCalendar(){
   var grid=document.getElementById('calGrid'); if(!grid)return;
   document.getElementById('calLabel').textContent=calY+'년 '+(calM+1)+'월';
@@ -1004,26 +1010,82 @@ function renderCalendar(){
   }
 
   var todayStr=iso(today0);
-  var MAXLINES=3;
+  var MAXLANES=4;
   grid.innerHTML='';
-  cells.forEach(function(c,idx){
-    var dateStr=c.y+'-'+String(c.m+1).padStart(2,'0')+'-'+String(c.d).padStart(2,'0');
-    var div=document.createElement('div');
-    div.className='calday'+(c.other?' other':'')+(dateStr===todayStr?' today':'')+(dateStr===calSel?' sel':'');
-    var dayList=dayRows(dateStr);
-    var shown=dayList.slice(0,MAXLINES);
-    div.innerHTML='<div class="num">'+c.d+'</div><div class="calevs">'+
-      shown.map(function(x){
-        var r=x.r;
-        return '<div class="calevline '+r.kind+(r.done?' done':'')+'" data-id="'+r.id+'" title="'+esc(r.label)+'">'+esc(r.label)+'</div>';
-      }).join('')+
-      '</div>'+(dayList.length>MAXLINES?'<div class="calmore">+'+(dayList.length-MAXLINES)+'개 더</div>':'');
-    div.querySelectorAll('.calevline').forEach(function(el){
-      el.onclick=function(e){ e.stopPropagation(); var r=findRow(el.dataset.id); if(r)openPanel(r); };
+
+  for(var w=0;w<cells.length;w+=7){
+    var wcells=cells.slice(w,w+7);
+    var wdates=wcells.map(function(c){ return c.y+'-'+String(c.m+1).padStart(2,'0')+'-'+String(c.d).padStart(2,'0'); });
+
+    var week=document.createElement('div');
+    week.className='calweek';
+
+    /* 숫자 줄 */
+    var nums=document.createElement('div');
+    nums.className='calnums';
+    wcells.forEach(function(c,i){
+      var dateStr=wdates[i];
+      var n=document.createElement('div');
+      n.className='calnum'+(c.other?' other':'')+(dateStr===todayStr?' today':'')+(dateStr===calSel?' sel':'');
+      n.textContent=c.d;
+      n.onclick=function(ds,cy,cm){ return function(){ calSel=ds; if(cy!==undefined){calY=cy;calM=cm;} renderCalendar(); }; }(dateStr,c.other?c.y:undefined,c.other?c.m:undefined);
+      nums.appendChild(n);
     });
-    div.onclick=function(){ calSel=dateStr; if(c.other){calY=c.y;calM=c.m;} renderCalendar(); };
-    grid.appendChild(div);
-  });
+    week.appendChild(nums);
+
+    /* 이 주와 겹치는 일정들을 레인에 배치 — 시작일 있는 칸에만 글자, 나머진 색선만 */
+    var wStart=wdates[0], wEnd=wdates[6];
+    var items=allRows().filter(function(x){
+      return days(wStart,x.r.end)>=0 && days(x.r.start,wEnd)>=0 && x.r.kind!=='cancelled';
+    }).sort(function(a,b){
+      var as=days(wStart,a.r.start)<0?0:days(wStart,a.r.start), bs=days(wStart,b.r.start)<0?0:days(wStart,b.r.start);
+      if(as!==bs)return as-bs;
+      return days(b.r.start,b.r.end)-days(a.r.start,a.r.end); // 같은 시작칸이면 긴 일정을 먼저 배치
+    });
+
+    var lanes=[]; // 각 레인: 그 레인에 마지막으로 놓인 colEnd
+    var placed=[];
+    items.forEach(function(x){
+      var r=x.r;
+      var colStart=days(wStart,r.start); if(colStart<0)colStart=0; if(colStart>6)colStart=6;
+      var colEnd=days(wStart,r.end); if(colEnd<0)colEnd=0; if(colEnd>6)colEnd=6;
+      var laneIdx=-1;
+      for(var li=0;li<lanes.length;li++){ if(lanes[li]<colStart){ laneIdx=li; break; } }
+      if(laneIdx===-1){ if(lanes.length>=MAXLANES) return; laneIdx=lanes.length; lanes.push(-1); }
+      lanes[laneIdx]=colEnd;
+      var cutL=days(wStart,r.start)<0, cutR=days(wEnd,r.end)>0;
+      placed.push({x:x,colStart:colStart,colEnd:colEnd,lane:laneIdx,cutL:cutL,cutR:cutR});
+    });
+
+    var overflowCount=items.length-placed.length;
+    var laneWrap=document.createElement('div');
+    laneWrap.className='callanes';
+    var laneCount=Math.max(1,lanes.length);
+    for(var li2=0;li2<laneCount;li2++){
+      var laneEl=document.createElement('div');
+      laneEl.className='callane';
+      placed.filter(function(p){return p.lane===li2;}).forEach(function(p){
+        var r=p.x.r;
+        var bar=document.createElement('div');
+        bar.className='calbar'+(p.cutL?' cutL':'')+(p.cutR?' cutR':'')+(r.done?' done':'');
+        bar.style.gridColumn=(p.colStart+1)+' / '+(p.colEnd+2);
+        bar.style.background=groupColor(p.x.g);
+        bar.title=p.x.g.name+' · '+r.label;
+        if(!p.cutL) bar.textContent=r.label;
+        bar.onclick=function(rr){ return function(e){ e.stopPropagation(); openPanel(rr); }; }(r);
+        laneEl.appendChild(bar);
+      });
+      laneWrap.appendChild(laneEl);
+    }
+    if(overflowCount>0){
+      var moreEl=document.createElement('div');
+      moreEl.className='calmore';
+      moreEl.textContent='+'+overflowCount+'개 더';
+      laneWrap.appendChild(moreEl);
+    }
+    week.appendChild(laneWrap);
+    grid.appendChild(week);
+  }
 
   var sd=D(calSel), dow2=['일','월','화','수','목','금','토'][sd.getDay()];
   document.getElementById('calAddLabel').textContent=(sd.getMonth()+1)+'월 '+sd.getDate()+'일('+dow2+')';
