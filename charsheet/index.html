@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#17181b">
-<meta name="description" content="CARECENTER 캐릭터 시트 — 인물/캐릭터 사진을 올리면 각도별로 정리된 참고 시트를 만들어줌">
+<meta name="description" content="CARECENTER 캐릭터 시트 — 인물/캐릭터 사진과 정보를 넣으면 캐릭터 레퍼런스 시트를 만들어줌">
 <link rel="manifest" href="../manifest.json">
 <link rel="icon" href="../icon-192.png">
 <link rel="apple-touch-icon" href="../apple-touch-icon.png">
@@ -14,8 +14,7 @@
 <title>캐릭터 시트 · CARECENTER</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
-<script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&family=Noto+Sans+KR:wght@400;500;600;700&display=swap">
 <style>
   :root {
     color-scheme: dark;
@@ -40,12 +39,13 @@
   html, body { margin: 0; }
   body {
     background: var(--ground); color: var(--ink);
-    font: 15px/1.5 "IBM Plex Sans", system-ui, sans-serif;
+    font: 14.5px/1.5 "IBM Plex Sans", "Noto Sans KR", system-ui, sans-serif;
     height: 100dvh; overflow: hidden;
     display: flex; flex-direction: column;
   }
   a { color: inherit; text-decoration: none; }
   button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+  input, textarea { font-family: inherit; color: inherit; }
 
   .topbar {
     display: flex; align-items: center; gap: 10px; flex: 0 0 auto;
@@ -58,324 +58,474 @@
   .iconbtn { width: 38px; height: 38px; border-radius: 10px; flex: none; display: grid; place-items: center; font-size: 20px; color: var(--ink); background: var(--surface-2); }
   .iconbtn:active { background: var(--hair); }
   .spacer { flex: 1; }
-  .modeldot { width: 7px; height: 7px; border-radius: 50%; background: var(--ink-faint); flex: none; }
-  .modeldot.on { background: var(--green); }
-  .modeldot.err { background: var(--red); }
 
-  .content { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 16px 16px calc(40px + var(--safe-b)); max-width: 900px; margin: 0 auto; width: 100%; }
+  .content { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 16px 16px calc(40px + var(--safe-b)); max-width: 960px; margin: 0 auto; width: 100%; }
 
-  .step { margin-bottom: 28px; }
+  .step { margin-bottom: 30px; }
   .step h2 { font-family: "Bricolage Grotesque", sans-serif; font-size: 15px; margin: 0 0 4px; display: flex; align-items: center; gap: 8px; }
   .step h2 .n { width: 20px; height: 20px; border-radius: 50%; background: var(--accent-soft); color: var(--accent); font: 700 11px "IBM Plex Mono", monospace; display: inline-flex; align-items: center; justify-content: center; flex: none; }
   .step .hint { font-size: 12.5px; color: var(--ink-faint); margin: 0 0 12px 28px; }
+  .sec { margin: 22px 0 0 28px; }
+  .sec h3 { font-size: 12.5px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.04em; margin: 0 0 10px; }
 
-  .drop {
-    border: 1.5px dashed var(--hair-strong); border-radius: 14px; padding: 28px 16px; text-align: center;
-    cursor: pointer; transition: border-color .15s, background .15s;
+  /* ── 프로필 입력 ── */
+  .fgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; margin-left: 28px; }
+  .fgrid.wide { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+  .fld label { display: block; font-size: 11.5px; color: var(--ink-faint); margin-bottom: 4px; }
+  .fld input[type=text], .fld textarea {
+    width: 100%; padding: 9px 11px; border-radius: 9px; border: 1px solid var(--hair);
+    background: var(--surface); color: var(--ink); font-size: 13.5px;
   }
-  .drop:hover, .drop.over { border-color: var(--accent); background: var(--accent-soft); }
-  .drop .ic { font-size: 26px; margin-bottom: 8px; }
-  .drop .t1 { font-weight: 600; font-size: 14px; }
-  .drop .t2 { font-size: 12px; color: var(--ink-faint); margin-top: 3px; }
-  #fileInput { display: none; }
+  .fld textarea { resize: vertical; min-height: 56px; }
+  .colorrow { display: flex; gap: 8px; align-items: center; margin-left: 28px; margin-top: 14px; flex-wrap: wrap; }
+  .colorrow .cwrap { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .colorrow input[type=color] { width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--hair); background: none; padding: 0; }
+  .colorrow .cwrap span { font: 500 10px "IBM Plex Mono", monospace; color: var(--ink-faint); }
 
-  .thumbs { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 10px; margin-top: 14px; }
-  .thumb { position: relative; border-radius: 10px; overflow: hidden; background: var(--surface); border: 1px solid var(--hair); aspect-ratio: 3/4; cursor: grab; }
-  .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .thumb .tag {
-    position: absolute; left: 4px; bottom: 4px; font: 600 10px "IBM Plex Mono", monospace;
-    padding: 2px 6px; border-radius: 999px; background: rgba(0,0,0,0.6); color: #fff;
-  }
-  .thumb .tag.front { background: rgba(91,160,216,0.85); }
-  .thumb .tag.threeq { background: rgba(167,139,216,0.85); }
-  .thumb .tag.side { background: rgba(224,171,76,0.85); }
-  .thumb .tag.unk { background: rgba(0,0,0,0.6); }
-  .thumb .rm {
-    position: absolute; right: 4px; top: 4px; width: 20px; height: 20px; border-radius: 50%;
-    background: rgba(0,0,0,0.6); color: #fff; font-size: 12px; display: flex; align-items: center; justify-content: center;
-  }
-  .thumb .analyzing { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.4); font-size: 10px; color: var(--ink-faint); }
-
-  .slotgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
+  /* ── 사진 슬롯 ── */
+  .slotrow { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; }
   .slot {
     border: 1.5px dashed var(--hair-strong); border-radius: 12px; aspect-ratio: 3/4; position: relative;
     display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
-    background: var(--surface); transition: border-color .12s, background .12s;
+    background: var(--surface); overflow: hidden; cursor: pointer;
   }
-  .slot.over { border-color: var(--accent); background: var(--accent-soft); }
-  .slot .lbl { font: 600 11px "IBM Plex Sans", sans-serif; color: var(--ink-faint); }
-  .slot .ph { font-size: 20px; color: var(--ink-faint); opacity: .5; }
-  .slot img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 10px; }
+  .slot:hover { border-color: var(--accent); }
+  .slot .lbl { font: 600 11px "IBM Plex Sans", sans-serif; color: var(--ink-faint); text-align: center; padding: 0 4px; }
+  .slot .ph { font-size: 18px; color: var(--ink-faint); opacity: .5; }
+  .slot img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
   .slot .slbl {
-    position: absolute; left: 6px; bottom: 6px; font: 700 10.5px "IBM Plex Sans", sans-serif;
-    padding: 2px 7px; border-radius: 999px; background: rgba(0,0,0,0.6); color: #fff;
-  }
-  .slot .clr {
-    position: absolute; right: 4px; top: 4px; width: 20px; height: 20px; border-radius: 50%;
-    background: rgba(0,0,0,0.6); color: #fff; font-size: 12px; display: flex; align-items: center; justify-content: center;
+    position: absolute; left: 5px; bottom: 5px; font: 700 10px "IBM Plex Sans", sans-serif;
+    padding: 2px 6px; border-radius: 999px; background: rgba(0,0,0,0.6); color: #fff;
   }
   .slot.filled { border-style: solid; border-color: var(--hair); }
+  .slot input[type=file] { display: none; }
+
+  .detailrow { margin-left: 28px; display: flex; flex-direction: column; gap: 8px; }
+  .detailitem { display: flex; gap: 8px; align-items: center; }
+  .detailitem .slot { width: 74px; aspect-ratio: 3/4; flex: none; }
+  .detailitem input[type=text] { flex: 1; padding: 9px 11px; border-radius: 9px; border: 1px solid var(--hair); background: var(--surface); color: var(--ink); font-size: 13px; }
+  .detailitem .rm { width: 30px; height: 30px; border-radius: 8px; background: var(--surface-2); color: var(--ink-faint); flex: none; }
+  .detailitem .rm:hover { color: var(--red); }
+  .adddetailbtn { margin-left: 28px; margin-top: 8px; font: 600 12.5px "IBM Plex Sans", sans-serif; color: var(--accent); background: var(--accent-soft); padding: 8px 14px; border-radius: 999px; }
 
   .genbtn {
     width: 100%; padding: 13px; border-radius: 12px; background: var(--accent); color: var(--accent-ink);
-    font-weight: 700; font-size: 14.5px; text-align: center; margin-top: 16px;
+    font-weight: 700; font-size: 14.5px; text-align: center; margin-top: 8px;
   }
-  .genbtn:disabled { opacity: .4; cursor: not-allowed; }
-  .genbtn:active:not(:disabled) { opacity: .85; }
-
-  #sheetCanvas { width: 100%; border-radius: 12px; border: 1px solid var(--hair); background: #fff; display: block; }
+  .genbtn:active { opacity: .85; }
+  #sheetCanvas { width: 100%; border-radius: 12px; border: 1px solid var(--hair); background: #fff; display: block; margin-top: 14px; }
   .dlbtn {
     display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; padding: 12px;
     border-radius: 12px; background: var(--surface-2); border: 1px solid var(--hair-strong); font-weight: 600; font-size: 14px; margin-top: 12px;
   }
   .dlbtn:hover { border-color: var(--accent); color: var(--accent); }
-
-
 </style>
 </head>
 <body>
 
 <div class="topbar">
   <a class="iconbtn" href="../" title="전체 앱 목록으로">‹</a>
-  <div><h1>캐릭터 시트</h1><div class="sub">인물/캐릭터 참고 시트 만들기</div></div>
+  <div><h1>캐릭터 시트</h1><div class="sub">인물·캐릭터 레퍼런스 시트 만들기</div></div>
   <div class="spacer"></div>
-  <div class="modeldot" id="modelDot" title="얼굴 분석 모델 상태"></div>
 </div>
 
 <main class="content">
+
   <div class="step">
-    <h2><span class="n">1</span>사진 올리기</h2>
-    <p class="hint">PNG·JPEG·JPG·스크린샷 전부 가능해요. 여러 장 한 번에 올릴 수 있어요.</p>
-    <div class="drop" id="drop">
-      <div class="ic">📷</div>
-      <div class="t1">눌러서 사진 선택 (또는 여기에 끌어다 놓기)</div>
-      <div class="t2">얼굴이 보이는 사진일수록 각도 자동 인식이 잘 돼요</div>
+    <h2><span class="n">1</span>캐릭터 정보</h2>
+    <p class="hint">시트 맨 위에 들어갈 기본 정보예요. 한글로 자유롭게 입력하세요.</p>
+    <div class="fgrid">
+      <div class="fld"><label>이름</label><input type="text" id="fName" placeholder="예: 페이지"></div>
+      <div class="fld"><label>역할</label><input type="text" id="fRole" placeholder="예: 리드 분석가"></div>
+      <div class="fld"><label>나이</label><input type="text" id="fAge" placeholder="예: 20대 중반"></div>
+      <div class="fld"><label>키</label><input type="text" id="fHeight" placeholder="예: 165cm"></div>
+      <div class="fld"><label>체형</label><input type="text" id="fBody" placeholder="예: 슬림 / 탄탄한 체형"></div>
     </div>
-    <input type="file" id="fileInput" accept="image/png,image/jpeg,image/jpg,.png,.jpg,.jpeg" multiple>
-    <div class="thumbs" id="thumbs"></div>
+    <div class="fgrid wide" style="margin-top:10px">
+      <div class="fld"><label>성격</label><textarea id="fPersonality" placeholder="예: 사려깊고 침착함, 압박 속에서도 냉정함, 세심함"></textarea></div>
+      <div class="fld"><label>특징</label><textarea id="fTraits" placeholder="예: 주근깨, 파란 눈, 단발머리, 차분한 표정, 반듯한 자세"></textarea></div>
+    </div>
+    <div class="colorrow" id="colorRow"></div>
+
+    <div class="sec">
+      <h3>얼굴 디테일 정보</h3>
+      <div class="fgrid" id="faceDetailGrid"></div>
+    </div>
   </div>
 
   <div class="step">
-    <h2><span class="n">2</span>각도 배치</h2>
-    <p class="hint">자동으로 각도를 추정해 아래 칸에 넣어봤어요 — 잘못 들어간 사진은 끌어서 다른 칸으로 옮기면 돼요. 빈 칸은 그냥 비워둬도 괜찮아요.</p>
-    <div class="slotgrid" id="slotgrid"></div>
+    <h2><span class="n">2</span>사진 배치</h2>
+    <p class="hint">칸을 눌러서 그 각도·표정·포즈에 맞는 사진을 직접 올려주세요. 비워둔 칸은 시트에서 빠집니다.</p>
+
+    <div class="sec"><h3>전신 턴어라운드</h3><div class="slotrow" id="grid-turnaround"></div></div>
+    <div class="sec"><h3>얼굴 디테일</h3><div class="slotrow" id="grid-face"></div></div>
+    <div class="sec"><h3>표정 시트</h3><div class="slotrow" id="grid-expr"></div></div>
+    <div class="sec"><h3>포즈 &amp; 자세</h3><div class="slotrow" id="grid-pose"></div></div>
+    <div class="sec">
+      <h3>의상 디테일</h3>
+      <div class="detailrow" id="detailList"></div>
+      <button class="adddetailbtn" id="addDetailBtn">＋ 디테일 사진 추가</button>
+    </div>
   </div>
 
   <div class="step">
     <h2><span class="n">3</span>시트 생성</h2>
-    <button class="genbtn" id="genBtn" disabled>먼저 사진을 칸에 넣어주세요</button>
+    <button class="genbtn" id="genBtn">시트 생성</button>
     <canvas id="sheetCanvas" hidden></canvas>
     <button class="dlbtn" id="dlBtn" hidden>⬇ PNG로 다운로드</button>
   </div>
+
 </main>
 
 <script>
 'use strict';
 var $ = function(s){ return document.querySelector(s); };
-var $$ = function(s){ return [].slice.call(document.querySelectorAll(s)); };
 
-/* ---------- 슬롯 정의 (시장조사 기준 "최소 구도") ---------- */
-var SLOTS = [
-  { id: 'front', label: '정면' },
-  { id: 'threeq', label: '반측면(3/4)' },
-  { id: 'side', label: '측면' },
-  { id: 'back', label: '후면' },
-  { id: 'face', label: '얼굴 클로즈업' },
-  { id: 'extra', label: '기타' }
+/* ═══ 섹션 정의 (첨부해주신 레퍼런스 시트 구조 그대로) ═══ */
+var SECTIONS = {
+  turnaround: [ {id:'t_front',label:'정면'}, {id:'t_34',label:'3/4'}, {id:'t_side',label:'측면'}, {id:'t_back',label:'후면'} ],
+  face:       [ {id:'f_front',label:'정면'}, {id:'f_profile',label:'옆모습'}, {id:'f_34',label:'3/4'} ],
+  expr:       [ {id:'e_neutral',label:'무표정'}, {id:'e_happy',label:'웃음/기쁨'}, {id:'e_angry',label:'화남'}, {id:'e_sad',label:'슬픔'},
+                {id:'e_surprised',label:'놀람'}, {id:'e_worried',label:'걱정'}, {id:'e_confident',label:'자신감'}, {id:'e_determined',label:'단호함'} ],
+  pose:       [ {id:'p_stand',label:'기본 서있는 자세'}, {id:'p_walk',label:'걷는 모습'}, {id:'p_sit',label:'앉은 모습'},
+                {id:'p_relax',label:'편안한 자세'}, {id:'p_tense',label:'긴장된 자세'}, {id:'p_action',label:'액션 준비 자세'} ]
+};
+var FACE_DETAIL_FIELDS = [
+  {id:'hair',label:'머리카락'}, {id:'eyes',label:'눈'}, {id:'eyebrows',label:'눈썹'}, {id:'nose',label:'코'},
+  {id:'lips',label:'입술'}, {id:'skin',label:'피부'}, {id:'makeup',label:'메이크업'},
+  {id:'markings',label:'특징적 표식'}, {id:'tattoos',label:'타투'}, {id:'scars',label:'흉터'}
 ];
 
-var photos = {}; // id -> {img: HTMLImageElement, dataUrl, tag}
-var slotAssign = {}; // slotId -> photoId
-var pid = 0;
+var photos = {};      // slotId -> {img, dataUrl}
+var detailItems = []; // [{id, img, dataUrl, label}]
+var did = 0;
 
-/* ---------- 얼굴 각도 자동 추정 (face-api.js, 전부 브라우저 안에서 처리) ---------- */
-var modelsReady = false;
-(function loadModels(){
-  var MODEL_URL = 'https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js-models@master';
-  Promise.all([
-    faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL + '/tiny_face_detector'),
-    faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL + '/face_landmark_68')
-  ]).then(function(){
-    modelsReady = true;
-    $('#modelDot').classList.add('on');
-    $('#modelDot').title = '얼굴 분석 모델 준비됨';
-  }).catch(function(e){
-    console.error(e);
-    $('#modelDot').classList.add('err');
-    $('#modelDot').title = '얼굴 분석 모델을 못 불러왔어요 — 자동 분류 없이 수동으로 배치해주세요';
+/* ── 프로필 색상 스와치 (4개) ── */
+var DEFAULT_COLORS = ['#a9c6e0','#5b8ab8','#243b52','#d9dbe0'];
+(function(){
+  var wrap = $('#colorRow');
+  DEFAULT_COLORS.forEach(function(c,i){
+    var d = document.createElement('div');
+    d.className = 'cwrap';
+    d.innerHTML = '<input type="color" id="fColor'+i+'" value="'+c+'"><span id="fColorLbl'+i+'">'+c+'</span>';
+    wrap.appendChild(d);
+  });
+  wrap.addEventListener('input', function(e){
+    if(e.target.type==='color'){
+      var i = e.target.id.replace('fColor','');
+      $('#fColorLbl'+i).textContent = e.target.value;
+    }
   });
 })();
 
-function estimateAngle(img){
-  if(!modelsReady) return Promise.resolve('unk');
-  return faceapi.detectSingleFace(img, new faceapi.TinyFaceDetectorOptions())
-    .withFaceLandmarks()
-    .then(function(res){
-      if(!res) return 'unk';
-      var box = res.detection.box;
-      var nose = res.landmarks.getNose();
-      var noseX = nose[3].x; // 콧대 끝 근처
-      var faceCenter = box.x + box.width/2;
-      var offset = (noseX - faceCenter) / box.width; // -0.5~0.5 정도, 0이면 정면
-      var a = Math.abs(offset);
-      if(a < 0.06) return 'front';
-      if(a < 0.16) return 'threeq';
-      return 'side';
-    })
-    .catch(function(){ return 'unk'; });
+/* ── 얼굴 디테일 텍스트 입력 ── */
+(function(){
+  var wrap = $('#faceDetailGrid');
+  FACE_DETAIL_FIELDS.forEach(function(f){
+    var d = document.createElement('div');
+    d.className = 'fld';
+    d.innerHTML = '<label>'+f.label+'</label><input type="text" id="fd_'+f.id+'" placeholder="예: -">';
+    wrap.appendChild(d);
+  });
+})();
+
+/* ── 사진 슬롯 렌더 — 클릭할 때마다 임시 input을 만들어 파일 선택창을 띄움 ── */
+function makeSlot2(s){
+  var el = document.createElement('div');
+  el.className = 'slot';
+  el.dataset.slot = s.id;
+  render();
+  function render(){
+    var p = photos[s.id];
+    el.innerHTML = (p ? '<img src="'+p.dataUrl+'">' : '<div class="ph">＋</div>') +
+      '<div class="'+(p?'slbl':'lbl')+'">'+s.label+'</div>';
+  }
+  el.onclick = function(){
+    var input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/png,image/jpeg,image/jpg,.png,.jpg,.jpeg';
+    input.onchange = function(e){
+      var file = e.target.files[0];
+      if(!file) return;
+      loadImage(file, function(img, dataUrl){
+        photos[s.id] = { img: img, dataUrl: dataUrl };
+        render();
+      });
+    };
+    input.click();
+  };
+  return el;
 }
-var TAG_LABEL = { front:'정면 추정', threeq:'3/4 추정', side:'측면 추정', unk:'미인식' };
-var TAG_TO_SLOT = { front:'front', threeq:'threeq', side:'side', unk:null };
 
-/* ---------- 업로드 ---------- */
-var drop = $('#drop'), fileInput = $('#fileInput');
-drop.onclick = function(){ fileInput.click(); };
-fileInput.onchange = function(e){ handleFiles(e.target.files); fileInput.value=''; };
-['dragover','dragenter'].forEach(function(ev){ drop.addEventListener(ev, function(e){ e.preventDefault(); drop.classList.add('over'); }); });
-['dragleave','drop'].forEach(function(ev){ drop.addEventListener(ev, function(e){ e.preventDefault(); drop.classList.remove('over'); }); });
-drop.addEventListener('drop', function(e){ handleFiles(e.dataTransfer.files); });
-
-function handleFiles(fileList){
-  var files = [].slice.call(fileList).filter(function(f){ return /^image\//.test(f.type) || /\.(png|jpe?g)$/i.test(f.name); });
-  files.forEach(addPhoto);
-}
-
-function addPhoto(file){
-  var id = 'p' + (pid++);
+function loadImage(file, cb){
   var reader = new FileReader();
   reader.onload = function(e){
     var img = new Image();
-    img.onload = function(){
-      photos[id] = { img: img, dataUrl: e.target.result, tag: 'unk' };
-      renderThumbs();
-      estimateAngle(img).then(function(tag){
-        if(!photos[id]) return;
-        photos[id].tag = tag;
-        renderThumbs();
-        autoAssign(id, tag);
-        renderSlots();
-      });
-    };
+    img.onload = function(){ cb(img, e.target.result); };
     img.src = e.target.result;
   };
   reader.readAsDataURL(file);
 }
 
-function autoAssign(pidKey, tag){
-  var slotId = TAG_TO_SLOT[tag];
-  if(!slotId) return;
-  if(slotAssign[slotId]) return; // 이미 그 칸이 차있으면 자동배정 안 함(수동으로 옮기게)
-  slotAssign[slotId] = pidKey;
-}
+['turnaround','face','expr','pose'].forEach(function(key){
+  var wrap = $('#grid-'+key);
+  SECTIONS[key].forEach(function(s){ wrap.appendChild(makeSlot2(s)); });
+});
 
-function removePhoto(id){
-  delete photos[id];
-  Object.keys(slotAssign).forEach(function(s){ if(slotAssign[s]===id) delete slotAssign[s]; });
-  renderThumbs(); renderSlots();
-}
-
-function renderThumbs(){
-  var wrap = $('#thumbs');
+/* ── 의상 디테일 (자유 추가) ── */
+function renderDetailList(){
+  var wrap = $('#detailList');
   wrap.innerHTML = '';
-  Object.keys(photos).forEach(function(id){
-    var p = photos[id];
-    var el = document.createElement('div');
-    el.className = 'thumb';
-    el.draggable = true;
-    el.dataset.id = id;
-    el.innerHTML = '<img src="'+p.dataUrl+'">' +
-      (p.tag==='unk' && !modelsReady ? '' : '<span class="tag '+p.tag+'">'+TAG_LABEL[p.tag]+'</span>') +
-      '<button class="rm" data-id="'+id+'">×</button>';
-    el.addEventListener('dragstart', function(e){ e.dataTransfer.setData('text/plain', id); });
-    wrap.appendChild(el);
-  });
-  wrap.querySelectorAll('.rm').forEach(function(b){
-    b.onclick = function(e){ e.stopPropagation(); removePhoto(b.dataset.id); };
+  detailItems.forEach(function(it){
+    var row = document.createElement('div');
+    row.className = 'detailitem';
+    var slotEl = document.createElement('div');
+    slotEl.className = 'slot' + (it.dataUrl ? ' filled' : '');
+    slotEl.innerHTML = it.dataUrl ? '<img src="'+it.dataUrl+'">' : '<div class="ph">＋</div>';
+    slotEl.onclick = function(){
+      var input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/png,image/jpeg,image/jpg,.png,.jpg,.jpeg';
+      input.onchange = function(e){
+        var file = e.target.files[0];
+        if(!file) return;
+        loadImage(file, function(img, dataUrl){ it.img = img; it.dataUrl = dataUrl; renderDetailList(); });
+      };
+      input.click();
+    };
+    var labelInput = document.createElement('input');
+    labelInput.type = 'text';
+    labelInput.placeholder = '예: 옷깃, 소매, 신발';
+    labelInput.value = it.label;
+    labelInput.oninput = function(){ it.label = labelInput.value; };
+    var rm = document.createElement('button');
+    rm.className = 'rm'; rm.textContent = '×';
+    rm.onclick = function(){ detailItems = detailItems.filter(function(x){return x!==it;}); renderDetailList(); };
+    row.appendChild(slotEl); row.appendChild(labelInput); row.appendChild(rm);
+    wrap.appendChild(row);
   });
 }
+$('#addDetailBtn').onclick = function(){
+  detailItems.push({ id:'d'+(did++), img:null, dataUrl:null, label:'' });
+  renderDetailList();
+};
+renderDetailList();
 
-/* ---------- 슬롯 배치 ---------- */
-function renderSlots(){
-  var wrap = $('#slotgrid');
-  wrap.innerHTML = '';
-  SLOTS.forEach(function(s){
-    var pidHere = slotAssign[s.id];
-    var el = document.createElement('div');
-    el.className = 'slot' + (pidHere ? ' filled' : '');
-    el.dataset.slot = s.id;
-    if(pidHere && photos[pidHere]){
-      el.innerHTML = '<img src="'+photos[pidHere].dataUrl+'">' +
-        '<span class="slbl">'+s.label+'</span>' +
-        '<button class="clr" data-slot="'+s.id+'">×</button>';
-    } else {
-      el.innerHTML = '<div class="ph">＋</div><div class="lbl">'+s.label+'</div>';
-    }
-    el.addEventListener('dragover', function(e){ e.preventDefault(); el.classList.add('over'); });
-    el.addEventListener('dragleave', function(){ el.classList.remove('over'); });
-    el.addEventListener('drop', function(e){
-      e.preventDefault(); el.classList.remove('over');
-      var id = e.dataTransfer.getData('text/plain');
-      if(photos[id]){ slotAssign[s.id] = id; renderSlots(); }
-    });
-    wrap.appendChild(el);
-  });
-  wrap.querySelectorAll('.clr').forEach(function(b){
-    b.onclick = function(e){ e.stopPropagation(); delete slotAssign[b.dataset.slot]; renderSlots(); };
-  });
-  var filledCount = Object.keys(slotAssign).filter(function(k){return slotAssign[k];}).length;
-  var gen = $('#genBtn');
-  gen.disabled = filledCount === 0;
-  gen.textContent = filledCount === 0 ? '먼저 사진을 칸에 넣어주세요' : '시트 생성 (' + filledCount + '컷)';
+/* ═══ 캔버스로 시트 그리기 ═══ */
+function drawCover(ctx, img, x, y, w, h){
+  var ir = img.width/img.height, cr = w/h, sx, sy, sw, sh;
+  if(ir > cr){ sh = img.height; sw = sh*cr; sx = (img.width-sw)/2; sy = 0; }
+  else { sw = img.width; sh = sw/cr; sx = 0; sy = (img.height-sh)/2; }
+  ctx.drawImage(img, sx, sy, sw, sh, x, y, w, h);
+  ctx.strokeStyle = '#e2e2e6'; ctx.lineWidth = 1;
+  ctx.strokeRect(x+0.5, y+0.5, w-1, h-1);
 }
-renderSlots();
+function wrapText(ctx, text, x, y, maxWidth, lineHeight){
+  var words = String(text||'').split(/\s+/), line = '', ly = y;
+  words.forEach(function(w){
+    var test = line ? line+' '+w : w;
+    if(ctx.measureText(test).width > maxWidth && line){ ctx.fillText(line, x, ly); line = w; ly += lineHeight; }
+    else line = test;
+  });
+  if(line) ctx.fillText(line, x, ly);
+  return ly + lineHeight;
+}
 
-/* ---------- 시트 생성 (캔버스) ---------- */
 $('#genBtn').onclick = function(){
-  var filled = SLOTS.filter(function(s){ return slotAssign[s.id] && photos[slotAssign[s.id]]; });
-  if(!filled.length) return;
-
-  var cols = Math.min(filled.length, 4);
-  var rows = Math.ceil(filled.length / cols);
-  var cellW = 360, cellH = 480, pad = 24, labelH = 40, titleH = 64;
-
+  var PAD = 26, GAP = 16;
   var canvas = $('#sheetCanvas');
-  canvas.width = cols*cellW + pad*(cols+1);
-  canvas.height = titleH + rows*(cellH+labelH) + pad*(rows+1);
+  var W = 1240;
+  canvas.width = W;
+
+  // 임시 캔버스로 먼저 그리며 높이를 누적 계산
   var ctx = canvas.getContext('2d');
-  ctx.fillStyle = '#ffffff';
-  ctx.fillRect(0,0,canvas.width,canvas.height);
+  var y = 0;
 
-  ctx.fillStyle = '#141416';
-  ctx.font = '700 26px "Bricolage Grotesque", sans-serif';
-  ctx.fillText('CHARACTER SHEET', pad, 42);
-  ctx.fillStyle = '#8a8f98';
-  ctx.font = '500 13px "IBM Plex Mono", monospace';
-  ctx.fillText('CARECENTER · ' + new Date().toISOString().slice(0,10), pad, 60);
+  // ── 배경은 나중에 최종 높이로 채우고, 지금은 요소들 위치만 계산하며 실제로 그림 ──
+  // 전체 높이를 먼저 추정: 섹션별 대략치 계산 후 canvas.height 설정 → 다시 그림
+  function estimateAndDraw(finalPass, totalH){
+    if(finalPass){
+      canvas.height = totalH;
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0,0,canvas.width,canvas.height);
+    }
+    var cy = PAD;
 
-  filled.forEach(function(s, i){
-    var col = i % cols, row = Math.floor(i/cols);
-    var x = pad + col*(cellW+pad);
-    var y = titleH + pad + row*(cellH+labelH+pad);
-    var img = photos[slotAssign[s.id]].img;
-
-    // 셀 배경
-    ctx.fillStyle = '#f2f2f4';
-    ctx.fillRect(x, y, cellW, cellH);
-
-    // object-fit: cover 방식으로 그리기
-    var ir = img.width / img.height, cr = cellW / cellH;
-    var sx, sy, sw, sh;
-    if(ir > cr){ sh = img.height; sw = sh*cr; sx = (img.width-sw)/2; sy = 0; }
-    else { sw = img.width; sh = sw/cr; sx = 0; sy = (img.height-sh)/2; }
-    ctx.drawImage(img, sx, sy, sw, sh, x, y, cellW, cellH);
-
-    ctx.strokeStyle = '#dcdce0'; ctx.lineWidth = 1;
-    ctx.strokeRect(x+0.5, y+0.5, cellW-1, cellH-1);
-
+    // 타이틀 + 이름
     ctx.fillStyle = '#141416';
-    ctx.font = '700 16px "IBM Plex Sans", sans-serif';
-    ctx.fillText(s.label, x, y+cellH+24);
-  });
+    ctx.font = '800 34px "Bricolage Grotesque", sans-serif';
+    var name = $('#fName').value.trim() || 'UNNAMED';
+    if(finalPass) ctx.fillText(name.toUpperCase(), PAD, cy+30);
+    cy += 38;
+    ctx.fillStyle = '#8a8f98';
+    ctx.font = '600 12px "IBM Plex Mono", monospace';
+    if(finalPass) ctx.fillText('CHARACTER REFERENCE SHEET', PAD, cy+12);
+    cy += 30;
+
+    // ── 1. 프로필 텍스트 (좌) + 2. 전신 턴어라운드 (우) ──
+    var leftW = 300, rightX = PAD+leftW+GAP, rightW = W-PAD*2-leftW-GAP;
+    var profileTop = cy;
+    var py = cy;
+    ctx.fillStyle = '#141416'; ctx.font = '700 13px "IBM Plex Sans", sans-serif';
+    if(finalPass) ctx.fillText('1. 캐릭터 정보', PAD, py+12);
+    py += 26;
+    ctx.font = '400 12px "IBM Plex Sans", sans-serif'; ctx.fillStyle = '#3a3d42';
+    var rows = [
+      ['이름', $('#fName').value], ['역할', $('#fRole').value], ['나이', $('#fAge').value],
+      ['키', $('#fHeight').value], ['체형', $('#fBody').value]
+    ];
+    rows.forEach(function(r){
+      if(!r[1]) return;
+      ctx.font = '700 11px "IBM Plex Mono", monospace'; ctx.fillStyle = '#141416';
+      if(finalPass) ctx.fillText(r[0].toUpperCase(), PAD, py+9);
+      ctx.font = '400 12px "IBM Plex Sans", sans-serif'; ctx.fillStyle = '#3a3d42';
+      if(finalPass) ctx.fillText(String(r[1]), PAD+58, py+9);
+      py += 20;
+    });
+    py += 8;
+    if($('#fPersonality').value){
+      ctx.font = '700 11px "IBM Plex Mono", monospace'; ctx.fillStyle = '#141416';
+      if(finalPass) ctx.fillText('성격', PAD, py+9);
+      py += 18;
+      ctx.font = '400 12px "IBM Plex Sans", sans-serif'; ctx.fillStyle = '#3a3d42';
+      py = finalPass ? wrapText(ctx, $('#fPersonality').value, PAD, py+9, leftW-4, 16) : py+48;
+      py += 8;
+    }
+    if($('#fTraits').value){
+      ctx.font = '700 11px "IBM Plex Mono", monospace'; ctx.fillStyle = '#141416';
+      if(finalPass) ctx.fillText('특징', PAD, py+9);
+      py += 18;
+      ctx.font = '400 12px "IBM Plex Sans", sans-serif'; ctx.fillStyle = '#3a3d42';
+      py = finalPass ? wrapText(ctx, $('#fTraits').value, PAD, py+9, leftW-4, 16) : py+48;
+      py += 8;
+    }
+    ctx.font = '700 11px "IBM Plex Mono", monospace'; ctx.fillStyle = '#141416';
+    if(finalPass) ctx.fillText('시그니처 컬러', PAD, py+9);
+    py += 16;
+    for(var ci=0; ci<4; ci++){
+      var hex = $('#fColor'+ci).value;
+      if(finalPass){ ctx.fillStyle = hex; ctx.fillRect(PAD+ci*44, py, 36, 36); ctx.strokeStyle='#e2e2e6'; ctx.strokeRect(PAD+ci*44+0.5, py+0.5, 35, 35); }
+    }
+    py += 46;
+
+    // 전신 턴어라운드 (우측, 4컷 가로)
+    var tRows = SECTIONS.turnaround.filter(function(s){ return photos[s.id]; });
+    var ty = profileTop;
+    ctx.fillStyle = '#141416'; ctx.font = '700 13px "IBM Plex Sans", sans-serif';
+    if(finalPass) ctx.fillText('2. 전신 턴어라운드', rightX, ty+12);
+    ty += 30;
+    if(tRows.length){
+      var tCellW = (rightW-(tRows.length-1)*10)/tRows.length, tCellH = tCellW*1.42;
+      tRows.forEach(function(s,i){
+        var x = rightX + i*(tCellW+10);
+        ctx.fillStyle = '#141416'; ctx.font = '700 11px "IBM Plex Mono", monospace'; ctx.textAlign = 'center';
+        if(finalPass) ctx.fillText(s.label.toUpperCase(), x+tCellW/2, ty+10);
+        ctx.textAlign = 'left';
+        if(finalPass) drawCover(ctx, photos[s.id].img, x, ty+18, tCellW, tCellH);
+      });
+      ty += 18 + tCellH + 8;
+    }
+
+    cy = Math.max(py, ty) + GAP;
+
+    // ── 3. 얼굴 디테일 (좌) + 4. 표정 시트 (우) ──
+    var sec3Top = cy;
+    var fRows = SECTIONS.face.filter(function(s){ return photos[s.id]; });
+    var fy = cy;
+    ctx.fillStyle = '#141416'; ctx.font = '700 13px "IBM Plex Sans", sans-serif';
+    if(finalPass) ctx.fillText('3. 얼굴 디테일', PAD, fy+12);
+    fy += 26;
+    if(fRows.length){
+      var fCellW = (leftW-(fRows.length-1)*8)/fRows.length, fCellH = fCellW*1.15;
+      fRows.forEach(function(s,i){
+        var x = PAD + i*(fCellW+8);
+        ctx.fillStyle='#141416'; ctx.font='700 10px "IBM Plex Mono", monospace'; ctx.textAlign='center';
+        if(finalPass) ctx.fillText(s.label, x+fCellW/2, fy+8);
+        ctx.textAlign='left';
+        if(finalPass) drawCover(ctx, photos[s.id].img, x, fy+14, fCellW, fCellH);
+      });
+      fy += 14 + fCellH + 10;
+    }
+    var filledFace = FACE_DETAIL_FIELDS.filter(function(f){ return $('#fd_'+f.id).value.trim(); });
+    filledFace.forEach(function(f){
+      ctx.font = '700 10.5px "IBM Plex Mono", monospace'; ctx.fillStyle = '#141416';
+      if(finalPass) ctx.fillText(f.label.toUpperCase()+':', PAD, fy+9);
+      ctx.font = '400 11.5px "IBM Plex Sans", sans-serif'; ctx.fillStyle = '#3a3d42';
+      if(finalPass) ctx.fillText($('#fd_'+f.id).value, PAD+82, fy+9);
+      fy += 18;
+    });
+
+    var eRows = SECTIONS.expr.filter(function(s){ return photos[s.id]; });
+    var ey = sec3Top;
+    ctx.fillStyle = '#141416'; ctx.font = '700 13px "IBM Plex Sans", sans-serif';
+    if(finalPass) ctx.fillText('4. 표정 시트', rightX, ey+12);
+    ey += 26;
+    if(eRows.length){
+      var eCols = Math.min(4, eRows.length);
+      var eCellW = (rightW-(eCols-1)*8)/eCols, eCellH = eCellW*1.05;
+      eRows.forEach(function(s,i){
+        var col = i%eCols, row = Math.floor(i/eCols);
+        var x = rightX + col*(eCellW+8), yy = ey + row*(eCellH+22);
+        if(finalPass) drawCover(ctx, photos[s.id].img, x, yy, eCellW, eCellH);
+        ctx.fillStyle='#141416'; ctx.font='700 10px "IBM Plex Mono", monospace'; ctx.textAlign='center';
+        if(finalPass) ctx.fillText(s.label, x+eCellW/2, yy+eCellH+14);
+        ctx.textAlign='left';
+      });
+      var eRowsCount = Math.ceil(eRows.length/eCols);
+      ey += eRowsCount*(eCellH+22);
+    }
+
+    cy = Math.max(fy, ey) + GAP;
+
+    // ── 5. 포즈 & 자세 (전체 폭) ──
+    var pRows = SECTIONS.pose.filter(function(s){ return photos[s.id]; });
+    ctx.fillStyle = '#141416'; ctx.font = '700 13px "IBM Plex Sans", sans-serif';
+    if(finalPass) ctx.fillText('5. 포즈 & 자세', PAD, cy+12);
+    cy += 26;
+    if(pRows.length){
+      var pCols = Math.min(6, pRows.length);
+      var fullW = W-PAD*2;
+      var pCellW = (fullW-(pCols-1)*10)/pCols, pCellH = pCellW*1.4;
+      var pRowsCount = Math.ceil(pRows.length/pCols);
+      pRows.forEach(function(s,i){
+        var col = i%pCols, row = Math.floor(i/pCols);
+        var x = PAD + col*(pCellW+10), yy = cy + row*(pCellH+22);
+        ctx.fillStyle='#141416'; ctx.font='700 10px "IBM Plex Mono", monospace'; ctx.textAlign='center';
+        if(finalPass) ctx.fillText(s.label, x+pCellW/2, yy+10);
+        ctx.textAlign='left';
+        if(finalPass) drawCover(ctx, photos[s.id].img, x, yy+16, pCellW, pCellH);
+      });
+      cy += pRowsCount*(pCellH+22);
+    }
+    cy += GAP;
+
+    // ── 6. 의상 디테일 ──
+    var dItems = detailItems.filter(function(it){ return it.dataUrl; });
+    if(dItems.length){
+      ctx.fillStyle = '#141416'; ctx.font = '700 13px "IBM Plex Sans", sans-serif';
+      if(finalPass) ctx.fillText('6. 의상 디테일', PAD, cy+12);
+      cy += 26;
+      var dCols = Math.min(6, dItems.length);
+      var fullW2 = W-PAD*2;
+      var dCellW = (fullW2-(dCols-1)*10)/dCols, dCellH = dCellW*1.2;
+      dItems.forEach(function(it,i){
+        var col = i%dCols, row = Math.floor(i/dCols);
+        var x = PAD + col*(dCellW+10), yy = cy + row*(dCellH+20);
+        if(finalPass) drawCover(ctx, it.img, x, yy, dCellW, dCellH);
+        ctx.fillStyle='#141416'; ctx.font='600 10.5px "IBM Plex Sans", sans-serif'; ctx.textAlign='center';
+        if(finalPass) ctx.fillText(it.label||'-', x+dCellW/2, yy+dCellH+14);
+        ctx.textAlign='left';
+      });
+      var dRowsCount = Math.ceil(dItems.length/dCols);
+      cy += dRowsCount*(dCellH+20);
+    }
+
+    cy += PAD;
+    return cy;
+  }
+
+  var totalH = estimateAndDraw(false, 0);
+  estimateAndDraw(true, totalH);
 
   canvas.hidden = false;
   $('#dlBtn').hidden = false;
@@ -385,11 +535,11 @@ $('#genBtn').onclick = function(){
 $('#dlBtn').onclick = function(){
   var canvas = $('#sheetCanvas');
   var a = document.createElement('a');
+  var name = $('#fName').value.trim() || '캐릭터';
   a.href = canvas.toDataURL('image/png');
-  a.download = '캐릭터시트_' + new Date().toISOString().slice(0,10) + '.png';
+  a.download = '캐릭터시트_' + name + '_' + new Date().toISOString().slice(0,10) + '.png';
   document.body.appendChild(a); a.click(); a.remove();
 };
-
 </script>
 </body>
 </html>
