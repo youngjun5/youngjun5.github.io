@@ -2,6 +2,17 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
+<script>
+  /* 설치된 앱(홈 화면 아이콘)으로 이 서브앱이 직접 열리면 허브 메인으로 먼저 보냄 —
+     팀원이 서브앱 페이지에서 "홈 화면에 추가"를 눌러 아이콘이 서브앱을 직접
+     가리키게 저장된 경우까지 코드만으로 고치기 위함. 일반 브라우저 탭/링크로
+     들어온 경우(standalone이 아님)는 그대로 이 페이지를 보여줌. */
+  (function(){
+    var standalone = window.navigator.standalone === true ||
+      (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches);
+    if (standalone) location.replace("../");
+  })();
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#17181b">
 <meta name="description" content="CARECENTER GEAR — 케어코너즈 촬영 장비 목록, 카테고리별로 사진과 함께 바로 확인">
