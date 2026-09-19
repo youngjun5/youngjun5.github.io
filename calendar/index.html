@@ -260,7 +260,7 @@ h1 .rangeTxt:hover{color:var(--accent-2)}
   color:var(--gc);
   border-left:3px solid var(--gc);
 }
-.calbar:hover{background:color-mix(in srgb, var(--gc) 34%, var(--surface))}
+.calbar.hoverAll{background:color-mix(in srgb, var(--gc) 34%, var(--surface))}
 .calbar.cutL{border-top-left-radius:0;border-bottom-left-radius:0;border-left-width:1px;padding-left:6px}
 .calbar.cutR{border-top-right-radius:0;border-bottom-right-radius:0}
 .calbar.cancelled{opacity:.5;text-decoration:line-through}
@@ -268,7 +268,7 @@ h1 .rangeTxt:hover{color:var(--accent-2)}
 .calbar.single{
   background:none;border-left:none;padding-left:3px;color:var(--ink-soft);
 }
-.calbar.single:hover{background:color-mix(in srgb, var(--gc) 16%, transparent);color:var(--ink)}
+.calbar.single.hoverAll{background:color-mix(in srgb, var(--gc) 16%, transparent);color:var(--ink)}
 .calbar.single::before{
   content:''; display:inline-block; width:6px; height:6px; border-radius:50%;
   background:var(--gc); margin-right:5px; vertical-align:middle;
@@ -1126,8 +1126,18 @@ function renderCalendar(){
         bar.style.gridColumn=(p.colStart+1)+' / '+(p.colEnd+2);
         bar.style.setProperty('--gc', groupColor(p.x.g));
         bar.title=p.x.g.name+' · '+r.label;
+        bar.dataset.rowId=r.id;
         if(!p.cutL) bar.textContent=r.label;
         bar.onclick=function(rr){ return function(e){ e.stopPropagation(); openPanel(rr); }; }(r);
+        // 주가 바뀌면 막대가 조각조각 나뉘어 있어서, 한 조각에 커서를 올려도
+        // 같은 일정의 나머지 조각(다른 주 줄)까지 전부 같이 진해지게 함 —
+        // 그래야 언제부터 언제까지 이어지는 일정인지 한눈에 보임
+        bar.addEventListener('mouseenter', function(rid){ return function(){
+          document.querySelectorAll('.calbar[data-row-id="'+rid+'"]').forEach(function(el){ el.classList.add('hoverAll'); });
+        }; }(r.id));
+        bar.addEventListener('mouseleave', function(rid){ return function(){
+          document.querySelectorAll('.calbar[data-row-id="'+rid+'"]').forEach(function(el){ el.classList.remove('hoverAll'); });
+        }; }(r.id));
         laneEl.appendChild(bar);
       });
       laneWrap.appendChild(laneEl);
