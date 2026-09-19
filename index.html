@@ -89,6 +89,31 @@
     text-wrap: pretty;
   }
 
+  /* ── 다가오는 일정 (팀 달력 요약, 앱 들어가자마자 바로 보이게) ── */
+  .agenda {
+    display: block; background: var(--surface); border: 1px solid var(--hair); border-radius: 14px;
+    padding: 16px 18px; margin-bottom: clamp(24px, 4vw, 34px);
+    transition: border-color .15s ease, background .15s ease;
+  }
+  .agenda:hover { border-color: var(--hair-strong); background: var(--surface-2); }
+  .agenda[hidden] { display: none; }
+  .agenda .ahead {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 12px;
+    font: 600 11px "IBM Plex Mono", monospace; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+  .agenda .ahead .arrow2 { margin-left: auto; color: var(--ink-faint); }
+  .agenda:hover .ahead .arrow2 { color: var(--ink); }
+  .agenda .arow { display: flex; align-items: baseline; gap: 10px; padding: 5px 0; font-size: 13.5px; }
+  .agenda .arow + .arow { border-top: 1px solid var(--hair); }
+  .agenda .arow .adot { width: 6px; height: 6px; border-radius: 50%; background: var(--ink-faint); flex: none; align-self: center; }
+  .agenda .arow .adot.soon { background: #d98a6e; }
+  .agenda .arow .aproj { color: var(--ink-faint); font-size: 11.5px; white-space: nowrap; }
+  .agenda .arow .atitle { color: var(--ink); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .agenda .arow .add { font: 600 11px "IBM Plex Mono", monospace; color: var(--ink-faint); flex: none; }
+  .agenda .arow .add.soon { color: #d98a6e; }
+  .agenda .aempty { color: var(--ink-faint); font-size: 13px; }
+
   .rooms { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
 
   .room {
@@ -154,9 +179,79 @@
     </h1>
   </section>
 
+  <a class="agenda" id="agenda" href="https://youngjun5.github.io/calendar/" hidden>
+    <div class="ahead">다가오는 일정<span class="arrow2">→</span></div>
+    <div id="agendaBody"><p class="aempty">불러오는 중...</p></div>
+  </a>
+
   <div class="rooms" id="rooms"></div>
 </main>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.58.0/dist/umd/supabase.js"></script>
+<script>
+  (function () {
+    var SB = {
+      url: 'https://mgvqhrdhshpuamihfvnp.supabase.co',
+      anon: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1ndnFocmRoc2hwdWFtaWhmdm5wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg2MTE4NjQsImV4cCI6MjEwNDE4Nzg2NH0.fjDJuG-47YHU63lydUSZGAGg3FQ-DLGLp9ufnJ4SN30',
+      table: 'carescript', row: 'team-calendar'
+    };
+    function D(s) { var p = String(s).split('-'); return new Date(+p[0], +p[1] - 1, +p[2]); }
+    function iso(d) { var m = d.getMonth() + 1, dd = d.getDate(); return d.getFullYear() + '-' + (m < 10 ? '0' : '') + m + '-' + (dd < 10 ? '0' : '') + dd; }
+    function days(a, b) { return Math.round((D(b) - D(a)) / 86400000); }
+    function md(s) { var p = String(s).split('-'); return p[1] + '/' + p[2]; }
+    function esc(v) { return String(v == null ? '' : v).replace(/[&<>]/g, function (c) { return c === '&' ? '&amp;' : c === '<' ? '&lt;' : '&gt;'; }); }
+    function keyDate(r) { return r.kind === 'milestone' ? r.start : r.end; }
+    function openRow(r) { return !r.done && r.kind !== 'cancelled' && r.kind !== 'blocked'; }
+    function dday(d) {
+      var n = days(iso(new Date()), d);
+      if (n === 0) return '오늘';
+      if (n === 1) return '내일';
+      if (n < 0) return (-n) + '일 지남';
+      return 'D-' + n;
+    }
+
+    function renderAgenda(S) {
+      var box = document.getElementById('agendaBody');
+      if (!S || !S.groups) { box.innerHTML = '<p class="aempty">아직 등록된 일정이 없어요.</p>'; return; }
+      var all = [];
+      S.groups.forEach(function (g) { g.rows.forEach(function (r) { all.push({ g: g, r: r }); }); });
+      var open = all.filter(function (x) { return openRow(x.r); });
+
+      var now = open.filter(function (x) { return days(iso(new Date()), x.r.start) <= 0 && days(iso(new Date()), x.r.end) >= 0; });
+      var fut = open.filter(function (x) { return days(iso(new Date()), keyDate(x.r)) > 0; })
+                    .sort(function (a, b) { return days(keyDate(a.r), keyDate(b.r)); });
+      var late = open.filter(function (x) { return days(iso(new Date()), keyDate(x.r)) < 0; })
+                     .sort(function (a, b) { return days(keyDate(b.r), keyDate(a.r)); });
+
+      var picks = now.slice(0, 2).concat(fut.slice(0, 3)).slice(0, 4);
+      if (!picks.length && late.length) picks = late.slice(0, 2);
+
+      if (!picks.length) { box.innerHTML = '<p class="aempty">지금 진행 중이거나 다가오는 일정이 없어요.</p>'; return; }
+
+      box.innerHTML = picks.map(function (x) {
+        var d = keyDate(x.r), dd = dday(d), n = days(iso(new Date()), d);
+        var soon = n <= 2;
+        return '<div class="arow"><span class="adot' + (soon ? ' soon' : '') + '"></span>' +
+          '<span class="aproj">' + esc(x.g.name) + '</span>' +
+          '<span class="atitle">' + esc(x.r.label) + '</span>' +
+          '<span class="add' + (soon ? ' soon' : '') + '">' + dd + '</span></div>';
+      }).join('');
+    }
+
+    if (window.supabase && window.supabase.createClient) {
+      var db = window.supabase.createClient(SB.url, SB.anon);
+      function pull() {
+        db.from(SB.table).select('content').eq('id', SB.row).maybeSingle().then(function (res) {
+          document.getElementById('agenda').hidden = false;
+          if (res.error || !res.data) { document.getElementById('agendaBody').innerHTML = '<p class="aempty">불러오지 못했어요.</p>'; return; }
+          renderAgenda(res.data.content);
+        });
+      }
+      pull();
+      db.channel('hub-agenda').on('postgres_changes', { event: '*', schema: 'public', table: SB.table, filter: 'id=eq.' + SB.row }, pull).subscribe();
+    }
+  })();
+</script>
 <script>
   var ICONS = {
     note: '<path d="M4 3h12a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M6.5 7h7M6.5 10h7M6.5 13h4"/>',
