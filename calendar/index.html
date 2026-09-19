@@ -239,15 +239,28 @@ h1 .rangeTxt:hover{color:var(--accent-2)}
 .calnum.sel{background:var(--accent-soft)}
 .callanes{display:flex;flex-direction:column;gap:2px}
 .callane{display:grid;grid-template-columns:repeat(7,1fr);gap:0 3px;min-height:17px}
+/* 여러 날 이어지는 진짜 막대는 은은한 틴트 배경 + 왼쪽 컬러 보더로,
+   단 하루짜리는 점+글자로만 — 겹쳐도 전부 진한 색 블록이 되지 않게
+   (구글 캘린더/노션 캘린더/Atlassian 캘린더 컴포넌트 참고) */
 .calbar{
-  border-radius:5px;padding:1px 7px;font:500 10.5px "IBM Plex Sans",sans-serif;line-height:1.55;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#fff;cursor:pointer;
+  border-radius:5px;padding:1px 7px 1px 8px;font:500 10.5px "IBM Plex Sans",sans-serif;line-height:1.55;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;
+  background:color-mix(in srgb, var(--gc) 20%, var(--surface));
+  color:var(--gc);
+  border-left:3px solid var(--gc);
 }
-.calbar.cutL{border-top-left-radius:0;border-bottom-left-radius:0;padding-left:5px}
+.calbar.cutL{border-top-left-radius:0;border-bottom-left-radius:0;border-left-width:1px;padding-left:6px}
 .calbar.cutR{border-top-right-radius:0;border-bottom-right-radius:0}
 .calbar.cancelled{opacity:.5;text-decoration:line-through}
-.calbar.done{opacity:.5;text-decoration:line-through}
-.calmore{grid-column:1/8;font:600 9.5px "IBM Plex Mono",monospace;color:var(--ink-faint);padding:0 4px}
+.calbar.done{opacity:.55;text-decoration:line-through}
+.calbar.single{
+  background:none;border-left:none;padding-left:3px;color:var(--ink-soft);
+}
+.calbar.single::before{
+  content:''; display:inline-block; width:6px; height:6px; border-radius:50%;
+  background:var(--gc); margin-right:5px; vertical-align:middle;
+}
+.calmore{grid-column:1/8;font:600 9.5px "IBM Plex Mono",monospace;color:var(--ink-faint);padding:0 4px;cursor:default}
 
 .caladdrow{display:flex;justify-content:center;margin:14px 0 0}
 .caladdbtn{display:flex;align-items:center;gap:5px;font:600 12.5px "IBM Plex Sans",sans-serif;color:var(--accent-2);background:var(--accent-soft);padding:6px 13px;border-radius:999px}
@@ -1035,7 +1048,7 @@ function renderCalendar(){
   }
 
   var todayStr=iso(today0);
-  var MAXLANES=4;
+  var MAXLANES=3;
   grid.innerHTML='';
 
   for(var w=0;w<cells.length;w+=7){
@@ -1091,10 +1104,11 @@ function renderCalendar(){
       laneEl.className='callane';
       placed.filter(function(p){return p.lane===li2;}).forEach(function(p){
         var r=p.x.r;
+        var isSingle=(p.colStart===p.colEnd && !p.cutL && !p.cutR);
         var bar=document.createElement('div');
-        bar.className='calbar'+(p.cutL?' cutL':'')+(p.cutR?' cutR':'')+(r.done?' done':'');
+        bar.className='calbar'+(p.cutL?' cutL':'')+(p.cutR?' cutR':'')+(r.done?' done':'')+(isSingle?' single':'');
         bar.style.gridColumn=(p.colStart+1)+' / '+(p.colEnd+2);
-        bar.style.background=groupColor(p.x.g);
+        bar.style.setProperty('--gc', groupColor(p.x.g));
         bar.title=p.x.g.name+' · '+r.label;
         if(!p.cutL) bar.textContent=r.label;
         bar.onclick=function(rr){ return function(e){ e.stopPropagation(); openPanel(rr); }; }(r);
