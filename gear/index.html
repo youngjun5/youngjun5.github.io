@@ -10,7 +10,7 @@
   (function(){
     var standalone = window.navigator.standalone === true ||
       (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches);
-    if (standalone) location.replace("../");
+    if (standalone && !document.referrer) location.replace("../"); // referrer가 있으면 허브 안에서 넘어온 정상 이동
   })();
 </script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
