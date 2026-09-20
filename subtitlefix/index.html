@@ -122,9 +122,10 @@
   .cue .unchangedtag { font: 600 10px "IBM Plex Mono", monospace; color: var(--ink-faint); }
   .cue .delbtn { margin-left: auto; color: var(--ink-faint); font-size: 13px; }
   .cue .delbtn:hover { color: var(--red); }
-  .cue .diffline { font-size: 12px; color: var(--ink-faint); margin-bottom: 6px; line-height: 1.6; word-break: break-word; }
-  .cue .diffline del { color: var(--red); text-decoration: line-through; opacity: .8; }
-  .cue .diffline ins { color: var(--green); text-decoration: none; }
+  .cue .diffline { font-size: 12px; margin-bottom: 6px; line-height: 1.7; word-break: break-word; }
+  .old { color: var(--red); text-decoration: line-through; opacity: .75; }
+  .arrow { color: var(--ink-faint); margin: 0 7px; font-weight: 700; }
+  .new { color: var(--green); }
   .cue textarea.cuetext {
     width: 100%; border: 1px solid var(--hair); background: var(--surface-2); color: var(--ink);
     border-radius: 8px; padding: 8px 10px; font-size: 14px; line-height: 1.6; resize: vertical; min-height: 40px;
@@ -140,9 +141,7 @@
   .changerow:hover { border-color: var(--accent); }
   .changerow.flag { border-color: rgba(224,171,76,0.5); }
   .changerow .time { font: 600 10.5px "IBM Plex Mono", monospace; color: var(--ink-faint); flex: none; padding-top: 1px; white-space: nowrap; }
-  .changerow .difftxt { font-size: 12.5px; line-height: 1.6; color: var(--ink-faint); word-break: break-word; }
-  .changerow .difftxt del { color: var(--red); text-decoration: line-through; opacity: .8; }
-  .changerow .difftxt ins { color: var(--green); text-decoration: none; }
+  .changerow .difftxt { font-size: 12.5px; line-height: 1.7; word-break: break-word; }
   .changerow .flagdot { width: 6px; height: 6px; border-radius: 50%; background: var(--amber); flex: none; margin-top: 5px; }
   .changeempty { color: var(--ink-faint); font-size: 12.5px; margin-top: 8px; }
 
@@ -447,16 +446,13 @@ $('#runBtn').onclick = function(){
 
 function esc(s){ return String(s||'').replace(/[&<>]/g,function(c){return c==='&'?'&amp;':c==='<'?'&lt;':'&gt;';}); }
 
-function inlineDiffHtml(a, b){
-  var dmp = new diff_match_patch();
-  var diffs = dmp.diff_main(a, b);
-  dmp.diff_cleanupSemantic(diffs);
-  return diffs.map(function(d){
-    var op = d[0], t = esc(d[1]);
-    if(op === -1) return '<del>'+t+'</del>';
-    if(op === 1) return '<ins>'+t+'</ins>';
-    return t;
-  }).join('');
+// 글자 단위로 촘촘히 섞어 보여주면 뭐가 바뀐 건지 한눈에 안 들어온다는
+// 피드백 반영 — 자동자막 원문 전체(빨간 취소선) → 대본 기준 수정본
+// 전체(초록)을 통째로 나란히 보여주는 방식으로 바꿈.
+function beforeAfterHtml(original, corrected){
+  return '<span class="old">'+esc(original)+'</span>' +
+    '<span class="arrow">→</span>' +
+    '<span class="new">'+esc(corrected)+'</span>';
 }
 
 function renderResults(){
@@ -480,7 +476,7 @@ function renderResults(){
         (c.flag ? '<span class="flagtag">확인 필요</span>' : (!c.changed ? '<span class="unchangedtag">변경 없음</span>' : '')) +
         '<button class="delbtn" data-i="'+i+'">삭제</button>' +
       '</div>' +
-      (c.changed ? '<div class="diffline">'+inlineDiffHtml(c.original, c.corrected)+'</div>' : '') +
+      (c.changed ? '<div class="diffline">'+beforeAfterHtml(c.original, c.corrected)+'</div>' : '') +
       '<textarea class="cuetext" data-i="'+i+'" rows="1">'+esc(c.corrected)+'</textarea>';
     wrap.appendChild(el);
   });
@@ -516,7 +512,7 @@ function renderChangeList(){
     return '<div class="changerow" data-i="'+x.i+'">' +
       (x.c.flag ? '<span class="flagdot" title="확인 필요"></span>' : '') +
       '<span class="time">'+msToSrtTc(x.c.start).slice(0,-4)+'</span>' +
-      '<span class="difftxt">'+inlineDiffHtml(x.c.original, x.c.corrected)+'</span>' +
+      '<span class="difftxt">'+beforeAfterHtml(x.c.original, x.c.corrected)+'</span>' +
     '</div>';
   }).join('');
   box.querySelectorAll('.changerow').forEach(function(row){
