@@ -105,11 +105,17 @@
   .runbtn:active:not(:disabled) { opacity: .85; }
 
   .summary {
-    display: flex; gap: 18px; margin-left: 28px; margin-bottom: 14px; flex-wrap: wrap;
+    display: flex; gap: 8px; margin-left: 28px; margin-bottom: 14px; flex-wrap: wrap;
   }
-  .summary .s { font-size: 12.5px; color: var(--ink-faint); }
+  .summary .s {
+    font: inherit; font-size: 12.5px; color: var(--ink-faint); cursor: pointer;
+    background: var(--surface); border: 1px solid var(--hair); border-radius: 999px; padding: 6px 12px;
+  }
+  .summary .s:hover { border-color: var(--hair-strong); color: var(--ink); }
+  .summary .s.active { border-color: var(--accent); background: var(--accent-soft); color: var(--ink); }
   .summary .s b { color: var(--ink); font-family: "IBM Plex Mono", monospace; }
   .summary .s.warn b { color: var(--amber); }
+  .summary .s.warn.active { border-color: var(--amber); background: rgba(224,171,76,0.14); }
 
   .cuelist { display: flex; flex-direction: column; gap: 8px; }
   .cue {
@@ -398,17 +404,15 @@ function stripNonDialogue(text){
    훨씬 안정적임. diff-match-patch의 match_main(퍼지 위치 검색)으로
    큐가 스크립트의 어디쯤 있는지 먼저 찾고, 그 주변 작은 구간에서만
    diff_main으로 정밀 대조함. */
-function alignScriptToWhisper(cues, scriptText){
+function makeAligner(scriptText){
   var scriptFull = stripNonDialogue(scriptText).replace(/\s+/g,' ').trim();
-
   var dmp = new diff_match_patch();
   dmp.Diff_Timeout = 0;
   dmp.Match_Threshold = 0.45; // 어느 정도 다른 것도 "찾은 걸로" 쳐줌(어미/오타 감안)
   dmp.Match_Distance = 1000;  // 예상 위치에서 이 정도 범위까지만 찾아봄(너무 멀리 안 튐)
-
   var scriptCursor = 0;
 
-  return cues.map(function(c){
+  return { alignOne: function(c){
     var origNorm = c.text.replace(/\s+/g,' ').trim();
     var durSec = Math.max(0.3, (c.end - c.start) / 1000);
     if(!origNorm){
@@ -498,13 +502,40 @@ function alignScriptToWhisper(cues, scriptText){
       changed: corrected !== origNorm,
       flag: !!flagReason, flagReason: flagReason
     };
-  });
+  } };
+}
+
+/* 큐를 한 번에 다 처리하면(800개면 조금 걸림) 화면이 멈춘 것처럼 보여서,
+   덩어리로 나눠 처리하면서 진행률을 보여줌(브라우저가 화면 그릴 틈을
+   주려고 setTimeout으로 양보). */
+function runAlignmentAsync(cues, scriptText, onProgress, onDone){
+  var aligner = makeAligner(scriptText);
+  var results = new Array(cues.length);
+  var i = 0;
+  var CHUNK = 25;
+  function step(){
+    var end = Math.min(cues.length, i + CHUNK);
+    for(; i < end; i++) results[i] = aligner.alignOne(cues[i]);
+    onProgress(Math.round(i / cues.length * 100));
+    if(i < cues.length) setTimeout(step, 0);
+    else onDone(results);
+  }
+  setTimeout(step, 0);
 }
 
 /* ═══ 실행 ═══ */
 $('#runBtn').onclick = function(){
-  resultCues = alignScriptToWhisper(whisperCues, $('#scriptInput').value);
-  renderResults();
+  $('#runBtn').disabled = true;
+  $('#runBtn').textContent = '분석 중... 0%';
+  runAlignmentAsync(whisperCues, $('#scriptInput').value,
+    function(pct){ $('#runBtn').textContent = '분석 중... ' + pct + '%'; },
+    function(results){
+      resultCues = results;
+      $('#runBtn').disabled = false;
+      $('#runBtn').textContent = '다시 대조 & 수정 실행';
+      renderResults();
+    }
+  );
 };
 
 function esc(s){ return String(s||'').replace(/[&<>]/g,function(c){return c==='&'?'&amp;':c==='<'?'&lt;':'&gt;';}); }
@@ -518,21 +549,39 @@ function beforeAfterHtml(original, corrected){
     '<span class="new">'+esc(corrected)+'</span>';
 }
 
+var curFilter = 'attn'; // 'all' | 'changed' | 'flag' | 'unchanged' | 'attn'(=changed 또는 flag, 기본값)
+var FILTERS = {
+  all:       { label: '전체',       test: function(){ return true; } },
+  changed:   { label: '수정됨',     test: function(c){ return c.changed; } },
+  flag:      { label: '확인 필요',  test: function(c){ return c.flag; }, warn: true },
+  unchanged: { label: '그대로 맞음', test: function(c){ return !c.changed && !c.flag; } }
+};
+
 function renderResults(){
   $('#resultStep').hidden = false;
-  var changedN = resultCues.filter(function(c){return c.changed;}).length;
-  var flagN = resultCues.filter(function(c){return c.flag;}).length;
-  var untouchedN = resultCues.filter(function(c){return !c.changed && !c.flag;}).length;
-  $('#summary').innerHTML =
-    '<span class="s">전체 <b>'+resultCues.length+'</b>개 큐</span>' +
-    '<span class="s">수정됨 <b>'+changedN+'</b>개</span>' +
-    '<span class="s warn">확인 필요 <b>'+flagN+'</b>개</span>' +
-    '<span class="s">그대로 맞음 <b>'+untouchedN+'</b>개 (아래 목록엔 안 보여줌)</span>';
+  var counts = {
+    all: resultCues.length,
+    changed: resultCues.filter(FILTERS.changed.test).length,
+    flag: resultCues.filter(FILTERS.flag.test).length,
+    unchanged: resultCues.filter(FILTERS.unchanged.test).length
+  };
+  $('#summary').innerHTML = ['all','changed','flag','unchanged'].map(function(key){
+    var f = FILTERS[key];
+    var active = curFilter === key;
+    return '<button class="s'+(f.warn?' warn':'')+(active?' active':'')+'" data-filter="'+key+'">'+
+      f.label+' <b>'+counts[key]+'</b>개</button>';
+  }).join('');
+  $('#summary').querySelectorAll('button').forEach(function(b){
+    b.onclick = function(){ curFilter = b.dataset.filter; renderResults(); };
+  });
 
   var wrap = $('#cuelist');
   wrap.innerHTML = '';
+  var shownCount = 0;
   resultCues.forEach(function(c, i){
-    if(!c.changed && !c.flag) return; // 손댈 것 없는 큐는 목록에서 뺌 — 확인해야 할 것만 보이게
+    var show = curFilter === 'attn' ? (c.changed || c.flag) : FILTERS[curFilter].test(c);
+    if(!show) return;
+    shownCount++;
     var el = document.createElement('div');
     el.className = 'cue' + (c.flag ? ' flag' : '');
     el.id = 'cue-' + i;
@@ -546,6 +595,9 @@ function renderResults(){
       '<textarea class="cuetext" data-i="'+i+'" rows="1">'+esc(c.corrected)+'</textarea>';
     wrap.appendChild(el);
   });
+  if(!shownCount){
+    wrap.innerHTML = '<p class="changeempty">이 카테고리엔 해당하는 큐가 없어요.</p>';
+  }
   wrap.querySelectorAll('textarea.cuetext').forEach(function(ta){
     autoGrow(ta);
     ta.addEventListener('input', function(){
