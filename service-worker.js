@@ -1,7 +1,7 @@
 // CARECENTER 홈 PWA service worker.
 // HTML은 항상 네트워크에서 새로 받아온다 — "설치된 앱이 예전 버전에 멈춰있다"는 문제를 막기 위함.
 // 정적 자산(아이콘 등)만 캐시해서 설치 가능성/오프라인 아이콘 정도만 지원.
-const CACHE = "studio-shell-v2";
+const CACHE = "studio-shell-v3"; // v2->v3: 개발 중인 앱들 캐시 꼬임 초기화
 const STATIC = ["./icon-192.png", "./icon-512.png", "./manifest.json"];
 
 self.addEventListener("install", (e) => {
@@ -28,6 +28,8 @@ self.addEventListener("fetch", (e) => {
   if (url.pathname.indexOf("/carescript/") === 0) return;     // 케어스크립트 — 실시간 데이터, 캐시 없이 항상 최신으로
   if (url.pathname.indexOf("/english/") === 0) return;       // 영어 공부방 — 문장 데이터가 갱신되므로 항상 최신으로
   if (url.pathname.indexOf("/calendar/") === 0) return;      // 팀 달력 — 실시간 일정, 캐시 없이 항상 최신으로
+  if (url.pathname.indexOf("/charsheet/") === 0) return;     // 캐릭터 시트 — 한창 개발 중, 캐시 없이 항상 최신으로
+  if (url.pathname.indexOf("/subtitlefix/") === 0) return;   // 자막 수정기 — 한창 개발 중, 캐시 없이 항상 최신으로
 
   const isPage = e.request.mode === "navigate" || url.pathname.endsWith("/") || url.pathname.endsWith("index.html");
   if (isPage) {
