@@ -320,6 +320,53 @@ function extractImageText(file, onProgress){
   }).then(function(res){ return res.data.text; });
 }
 
+// 일부 대본 PDF는 대사 부분에 일반 폰트가 아니라 특수 인코딩된 폰트를
+// 써서, pdf.js가 글자를 뽑으면 지문은 멀쩡한데 정작 대사는 ":"/"?"/"..."
+// 같은 기호만 남고 실제 한글이 거의 안 뽑히는 경우가 있었음(실사용
+// 사례로 확인됨). 이런 "깨진 추출"을 감지해서, 그런 경우엔 텍스트
+// 레이어를 안 믿고 PDF 페이지를 통째로 이미지로 렌더링한 다음 OCR로
+// 다시 읽음 — OCR은 폰트 인코딩과 무관하게 화면에 보이는 대로 읽으니까.
+function looksGarbled(text){
+  // 지문(괄호 안)은 멀쩡하게 뽑히는 경우가 많아서, 전체 텍스트 기준으로
+  // 보면 한글 비율이 괜찮아 보여도 정작 대사(괄호 밖)는 텅 비어있을 수
+  // 있음(실사용 사례로 확인됨) — 그래서 괄호 안 내용은 빼고 "대사여야
+  // 할 부분"만 놓고 판단함.
+  var dialogueOnly = text.replace(/[\[【（(][^\]】）)]*[\]】）)]/g, ' ');
+  var meaningful = dialogueOnly.replace(/\s/g, '');
+  if(meaningful.length < 20) return false; // 너무 짧으면 판단 보류
+  var hangul = (dialogueOnly.match(/[가-힣]/g) || []).length;
+  return (hangul / meaningful.length) < 0.25;
+}
+
+function extractPdfViaOCR(arrayBuffer, onProgress){
+  return pdfjsLib.getDocument({data: arrayBuffer}).promise.then(function(pdf){
+    var pageTexts = [];
+    function doPage(i){
+      if(i > pdf.numPages) return Promise.resolve(pageTexts.join('\n'));
+      return pdf.getPage(i).then(function(page){
+        var viewport = page.getViewport({scale: 2.2}); // OCR 정확도를 위해 고해상도로
+        var canvas = document.createElement('canvas');
+        canvas.width = viewport.width; canvas.height = viewport.height;
+        var ctx = canvas.getContext('2d');
+        return page.render({canvasContext: ctx, viewport: viewport}).promise.then(function(){
+          return Tesseract.recognize(canvas, 'kor+eng', {
+            logger: function(m){
+              if(m.status === 'recognizing text' && onProgress){
+                var pageBase = (i-1) / pdf.numPages, pageSpan = 1 / pdf.numPages;
+                onProgress(Math.round((pageBase + pageSpan*m.progress) * 100), i, pdf.numPages);
+              }
+            }
+          });
+        }).then(function(res){
+          pageTexts.push(res.data.text);
+          return doPage(i+1);
+        });
+      });
+    }
+    return doPage(1);
+  });
+}
+
 $('#scriptFileBox').addEventListener('click', function(e){
   if(e.target.tagName !== 'INPUT') { e.preventDefault(); $('#scriptFileInput').click(); }
 });
@@ -351,14 +398,42 @@ function processScriptFiles(files){
       t2.textContent = 'PDF에서 텍스트 추출 중...';
       var reader = new FileReader();
       reader.onload = function(ev){
-        extractPdfText(ev.target.result).then(function(text){
-          results.push(text);
-          next(i+1);
+        // pdf.js에 data로 넘긴 ArrayBuffer는 내부적으로 소비(detach)될 수
+        // 있어서, 나중에 OCR로 재시도할 때를 대비해 미리 복사본을 떠둠
+        var bufForText = ev.target.result;
+        var bufForOcr = bufForText.slice(0);
+        extractPdfText(bufForText).then(function(text){
+          if(!looksGarbled(text)){
+            results.push(text);
+            next(i+1);
+            return;
+          }
+          // 텍스트 레이어가 깨진 것으로 보임(지문은 있는데 대사가 기호로만
+          // 남는 등) — PDF를 이미지로 렌더링해서 OCR로 다시 읽음
+          t2.textContent = 'PDF 텍스트가 깨진 것 같아 이미지로 변환 후 OCR로 다시 읽는 중... 0%';
+          extractPdfViaOCR(bufForOcr, function(pct, curPage, totalPages){
+            t2.textContent = 'OCR로 다시 읽는 중... 페이지 '+curPage+'/'+totalPages+' ('+pct+'%)';
+          }).then(function(ocrText){
+            results.push(ocrText);
+            next(i+1);
+          }).catch(function(err){
+            console.error(err);
+            results.push(text); // OCR도 실패하면 그나마 있던 원래 추출 결과라도 사용
+            next(i+1);
+          });
         }).catch(function(err){
           console.error(err);
-          t2.textContent = file.name + ' 처리 실패 — 스캔본(이미지) PDF일 수 있어요';
-          results.push('');
-          next(i+1);
+          t2.textContent = file.name + ' 텍스트 추출 실패 — 이미지로 변환 후 OCR 시도 중...';
+          extractPdfViaOCR(bufForOcr, function(pct, curPage, totalPages){
+            t2.textContent = 'OCR로 읽는 중... 페이지 '+curPage+'/'+totalPages+' ('+pct+'%)';
+          }).then(function(ocrText){
+            results.push(ocrText);
+            next(i+1);
+          }).catch(function(err2){
+            console.error(err2);
+            results.push('');
+            next(i+1);
+          });
         });
       };
       reader.readAsArrayBuffer(file);
