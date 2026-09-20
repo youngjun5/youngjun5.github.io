@@ -423,16 +423,38 @@ function makeAligner(scriptText){
       return { start:c.start, end:c.end, original:c.text, corrected:origNorm, changed:false, flag:false };
     }
 
-    var probe = origNorm.slice(0, 30); // match_main은 32글자 넘는 패턴을 못 받음
+    // 숫자를 고정폭 표시자로 바꿔서 위치를 찾음 — "3000"과 "3,800"처럼
+    // 서로 다른 숫자라도 글자가 우연히 겹쳐서(0이 여러 개 등) 엉뚱한
+    // 위치를 "그럴듯한 매치"로 잘못 짚는 경우가 있었음. 숫자 부분을 스크립트에
+    // 절대 없을 기호로 바꾸면 그 자리는 "확실한 불일치"로 처리돼서
+    // 위치 자체는 주변 단어만 보고 정확히 찾고(원래 자리는 그대로 유지),
+    // 숫자 값 자체는 뒤에서 diff_main이 실제 텍스트로 다시 비교함.
+    var probeBase = origNorm.replace(/\d+/g, '⁇⁇⁇');
+    var probe = probeBase.slice(0, 30); // match_main은 32글자 넘는 패턴을 못 받음
     var loc = -1;
     try { loc = dmp.match_main(scriptFull, probe, Math.min(scriptCursor, scriptFull.length)); }
     catch(e){ loc = -1; }
 
     if(loc === -1){
-      // 대본에서 이 큐에 해당하는 부분을 못 찾음 — 원본 유지하고 확인 표시,
-      // 커서는 그대로 둬서 다음 큐가 이어서 찾아보게 함
+      // 커서 근처(1000자 이내)에서 못 찾았다고 바로 포기하지 않고, 직전 큐들이
+      // 살짝 어긋나서 커서가 밀렸을 경우를 대비해 범위를 넓혀서 한 번 더 찾아봄
+      try {
+        dmp.Match_Distance = scriptFull.length;
+        loc = dmp.match_main(scriptFull, probe, Math.min(scriptCursor, scriptFull.length));
+      } catch(e2){ loc = -1; }
+      finally { dmp.Match_Distance = 1000; }
+    }
+
+    if(loc === -1){
+      // 그래도 못 찾음 — 원본 유지하고 확인 표시, 커서는 그대로 둬서 다음
+      // 큐가 이어서 찾아보게 함
       return { start:c.start, end:c.end, original:c.text, corrected:origNorm, changed:false, flag:true, flagReason:'대본에서 못 찾음' };
     }
+
+    // 숫자를 표시자로 바꿔서 찾다 보니, 정확히 숫자 시작점이 아니라 숫자
+    // 중간(또는 바로 뒤)에서 걸리는 경우가 있었음 — 위치 바로 앞이 숫자/콤마/
+    // 마침표면 그 앞으로 계속 물러나서 숫자 전체를 창 시작점에 포함시킴.
+    while(loc > 0 && /[\d,.]/.test(scriptFull[loc-1])) loc--;
 
     // 창을 너무 넉넉하게 주면(예전엔 원문 길이의 3배) 다음 문장, 그다음
     // 문장까지 창 안에 들어와버려서, 리뷰 영상처럼 말투가 자주 겹치는
@@ -492,7 +514,21 @@ function makeAligner(scriptText){
     var tooLong = corrected.length > origNorm.length * 1.8 + 6;
     var lowRatio = ratio < 0.4;
     var tooFast = rate > 14;
-    var flagReason = lowRatio ? '일치율 낮음 ('+Math.round(ratio*100)+'%)'
+
+    // 숫자는 whisper가 특히 잘 틀리는데(금액/수량 등) 틀리면 의미 자체가
+    // 완전히 달라지니, 다른 조건과 상관없이 항상 최우선으로 확인 표시함.
+    // 반대로 "뭐"/"좀" 같은 필러 한두 글자 빠진 건 의미가 안 바뀌니
+    // 굳이 확인 표시 안 함(아래 ratio/rate 기준이 이미 그 정도는 통과시킴).
+    // corrected 안의 숫자가 아니라 windowText(대본에서 이 큐가 있다고 찾은
+    // 구간) 전체의 숫자와 비교함 — 숫자 근처는 글자 수가 달라 경계가 살짝
+    // 어긋나기 쉬운데, 그래도 "숫자가 다르다"는 감지 자체는 놓치지 않게.
+    var numsOrig = (origNorm.match(/\d[\d,.]*\d|\d/g) || []).map(function(x){return x.replace(/[,.]/g,'');});
+    var numsWindow = (windowText.match(/\d[\d,.]*\d|\d/g) || []).map(function(x){return x.replace(/[,.]/g,'');});
+    var numMismatch = numsOrig.length > 0 &&
+      numsOrig.some(function(n){ return numsWindow.indexOf(n) === -1; });
+
+    var flagReason = numMismatch ? '숫자가 다름 (원문 "'+numsOrig.join(', ')+'" → 대본엔 "'+numsWindow.join(', ')+'")'
+      : lowRatio ? '일치율 낮음 ('+Math.round(ratio*100)+'%)'
       : tooFast ? '너무 빠름 (초당 '+Math.round(rate)+'자)'
       : tooLong ? '원본보다 너무 길어짐'
       : null;
