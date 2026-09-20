@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<script>
+  /* 설치된 앱(홈 화면 아이콘)으로 이 서브앱이 직접 열리면 허브 메인으로 먼저 보냄 —
+     팀원이 서브앱 페이지에서 "홈 화면에 추가"를 눌러 아이콘이 서브앱을 직접
+     가리키게 저장된 경우까지 코드만으로 고치기 위함. 일반 브라우저 탭/링크로
+     들어온 경우(standalone이 아님)는 그대로 이 페이지를 보여줌. */
+  (function(){
+    var standalone = window.navigator.standalone === true ||
+      (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches);
+    if (standalone && !document.referrer) location.replace("../"); // referrer가 있으면 허브 안에서 넘어온 정상 이동
+  })();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#17181b">
+<meta name="description" content="CARECENTER 자막 수정기 — 유튜브 자동자막을 실제 대본과 대조해서 정확하게 고침">
+<link rel="manifest" href="../manifest.json">
+<link rel="icon" href="../icon-192.png">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="자막 수정기">
+<title>자막 수정기 · CARECENTER</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&family=Noto+Sans+KR:wght@400;500;600;700&display=swap">
+<script src="dmp.js"></script>
+<style>
+  :root {
+    color-scheme: dark;
+    --ground: #121316;
+    --surface: #1b1c20;
+    --surface-2: #202227;
+    --hair: rgba(231,232,234,0.10);
+    --hair-strong: rgba(231,232,234,0.22);
+    --ink: #e7e8ea;
+    --ink-soft: #9a9ea6;
+    --ink-faint: #6b6f78;
+    --accent: #5ba0d8;
+    --accent-soft: rgba(91,160,216,0.14);
+    --accent-ink: #0d1520;
+    --amber: #e0ab4c;
+    --green: #6fbf85;
+    --red: #d9736c;
+    --safe-t: env(safe-area-inset-top, 0px);
+    --safe-b: env(safe-area-inset-bottom, 0px);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--ground); color: var(--ink);
+    font: 14.5px/1.5 "IBM Plex Sans", "Noto Sans KR", system-ui, sans-serif;
+    height: 100dvh; overflow: hidden;
+    display: flex; flex-direction: column;
+  }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+  textarea, input { font-family: inherit; color: inherit; }
+
+  .topbar {
+    display: flex; align-items: center; gap: 10px; flex: 0 0 auto;
+    padding: calc(10px + var(--safe-t)) 16px 10px;
+    background: var(--surface); border-bottom: 1px solid var(--hair);
+    position: sticky; top: 0; z-index: 50;
+  }
+  .topbar h1 { font-family: "Bricolage Grotesque", sans-serif; font-weight: 800; font-size: 18px; margin: 0; letter-spacing: -0.02em; }
+  .topbar .sub { font-size: 11.5px; color: var(--ink-faint); font-weight: 500; }
+  .iconbtn { width: 38px; height: 38px; border-radius: 10px; flex: none; display: grid; place-items: center; font-size: 20px; color: var(--ink); background: var(--surface-2); }
+  .iconbtn:active { background: var(--hair); }
+  .spacer { flex: 1; }
+
+  .content { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 16px 16px calc(40px + var(--safe-b)); max-width: 880px; margin: 0 auto; width: 100%; }
+
+  .step { margin-bottom: 26px; }
+  .step h2 { font-family: "Bricolage Grotesque", sans-serif; font-size: 15px; margin: 0 0 4px; display: flex; align-items: center; gap: 8px; }
+  .step h2 .n { width: 20px; height: 20px; border-radius: 50%; background: var(--accent-soft); color: var(--accent); font: 700 11px "IBM Plex Mono", monospace; display: inline-flex; align-items: center; justify-content: center; flex: none; }
+  .step .hint { font-size: 12.5px; color: var(--ink-faint); margin: 0 0 12px 28px; line-height: 1.6; }
+
+  .filebox {
+    margin-left: 28px; border: 1.5px dashed var(--hair-strong); border-radius: 12px; padding: 16px;
+    display: flex; align-items: center; gap: 12px; cursor: pointer;
+  }
+  .filebox:hover { border-color: var(--accent); }
+  .filebox .ic { font-size: 20px; flex: none; }
+  .filebox .t1 { font-weight: 600; font-size: 13.5px; }
+  .filebox .t2 { font-size: 11.5px; color: var(--ink-faint); margin-top: 2px; }
+  .filebox.has .t1 { color: var(--green); }
+
+  textarea.scriptbox {
+    width: calc(100% - 28px); margin-left: 28px; min-height: 140px; padding: 12px 14px;
+    border-radius: 12px; border: 1px solid var(--hair); background: var(--surface); color: var(--ink);
+    font-size: 13.5px; line-height: 1.7; resize: vertical;
+  }
+
+  .runbtn {
+    width: 100%; padding: 13px; border-radius: 12px; background: var(--accent); color: var(--accent-ink);
+    font-weight: 700; font-size: 14.5px; text-align: center; margin-top: 6px;
+  }
+  .runbtn:disabled { opacity: .4; cursor: not-allowed; }
+  .runbtn:active:not(:disabled) { opacity: .85; }
+
+  .summary {
+    display: flex; gap: 18px; margin-left: 28px; margin-bottom: 14px; flex-wrap: wrap;
+  }
+  .summary .s { font-size: 12.5px; color: var(--ink-faint); }
+  .summary .s b { color: var(--ink); font-family: "IBM Plex Mono", monospace; }
+  .summary .s.warn b { color: var(--amber); }
+
+  .cuelist { display: flex; flex-direction: column; gap: 8px; }
+  .cue {
+    background: var(--surface); border: 1px solid var(--hair); border-radius: 12px; padding: 12px 14px;
+  }
+  .cue.flag { border-color: rgba(224,171,76,0.5); }
+  .cue .top2 { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .cue .time { font: 600 11px "IBM Plex Mono", monospace; color: var(--ink-faint); }
+  .cue .flagtag { font: 700 10px "IBM Plex Mono", monospace; color: var(--amber); background: rgba(224,171,76,0.14); padding: 2px 7px; border-radius: 999px; }
+  .cue .unchangedtag { font: 600 10px "IBM Plex Mono", monospace; color: var(--ink-faint); }
+  .cue .delbtn { margin-left: auto; color: var(--ink-faint); font-size: 13px; }
+  .cue .delbtn:hover { color: var(--red); }
+  .cue .diffline { font-size: 12px; color: var(--ink-faint); margin-bottom: 6px; line-height: 1.6; word-break: break-word; }
+  .cue .diffline del { color: var(--red); text-decoration: line-through; opacity: .8; }
+  .cue .diffline ins { color: var(--green); text-decoration: none; }
+  .cue textarea.cuetext {
+    width: 100%; border: 1px solid var(--hair); background: var(--surface-2); color: var(--ink);
+    border-radius: 8px; padding: 8px 10px; font-size: 14px; line-height: 1.6; resize: vertical; min-height: 40px;
+  }
+  .cue textarea.cuetext:focus { outline: none; border-color: var(--accent); }
+
+  .dlbtn {
+    display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; padding: 12px;
+    border-radius: 12px; background: var(--surface-2); border: 1px solid var(--hair-strong); font-weight: 600; font-size: 14px; margin-top: 14px;
+  }
+  .dlbtn:hover { border-color: var(--accent); color: var(--accent); }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a class="iconbtn" href="../" title="전체 앱 목록으로">‹</a>
+  <div><h1>자막 수정기</h1><div class="sub">Whisper 자막을 실제 대본으로 정확하게</div></div>
+  <div class="spacer"></div>
+</div>
+
+<main class="content">
+  <div class="step">
+    <h2><span class="n">1</span>Whisper 자막 (.srt)</h2>
+    <p class="hint">로컬 mlx_whisper로 뽑은 원본 SRT — 타이밍은 정확하지만 내용은 오디오만 듣고 추측한 거라 틀릴 수 있어요.</p>
+    <label class="filebox" id="srtBox">
+      <span class="ic">📄</span>
+      <div><div class="t1" id="srtBoxT1">눌러서 .srt 파일 선택</div><div class="t2" id="srtBoxT2">whisper --output-format srt 결과물</div></div>
+      <input type="file" id="srtInput" accept=".srt,.vtt,text/plain" hidden>
+    </label>
+  </div>
+
+  <div class="step">
+    <h2><span class="n">2</span>실제 대본</h2>
+    <p class="hint">영상에서 실제로 쓴 대본 텍스트를 그대로 붙여넣으세요. 줄바꿈은 신경 안 써도 돼요 — 통째로 대조합니다.</p>
+    <textarea class="scriptbox" id="scriptInput" placeholder="여기에 대본 전체를 붙여넣으세요..."></textarea>
+  </div>
+
+  <div class="step">
+    <h2><span class="n">3</span>대조 &amp; 수정</h2>
+    <button class="runbtn" id="runBtn" disabled>먼저 SRT와 대본을 넣어주세요</button>
+  </div>
+
+  <div class="step" id="resultStep" hidden>
+    <h2><span class="n">4</span>결과 확인</h2>
+    <p class="hint">시간은 whisper 그대로, 글자만 대본 기준으로 고쳤어요. 노란 테두리는 자동 대조가 애매했던 곳이라 직접 한 번 봐주세요. 바로 아래에서 수정도 가능해요.</p>
+    <div class="summary" id="summary"></div>
+    <div class="cuelist" id="cuelist"></div>
+    <button class="dlbtn" id="dlBtn">⬇ 수정된 SRT 다운로드</button>
+  </div>
+</main>
+
+<script>
+'use strict';
+var $ = function(s){ return document.querySelector(s); };
+
+var whisperCues = null; // [{start,end,text}]
+var resultCues = null;  // [{start,end,original,corrected,changed,flag}]
+
+/* ═══ SRT/VTT 파싱 ═══ */
+function tcToMs(tc){
+  // "00:01:02,340" 또는 "00:01:02.340"
+  var m = tc.trim().match(/(\d+):(\d\d):(\d\d)[.,](\d+)/);
+  if(!m) return 0;
+  return (+m[1]*3600 + +m[2]*60 + +m[3])*1000 + +m[4].padEnd(3,'0').slice(0,3);
+}
+function msToSrtTc(ms){
+  ms = Math.max(0, Math.round(ms));
+  var h = Math.floor(ms/3600000); ms -= h*3600000;
+  var m = Math.floor(ms/60000); ms -= m*60000;
+  var s = Math.floor(ms/1000); ms -= s*1000;
+  return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')+','+String(ms).padStart(3,'0');
+}
+function parseSubs(text){
+  text = text.replace(/\r\n/g,'\n').replace(/^﻿/, '');
+  var isVtt = /^WEBVTT/.test(text.trim());
+  var blocks = text.trim().split(/\n\s*\n/);
+  var cues = [];
+  blocks.forEach(function(b){
+    var lines = b.split('\n').filter(function(l){ return l.trim() !== ''; });
+    if(!lines.length) return;
+    if(isVtt && /^WEBVTT/.test(lines[0])) lines.shift();
+    if(!lines.length) return;
+    var timeLineIdx = lines.findIndex(function(l){ return l.indexOf('-->') !== -1; });
+    if(timeLineIdx === -1) return;
+    var timeLine = lines[timeLineIdx];
+    var parts = timeLine.split('-->');
+    if(parts.length < 2) return;
+    var start = tcToMs(parts[0]);
+    var end = tcToMs(parts[1]);
+    var textLines = lines.slice(timeLineIdx+1);
+    var txt = textLines.join(' ').replace(/<[^>]+>/g,'').replace(/\s+/g,' ').trim();
+    if(!txt) return;
+    cues.push({start: start, end: end, text: txt});
+  });
+  return cues;
+}
+
+/* ═══ 파일 업로드 ═══ */
+$('#srtInput').onchange = function(e){
+  var file = e.target.files[0];
+  if(!file) return;
+  var reader = new FileReader();
+  reader.onload = function(ev){
+    whisperCues = parseSubs(ev.target.result);
+    $('#srtBoxT1').textContent = file.name + ' (' + whisperCues.length + '개 큐)';
+    $('#srtBoxT2').textContent = whisperCues.length ? '다시 눌러서 다른 파일 선택' : '큐를 못 읽었어요 — SRT 형식인지 확인해주세요';
+    $('#srtBox').classList.toggle('has', whisperCues.length > 0);
+    updateRunBtn();
+  };
+  reader.readAsText(file);
+};
+$('#srtBox').addEventListener('click', function(e){
+  if(e.target.tagName !== 'INPUT') { e.preventDefault(); $('#srtInput').click(); }
+});
+
+$('#scriptInput').addEventListener('input', updateRunBtn);
+function updateRunBtn(){
+  var ready = whisperCues && whisperCues.length && $('#scriptInput').value.trim().length > 0;
+  $('#runBtn').disabled = !ready;
+  $('#runBtn').textContent = ready ? '대조 & 수정 실행' : '먼저 SRT와 대본을 넣어주세요';
+}
+
+/* ═══ 핵심: whisper 자막(타이밍) × 실제 대본(내용) 글자 단위 대조 ═══
+   diff-match-patch로 두 텍스트를 통째로 비교한 뒤, 그 결과를 whisper
+   큐 경계에 맞춰 순서대로 나눠 담음 — 같은 부분은 그대로, whisper에만
+   있던 부분(오인식)은 버리고, 대본에만 있던 부분(놓친 부분)은 해당
+   위치의 큐에 끼워 넣음. */
+function alignScriptToWhisper(cues, scriptText){
+  var whisperFull = '', cueRanges = [];
+  cues.forEach(function(c, i){
+    if(i > 0) whisperFull += ' ';
+    var start = whisperFull.length;
+    whisperFull += c.text;
+    cueRanges.push({start: start, end: whisperFull.length});
+  });
+  var scriptFull = scriptText.replace(/\s+/g,' ').trim();
+
+  var dmp = new diff_match_patch();
+  var diffs = dmp.diff_main(whisperFull, scriptFull);
+  dmp.diff_cleanupSemantic(diffs);
+
+  var out = cues.map(function(){ return ''; });
+  var matchedLen = cues.map(function(){ return 0; }); // 얼마나 '그대로 일치'했는지 (애매함 판단용)
+  var ci = 0, pos = 0;
+  function idxFor(p){ while(ci < cueRanges.length-1 && p >= cueRanges[ci].end) ci++; return ci; }
+
+  diffs.forEach(function(d){
+    var op = d[0], text = d[1];
+    if(op === 0 || op === -1){
+      var remaining = text, localPos = pos;
+      while(remaining.length){
+        var idx = idxFor(localPos);
+        var untilBoundary = cueRanges[idx].end - localPos;
+        var take = untilBoundary > 0 ? Math.min(untilBoundary, remaining.length) : remaining.length;
+        var chunk = remaining.slice(0, take);
+        if(op === 0){ out[idx] += chunk; matchedLen[idx] += chunk.length; }
+        remaining = remaining.slice(take);
+        localPos += take;
+      }
+      pos += text.length;
+    } else {
+      var idx2 = idxFor(pos);
+      out[idx2] += text;
+    }
+  });
+
+  return cues.map(function(c, i){
+    var corrected = out[i].replace(/\s+/g,' ').trim();
+    // 큐 경계에서 쉼표/마침표만 뚝 떨어져 나온 경우 정리 (예: ", 오늘날...")
+    corrected = corrected.replace(/^[,.、。!?~\s]+/, '').trim();
+    var origNorm = c.text.replace(/\s+/g,' ').trim();
+    if(!corrected) corrected = origNorm; // 대본에서 대응하는 부분을 전혀 못 찾음 — 원본 유지
+    // 원본 길이 대비 '그대로 일치'한 비율이 낮으면 자동 대조가 애매했다는 뜻 -> 확인 표시
+    var ratio = origNorm.length ? matchedLen[i] / origNorm.length : 1;
+    // whisper가 한 문장을 통째로 못 알아들은 경우, 그 근처 큐에 대본 문장이
+    // 통째로 딸려 들어가서 글자 수만 갑자기 늘어남 — 그 짧은 시간에 그만큼
+    // 말했을 리가 없으니(초당 글자수로 판단) 이런 것도 같이 확인 표시
+    var durSec = Math.max(0.3, (c.end - c.start) / 1000);
+    var rate = corrected.length / durSec;
+    var tooLong = corrected.length > origNorm.length * 1.8 + 6;
+    return {
+      start: c.start, end: c.end, original: c.text, corrected: corrected,
+      changed: corrected !== origNorm,
+      flag: ratio < 0.35 || rate > 14 || tooLong
+    };
+  });
+}
+
+/* ═══ 실행 ═══ */
+$('#runBtn').onclick = function(){
+  resultCues = alignScriptToWhisper(whisperCues, $('#scriptInput').value);
+  renderResults();
+};
+
+function esc(s){ return String(s||'').replace(/[&<>]/g,function(c){return c==='&'?'&amp;':c==='<'?'&lt;':'&gt;';}); }
+
+function inlineDiffHtml(a, b){
+  var dmp = new diff_match_patch();
+  var diffs = dmp.diff_main(a, b);
+  dmp.diff_cleanupSemantic(diffs);
+  return diffs.map(function(d){
+    var op = d[0], t = esc(d[1]);
+    if(op === -1) return '<del>'+t+'</del>';
+    if(op === 1) return '<ins>'+t+'</ins>';
+    return t;
+  }).join('');
+}
+
+function renderResults(){
+  $('#resultStep').hidden = false;
+  var changedN = resultCues.filter(function(c){return c.changed;}).length;
+  var flagN = resultCues.filter(function(c){return c.flag;}).length;
+  $('#summary').innerHTML =
+    '<span class="s">전체 <b>'+resultCues.length+'</b>개 큐</span>' +
+    '<span class="s">수정됨 <b>'+changedN+'</b>개</span>' +
+    '<span class="s warn">확인 필요 <b>'+flagN+'</b>개</span>';
+
+  var wrap = $('#cuelist');
+  wrap.innerHTML = '';
+  resultCues.forEach(function(c, i){
+    var el = document.createElement('div');
+    el.className = 'cue' + (c.flag ? ' flag' : '');
+    el.innerHTML =
+      '<div class="top2">' +
+        '<span class="time">'+msToSrtTc(c.start).slice(0,-4)+' → '+msToSrtTc(c.end).slice(0,-4)+'</span>' +
+        (c.flag ? '<span class="flagtag">확인 필요</span>' : (!c.changed ? '<span class="unchangedtag">변경 없음</span>' : '')) +
+        '<button class="delbtn" data-i="'+i+'">삭제</button>' +
+      '</div>' +
+      (c.changed ? '<div class="diffline">'+inlineDiffHtml(c.original, c.corrected)+'</div>' : '') +
+      '<textarea class="cuetext" data-i="'+i+'" rows="1">'+esc(c.corrected)+'</textarea>';
+    wrap.appendChild(el);
+  });
+  wrap.querySelectorAll('textarea.cuetext').forEach(function(ta){
+    autoGrow(ta);
+    ta.addEventListener('input', function(){
+      resultCues[+ta.dataset.i].corrected = ta.value;
+      autoGrow(ta);
+    });
+  });
+  wrap.querySelectorAll('.delbtn').forEach(function(b){
+    b.onclick = function(){
+      resultCues.splice(+b.dataset.i, 1);
+      renderResults();
+    };
+  });
+}
+function autoGrow(ta){ ta.style.height='auto'; ta.style.height=(ta.scrollHeight+2)+'px'; }
+
+/* ═══ 다운로드 ═══ */
+$('#dlBtn').onclick = function(){
+  var srt = resultCues.map(function(c,i){
+    return (i+1)+'\n'+msToSrtTc(c.start)+' --> '+msToSrtTc(c.end)+'\n'+(c.corrected||c.original)+'\n';
+  }).join('\n');
+  var blob = new Blob([srt], {type:'text/plain;charset=utf-8'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = '수정된자막_' + new Date().toISOString().slice(0,10) + '.srt';
+  document.body.appendChild(a); a.click(); a.remove();
+};
+</script>
+</body>
+</html>
