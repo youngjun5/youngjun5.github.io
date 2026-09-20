@@ -167,6 +167,30 @@
 </div>
 
 <main class="content">
+  <section id="spellSection">
+    <div class="step">
+      <h2><span class="n">A</span>자동 맞춤법 · 띄어쓰기 교정</h2>
+      <p class="hint">대본 없이 자막 파일만 올리면, 실제 맞춤법 검사기(네이버 맞춤법 검사기)로 오타·띄어쓰기를 바로 고쳐줘요.</p>
+      <label class="filebox" id="spellSrtBox">
+        <span class="ic">📄</span>
+        <div><div class="t1" id="spellSrtT1">눌러서 자막 파일 선택</div><div class="t2" id="spellSrtT2">.srt / .vtt / .sbv 전부 가능</div></div>
+        <input type="file" id="spellSrtInput" accept=".srt,.vtt,.sbv,text/plain" hidden>
+      </label>
+      <button class="runbtn" id="spellRunBtn" disabled style="margin-top:14px">먼저 자막 파일을 넣어주세요</button>
+    </div>
+
+    <div class="step" id="spellResultStep" hidden>
+      <h2><span class="n">B</span>결과 확인</h2>
+      <p class="hint">맞춤법 검사기가 고친 그대로예요. 시간은 그대로 두고 글자만 바뀌었어요. 이상한 부분은 아래에서 바로 고칠 수 있어요.</p>
+      <div class="summary" id="spellSummary"></div>
+      <div class="cuelist" id="spellCuelist"></div>
+      <button class="dlbtn" id="spellDlBtn">⬇ 수정된 SRT 다운로드</button>
+    </div>
+  </section>
+
+  <hr style="border:none;border-top:1px solid var(--hair);margin:32px 0">
+  <p class="hint" style="margin-left:0;opacity:.65">아래는 실제 대본과 글자 단위로 대조하는 기능이에요 — 대본 파일에서 텍스트가 깨끗하게 추출 안 되는 경우가 있어서 잠시 보류 중이에요. 위 맞춤법 교정만으로 충분하면 아래는 안 쓰셔도 돼요.</p>
+
   <div class="step">
     <h2><span class="n">1</span>Whisper / 유튜브 자막 (.srt, .vtt, .sbv)</h2>
     <p class="hint">로컬 mlx_whisper로 뽑은 SRT든, 유튜브에서 내려받은 자동자막(SBV)이든 — 타이밍은 정확하지만 내용은 오디오/AI가 추측한 거라 틀릴 수 있어요.</p>
@@ -277,7 +301,162 @@ function parseSbv(text){
   return cues;
 }
 
-/* ═══ 파일 업로드 ═══ */
+/* ═══ A) 대본 없이 자동 맞춤법·띄어쓰기 교정 — 네이버 맞춤법 검사기를
+   대신 호출해주는 작은 프록시(Cloudflare Worker)를 거침. 한 번에 보낼 수
+   있는 글자 수가 정해져 있어서(약 430자), 큐 여러 개를 줄바꿈으로 묶어서
+   한 번에 보내고, 결과도 줄바꿈 기준으로 다시 큐별로 나눔. ═══ */
+var SPELL_API = 'https://carecenter-spellcheck.youngjun981221.workers.dev/check';
+var spellCues = null;
+var spellResults = null;
+
+$('#spellSrtInput').onchange = function(e){
+  var file = e.target.files[0];
+  if(!file) return;
+  var reader = new FileReader();
+  reader.onload = function(ev){
+    spellCues = parseSubs(ev.target.result);
+    $('#spellSrtT1').textContent = file.name + ' (' + spellCues.length + '개 큐)';
+    $('#spellSrtT2').textContent = spellCues.length ? '다시 눌러서 다른 파일 선택' : '큐를 못 읽었어요 — SRT/VTT/SBV 형식인지 확인해주세요';
+    $('#spellSrtBox').classList.toggle('has', spellCues.length > 0);
+    $('#spellRunBtn').disabled = !spellCues.length;
+    $('#spellRunBtn').textContent = spellCues.length ? '맞춤법 검사 실행' : '먼저 자막 파일을 넣어주세요';
+  };
+  reader.readAsText(file);
+};
+$('#spellSrtBox').addEventListener('click', function(e){
+  if(e.target.tagName !== 'INPUT') { e.preventDefault(); $('#spellSrtInput').click(); }
+});
+
+function batchCues(cues, maxLen){
+  var batches = [], cur = [], curLen = 0;
+  cues.forEach(function(idx){
+    var t = spellCues[idx].text.replace(/\s+/g,' ').trim();
+    var addLen = t.length + 1;
+    if(curLen + addLen > maxLen && cur.length){ batches.push(cur); cur = []; curLen = 0; }
+    cur.push(idx); curLen += addLen;
+  });
+  if(cur.length) batches.push(cur);
+  return batches;
+}
+
+function callSpellApi(text){
+  return fetch(SPELL_API, {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({text: text})
+  }).then(function(r){ return r.json(); });
+}
+
+function sleep(ms){ return new Promise(function(res){ setTimeout(res, ms); }); }
+
+async function runSpellCheck(){
+  var allIdx = spellCues.map(function(_, i){ return i; });
+  var batches = batchCues(allIdx, 380);
+  var results = new Array(spellCues.length);
+  spellCues.forEach(function(c, i){
+    var norm = c.text.replace(/\s+/g,' ').trim();
+    results[i] = { start:c.start, end:c.end, original:c.text, corrected:norm, changed:false, failed:false };
+  });
+
+  for(var b = 0; b < batches.length; b++){
+    var idxs = batches[b];
+    var text = idxs.map(function(i){ return spellCues[i].text.replace(/\s+/g,' ').trim(); }).join('\n');
+    $('#spellRunBtn').textContent = '맞춤법 검사 중... ' + Math.round(b/batches.length*100) + '% ('+(b+1)+'/'+batches.length+' 묶음)';
+    try {
+      var res = await callSpellApi(text);
+      if(res.success){
+        var lines = res.corrected.split('\n');
+        if(lines.length === idxs.length){
+          idxs.forEach(function(cueIdx, li){
+            var corrected = lines[li].trim();
+            var origNorm = spellCues[cueIdx].text.replace(/\s+/g,' ').trim();
+            results[cueIdx].corrected = corrected || origNorm;
+            results[cueIdx].changed = corrected !== origNorm;
+          });
+        } else {
+          idxs.forEach(function(cueIdx){ results[cueIdx].failed = true; });
+        }
+      } else {
+        idxs.forEach(function(cueIdx){ results[cueIdx].failed = true; });
+      }
+    } catch(e) {
+      console.error(e);
+      idxs.forEach(function(cueIdx){ results[cueIdx].failed = true; });
+    }
+    await sleep(250); // 네이버 쪽에 너무 빠르게 연속 요청 안 하려고 살짝 텀을 둠
+  }
+  return results;
+}
+
+$('#spellRunBtn').onclick = function(){
+  $('#spellRunBtn').disabled = true;
+  runSpellCheck().then(function(results){
+    spellResults = results;
+    $('#spellRunBtn').disabled = false;
+    $('#spellRunBtn').textContent = '다시 맞춤법 검사 실행';
+    renderSpellResults();
+  });
+};
+
+var spellCurFilter = 'changed';
+var SPELL_FILTERS = {
+  all:       { label: '전체',      test: function(){ return true; } },
+  changed:   { label: '수정됨',    test: function(r){ return r.changed; } },
+  failed:    { label: '실패',      test: function(r){ return r.failed; }, warn: true },
+  unchanged: { label: '그대로 맞음', test: function(r){ return !r.changed && !r.failed; } }
+};
+function renderSpellResults(){
+  $('#spellResultStep').hidden = false;
+  var counts = {
+    all: spellResults.length,
+    changed: spellResults.filter(SPELL_FILTERS.changed.test).length,
+    failed: spellResults.filter(SPELL_FILTERS.failed.test).length,
+    unchanged: spellResults.filter(SPELL_FILTERS.unchanged.test).length
+  };
+  $('#spellSummary').innerHTML = ['all','changed','failed','unchanged'].map(function(key){
+    var f = SPELL_FILTERS[key], active = spellCurFilter === key;
+    return '<button class="s'+(f.warn?' warn':'')+(active?' active':'')+'" data-filter="'+key+'">'+f.label+' <b>'+counts[key]+'</b>개</button>';
+  }).join('');
+  $('#spellSummary').querySelectorAll('button').forEach(function(b){
+    b.onclick = function(){ spellCurFilter = b.dataset.filter; renderSpellResults(); };
+  });
+
+  var wrap = $('#spellCuelist');
+  wrap.innerHTML = '';
+  var shown = 0;
+  spellResults.forEach(function(r, i){
+    if(!SPELL_FILTERS[spellCurFilter].test(r)) return;
+    shown++;
+    var el = document.createElement('div');
+    el.className = 'cue' + (r.failed ? ' flag' : '');
+    el.innerHTML =
+      '<div class="top2">' +
+        '<span class="time">'+msToSrtTc(r.start).slice(0,-4)+' → '+msToSrtTc(r.end).slice(0,-4)+'</span>' +
+        (r.failed ? '<span class="flagtag">검사 실패 — 원본 유지</span>' : '') +
+      '</div>' +
+      (r.changed ? '<div class="diffline">'+beforeAfterHtml(r.original, r.corrected)+'</div>' : '') +
+      '<textarea class="cuetext" data-i="'+i+'" rows="1">'+esc(r.corrected)+'</textarea>';
+    wrap.appendChild(el);
+  });
+  if(!shown) wrap.innerHTML = '<p class="changeempty">이 카테고리엔 해당하는 큐가 없어요.</p>';
+  wrap.querySelectorAll('textarea.cuetext').forEach(function(ta){
+    autoGrow(ta);
+    ta.addEventListener('input', function(){ spellResults[+ta.dataset.i].corrected = ta.value; autoGrow(ta); });
+  });
+}
+
+$('#spellDlBtn').onclick = function(){
+  var srt = spellResults.map(function(r,i){
+    return (i+1)+'\n'+msToSrtTc(r.start)+' --> '+msToSrtTc(r.end)+'\n'+(r.corrected||r.original)+'\n';
+  }).join('\n');
+  var blob = new Blob([srt], {type:'text/plain;charset=utf-8'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = '맞춤법수정_' + new Date().toISOString().slice(0,10) + '.srt';
+  document.body.appendChild(a); a.click(); a.remove();
+};
+
+/* ═══ 파일 업로드 (대본 대조 기능 — 아래는 기존 코드) ═══ */
 $('#srtInput').onchange = function(e){
   var file = e.target.files[0];
   if(!file) return;
