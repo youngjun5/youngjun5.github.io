@@ -173,13 +173,14 @@
 
   <div class="step">
     <h2><span class="n">2</span>실제 대본</h2>
-    <p class="hint">직접 붙여넣거나, 대본 파일(PDF/이미지·스크린샷)을 올리면 자동으로 글자를 읽어서 아래 칸에 채워줘요 — 채워진 뒤엔 자유롭게 고칠 수 있어요.</p>
+    <p class="hint">직접 붙여넣거나, 대본 파일(PDF/이미지·스크린샷)을 올리면 자동으로 글자를 읽어서 아래 칸에 채워줘요 — 채워진 뒤엔 자유롭게 고칠 수 있어요.<br>
+    <b>실제 대사가 아닌 지문/설명은 자동으로 제외돼요</b> — 대괄호나 소괄호로 감싼 부분( [웃으며 말한다], (효과음) 등)은 자동으로 빠지고, 괄호가 없는 설명 문단은 그 줄 맨 앞에 <b>#</b>을 붙이면 제외돼요.</p>
     <label class="filebox" id="scriptFileBox">
       <span class="ic">📎</span>
       <div><div class="t1" id="scriptFileT1">눌러서 대본 파일 선택 (여러 장 가능)</div><div class="t2" id="scriptFileT2">PDF는 텍스트 추출, 이미지는 OCR로 글자 인식</div></div>
       <input type="file" id="scriptFileInput" accept=".pdf,image/png,image/jpeg,image/jpg,.png,.jpg,.jpeg" multiple hidden>
     </label>
-    <textarea class="scriptbox" id="scriptInput" placeholder="여기에 대본 전체를 붙여넣으세요..."></textarea>
+    <textarea class="scriptbox" id="scriptInput" placeholder="여기에 대본 전체를 붙여넣으세요...&#10;&#10;예)&#10;민수: 오늘 진짜 대박이었어&#10;[웃으며] 이 부분은 자동으로 제외됨&#10;#이런 식으로 줄 앞에 #을 붙여도 제외됨"></textarea>
   </div>
 
   <div class="step">
@@ -372,6 +373,21 @@ function updateRunBtn(){
   $('#runBtn').textContent = ready ? '대조 & 수정 실행' : '먼저 SRT와 대본을 넣어주세요';
 }
 
+/* 대본엔 실제 대사 말고도 지문/설명(예: [웃으며 말한다], (효과음), 장면
+   설명 문단)이 섞여 있는 경우가 많음 — 이런 건 whisper 자막엔 당연히
+   없으니 대조 과정에서 "누락된 부분"으로 오인돼서 자막에 끼어들어감.
+   그래서 대조 전에 미리 걸러냄:
+   1) 대괄호/소괄호로 감싼 부분은 자동으로 지문으로 보고 제거
+   2) 줄 맨 앞에 #을 붙인 줄은 통째로 제외 (괄호가 없는 설명 문단용) */
+function stripNonDialogue(text){
+  var lines = text.split('\n')
+    .filter(function(l){ return l.trim().indexOf('#') !== 0; })
+    // 줄 맨 앞 "캐릭터명:" 같은 화자 표시 제거 (실제로 말하는 부분이 아님)
+    .map(function(l){ return l.replace(/^\s*[가-힣A-Za-z0-9]{1,12}\s*[:：]\s*/, ''); });
+  var joined = lines.join('\n');
+  return joined.replace(/[\[【（(][^\]】）)]*[\]】）)]/g, ' ');
+}
+
 /* ═══ 핵심: whisper 자막(타이밍) × 실제 대본(내용) 글자 단위 대조 ═══
    diff-match-patch로 두 텍스트를 통째로 비교한 뒤, 그 결과를 whisper
    큐 경계에 맞춰 순서대로 나눠 담음 — 같은 부분은 그대로, whisper에만
@@ -385,7 +401,7 @@ function alignScriptToWhisper(cues, scriptText){
     whisperFull += c.text;
     cueRanges.push({start: start, end: whisperFull.length});
   });
-  var scriptFull = scriptText.replace(/\s+/g,' ').trim();
+  var scriptFull = stripNonDialogue(scriptText).replace(/\s+/g,' ').trim();
 
   var dmp = new diff_match_patch();
   dmp.Diff_Timeout = 0; // 긴 영상(대본이 큰 경우) 대조가 시간제한에 걸려 대충 끝나는 일이 없게 무제한으로
