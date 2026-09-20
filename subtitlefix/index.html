@@ -131,6 +131,21 @@
   }
   .cue textarea.cuetext:focus { outline: none; border-color: var(--accent); }
 
+  .changesH { font-family: "Bricolage Grotesque", sans-serif; font-size: 14px; margin: 26px 0 4px; color: var(--ink); }
+  .changelist { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+  .changerow {
+    display: flex; align-items: flex-start; gap: 10px; background: var(--surface); border: 1px solid var(--hair);
+    border-radius: 10px; padding: 9px 12px; cursor: pointer;
+  }
+  .changerow:hover { border-color: var(--accent); }
+  .changerow.flag { border-color: rgba(224,171,76,0.5); }
+  .changerow .time { font: 600 10.5px "IBM Plex Mono", monospace; color: var(--ink-faint); flex: none; padding-top: 1px; white-space: nowrap; }
+  .changerow .difftxt { font-size: 12.5px; line-height: 1.6; color: var(--ink-faint); word-break: break-word; }
+  .changerow .difftxt del { color: var(--red); text-decoration: line-through; opacity: .8; }
+  .changerow .difftxt ins { color: var(--green); text-decoration: none; }
+  .changerow .flagdot { width: 6px; height: 6px; border-radius: 50%; background: var(--amber); flex: none; margin-top: 5px; }
+  .changeempty { color: var(--ink-faint); font-size: 12.5px; margin-top: 8px; }
+
   .dlbtn {
     display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; padding: 12px;
     border-radius: 12px; background: var(--surface-2); border: 1px solid var(--hair-strong); font-weight: 600; font-size: 14px; margin-top: 14px;
@@ -178,6 +193,11 @@
     <p class="hint">시간은 whisper 그대로, 글자만 대본 기준으로 고쳤어요. 노란 테두리는 자동 대조가 애매했던 곳이라 직접 한 번 봐주세요. 바로 아래에서 수정도 가능해요.</p>
     <div class="summary" id="summary"></div>
     <div class="cuelist" id="cuelist"></div>
+
+    <h3 class="changesH">수정된 사항</h3>
+    <p class="hint" style="margin-left:0">바뀐 큐만 모아서 시간순으로 보여줘요 — 여기서 훑어보고 이상한 거 있으면 눌러서 위에서 바로 고치세요.</p>
+    <div class="changelist" id="changelist"></div>
+
     <button class="dlbtn" id="dlBtn">⬇ 수정된 SRT 다운로드</button>
   </div>
 </main>
@@ -453,6 +473,7 @@ function renderResults(){
   resultCues.forEach(function(c, i){
     var el = document.createElement('div');
     el.className = 'cue' + (c.flag ? ' flag' : '');
+    el.id = 'cue-' + i;
     el.innerHTML =
       '<div class="top2">' +
         '<span class="time">'+msToSrtTc(c.start).slice(0,-4)+' → '+msToSrtTc(c.end).slice(0,-4)+'</span>' +
@@ -476,8 +497,42 @@ function renderResults(){
       renderResults();
     };
   });
+
+  renderChangeList();
 }
 function autoGrow(ta){ ta.style.height='auto'; ta.style.height=(ta.scrollHeight+2)+'px'; }
+
+/* 바뀐 큐만 모아 하단에 한눈에 훑어볼 수 있는 요약 — 누르면 위쪽 해당
+   큐로 스크롤 + 잠깐 강조해서 바로 고칠 수 있게 함 */
+function renderChangeList(){
+  var box = $('#changelist');
+  var changed = [];
+  resultCues.forEach(function(c, i){ if(c.changed) changed.push({c: c, i: i}); });
+  if(!changed.length){
+    box.innerHTML = '<p class="changeempty">이번엔 대본과 달라진 큐가 없어요.</p>';
+    return;
+  }
+  box.innerHTML = changed.map(function(x){
+    return '<div class="changerow" data-i="'+x.i+'">' +
+      (x.c.flag ? '<span class="flagdot" title="확인 필요"></span>' : '') +
+      '<span class="time">'+msToSrtTc(x.c.start).slice(0,-4)+'</span>' +
+      '<span class="difftxt">'+inlineDiffHtml(x.c.original, x.c.corrected)+'</span>' +
+    '</div>';
+  }).join('');
+  box.querySelectorAll('.changerow').forEach(function(row){
+    row.onclick = function(){
+      var target = document.getElementById('cue-'+row.dataset.i);
+      if(!target) return;
+      target.scrollIntoView({behavior:'smooth', block:'center'});
+      target.style.transition = 'none';
+      target.style.borderColor = 'var(--accent)';
+      setTimeout(function(){
+        target.style.transition = 'border-color .6s ease';
+        target.style.borderColor = '';
+      }, 700);
+    };
+  });
+}
 
 /* ═══ 다운로드 ═══ */
 $('#dlBtn').onclick = function(){
