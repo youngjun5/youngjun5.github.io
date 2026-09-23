@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<script>
+  (function(){
+    var standalone = window.navigator.standalone === true ||
+      (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches);
+    if (standalone && !document.referrer) location.replace("../");
+  })();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0e1220">
+<meta name="description" content="CARECENTER 팀 계정 모음 — 구독 서비스 계정과 만료 상태">
+<link rel="manifest" href="../manifest.json">
+<link rel="icon" href="../icon-192.png">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="계정">
+<title>계정 · CARECENTER</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+  :root {
+    color-scheme: dark;
+    --ground: #0e1220;
+    --ink: #f0f1f4;
+    --ink-soft: #b7bcc8;
+    --ink-faint: #7d8394;
+    --accent: #6db4ff;
+    --safe-t: env(safe-area-inset-top, 0px);
+    --safe-b: env(safe-area-inset-bottom, 0px);
+    --glass-bg: rgba(255,255,255,0.09);
+    --glass-bg-2: rgba(255,255,255,0.05);
+    --glass-border: rgba(255,255,255,0.16);
+    --red: #ff6b6b; --yellow: #ffd166; --green: #6fdd8b; --gray: #7a7f8a;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; }
+  body {
+    background: var(--ground); color: var(--ink);
+    font: 15px/1.5 "IBM Plex Sans", system-ui, sans-serif;
+    height: 100dvh; overflow: hidden;
+    display: flex; flex-direction: column;
+    position: relative;
+  }
+  a { color: inherit; }
+
+  /* 배경 블롭 — 글래스 카드가 실제로 '비치게' 보이도록 */
+  .bg-blobs { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+  .blob { position: absolute; border-radius: 50%; filter: blur(70px); opacity: 0.55; }
+  .blob.b1 { width: 340px; height: 340px; background: #5b7cff; top: -80px; left: -60px; }
+  .blob.b2 { width: 300px; height: 300px; background: #ff6bd6; top: 40%; right: -100px; }
+  .blob.b3 { width: 280px; height: 280px; background: #35e0c0; bottom: -100px; left: 20%; }
+
+  .topbar {
+    display: flex; align-items: center; gap: 10px; flex: 0 0 auto;
+    padding: calc(10px + var(--safe-t)) 16px 10px;
+    background: rgba(14,18,32,0.65); backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--glass-border);
+    position: sticky; top: 0; z-index: 50;
+  }
+  .topbar h1 {
+    font-family: "Bricolage Grotesque", sans-serif; font-weight: 800; font-size: 18px;
+    margin: 0; letter-spacing: -0.02em;
+  }
+  .topbar .sub { font-size: 11.5px; color: var(--ink-faint); font-weight: 500; }
+  .iconbtn {
+    width: 38px; height: 38px; border-radius: 10px; flex: none;
+    display: grid; place-items: center; font-size: 20px; color: var(--ink);
+    background: var(--glass-bg); border: 1px solid var(--glass-border);
+  }
+  .iconbtn:active { background: var(--glass-bg-2); }
+
+  .content {
+    position: relative; z-index: 1;
+    flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
+    padding: 18px 16px calc(40px + var(--safe-b));
+  }
+
+  .intro { max-width: 640px; margin-bottom: 20px; }
+  .intro .eyebrow {
+    font: 600 11px "IBM Plex Mono", monospace; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--accent); margin: 0 0 10px;
+  }
+  .intro h1 {
+    font-family: "Bricolage Grotesque", sans-serif; font-weight: 700;
+    font-size: clamp(22px, 3.6vw, 30px); line-height: 1.18; margin: 0 0 8px;
+  }
+  .intro p { margin: 0; color: var(--ink-soft); font-size: 13.5px; max-width: 58ch; }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 12px; margin: 14px 0 22px; }
+  .legend .li { display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--ink-faint); }
+  .dot { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+  .dot.red { background: var(--red); box-shadow: 0 0 10px var(--red); }
+  .dot.yellow { background: var(--yellow); box-shadow: 0 0 10px var(--yellow); }
+  .dot.green { background: var(--green); box-shadow: 0 0 10px var(--green); }
+  .dot.gray { background: var(--gray); }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+
+  .card {
+    position: relative; border-radius: 20px; padding: 18px;
+    background: var(--glass-bg); border: 1px solid var(--glass-border);
+    backdrop-filter: blur(22px) saturate(150%); -webkit-backdrop-filter: blur(22px) saturate(150%);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.12);
+    transition: transform .15s ease, border-color .15s ease;
+  }
+  .card.status-gray { filter: grayscale(1); opacity: .6; }
+  .card:active { transform: scale(0.99); }
+
+  .card-top { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+  .card-logo {
+    width: 40px; height: 40px; border-radius: 11px; flex: none; overflow: hidden;
+    background: rgba(255,255,255,0.15); display: grid; place-items: center;
+  }
+  .card-logo img { width: 100%; height: 100%; object-fit: cover; }
+  .card-name { font: 700 15.5px "IBM Plex Sans", sans-serif; }
+  .card-url { font: 500 11.5px "IBM Plex Mono", monospace; color: var(--ink-faint); }
+  .status-pill {
+    margin-left: auto; display: flex; align-items: center; gap: 6px;
+    font: 600 11px "IBM Plex Sans", sans-serif; padding: 5px 10px 5px 8px; border-radius: 999px;
+    background: rgba(255,255,255,0.10); border: 1px solid var(--glass-border); white-space: nowrap;
+  }
+
+  .field-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .field-label { font: 600 10.5px "IBM Plex Mono", monospace; color: var(--ink-faint); width: 40px; flex: none; text-transform: uppercase; }
+  .field-value {
+    flex: 1; font: 500 13.5px "IBM Plex Mono", monospace; color: var(--ink);
+    background: rgba(0,0,0,0.18); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px;
+    padding: 7px 10px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .copy-btn {
+    flex: none; width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center;
+    background: rgba(255,255,255,0.10); border: 1px solid var(--glass-border); color: var(--ink-soft); cursor: pointer;
+  }
+  .copy-btn:active { background: rgba(255,255,255,0.2); }
+  .copy-btn.copied { color: var(--green); border-color: var(--green); }
+
+  .card-actions { display: flex; align-items: center; gap: 10px; margin-top: 14px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.08); flex-wrap: wrap; }
+  .visit-btn {
+    display: inline-flex; align-items: center; gap: 6px; font: 700 12.5px "IBM Plex Sans", sans-serif;
+    padding: 8px 14px; border-radius: 10px; background: var(--accent); color: #0e1220; text-decoration: none;
+  }
+  .renew-field { display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--ink-faint); }
+  .renew-field input[type=date] {
+    background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.12); border-radius: 7px;
+    color: var(--ink); font: 500 12px "IBM Plex Mono", monospace; padding: 5px 7px;
+  }
+  .pay-toggle { display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--ink-faint); cursor: pointer; }
+  .pay-toggle input { accent-color: var(--yellow); }
+
+  .loading, .empty { text-align: center; color: var(--ink-faint); padding: 60px 0; font-size: 13px; position: relative; z-index: 1; }
+  .footnote { padding: 22px 2px 0; color: var(--ink-faint); font-size: 11.5px; position: relative; z-index: 1; }
+
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<div class="bg-blobs"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+
+<div class="topbar">
+  <a class="iconbtn" href="../" title="전체 앱 목록으로">‹</a>
+  <div><h1>계정</h1><div class="sub">케어코너즈 팀 구독 계정</div></div>
+</div>
+
+<main class="content">
+  <div class="intro">
+    <p class="eyebrow">CARECENTER 계정</p>
+    <h1>팀 계정 모음</h1>
+    <p>팀에서 쓰는 구독 서비스 계정과 만료 상태를 한눈에 봐요. 갱신일을 입력해두면 상태등이 자동으로 계산돼요.</p>
+  </div>
+
+  <div class="legend">
+    <span class="li"><span class="dot green"></span>7일 이상 남음</span>
+    <span class="li"><span class="dot red"></span>7일 이내 / 만료됨</span>
+    <span class="li"><span class="dot yellow"></span>결제 필요</span>
+    <span class="li"><span class="dot gray"></span>한 달 이상 방치</span>
+  </div>
+
+  <div class="grid" id="grid"></div>
+  <p class="loading" id="loadingMsg">불러오는 중...</p>
+  <p class="empty" id="emptyMsg" hidden>등록된 계정이 없어요.</p>
+  <p class="footnote">비밀번호가 그대로 보이는 페이지예요 — 링크를 아무한테나 공유하지 마세요. 갱신일/결제필요 표시는 직접 입력한 값을 기준으로 계산돼요(사이트에 자동으로 로그인해서 확인하지는 않아요).</p>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.58.0/dist/umd/supabase.js"></script>
+<script>
+  var SB = {
+    url: 'https://mgvqhrdhshpuamihfvnp.supabase.co',
+    anon: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1ndnFocmRoc2hwdWFtaWhmdm5wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg2MTE4NjQsImV4cCI6MjEwNDE4Nzg2NH0.fjDJuG-47YHU63lydUSZGAGg3FQ-DLGLp9ufnJ4SN30',
+    table: 'carescript', row: 'accounts'
+  };
+  var db = (window.supabase && window.supabase.createClient) ? window.supabase.createClient(SB.url, SB.anon) : null;
+  var grid = document.getElementById("grid");
+  var items = [];
+  var rev = 0;
+
+  function esc(v) { return String(v == null ? "" : v).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  function todayISO() { var d = new Date(); return d.toISOString().slice(0, 10); }
+  function daysUntil(dateStr) {
+    if (!dateStr) return null;
+    var a = new Date(todayISO()), b = new Date(dateStr);
+    return Math.round((b - a) / 86400000);
+  }
+
+  function computeStatus(item) {
+    if (item.paymentNeeded) return "yellow";
+    var d = daysUntil(item.renewDate);
+    if (d === null) return "unknown";
+    if (d < -30) return "gray";
+    if (d < 7) return "red";
+    return "green";
+  }
+  var STATUS_LABEL = { red: "임박/만료", yellow: "결제 필요", green: "정상", gray: "방치됨", unknown: "날짜 미입력" };
+
+  function faviconUrl(domain) { return "https://www.google.com/s2/favicons?sz=128&domain=" + encodeURIComponent(domain); }
+
+  function render() {
+    document.getElementById("loadingMsg").hidden = true;
+    if (!items.length) { document.getElementById("emptyMsg").hidden = false; grid.innerHTML = ""; return; }
+    document.getElementById("emptyMsg").hidden = true;
+
+    grid.innerHTML = items.map(function (it, i) {
+      var status = computeStatus(it);
+      var d = daysUntil(it.renewDate);
+      var dLabel = d === null ? "" : (d >= 0 ? "D-" + d : (-d) + "일 지남");
+      return '<div class="card status-' + status + '" data-i="' + i + '">' +
+        '<div class="card-top">' +
+          '<div class="card-logo"><img src="' + faviconUrl(it.domain) + '" alt=""></div>' +
+          '<div><div class="card-name">' + esc(it.name) + '</div><div class="card-url">' + esc(it.domain) + '</div></div>' +
+          '<div class="status-pill"><span class="dot ' + status + '"></span>' + STATUS_LABEL[status] + (dLabel ? " · " + dLabel : "") + '</div>' +
+        '</div>' +
+        '<div class="field-row"><span class="field-label">ID</span><span class="field-value">' + esc(it.id) + '</span>' +
+          '<span class="copy-btn" data-copy="' + esc(it.id) + '" title="아이디 복사">' + copyIcon() + '</span></div>' +
+        '<div class="field-row"><span class="field-label">PW</span><span class="field-value">' + esc(it.password) + '</span>' +
+          '<span class="copy-btn" data-copy="' + esc(it.password) + '" title="비밀번호 복사">' + copyIcon() + '</span></div>' +
+        (it.note ? '<div class="field-row"><span class="field-label">비고</span><span class="field-value" style="white-space:normal">' + esc(it.note) + '</span></div>' : '') +
+        '<div class="card-actions">' +
+          '<a class="visit-btn" href="' + esc(it.url) + '" target="_blank" rel="noopener">사이트로 이동 ↗</a>' +
+          '<label class="renew-field">갱신일 <input type="date" data-i="' + i + '" class="renewInput" value="' + esc(it.renewDate || "") + '"></label>' +
+          '<label class="pay-toggle"><input type="checkbox" class="payInput" data-i="' + i + '" ' + (it.paymentNeeded ? "checked" : "") + '> 결제 필요</label>' +
+        '</div>' +
+      '</div>';
+    }).join("");
+
+    Array.prototype.forEach.call(grid.querySelectorAll(".copy-btn"), function (btn) {
+      btn.addEventListener("click", function () {
+        navigator.clipboard.writeText(btn.dataset.copy).then(function () {
+          btn.classList.add("copied");
+          setTimeout(function () { btn.classList.remove("copied"); }, 1200);
+        });
+      });
+    });
+    Array.prototype.forEach.call(grid.querySelectorAll(".renewInput"), function (inp) {
+      inp.addEventListener("change", function () {
+        items[+inp.dataset.i].renewDate = inp.value;
+        save();
+      });
+    });
+    Array.prototype.forEach.call(grid.querySelectorAll(".payInput"), function (inp) {
+      inp.addEventListener("change", function () {
+        items[+inp.dataset.i].paymentNeeded = inp.checked;
+        save();
+      });
+    });
+  }
+
+  function copyIcon() {
+    return '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="5.5" y="5.5" width="8" height="9" rx="1.4"/><path d="M3.5 10.5V3.6A1.1 1.1 0 0 1 4.6 2.5h6.4"/></svg>';
+  }
+
+  function save() {
+    if (!db) return;
+    rev += 1;
+    db.from(SB.table).upsert({ id: SB.row, content: { items: items }, rev: rev, updated_at: new Date().toISOString() }).then(function () {});
+  }
+
+  function pull() {
+    if (!db) { document.getElementById("loadingMsg").textContent = "불러오지 못했어요."; return; }
+    db.from(SB.table).select("content,rev").eq("id", SB.row).maybeSingle().then(function (res) {
+      if (res.error || !res.data) { items = []; render(); return; }
+      items = (res.data.content && res.data.content.items) || [];
+      rev = res.data.rev || 0;
+      render();
+    });
+  }
+  pull();
+</script>
+</body>
+</html>
