@@ -155,6 +155,40 @@
   .loading, .empty { text-align: center; color: var(--ink-faint); padding: 60px 0; font-size: 13px; position: relative; z-index: 1; }
   .footnote { padding: 22px 2px 0; color: var(--ink-faint); font-size: 11.5px; position: relative; z-index: 1; }
 
+  .add-btn {
+    margin-left: auto; font: 700 12px "IBM Plex Sans", sans-serif; padding: 7px 13px; border-radius: 999px;
+    background: var(--accent); color: #0e1220; border: none; cursor: pointer;
+  }
+  .add-btn:active { opacity: .85; }
+
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.55); backdrop-filter: blur(4px);
+    display: flex; align-items: flex-end; justify-content: center;
+  }
+  .modal-overlay[hidden] { display: none; }
+  .modal {
+    width: 100%; max-width: 480px; max-height: 88dvh; overflow-y: auto;
+    background: #171b2c; border: 1px solid var(--glass-border); border-radius: 20px 20px 0 0;
+    padding: 20px 20px calc(24px + var(--safe-b));
+  }
+  @media (min-width: 560px) {
+    .modal-overlay { align-items: center; }
+    .modal { border-radius: 20px; }
+  }
+  .modal h2 { font-family: "Bricolage Grotesque", sans-serif; font-size: 18px; margin: 0 0 16px; }
+  .modal .mfield { margin-bottom: 12px; }
+  .modal label { display: block; font: 600 11px "IBM Plex Mono", monospace; color: var(--ink-faint); margin-bottom: 5px; text-transform: uppercase; }
+  .modal input {
+    width: 100%; background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.12); border-radius: 9px;
+    color: var(--ink); font: 500 14px "IBM Plex Sans", sans-serif; padding: 10px 12px;
+  }
+  .modal-actions { display: flex; gap: 10px; margin-top: 18px; }
+  .modal-actions button {
+    flex: 1; padding: 11px; border-radius: 10px; font: 700 13px "IBM Plex Sans", sans-serif; border: none; cursor: pointer;
+  }
+  .modal-save { background: var(--accent); color: #0e1220; }
+  .modal-cancel { background: rgba(255,255,255,0.1); color: var(--ink); }
+
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
 </head>
@@ -179,6 +213,7 @@
     <span class="li"><span class="dot red"></span>7일 이내 / 만료됨</span>
     <span class="li"><span class="dot yellow"></span>결제 필요</span>
     <span class="li"><span class="dot gray"></span>한 달 이상 방치</span>
+    <button class="add-btn" id="addBtn">+ 계정 추가</button>
   </div>
 
   <div class="grid" id="grid"></div>
@@ -186,6 +221,22 @@
   <p class="empty" id="emptyMsg" hidden>등록된 계정이 없어요.</p>
   <p class="footnote">비밀번호가 그대로 보이는 페이지예요 — 링크를 아무한테나 공유하지 마세요. 갱신일/결제필요 표시는 직접 입력한 값을 기준으로 계산돼요(사이트에 자동으로 로그인해서 확인하지는 않아요).</p>
 </main>
+
+<div class="modal-overlay" id="modalOverlay" hidden>
+  <div class="modal">
+    <h2>계정 추가</h2>
+    <div class="mfield"><label>서비스 이름</label><input id="mName" placeholder="예: 네이버 블로그"></div>
+    <div class="mfield"><label>도메인 (로고용, 예: canva.com)</label><input id="mDomain" placeholder="예: canva.com"></div>
+    <div class="mfield"><label>로그인 링크</label><input id="mUrl" placeholder="https://..."></div>
+    <div class="mfield"><label>아이디</label><input id="mId"></div>
+    <div class="mfield"><label>비밀번호</label><input id="mPw"></div>
+    <div class="mfield"><label>비고 (선택)</label><input id="mNote" placeholder="예: 구글 2단계 인증 필요"></div>
+    <div class="modal-actions">
+      <button class="modal-cancel" id="mCancel">취소</button>
+      <button class="modal-save" id="mSave">저장</button>
+    </div>
+  </div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.58.0/dist/umd/supabase.js"></script>
 <script>
@@ -289,6 +340,28 @@
     });
   }
   pull();
+
+  /* 계정 추가 모달 — 비밀번호는 이 브라우저에서 바로 Supabase로 저장됨 (Claude를 거치지 않음) */
+  var overlay = document.getElementById("modalOverlay");
+  document.getElementById("addBtn").addEventListener("click", function () {
+    ["mName", "mDomain", "mUrl", "mId", "mPw", "mNote"].forEach(function (id) { document.getElementById(id).value = ""; });
+    overlay.hidden = false;
+  });
+  document.getElementById("mCancel").addEventListener("click", function () { overlay.hidden = true; });
+  overlay.addEventListener("click", function (e) { if (e.target === overlay) overlay.hidden = true; });
+  document.getElementById("mSave").addEventListener("click", function () {
+    var name = document.getElementById("mName").value.trim();
+    var domain = document.getElementById("mDomain").value.trim();
+    var url = document.getElementById("mUrl").value.trim();
+    var id = document.getElementById("mId").value.trim();
+    var pw = document.getElementById("mPw").value;
+    var note = document.getElementById("mNote").value.trim();
+    if (!name || !domain || !id || !pw) { alert("서비스 이름 / 도메인 / 아이디 / 비밀번호는 꼭 입력해주세요."); return; }
+    items.push({ name: name, domain: domain, url: url || ("https://" + domain), id: id, password: pw, note: note, renewDate: null, paymentNeeded: false });
+    save();
+    render();
+    overlay.hidden = true;
+  });
 </script>
 </body>
 </html>
