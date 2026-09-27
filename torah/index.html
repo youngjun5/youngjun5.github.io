@@ -170,6 +170,10 @@
   .reader-art .date { font: 500 12px "IBM Plex Mono", monospace; color: var(--ink-faint); margin-bottom: 24px; }
 
   .reader-body { font: 400 15.5px/1.85 "IBM Plex Sans", sans-serif; color: var(--ink); }
+  .reader-body h2 {
+    font-family: "Noto Serif KR", serif; font-weight: 700; font-size: 22px; line-height: 1.35; color: var(--ink);
+    margin: 40px 0 14px;
+  }
   .reader-body h3 {
     font-family: "Noto Serif KR", serif; font-weight: 700; font-size: 20px; color: var(--ink);
     margin: 34px 0 12px;
@@ -234,7 +238,7 @@
 
   <div class="list" id="list"></div>
   <p class="empty" id="emptyMsg" hidden>검색 결과가 없어요.</p>
-  <p class="footnote">노션 "Torah Portion 토라 포션" 데이터베이스에서 옮겨왔어요 · 주차별 요약 위주 · 오메르 주차 항목은 일일 묵상 전문은 아직 생략되어 있어요.</p>
+  <p class="footnote">노션 "Torah Portion 토라 포션" 데이터베이스에서 옮겨왔어요 · 주차별 해설 전문과 오메르 49일 매일 묵상까지 담겨 있어요.</p>
 </main>
 
 <div class="reader" id="reader" hidden>
@@ -355,6 +359,11 @@
     tagEl.textContent = CAT_LABEL[item.cat] || item.cat;
     tagEl.className = "reader-tag tag " + (CAT_CLASS[item.cat]||"");
     document.getElementById("readerBody").innerHTML = item.html || "<p>내용이 없습니다.</p>";
+    document.querySelectorAll("#readerBody table").forEach(function(t){
+      if (t.parentNode.classList.contains("reader-wide-table")) return;
+      var w = document.createElement("div"); w.className = "reader-wide-table";
+      t.parentNode.insertBefore(w, t); w.appendChild(t);
+    });
     reader.hidden = false;
     reader.scrollTop = 0;
     document.body.style.overflow = "hidden";
