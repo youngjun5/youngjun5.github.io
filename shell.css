@@ -1,0 +1,97 @@
+/* ─────────────────────────────────────────────────────────────
+   CARECENTER 공통 앱 셸
+   방마다 다른 디자인을 덮어쓰지 않도록 전부 cc- 접두사를 쓴다.
+   색은 각 방이 이미 쓰는 토큰을 먼저 보고, 없으면 폴백값으로 간다.
+   ───────────────────────────────────────────────────────────── */
+
+:root{
+  --cc-top: env(safe-area-inset-top, 0px);
+  --cc-bot: env(safe-area-inset-bottom, 0px);
+  --cc-left: env(safe-area-inset-left, 0px);
+  --cc-right: env(safe-area-inset-right, 0px);
+  --cc-bg: var(--ground, #121316);
+  --cc-ink: var(--ink, #e7e8ea);
+  --cc-soft: var(--ink-soft, #9a9ea6);
+  --cc-faint: var(--ink-faint, #6b6f78);
+  --cc-line: var(--hair-strong, rgba(231,232,234,.22));
+  --cc-accent: var(--accent, #5ba0d8);
+}
+
+/* ── 모바일 기본기 ── 세로 스크롤만 남기고 가로 넘침을 막는다 */
+html.cc-on{ -webkit-text-size-adjust: 100%; }
+html.cc-on body{
+  padding-left: var(--cc-left);
+  padding-right: var(--cc-right);
+}
+/* 페이지 전체가 스크롤되는 보통 방에만 하단 안전영역을 더한다.
+   body 자체가 100dvh 짜리 앱 셸인 방(내부 요소가 스크롤)은 이미 처리돼 있다. */
+html.cc-on:not(.cc-appshell) body{ padding-bottom: calc(var(--cc-bot) + 8px); }
+/* 가로 넘침만 잘라낸다. body 에 overflow-x:hidden 을 주면 세로 스크롤까지
+   막혀버리므로(스크롤 컨테이너가 바뀜) clip 을 html 쪽에만 쓴다. */
+@supports (overflow-x: clip){ html.cc-on{ overflow-x: clip; } }
+html.cc-on img,
+html.cc-on video,
+html.cc-on canvas,
+html.cc-on svg:not([width]){ max-width: 100%; height: auto; }
+html.cc-on pre{ overflow-x: auto; }
+/* iOS 는 16px 미만 입력창에 포커스하면 화면을 확대해버린다 */
+@media (max-width: 820px){
+  html.cc-on input:not([type=range]):not([type=checkbox]):not([type=radio]),
+  html.cc-on textarea,
+  html.cc-on select{ font-size: max(16px, 1em); }
+}
+/* 손가락으로 누를 수 있는 최소 크기 */
+@media (pointer: coarse){
+  html.cc-on button,
+  html.cc-on a[role=button],
+  html.cc-on .cc-ib{ min-height: 36px; }
+}
+
+/* ── 상단바 ── */
+.cc-bar{
+  position: sticky; top: 0; z-index: 60;
+  display: flex; align-items: center; gap: 9px;
+  padding: calc(var(--cc-top) + 10px) clamp(14px, 4vw, 28px) 10px;
+  background: var(--cc-bg);
+  border-bottom: 1px solid transparent;
+  transition: border-color .15s;
+}
+.cc-bar.cc-stuck{ border-bottom-color: var(--hair, rgba(231,232,234,.10)); }
+.cc-bar + *{ margin-top: 0; }
+
+.cc-back{
+  display: inline-flex; align-items: center; gap: 6px;
+  border: 1px solid var(--cc-line); border-radius: 999px;
+  padding: 7px 13px 7px 11px;
+  font-size: 13px; line-height: 1; color: var(--cc-soft);
+  text-decoration: none; white-space: nowrap; flex: none;
+  background: none; cursor: pointer;
+}
+.cc-back:hover, .cc-back:focus-visible{ color: var(--cc-ink); border-color: var(--cc-faint); outline: none; }
+.cc-back svg{ flex: none; }
+
+.cc-title{
+  font-size: 14px; font-weight: 600; letter-spacing: -.01em;
+  color: var(--cc-ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  min-width: 0;
+}
+.cc-sp{ flex: 1; min-width: 0; }
+.cc-actions{ display: flex; align-items: center; gap: 7px; flex: none; }
+
+.cc-ib{
+  width: 34px; height: 34px; border-radius: 999px;
+  border: 1px solid var(--cc-line); background: none; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+  color: var(--cc-soft); flex: none; padding: 0;
+}
+.cc-ib:hover, .cc-ib:focus-visible{ color: var(--cc-ink); border-color: var(--cc-faint); outline: none; }
+
+/* 화면이 좁으면 제목을 숨겨 뒤로가기와 액션 버튼 자리를 확보한다 */
+@media (max-width: 380px){
+  .cc-title{ display: none; }
+  .cc-back{ padding: 7px 11px; }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .cc-bar{ transition: none; }
+}

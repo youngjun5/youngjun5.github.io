@@ -3,6 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="stylesheet" href="../shell.css">
+<script src="../shell.js" defer></script>
 <meta name="theme-color" content="#121316">
 <title>무엇이든 설명해보세요 · CARECENTER</title>
 <link rel="manifest" href="../manifest.json">
@@ -175,13 +177,13 @@ textarea:disabled{color:var(--ink-soft)}
 <body>
 <div class="wrap">
 
-  <div class="top">
+  <div class="top" data-cc-replace>
     <a class="back" href="../index.html">‹ 케어센터</a>
     <span class="spacer"></span>
-    <button class="iconbtn" id="histBtn" title="연습 기록">
+    <button class="iconbtn" id="histBtn" data-cc-action title="연습 기록">
       <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M3 5h14M3 10h14M3 15h9"/></svg>
     </button>
-    <button class="iconbtn" id="themeBtn" title="밝게 / 어둡게">
+    <button class="iconbtn" id="themeBtn" data-cc-action title="밝게 / 어둡게">
       <svg class="moon" width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16.5 11.8A6.8 6.8 0 0 1 8.2 3.5a6.8 6.8 0 1 0 8.3 8.3z"/></svg>
       <svg class="sun" width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="10" cy="10" r="3.6"/><path d="M10 1.8v2.1M10 16.1v2.1M3.2 3.2l1.5 1.5M15.3 15.3l1.5 1.5M1.8 10h2.1M16.1 10h2.1M3.2 16.8l1.5-1.5M15.3 4.7l1.5-1.5"/></svg>
     </button>
