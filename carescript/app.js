@@ -2,7 +2,7 @@
    케어스크립트 (CARE SCRIPT) — 현장 스크립터 전용 앱
    ============================================================ */
 'use strict';
-const BUILD = '260929.2221';
+const BUILD = '260929.2228';
 
 /* ---------- 유틸 ---------- */
 const $  = (s,r=document)=>r.querySelector(s);
@@ -25,9 +25,6 @@ const MULTI = ['weather','film','lens','filter','exp','light','sound','flags'];
 const FIELD_LABEL = {
   weather:'날씨', film:'Film', lens:'Lens', filter:'Filter', exp:'Exp',
   light:'조명', sound:'사운드', flags:'특이사항'
-};
-const FIXED = {
-  camPos:['Tracking','Fix','Pan']
 };
 const emptyPresets = ()=> Object.fromEntries(MULTI.map(k=>[k,[]]));
 
@@ -644,6 +641,7 @@ async function importDocument(file){
 /* ============================================================
    4) 라우팅 & 렌더
    ============================================================ */
+let SPLIT = localStorage.getItem('carescript.split')==='1';
 let R = { v:'home', folder:'all', pid:null, sid:null, tab:'script',
           fopen:false, filters:{date:[],scene:[],cut:[],flags:[]}, editing:null, q:'', page:0 };
 
@@ -820,12 +818,6 @@ function chipsU(field, sel, mode){
 }
 
 /* 용지에 인쇄된 고정 항목 */
-function chipsF(field, sel, cls='mini'){
-  return `<div class="chips">${
-    (FIXED[field]||[]).map(v=>`<button class="chip ${cls} ${sel.includes(v)?'on':''}" data-act="chip" data-f="${esc(field)}" data-v="${esc(v)}">${esc(v.replace(' 2',''))}</button>`).join('')
-  }</div>`;
-}
-
 function viewSheet(){
   const s=getSheet(R.sid); if(!s) return (R.v='home', viewHome());
   const p=getProject(s.projectId) || {};
@@ -838,9 +830,10 @@ function viewSheet(){
   const PG = PAGES[pi];
 
   return topbar(`S#${s.scene||'–'}  C#${s.cut||'–'}`, `${p.name||''}${s.date?' · '+s.date:''}`,
-      backBtn('backproject'), `<button class="iconbtn" data-act="theme">◐</button><button class="iconbtn" data-act="sheetmenu">⋯</button>`)
+      backBtn('backproject'), `<button class="iconbtn${SPLIT?' on':''}" data-act="split" title="분할 보기">◫</button><button class="iconbtn" data-act="theme">◐</button><button class="iconbtn" data-act="sheetmenu">⋯</button>`)
   + `<div class="content">
-    <div class="paper">
+    <div class="paper${SPLIT?' split':''}" id="paper">
+      <div class="pane pa">
 
       <div class="pgno">PAGE NO. <input data-act="inp" data-k="pageNo" value="${esc(s.pageNo||'')}"></div>
 
@@ -883,18 +876,13 @@ function viewSheet(){
         <div class="cell kv"><span class="lb">Roll</span><input data-act="inp" data-k="roll" value="${esc(s.roll||'')}"></div>
       </div>
 
-      <!-- 상단 3단: 연결 / 카메라 위치 / 사운드 -->
+      <!-- 상단 2단: 연결 / 사운드 -->
       <div class="grid r3">
         <div class="cell">
           <h5>연결 / Continuity</h5>
           ${sta(s,'continuity','앞뒤 컷 연결 — 의상·소품·동선·시선 방향 등',2)}
           <span class="lb" style="margin-top:8px">특이사항</span>
           ${chipsU('flags', s.flags||[])}
-        </div>
-        <div class="cell">
-          <h5>카메라 위치 &lt;Tracking / Fix / Pan&gt;</h5>
-          ${chipsF('camPos', s.camPos||[])}
-          ${sta(s,'camPosNote','카메라 움직임 · 앵글 · 사이즈',2)}
         </div>
         <div class="cell">
           <h5>사운드</h5>
@@ -905,6 +893,9 @@ function viewSheet(){
         </div>
       </div>
 
+      </div>
+      <div class="splitbar" id="splitbar"></div>
+      <div class="pane pb">
       <!-- 지문과 대사 : 페이지 전체 폭 -->
       <div class="grid full">
         <div class="cell script">
@@ -933,6 +924,7 @@ function viewSheet(){
         </div>
       </div>
 
+      </div>
       <div class="paperfoot">
         <button class="btn" data-act="dupsheet">이 설정으로 다음 컷</button>
         <button class="btn dan" data-act="delsheet">이 용지 삭제</button>
@@ -1164,11 +1156,11 @@ function newSheetFrom(base){
     location: base?.location||'',
     scene: base?.scene||'', cut: base? String((parseInt(base.cut,10)||0)+1) : '', cutDesc:'',
     temp: base?.temp||'', roll: base?.roll||'',
-    continuity:'', camPosNote:'', soundNote:'', notes:'',
+    continuity:'', soundNote:'', notes:'',
     scriptName: base?.scriptName||'',
     lines:[]
   };
-  [...MULTI, 'camPos'].forEach(k=> s[k] = base ? [...(base[k]||[])] : []);
+  MULTI.forEach(k=> s[k] = base ? [...(base[k]||[])] : []);
   if(base) s.flags=[];
   DB.sheets.push(s); save();
   return s;
@@ -1182,6 +1174,10 @@ document.addEventListener('click', async e=>{
   switch(act){
     /* --- 네비 --- */
     case 'home': go({v:'home',sid:null,pid:null}); break;
+    case 'split':
+      SPLIT=!SPLIT; localStorage.setItem('carescript.split', SPLIT?'1':'0');
+      render(); toast(SPLIT?'분할 보기 — 가운데 선을 끌어 비율 조절':'분할 해제');
+      break;
     case 'backproject': go({v:'project',sid:null,editing:null}); break;
     case 'openproject': go({v:'project',pid:v,filters:{date:[],scene:[],cut:[],flags:[]},q:''}); break;
     case 'opensheet': go({v:'sheet',sid:v,tab:'script',editing:null,page:0}); break;
@@ -1491,3 +1487,36 @@ document.addEventListener('drop', e=>{
   importDocument(e.dataTransfer.files[0]);
 });
 console.log('%c케어스크립트 ready','color:#ffb02e;font-weight:bold');
+
+
+/* ═══ 분할 경계선 끌기 ═══ */
+(function(){
+  let drag=null;
+  document.addEventListener('pointerdown', e=>{
+    const bar=e.target.closest && e.target.closest('#splitbar');
+    if(!bar) return;
+    const paper=document.getElementById('paper'); if(!paper) return;
+    const col = getComputedStyle(paper).gridTemplateColumns.split(' ').length>1;
+    const r=paper.getBoundingClientRect();
+    drag={paper,col,r};
+    bar.classList.add('drag');
+    bar.setPointerCapture && bar.setPointerCapture(e.pointerId);
+    e.preventDefault();
+  }, true);
+  document.addEventListener('pointermove', e=>{
+    if(!drag) return;
+    const {paper,col,r}=drag;
+    if(col){
+      const px=Math.min(Math.max(e.clientX-r.left,240), r.width-250);
+      paper.style.setProperty('--pw', px+'px');
+    }else{
+      const px=Math.min(Math.max(e.clientY-r.top,120), Math.max(160,r.height-130));
+      paper.style.setProperty('--ph', px+'px');
+    }
+  });
+  document.addEventListener('pointerup', ()=>{
+    if(!drag) return;
+    const b=document.getElementById('splitbar'); b&&b.classList.remove('drag');
+    drag=null;
+  });
+})();

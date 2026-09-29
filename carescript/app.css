@@ -289,7 +289,7 @@ body.dropping::after{
 .chiptools{display:flex;gap:4px;flex:0 0 auto;border-left:1px solid var(--line);padding-left:5px}
 
 /* 상단 3단 + 전체 폭 대사칸 */
-.grid.r3{grid-template-columns:1fr 1fr 1fr}
+.grid.r3{grid-template-columns:1fr 1fr}
 .grid.r3 .cell{padding:5px 7px}
 .grid.r3 textarea{width:100%;min-height:36px}
 .grid.r3 .chips{max-height:52px;overflow-y:auto}
@@ -385,3 +385,46 @@ body.dropping::after{
 }
 .chip.on .minus{background:var(--bg)}
 .chip .minus:active{background:var(--mark);color:var(--bg)}
+
+/* ═══ 분할 보기 ═══
+   꺼져 있을 땐 pane 이 display:contents 라 기존 레이아웃과 완전히 같다.
+   켜지면 용지 자체가 화면 높이에 고정되고, 두 칸이 각자 스크롤한다. */
+.paper .pane{display:contents}
+.paper .splitbar{display:none}
+
+.paper.split{
+  display:grid;
+  grid-template-columns:minmax(240px,var(--pw,1fr)) 10px minmax(240px,1fr);
+  grid-template-rows:1fr auto;
+  height:calc(100dvh - 205px - var(--safe-b));
+  max-width:none;
+}
+.paper.split>.pane{
+  display:block; min-width:0; min-height:0;
+  overflow-y:auto; -webkit-overflow-scrolling:touch; overscroll-behavior:contain;
+  padding-right:8px;
+}
+.paper.split>.pane.pb{padding-right:0;padding-left:8px}
+.paper.split>.splitbar{
+  display:block; min-height:0; align-self:stretch;
+  cursor:col-resize; position:relative; touch-action:none;
+}
+.paper.split>.splitbar::before{
+  content:''; position:absolute; inset:0 4px; background:var(--line); border-radius:2px;
+}
+.paper.split>.splitbar:hover::before,.paper.split>.splitbar.drag::before{background:var(--ac)}
+.paper.split>.paperfoot{grid-column:1/-1}
+
+/* 세로 화면·좁은 화면에서는 위아래로 */
+@media (max-width:900px),(orientation:portrait){
+  .paper.split{
+    grid-template-columns:1fr;
+    grid-template-rows:minmax(110px,var(--ph,1fr)) 10px minmax(110px,1fr) auto;
+  }
+  .paper.split>.pane{padding:0 0 6px}
+  .paper.split>.pane.pb{padding:6px 0 0}
+  .paper.split>.splitbar{cursor:row-resize}
+  .paper.split>.splitbar::before{inset:4px 0}
+}
+
+.iconbtn.on{background:var(--ac);color:var(--acfg);border-color:var(--ac)}
