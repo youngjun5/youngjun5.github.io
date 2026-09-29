@@ -20,7 +20,7 @@
   --ground:#121316; --grid-line:rgba(230,231,233,0.05);
   --surface:#1b1c20; --surface-2:#202227; --surface-3:#282b31;
   --hair:rgba(231,232,234,0.10); --hair-strong:rgba(231,232,234,0.22);
-  --ink:#e7e8ea; --ink-soft:#9a9ea6; --ink-faint:#6b6f78;
+  --ink:#e7e8ea; --ink-soft:#9a9ea6; --ink-faint:#878c95;
   --accent:#5ba0d8; --accent-soft:rgba(91,160,216,0.14); --accent-ink:#0d1520;
   --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
   --top:env(safe-area-inset-top,0px);
@@ -94,8 +94,12 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 @media(min-width:820px){ .grid{grid-template-columns:repeat(5,1fr);gap:13px} }
 .tile{display:flex;flex-direction:column;align-items:center;text-align:center;gap:9px;
   padding:16px 8px 14px;border:1px solid var(--hair);border-radius:16px;
-  background:var(--surface);transition:transform .12s,border-color .12s,background .12s}
-.tile:hover,.tile:focus-visible{border-color:var(--accent);background:var(--surface-2);outline:none}
+  background:var(--surface);transition:transform .16s ease,border-color .16s ease,background .16s ease}
+.tile:hover{border-color:var(--accent);background:var(--surface-2)}
+.tile:focus-visible{border-color:var(--accent);background:var(--surface-2);
+  outline:2px solid var(--accent);outline-offset:2px}
+.agenda:focus-visible,.sitem:focus-visible,.shint button:focus-visible{
+  outline:2px solid var(--accent);outline-offset:2px}
 .tile:active{transform:scale(.96)}
 .tile.off{opacity:.42;pointer-events:none}
 .ticon{width:44px;height:44px;border-radius:13px;background:var(--surface-3);
@@ -140,7 +144,21 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
   border-radius:999px;padding:6px 12px}
 .shint button:hover{border-color:var(--ink-faint);color:var(--ink)}
 
-@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+/* 타일 등장 — 그리드 순서대로 (Flat Design + Micro-interactions) */
+@keyframes ccTileIn{from{opacity:0;transform:translateY(10px) scale(.96)}to{opacity:1;transform:none}}
+.tile{animation:ccTileIn .34s cubic-bezier(.34,1.28,.64,1) both}
+.tile:nth-child(1){animation-delay:.02s} .tile:nth-child(2){animation-delay:.05s}
+.tile:nth-child(3){animation-delay:.08s} .tile:nth-child(4){animation-delay:.11s}
+.tile:nth-child(5){animation-delay:.14s} .tile:nth-child(6){animation-delay:.17s}
+.tile:nth-child(7){animation-delay:.20s} .tile:nth-child(8){animation-delay:.23s}
+.tile:nth-child(9){animation-delay:.26s} .tile:nth-child(10){animation-delay:.29s}
+.tile:nth-child(11){animation-delay:.32s} .tile:nth-child(12){animation-delay:.35s}
+.tile:nth-child(n+13){animation-delay:.38s}
+
+@media(prefers-reduced-motion:reduce){
+  *{transition:none!important}
+  .tile{animation:none}
+}
 </style>
 </head>
 <body>
