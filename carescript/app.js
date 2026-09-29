@@ -2,7 +2,7 @@
    케어스크립트 (CARE SCRIPT) — 현장 스크립터 전용 앱
    ============================================================ */
 'use strict';
-const BUILD = '260929.1845';
+const BUILD = '260929.2221';
 
 /* ---------- 유틸 ---------- */
 const $  = (s,r=document)=>r.querySelector(s);
@@ -247,7 +247,6 @@ const CONN_STOP = new Set(['그리고','하지만','그래서','그러니까','�
   '언니','오빠','엄마','아빠','어머니','아버지','할머니','할아버지','가운데','어디','여기','거기','저기',
   '우리','아니','정말','진짜','너무','라면','화면','장면','측면','반면','이며','당신','미안','괜찮']);
 const FINAL_SYLL = '다요죠까네지야아어군냐래걸나대';
-const norm = s => String(s||'').replace(/[^가-힣a-zA-Z0-9]/g,'');
 
 /* 어절 끝에서 연결어미 찾기 → {key:마지막 음절, len:매칭 길이} */
 function connEndingOf(w){
@@ -324,33 +323,6 @@ function markedHTML(text, marks){
 /* ============================================================
    2) 음성인식 매칭 — 친 대사 자동 밑줄 + 대본 대조
    ============================================================ */
-function bigrams(s){ const b=[]; for(let i=0;i<s.length-1;i++) b.push(s.slice(i,i+2)); return b.length?b:[s]; }
-function dice(a,b){
-  if(!a||!b) return 0;
-  if(a===b) return 1;
-  const A=bigrams(a), B=bigrams(b), m=new Map();
-  A.forEach(x=>m.set(x,(m.get(x)||0)+1));
-  let hit=0; B.forEach(x=>{ const c=m.get(x); if(c>0){ hit++; m.set(x,c-1);} });
-  return 2*hit/(A.length+B.length);
-}
-/** 인식문장 → 가장 비슷한 대사 찾기 */
-function matchLine(spoken, lines, cursor){
-  const sp = norm(spoken); if(sp.length<2) return null;
-  let best=null;
-  lines.forEach((l,i)=>{
-    if(l.type!=='d') return;
-    const tx = norm(l.text); if(tx.length<2) return;
-    let sc = dice(sp,tx);
-    // 부분 인식 보정: 인식이 짧으면 대사 앞부분과 비교
-    if(sp.length < tx.length*0.7) sc = Math.max(sc, dice(sp, tx.slice(0,sp.length+2))*0.96);
-    if(tx.includes(sp) && sp.length>=4) sc = Math.max(sc, 0.82);
-    // 진행 순서 가중치 (현재 커서 근처 우선)
-    if(cursor>=0){ const d=Math.abs(i-cursor); sc += d<=3 ? 0.06 : d<=8 ? 0.02 : -0.03; }
-    if(!l.done) sc += 0.05;
-    if(!best || sc>best.sc) best={i, sc, line:l};
-  });
-  return best;
-}
 
 /* ============================================================
    3) 대본 파싱 — 붙여넣기/파일 → 캐릭터+대사 라인
@@ -689,7 +661,7 @@ function render(){
   _lastView = key;
   const cur = $('.content'); if(cur && keep) cur.scrollTop = keep;
   paintSync();
-  if(R.v==='sheet'){ Voice.paint(); $$('.paper textarea').forEach(autoGrow); }
+  if(R.v==='sheet'){ $$('.paper textarea').forEach(autoGrow); }
   if(R.editing){ const ta=$(`textarea[data-line="${R.editing}"]`); if(ta){ ta.focus(); ta.setSelectionRange(ta.value.length,ta.value.length); autoGrow(ta);} }
 }
 function autoGrow(ta){ ta.style.height='auto'; ta.style.height=(ta.scrollHeight+4)+'px'; }
@@ -966,8 +938,7 @@ function viewSheet(){
         <button class="btn dan" data-act="delsheet">이 용지 삭제</button>
       </div>
     </div>
-  </div>
-  ${micPanel()}`;
+  </div>`;
 }
 
 /* 지문은 기본적으로 대사 단락 안에 들어간다.
@@ -1086,125 +1057,6 @@ function pagerHTML(pages, pi, hasScene){
                   <button class="tinybtn" data-act="pagelines" data-v="5">＋</button></div>`}`;
 }
 
-function micPanel(){
-  return `<div class="mic">
-    <div class="r1">
-      <button class="btnmic ${Voice.on?'on':''}" id="micbtn" data-act="mic">${Voice.on?'듣는중':'음성'}</button>
-      <div class="live">
-        <div class="lb">음성인식 ${Voice.on?'· 켜짐':'· 꺼짐'}</div>
-        <div class="tx ${Voice.interim?'i':''}" id="miclive">${esc(Voice.interim || Voice.last || '버튼을 누르면 배우가 친 대사에 자동으로 밑줄이 그어집니다')}</div>
-      </div>
-      <button class="iconbtn" data-act="micinfo">?</button>
-    </div>
-    <div class="r2"><span>정확도</span>
-      <input type="range" min="40" max="95" value="${Voice.thr*100}" data-act="thr">
-      <span id="thrv">${Math.round(Voice.thr*100)}%</span>
-      <div class="spacer"></div>
-      <button class="btn sm" data-act="resetdone">밑줄 전체 해제</button>
-    </div>
-  </div>`;
-}
-
-/* ============================================================
-   5) 음성인식 엔진
-   ============================================================ */
-const Voice = {
-  rec:null, on:false, interim:'', last:'', cursor:-1,
-  claimed:new Set(), tried:'', triedAt:0,
-  thr: parseFloat(localStorage.getItem('carescript.thr')||'0.62'),
-  toggle(){ this.on ? this.stop() : this.start(); },
-  start(){
-    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if(!SR){ toast('이 브라우저는 음성인식을 지원하지 않아요 (Safari·Chrome 권장)','warn'); return; }
-    try{
-      const rec = new SR();
-      rec.lang='ko-KR'; rec.continuous=true; rec.interimResults=true; rec.maxAlternatives=3;
-      rec.onresult = e=>{
-        for(let i=e.resultIndex;i<e.results.length;i++){
-          const r=e.results[i];
-          if(r.isFinal){
-            const alts=[...r].map(a=>a.transcript.trim()).filter(Boolean);
-            this.interim=''; this.last=alts[0]||'';
-            // 중간 결과로 이미 처리한 발화는 최종 결과에서 건너뛴다
-            if(this.claimed.has(i)) this.claimed.delete(i);
-            else this.apply(alts);
-          } else {
-            this.interim = r[0].transcript;
-            this.early(i, this.interim);
-          }
-        }
-        this.paint();
-      };
-      rec.onerror = e=>{
-        if(e.error==='not-allowed'){ toast('마이크 권한이 필요해요','warn'); this.stop(); }
-        else if(e.error==='no-speech'){ /* 무시 */ }
-      };
-      // 세션이 새로 시작되면 결과 번호가 0부터 다시 매겨지므로 표시를 비운다
-      // 브라우저가 세션을 끊으면 바로 다시 시작한다. 직후 start() 는 "이미 시작됨"
-      // 으로 튕길 때가 있는데, 그대로 두면 인식이 조용히 멈춰버리므로 한 번 더 시도한다.
-      rec.onend = ()=>{
-        if(!this.on) return;
-        this.claimed.clear(); this.tried='';
-        try{ this.rec.start(); }
-        catch(_){ setTimeout(()=>{ if(this.on){ try{ this.rec.start(); }catch(__){} } }, 250); }
-      };
-      rec.start();
-      this.rec=rec; this.on=true; this.interim=''; this.claimed.clear(); this.tried='';
-      toast('음성인식 시작 — 대사를 치면 자동으로 밑줄');
-    }catch(err){ console.error(err); toast('음성인식 시작 실패','warn'); }
-    this.paint();
-  },
-  stop(){ this.on=false; this.interim=''; this.claimed.clear(); this.tried='';
-          try{ this.rec && this.rec.stop(); }catch(_){} this.paint(); toast('음성인식 중지'); },
-
-  /* 중간 인식 결과로 미리 밑줄을 긋는다.
-     isFinal(확정 신호)은 말이 끝나고도 몇 초 뒤에 오기 때문에 그때까지 기다리면
-     현장에서 체감 지연이 크다. 확신이 충분할 때만 앞당기고, 같은 발화의 최종
-     결과는 위에서 건너뛴다. */
-  early(i, txt){
-    if(this.claimed.has(i)) return;
-    const now = Date.now();
-    if(txt === this.tried || now - this.triedAt < 150) return;
-    this.tried = txt; this.triedAt = now;
-    const sp = norm(txt); if(sp.length < 6) return;
-    const s = getSheet(R.sid); if(!s) return;
-    const m = matchLine(txt, s.lines||[], this.cursor);
-    if(!m || m.sc < this.thr) return;
-    // 대사의 절반 이상을 말했을 때만 확정 — 앞부분만 듣고 엉뚱한 줄에 긋지 않도록
-    if(sp.length < norm(m.line.text).length * 0.55) return;
-    this.claimed.add(i);
-    this.last = txt; this.interim = '';
-    this.apply([txt]);
-  },
-  apply(alts){
-    const s=getSheet(R.sid); if(!s) return;
-    let best=null, spoken='';
-    for(const a of alts){
-      const m = matchLine(a, s.lines||[], this.cursor);
-      if(m && (!best || m.sc>best.sc)){ best=m; spoken=a; }
-    }
-    if(!best || best.sc < this.thr*0.6){ toast('매칭 안 됨: “'+(alts[0]||'').slice(0,18)+'”'); return; }
-    const l = best.line;
-    l.done = true;
-    if(best.sc >= this.thr){ l.dev=null; }
-    else { l.dev = { spoken, score:best.sc }; }
-    this.cursor = best.i;
-    touch(s); save();
-    const pg = pageOfLine(s.lines, l.id);
-    if(pg>=0 && pg!==(R.page||0)){ go({page:pg}); } else { refreshLines(); }
-    const el = $(`.ln[data-id="${l.id}"]`);
-    if(el){ el.scrollIntoView({block:'center',behavior:'smooth'}); el.animate([{opacity:.3},{opacity:1}],{duration:700}); }
-  },
-  paint(){
-    const b=$('#micbtn'); if(b) b.className='btnmic '+(this.on?'on':'');
-    const t=$('#miclive');
-    if(t){
-      t.textContent = this.interim || this.last || '버튼을 눌러 시작 — 배우가 친 대사에 자동으로 밑줄이 그어집니다';
-      t.className = 'tx '+(this.interim?'i':'');
-    }
-    const lb=$('.mic .live .lb'); if(lb) lb.textContent = '음성인식 '+(this.on?'· 듣는 중':'· 꺼짐');
-  }
-};
 function refreshLines(){
   const c=$('#lines'); if(!c) return;
   const s=getSheet(R.sid); if(!s) return;
@@ -1330,9 +1182,9 @@ document.addEventListener('click', async e=>{
   switch(act){
     /* --- 네비 --- */
     case 'home': go({v:'home',sid:null,pid:null}); break;
-    case 'backproject': Voice.on&&Voice.stop(); go({v:'project',sid:null,editing:null}); break;
+    case 'backproject': go({v:'project',sid:null,editing:null}); break;
     case 'openproject': go({v:'project',pid:v,filters:{date:[],scene:[],cut:[],flags:[]},q:''}); break;
-    case 'opensheet': go({v:'sheet',sid:v,tab:'script',editing:null,page:0}); Voice.cursor=-1; break;
+    case 'opensheet': go({v:'sheet',sid:v,tab:'script',editing:null,page:0}); break;
     case 'tab': go({tab:v,editing:null}); break;
     case 'folder': go({folder:v}); break;
     case 'maskclose': if(e.target.classList.contains('mask')) closeModal(); break;
@@ -1454,7 +1306,7 @@ document.addEventListener('click', async e=>{
     case 'pagenext': go({page:(R.page||0)+1}); break;
     case 'endchk': ENDCHK=!ENDCHK; localStorage.setItem('carescript.endchk', ENDCHK?'1':'0');
       render(); toast(ENDCHK?'어미 반복 검사 켜짐':'어미 반복 검사 꺼짐'); break;
-    case 'resetdone': (s.lines||[]).forEach(l=>{l.done=false;l.dev=null;}); Voice.cursor=-1; touch(s); save(); refreshLines(); break;
+    case 'resetdone': (s.lines||[]).forEach(l=>{l.done=false;l.dev=null;}); touch(s); save(); refreshLines(); break;
 
     /* --- 대본 가져오기 --- */
     case 'paste': {
@@ -1473,20 +1325,6 @@ document.addEventListener('click', async e=>{
       inp.click(); break; }
 
     /* --- 음성 --- */
-    case 'mic': Voice.toggle(); break;
-    case 'micinfo': modal(`<h3>음성인식 사용법</h3>
-      <div class="desc">현장에서 아이패드를 배우 쪽에 두고 켜 두세요.</div>
-      <div class="card" style="line-height:1.8;font-size:14px">
-        1. 대본을 먼저 불러옵니다.<br>
-        2. 마이크 버튼 ON → 배우가 대사를 치면 <b>일치하는 줄에 자동 밑줄</b>.<br>
-        3. 대본과 다르게 쳤으면 <b style="color:var(--ac2)">대본불일치</b>로 표시되고 실제 친 말이 함께 남습니다.<br>
-        4. 버튼으로 <b style="color:var(--post)">후시 필요</b> 표시 → 사운드 항목에 자동 반영.<br>
-        5. 빨간 물결 밑줄은 <b style="color:var(--warn)">같은 어미 반복</b> 경고입니다.<br><br>
-        <span style="color:var(--tx3)">※ Safari·Chrome에서 동작. 첫 실행 시 마이크 권한 허용이 필요합니다.</span>
-      </div>
-      <div class="foot"><button class="btn pri" data-mod="ok" style="flex:1">확인</button></div>`);
-      $('#modal-root').onclick=ev=>{ if(ev.target.closest('[data-mod]')||ev.target.classList.contains('mask')) closeModal(); };
-      break;
 
     /* --- 샘플 --- */
     case 'demo': {
@@ -1536,7 +1374,6 @@ document.addEventListener('input', e=>{
   }
   else if(act==='search'){ R.q=t.value; clearTimeout(window.__st); window.__st=setTimeout(()=>{ const c=$('.slist')||$('.empty'); render(); const i=$('[data-act="search"]'); i&&(i.focus(),i.setSelectionRange(i.value.length,i.value.length)); },350); }
   else if(act==='pagego'){ go({page:+t.value}); }
-  else if(act==='thr'){ Voice.thr=t.value/100; localStorage.setItem('carescript.thr',Voice.thr); const v=$('#thrv'); v&&(v.textContent=t.value+'%'); }
 });
 
 /* ============================================================
