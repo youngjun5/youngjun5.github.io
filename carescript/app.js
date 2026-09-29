@@ -2,7 +2,7 @@
    케어스크립트 (CARE SCRIPT) — 현장 스크립터 전용 앱
    ============================================================ */
 'use strict';
-const BUILD = '260929.2250';
+const BUILD = '260929.2301';
 
 /* ---------- 유틸 ---------- */
 const $  = (s,r=document)=>r.querySelector(s);
@@ -641,7 +641,6 @@ async function importDocument(file){
 /* ============================================================
    4) 라우팅 & 렌더
    ============================================================ */
-let SPLIT = localStorage.getItem('carescript.split')==='1';
 let R = { v:'home', folder:'all', pid:null, sid:null, tab:'script',
           fopen:false, filters:{date:[],scene:[],cut:[],flags:[]}, editing:null, q:'', page:0 };
 
@@ -830,10 +829,9 @@ function viewSheet(){
   const PG = PAGES[pi];
 
   return topbar(`S#${s.scene||'–'}  C#${s.cut||'–'}`, `${p.name||''}${s.date?' · '+s.date:''}`,
-      backBtn('backproject'), `<button class="iconbtn${SPLIT?' on':''}" data-act="split" title="분할 보기">◫</button><button class="iconbtn" data-act="theme">◐</button><button class="iconbtn" data-act="sheetmenu">⋯</button>`)
+      backBtn('backproject'), `<button class="iconbtn" data-act="theme">◐</button><button class="iconbtn" data-act="sheetmenu">⋯</button>`)
   + `<div class="content">
-    <div class="paper${SPLIT?' split':''}" id="paper">
-      <div class="pane pa">
+    <div class="paper">
 
       <div class="pgno">PAGE NO. <input data-act="inp" data-k="pageNo" value="${esc(s.pageNo||'')}"></div>
 
@@ -893,9 +891,6 @@ function viewSheet(){
         </div>
       </div>
 
-      </div>
-      <div class="splitbar" id="splitbar"></div>
-      <div class="pane pb">
       <!-- 지문과 대사 : 페이지 전체 폭 -->
       <div class="grid full">
         <div class="cell script">
@@ -924,7 +919,6 @@ function viewSheet(){
         </div>
       </div>
 
-      </div>
       <div class="paperfoot">
         <button class="btn" data-act="dupsheet">이 설정으로 다음 컷</button>
         <button class="btn dan" data-act="delsheet">이 용지 삭제</button>
@@ -1174,10 +1168,6 @@ document.addEventListener('click', async e=>{
   switch(act){
     /* --- 네비 --- */
     case 'home': go({v:'home',sid:null,pid:null}); break;
-    case 'split':
-      SPLIT=!SPLIT; localStorage.setItem('carescript.split', SPLIT?'1':'0');
-      render(); toast(SPLIT?'분할 보기 — 가운데 선을 끌어 비율 조절':'분할 해제');
-      break;
     case 'backproject': go({v:'project',sid:null,editing:null}); break;
     case 'openproject': go({v:'project',pid:v,filters:{date:[],scene:[],cut:[],flags:[]},q:''}); break;
     case 'opensheet': go({v:'sheet',sid:v,tab:'script',editing:null,page:0}); break;
@@ -1487,36 +1477,3 @@ document.addEventListener('drop', e=>{
   importDocument(e.dataTransfer.files[0]);
 });
 console.log('%c케어스크립트 ready','color:#ffb02e;font-weight:bold');
-
-
-/* ═══ 분할 경계선 끌기 ═══ */
-(function(){
-  let drag=null;
-  document.addEventListener('pointerdown', e=>{
-    const bar=e.target.closest && e.target.closest('#splitbar');
-    if(!bar) return;
-    const paper=document.getElementById('paper'); if(!paper) return;
-    const col = getComputedStyle(paper).gridTemplateColumns.split(' ').length>1;
-    const r=paper.getBoundingClientRect();
-    drag={paper,col,r};
-    bar.classList.add('drag');
-    bar.setPointerCapture && bar.setPointerCapture(e.pointerId);
-    e.preventDefault();
-  }, true);
-  document.addEventListener('pointermove', e=>{
-    if(!drag) return;
-    const {paper,col,r}=drag;
-    if(col){
-      const px=Math.min(Math.max(e.clientX-r.left,240), r.width-250);
-      paper.style.setProperty('--pw', px+'px');
-    }else{
-      const px=Math.min(Math.max(e.clientY-r.top,120), Math.max(160,r.height-130));
-      paper.style.setProperty('--ph', px+'px');
-    }
-  });
-  document.addEventListener('pointerup', ()=>{
-    if(!drag) return;
-    const b=document.getElementById('splitbar'); b&&b.classList.remove('drag');
-    drag=null;
-  });
-})();
