@@ -2,7 +2,7 @@
    케어스크립트 (CARE SCRIPT) — 현장 스크립터 전용 앱
    ============================================================ */
 'use strict';
-const BUILD = '260917.1742';
+const BUILD = '260929.1845';
 
 /* ---------- 유틸 ---------- */
 const $  = (s,r=document)=>r.querySelector(s);
@@ -1110,6 +1110,7 @@ function micPanel(){
    ============================================================ */
 const Voice = {
   rec:null, on:false, interim:'', last:'', cursor:-1,
+  claimed:new Set(), tried:'', triedAt:0,
   thr: parseFloat(localStorage.getItem('carescript.thr')||'0.62'),
   toggle(){ this.on ? this.stop() : this.start(); },
   start(){
@@ -1124,8 +1125,13 @@ const Voice = {
           if(r.isFinal){
             const alts=[...r].map(a=>a.transcript.trim()).filter(Boolean);
             this.interim=''; this.last=alts[0]||'';
-            this.apply(alts);
-          } else { this.interim = r[0].transcript; }
+            // 중간 결과로 이미 처리한 발화는 최종 결과에서 건너뛴다
+            if(this.claimed.has(i)) this.claimed.delete(i);
+            else this.apply(alts);
+          } else {
+            this.interim = r[0].transcript;
+            this.early(i, this.interim);
+          }
         }
         this.paint();
       };
@@ -1133,14 +1139,43 @@ const Voice = {
         if(e.error==='not-allowed'){ toast('마이크 권한이 필요해요','warn'); this.stop(); }
         else if(e.error==='no-speech'){ /* 무시 */ }
       };
-      rec.onend = ()=>{ if(this.on){ try{ this.rec.start(); }catch(_){} } };
+      // 세션이 새로 시작되면 결과 번호가 0부터 다시 매겨지므로 표시를 비운다
+      // 브라우저가 세션을 끊으면 바로 다시 시작한다. 직후 start() 는 "이미 시작됨"
+      // 으로 튕길 때가 있는데, 그대로 두면 인식이 조용히 멈춰버리므로 한 번 더 시도한다.
+      rec.onend = ()=>{
+        if(!this.on) return;
+        this.claimed.clear(); this.tried='';
+        try{ this.rec.start(); }
+        catch(_){ setTimeout(()=>{ if(this.on){ try{ this.rec.start(); }catch(__){} } }, 250); }
+      };
       rec.start();
-      this.rec=rec; this.on=true; this.interim='';
+      this.rec=rec; this.on=true; this.interim=''; this.claimed.clear(); this.tried='';
       toast('음성인식 시작 — 대사를 치면 자동으로 밑줄');
     }catch(err){ console.error(err); toast('음성인식 시작 실패','warn'); }
     this.paint();
   },
-  stop(){ this.on=false; this.interim=''; try{ this.rec && this.rec.stop(); }catch(_){} this.paint(); toast('음성인식 중지'); },
+  stop(){ this.on=false; this.interim=''; this.claimed.clear(); this.tried='';
+          try{ this.rec && this.rec.stop(); }catch(_){} this.paint(); toast('음성인식 중지'); },
+
+  /* 중간 인식 결과로 미리 밑줄을 긋는다.
+     isFinal(확정 신호)은 말이 끝나고도 몇 초 뒤에 오기 때문에 그때까지 기다리면
+     현장에서 체감 지연이 크다. 확신이 충분할 때만 앞당기고, 같은 발화의 최종
+     결과는 위에서 건너뛴다. */
+  early(i, txt){
+    if(this.claimed.has(i)) return;
+    const now = Date.now();
+    if(txt === this.tried || now - this.triedAt < 150) return;
+    this.tried = txt; this.triedAt = now;
+    const sp = norm(txt); if(sp.length < 6) return;
+    const s = getSheet(R.sid); if(!s) return;
+    const m = matchLine(txt, s.lines||[], this.cursor);
+    if(!m || m.sc < this.thr) return;
+    // 대사의 절반 이상을 말했을 때만 확정 — 앞부분만 듣고 엉뚱한 줄에 긋지 않도록
+    if(sp.length < norm(m.line.text).length * 0.55) return;
+    this.claimed.add(i);
+    this.last = txt; this.interim = '';
+    this.apply([txt]);
+  },
   apply(alts){
     const s=getSheet(R.sid); if(!s) return;
     let best=null, spoken='';
