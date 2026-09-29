@@ -4,7 +4,7 @@
   "start_url": "/carescript/",
   "scope": "/carescript/",
   "display": "standalone",
-  "orientation": "portrait",
+  "orientation": "any",
   "background_color": "#101216",
   "theme_color": "#101216"
 }
