@@ -385,3 +385,25 @@ body.dropping::after{
 }
 .chip.on .minus{background:var(--bg)}
 .chip .minus:active{background:var(--mark);color:var(--bg)}
+
+/* ═══ 메모 (손글씨 / 타자) ═══ */
+.grid.memo{grid-template-columns:1fr}
+.memohead{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+.memohead h5{margin:0}
+.memotools{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-left:auto}
+.memosep{width:1px;height:14px;background:var(--line);margin:0 2px}
+.inkwrap{position:relative;border:1px solid var(--line);border-radius:var(--r2);
+  background:var(--bg2);overflow:hidden}
+#inkpad{display:block;touch-action:none;cursor:crosshair}
+.inkhint{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  color:var(--tx3);font-size:13px;pointer-events:none;transition:opacity .2s}
+.inkhint.gone{opacity:0}
+
+
+.mbtn{
+  border:1px solid var(--line);border-radius:6px;padding:4px 10px;height:26px;
+  font-size:12px;font-weight:600;color:var(--tx2);white-space:nowrap;
+  display:inline-flex;align-items:center;justify-content:center
+}
+.mbtn:hover{border-color:var(--tx3);color:var(--tx)}
+.mbtn.on{background:var(--ac);color:var(--acfg);border-color:var(--ac)}

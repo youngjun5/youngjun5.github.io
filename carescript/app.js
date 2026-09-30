@@ -2,7 +2,7 @@
    케어스크립트 (CARE SCRIPT) — 현장 스크립터 전용 앱
    ============================================================ */
 'use strict';
-const BUILD = '260929.2301';
+const BUILD = '260930.1418';
 
 /* ---------- 유틸 ---------- */
 const $  = (s,r=document)=>r.querySelector(s);
@@ -641,6 +641,8 @@ async function importDocument(file){
 /* ============================================================
    4) 라우팅 & 렌더
    ============================================================ */
+let PENONLY = localStorage.getItem('carescript.penonly')==='1';
+let ERASER  = false;
 let R = { v:'home', folder:'all', pid:null, sid:null, tab:'script',
           fopen:false, filters:{date:[],scene:[],cut:[],flags:[]}, editing:null, q:'', page:0 };
 
@@ -658,7 +660,7 @@ function render(){
   _lastView = key;
   const cur = $('.content'); if(cur && keep) cur.scrollTop = keep;
   paintSync();
-  if(R.v==='sheet'){ $$('.paper textarea').forEach(autoGrow); }
+  if(R.v==='sheet'){ $$('.paper textarea').forEach(autoGrow); initInk(); }
   if(R.editing){ const ta=$(`textarea[data-line="${R.editing}"]`); if(ta){ ta.focus(); ta.setSelectionRange(ta.value.length,ta.value.length); autoGrow(ta);} }
 }
 function autoGrow(ta){ ta.style.height='auto'; ta.style.height=(ta.scrollHeight+4)+'px'; }
@@ -888,6 +890,30 @@ function viewSheet(){
           <h6>동시녹음</h6>
           ${sta(s,'soundNote','룸톤 · 후시 필요 컷 · 노이즈',2)}
           ${post?`<div class="postlist">후시 표시 ${post}개 — 대사 옆 [후] 버튼</div>`:''}
+        </div>
+      </div>
+
+      <!-- 메모 : 손글씨(애플펜슬) + 타자 -->
+      <div class="grid memo">
+        <div class="cell">
+          <div class="memohead">
+            <h5>메모 / Memo</h5>
+            <div class="memotools">
+              <button class="mbtn${(s.memoMode||'ink')==='ink'?' on':''}" data-act="memomode" data-v="ink">손글씨</button>
+              <button class="mbtn${s.memoMode==='type'?' on':''}" data-act="memomode" data-v="type">타자</button>
+              ${(s.memoMode||'ink')==='ink' ? `
+                <span class="memosep"></span>
+                <button class="mbtn${PENONLY?' on':''}" data-act="penonly" title="손바닥이 닿아도 그려지지 않게">펜만</button>
+                <button class="mbtn${ERASER?' on':''}" data-act="eraser">지우개</button>
+                <button class="mbtn" data-act="inkundo">되돌리기</button>
+                <button class="mbtn" data-act="inkclear">전체 지우기</button>` : ''}
+            </div>
+          </div>
+          ${(s.memoMode||'ink')==='ink'
+            ? `<div class="inkwrap"><canvas id="inkpad"></canvas>
+                 <div class="inkhint${(s.memoInk||[]).length?' gone':''}">애플펜슬이나 손가락으로 바로 쓰세요</div>
+               </div>`
+            : sta(s,'memo','촬영 중 메모 — 자유롭게',6)}
         </div>
       </div>
 
@@ -1150,7 +1176,7 @@ function newSheetFrom(base){
     location: base?.location||'',
     scene: base?.scene||'', cut: base? String((parseInt(base.cut,10)||0)+1) : '', cutDesc:'',
     temp: base?.temp||'', roll: base?.roll||'',
-    continuity:'', soundNote:'', notes:'',
+    continuity:'', soundNote:'', notes:'', memo:'', memoMode:'ink', memoInk:[],
     scriptName: base?.scriptName||'',
     lines:[]
   };
@@ -1168,6 +1194,15 @@ document.addEventListener('click', async e=>{
   switch(act){
     /* --- 네비 --- */
     case 'home': go({v:'home',sid:null,pid:null}); break;
+    case 'memomode': s.memoMode=v; touch(s); save(); render(); break;
+    case 'penonly':  PENONLY=!PENONLY; localStorage.setItem('carescript.penonly',PENONLY?'1':'0'); render(); break;
+    case 'eraser':   ERASER=!ERASER; render(); break;
+    case 'inkundo':  if((s.memoInk||[]).length){ s.memoInk.pop(); touch(s); save(); drawInk(); } break;
+    case 'inkclear':
+      if((s.memoInk||[]).length && confirm('메모의 손글씨를 모두 지울까요?')){
+        s.memoInk=[]; touch(s); save(); render();
+      }
+      break;
     case 'backproject': go({v:'project',sid:null,editing:null}); break;
     case 'openproject': go({v:'project',pid:v,filters:{date:[],scene:[],cut:[],flags:[]},q:''}); break;
     case 'opensheet': go({v:'sheet',sid:v,tab:'script',editing:null,page:0}); break;
@@ -1477,3 +1512,125 @@ document.addEventListener('drop', e=>{
   importDocument(e.dataTransfer.files[0]);
 });
 console.log('%c케어스크립트 ready','color:#ffb02e;font-weight:bold');
+
+/* ═══ 메모 손글씨 (애플펜슬) ═══
+   텍스트 입력칸에 펜으로 쓰면 iPadOS 의 Scribble 이 글자로 바꿔버린다.
+   캔버스는 Scribble 대상이 아니라서 쓴 획이 그대로 남는다.
+   획은 x=가로폭 대비 비율(0~1), y=픽셀 로 저장해 폭이 바뀌어도 비율이 유지된다. */
+const INK_H = 200;
+let inkDraw = null, inkSaveT = null;
+
+function inkCanvas(){ return document.getElementById('inkpad'); }
+
+function initInk(){
+  const c = inkCanvas(); if(!c) return;
+  const fit = ()=>{
+    const w = c.parentNode.clientWidth || 300;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    c.style.width = w+'px'; c.style.height = INK_H+'px';
+    c.width = Math.round(w*dpr); c.height = Math.round(INK_H*dpr);
+    const x = c.getContext('2d');
+    x.setTransform(dpr,0,0,dpr,0,0);
+    x.lineCap='round'; x.lineJoin='round';
+    drawInk();
+  };
+  fit();
+  if(!c._fit){ c._fit = fit; window.addEventListener('resize', ()=>{ inkCanvas() && fit(); }); }
+}
+
+function drawInk(){
+  const c = inkCanvas(); if(!c) return;
+  const s = getSheet(R.sid); if(!s) return;
+  const x = c.getContext('2d');
+  const w = c.clientWidth || 300;
+  x.clearRect(0,0,w,INK_H);
+  x.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--tx').trim() || '#fff';
+  (s.memoInk||[]).forEach(st=>{
+    const p = st.p; if(!p || p.length<2) return;
+    x.lineWidth = st.w || 2;
+    x.beginPath();
+    x.moveTo(p[0]*w, p[1]);
+    for(let i=2;i<p.length;i+=2) x.lineTo(p[i]*w, p[i+1]);
+    if(p.length===2) x.lineTo(p[0]*w+0.1, p[1]);   // 점 하나만 찍은 경우
+    x.stroke();
+  });
+  const hint = document.querySelector('.inkhint');
+  if(hint) hint.classList.toggle('gone', (s.memoInk||[]).length>0);
+}
+
+function inkSave(){
+  const s = getSheet(R.sid); if(!s) return;
+  clearTimeout(inkSaveT);
+  inkSaveT = setTimeout(()=>{ touch(s); save(); }, 400);
+}
+
+function inkPos(e, c){
+  const r = c.getBoundingClientRect();
+  return { x: Math.min(Math.max((e.clientX-r.left)/r.width,0),1),
+           y: Math.min(Math.max(e.clientY-r.top,0), INK_H) };
+}
+
+/* 지우개 — 누른 자리 근처를 지나는 획을 통째로 지운다 */
+function inkErase(pt, w){
+  const s = getSheet(R.sid); if(!s || !(s.memoInk||[]).length) return false;
+  const R2 = 14;
+  const before = s.memoInk.length;
+  s.memoInk = s.memoInk.filter(st=>{
+    const p = st.p;
+    for(let i=0;i<p.length;i+=2){
+      const dx = p[i]*w - pt.x*w, dy = p[i+1] - pt.y;
+      if(dx*dx + dy*dy < R2*R2) return false;
+    }
+    return true;
+  });
+  return s.memoInk.length !== before;
+}
+
+document.addEventListener('pointerdown', e=>{
+  const c = e.target.closest && e.target.closest('#inkpad'); if(!c) return;
+  // 펜을 처음 쓰면 손바닥 방지를 자동으로 켠다
+  if(e.pointerType==='pen' && localStorage.getItem('carescript.penonly')===null){
+    PENONLY = true; localStorage.setItem('carescript.penonly','1');
+  }
+  if(PENONLY && e.pointerType!=='pen') return;
+  const s = getSheet(R.sid); if(!s) return;
+  if(!s.memoInk) s.memoInk = [];
+  const pt = inkPos(e, c);
+  e.preventDefault();
+  c.setPointerCapture && c.setPointerCapture(e.pointerId);
+
+  if(ERASER){
+    inkDraw = { erase:true, c };
+    if(inkErase(pt, c.clientWidth)){ drawInk(); inkSave(); }
+    return;
+  }
+  // 필압이 있으면 굵기에 반영 (애플펜슬)
+  const w = e.pressure && e.pressure>0 && e.pointerType==='pen' ? 1.1 + e.pressure*2.4 : 2.2;
+  const st = { w:+w.toFixed(2), p:[+pt.x.toFixed(4), +pt.y.toFixed(1)] };
+  s.memoInk.push(st);
+  inkDraw = { st, c };
+  drawInk();
+}, true);
+
+document.addEventListener('pointermove', e=>{
+  if(!inkDraw) return;
+  const c = inkDraw.c;
+  const pts = (e.getCoalescedEvents && e.getCoalescedEvents().length) ? e.getCoalescedEvents() : [e];
+  if(inkDraw.erase){
+    let hit=false;
+    pts.forEach(ev=>{ if(inkErase(inkPos(ev,c), c.clientWidth)) hit=true; });
+    if(hit){ drawInk(); inkSave(); }
+    return;
+  }
+  pts.forEach(ev=>{
+    const pt = inkPos(ev, c);
+    inkDraw.st.p.push(+pt.x.toFixed(4), +pt.y.toFixed(1));
+  });
+  drawInk();
+});
+
+document.addEventListener('pointerup', ()=>{
+  if(!inkDraw) return;
+  inkDraw = null;
+  inkSave();
+});
