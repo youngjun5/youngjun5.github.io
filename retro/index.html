@@ -152,6 +152,22 @@
   .reader-body a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
   .reader-body code { background: var(--surface-2); padding: 1px 6px; border-radius: 5px; font: 500 13px "IBM Plex Mono", monospace; }
 
+  .lock { max-width: 320px; margin: 30px auto 0; text-align: center; }
+  .lock[hidden] { display: none; }
+  .lock .lock-icon { font-size: 30px; margin-bottom: 8px; }
+  .lock p { margin: 0 0 16px; color: var(--ink-soft); font-size: 13.5px; }
+  .lock input {
+    width: 100%; padding: 14px 16px; border-radius: 12px; border: 1px solid var(--hair-strong);
+    background: var(--surface); color: var(--ink); text-align: center;
+    font: 600 22px "IBM Plex Mono", monospace; letter-spacing: 0.5em; outline: none;
+  }
+  .lock input:focus { border-color: var(--accent); }
+  .lock button {
+    margin-top: 10px; width: 100%; padding: 12px; border: 0; border-radius: 12px;
+    background: var(--accent); color: #0d1116; font: 600 14px "IBM Plex Sans", sans-serif; cursor: pointer;
+  }
+  .lock button:disabled { opacity: .6; cursor: default; }
+  .lock .lock-err { color: #e07a6b; font-size: 12.5px; min-height: 18px; margin: 10px 0 0; }
   .loading { text-align: center; color: var(--ink-faint); padding: 60px 0; font-size: 13px; }
 
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
@@ -171,6 +187,13 @@
     <p>매주 일요일 저녁, 그 주에 쓴 저널을 모아 어떤 생각을 했는지 · 반복되는 패턴은 뭔지 · 하나로 모이는 방향이 있다면 무엇인지 자동으로 정리돼요.</p>
   </div>
 
+  <form class="lock" id="lock" hidden autocomplete="off">
+    <div class="lock-icon">🔒</div>
+    <p>비밀번호를 입력해야 회고록을 볼 수 있어요.</p>
+    <input id="lockPw" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="12" aria-label="비밀번호" autofocus>
+    <button type="submit" id="lockBtn">열기</button>
+    <p class="lock-err" id="lockErr"></p>
+  </form>
   <div class="list" id="list"></div>
   <p class="loading" id="loadingMsg">불러오는 중...</p>
   <p class="empty" id="emptyMsg" hidden>아직 생성된 주간 회고록이 없어요. 다음 일요일 저녁에 첫 회고록이 자동으로 올라와요.</p>
@@ -256,13 +279,68 @@
   document.getElementById("readerBack").addEventListener("click", function () { history.back(); });
   window.addEventListener("popstate", closeReader);
 
+  // 회고 내용은 Supabase에 암호문으로만 저장된다 (journal-sync/retro_crypto.py와 같은 방식:
+  // PBKDF2-SHA256 600,000회 → AES-256-CBC). 비밀번호는 이 탭이 열려 있는 동안만 기억한다.
+  var lockEl = document.getElementById("lock");
+  var lockPw = document.getElementById("lockPw");
+  var lockBtn = document.getElementById("lockBtn");
+  var lockErr = document.getElementById("lockErr");
+  var PW_KEY = "retro-pw";
+  var password = null;
+  var latest = null;
+
+  function b64(s) { return Uint8Array.from(atob(s), function (c) { return c.charCodeAt(0); }); }
+  function decryptReviews(enc, pw) {
+    var te = new TextEncoder();
+    return crypto.subtle.importKey("raw", te.encode(pw), "PBKDF2", false, ["deriveKey"]).then(function (base) {
+      return crypto.subtle.deriveKey({ name: "PBKDF2", salt: b64(enc.salt), iterations: enc.iter, hash: "SHA-256" },
+        base, { name: "AES-CBC", length: 256 }, false, ["decrypt"]);
+    }).then(function (key) {
+      return crypto.subtle.decrypt({ name: "AES-CBC", iv: b64(enc.iv) }, key, b64(enc.ct));
+    }).then(function (buf) { return JSON.parse(new TextDecoder().decode(buf)); });
+  }
+
+  function showLock(msg) {
+    loadingMsg.hidden = true; listEl.innerHTML = ""; emptyMsg.hidden = true;
+    lockEl.hidden = false; lockErr.textContent = msg || ""; lockBtn.disabled = false; lockBtn.textContent = "열기";
+    lockPw.value = ""; lockPw.focus();
+  }
+
+  function apply(content) {
+    latest = content;
+    if (!content) { reviews = []; render(); return; }
+    if (!content.enc) {
+      reviews = (content.reviews || []).slice().sort(function (a, b) { return a.date < b.date ? 1 : -1; });
+      render(); return;
+    }
+    if (!password) { showLock(); return; }
+    decryptReviews(content.enc, password).then(function (list) {
+      try { sessionStorage.setItem(PW_KEY, password); } catch (e) {}
+      lockEl.hidden = true;
+      reviews = list.slice().sort(function (a, b) { return a.date < b.date ? 1 : -1; });
+      render();
+    }).catch(function () {
+      password = null;
+      try { sessionStorage.removeItem(PW_KEY); } catch (e) {}
+      showLock("비밀번호가 맞지 않아요.");
+    });
+  }
+
+  lockEl.addEventListener("submit", function (e) {
+    e.preventDefault();
+    if (!lockPw.value) return;
+    password = lockPw.value;
+    lockBtn.disabled = true; lockBtn.textContent = "여는 중..."; lockErr.textContent = "";
+    apply(latest);
+  });
+  try { password = sessionStorage.getItem(PW_KEY); } catch (e) {}
+
   if (window.supabase && window.supabase.createClient) {
     var db = window.supabase.createClient(SB.url, SB.anon);
     function pull() {
       db.from(SB.table).select("content").eq("id", SB.row).maybeSingle().then(function (res) {
-        if (res.error || !res.data || !res.data.content) { reviews = []; render(); return; }
-        reviews = (res.data.content.reviews || []).slice().sort(function (a, b) { return a.date < b.date ? 1 : -1; });
-        render();
+        if (res.error || !res.data) { apply(null); return; }
+        apply(res.data.content);
       });
     }
     pull();
