@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<script>
+  /* 설치된 앱(홈 화면 아이콘)으로 이 서브앱이 직접 열리면 허브 메인으로 먼저 보냄 (팀 달력과 같은 처리) */
+  (function(){
+    var standalone = window.navigator.standalone === true ||
+      (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches);
+    if (standalone && !document.referrer) location.replace("../");
+  })();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="stylesheet" href="../shell.css">
+<script src="../shell.js" defer></script>
+<meta name="theme-color" content="#0b0c0e">
+<meta name="description" content="CARECENTER SoliDeo:OFFMIC — 영화 제작 관리 문서">
+<link rel="icon" href="../icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="OFFMIC">
+<title>SoliDeo:OFFMIC · CARECENTER</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.58.0/dist/umd/supabase.js"></script>
+<script src="data.js"></script>
+<style>
+:root{
+  color-scheme: dark;
+  --ground:#0b0c0e; --surface:#15161a; --surface-2:#1c1e23;
+  --hair:rgba(231,232,234,0.10); --hair-strong:rgba(231,232,234,0.20);
+  --ink:#e7e8ea; --ink-soft:#9a9ea6; --ink-faint:#6b6f78;
+  --accent:#5b6fd8; --accent-2:#8f9be8; --accent-soft:rgba(91,111,216,0.18);
+  --amber:#e0ab4c; --done:#4caf80; --err:#d9604a;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--ground);color:var(--ink);font:14px/1.5 "IBM Plex Sans",system-ui,sans-serif;-webkit-text-size-adjust:100%}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+input,select,textarea{font:inherit;color:inherit}
+.wrap{max-width:1360px;margin:0 auto;padding:22px clamp(14px,3.4vw,44px) 110px}
+
+.topbar{display:flex;align-items:center;gap:10px;margin-bottom:22px;flex-wrap:wrap}
+.topbar .spacer{flex:1}
+.back{color:var(--ink-soft);font-size:13px;text-decoration:none}
+.status{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--ink-soft)}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--ink-faint);flex:none}
+.dot.sync{background:var(--done)}.dot.wait{background:var(--amber)}.dot.err{background:var(--err)}
+
+h1{font:700 clamp(26px,4vw,38px)/1.1 "Bricolage Grotesque",sans-serif;margin:0;letter-spacing:-.01em}
+.sub{color:var(--ink-soft);margin-top:6px;font-size:14px}
+.kpis{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0 8px}
+.kpi{background:var(--surface);border:1px solid var(--hair);border-radius:12px;padding:10px 14px;min-width:150px}
+.kpi b{display:block;font:600 18px/1.3 "IBM Plex Sans",sans-serif;font-variant-numeric:tabular-nums}
+.kpi span{font-size:11.5px;color:var(--ink-faint)}
+.bar{height:4px;border-radius:2px;background:var(--hair);margin-top:7px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--done)}
+
+section.overview{margin:22px 0 4px}
+.sec-h{display:flex;align-items:center;gap:10px;margin:0 0 10px}
+.sec-h h2{font:600 15px/1.3 "IBM Plex Sans",sans-serif;margin:0}
+.sec-h .spacer{flex:1}
+
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--hair);margin:26px 0 14px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:9px 14px;font-size:13.5px;color:var(--ink-soft);border-bottom:2px solid transparent;white-space:nowrap}
+.tab.on{color:var(--ink);border-bottom-color:var(--accent-2)}
+
+.tbl-wrap{overflow-x:auto;border:1px solid var(--hair);border-radius:12px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:720px}
+th,td{border-bottom:1px solid var(--hair);text-align:left;vertical-align:top}
+th{font-size:11.5px;font-weight:500;color:var(--ink-faint);padding:9px 10px;background:var(--surface-2);position:sticky;top:0;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td .cell{padding:8px 10px;min-height:36px;outline:none;white-space:pre-wrap;word-break:keep-all;overflow-wrap:anywhere}
+td .cell:focus{background:var(--accent-soft);box-shadow:inset 0 0 0 1px var(--accent)}
+td .cell:empty::before{content:"—";color:var(--ink-faint)}
+td .cell:focus:empty::before{content:""}
+td .cell.tbd{color:var(--amber)}
+td select{width:100%;background:transparent;border:0;padding:8px 6px;min-height:36px;color:var(--ink)}
+td select option{background:var(--surface)}
+td select.s-done{color:var(--done)} td select.s-doing{color:var(--accent-2)} td select.s-tbd{color:var(--amber)}
+td.acts{width:1%;white-space:nowrap;padding:4px 6px}
+.ib{width:28px;height:28px;border-radius:7px;color:var(--ink-faint);display:inline-flex;align-items:center;justify-content:center}
+.ib:hover{background:var(--surface-2);color:var(--ink)}
+.ib.del:hover{color:var(--err)}
+.add{margin-top:10px;padding:8px 12px;border:1px dashed var(--hair-strong);border-radius:9px;color:var(--ink-soft);font-size:13px}
+.add:hover{color:var(--ink);border-color:var(--accent-2)}
+.note{font-size:12px;color:var(--ink-faint);margin:10px 2px 0;line-height:1.6}
+
+.lock{display:flex;flex-wrap:wrap;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--hair);border-radius:12px;padding:10px 12px;margin-bottom:12px;font-size:13px;color:var(--ink-soft)}
+.lock input{background:var(--surface-2);border:1px solid var(--hair-strong);border-radius:8px;padding:6px 9px;width:150px}
+.lock button{background:var(--accent);color:#fff;border-radius:8px;padding:6px 12px;font-size:12.5px}
+.lock .ok{color:var(--done)}
+.lock .bad{color:var(--err)}
+td.private .cell{font-family:"IBM Plex Mono",monospace;font-size:12.5px}
+td.private.locked .cell{color:var(--ink-faint)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="topbar" data-cc-replace>
+    <a class="back" href="../">‹ 케어센터</a>
+    <span class="spacer"></span>
+    <span class="status" data-cc-action><span class="dot" id="dot"></span><span id="statusTxt">불러오는 중</span></span>
+  </header>
+
+  <h1 id="title">SoliDeo:OFFMIC</h1>
+  <div class="sub" id="subtitle">오프 마이크(가제)</div>
+  <div class="kpis" id="kpis"></div>
+
+  <section class="overview">
+    <div class="sec-h"><h2>개요</h2></div>
+    <div id="overview"></div>
+  </section>
+
+  <nav class="tabs" id="tabs"></nav>
+  <div id="panel"></div>
+</div>
+
+<script>
+/* ═══ 저장소 (팀 달력과 같은 방식: Supabase carescript 테이블의 행 하나) ═══ */
+var SB = {
+  url:'https://mgvqhrdhshpuamihfvnp.supabase.co',
+  anon:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1ndnFocmRoc2hwdWFtaWhmdm5wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg2MTE4NjQsImV4cCI6MjEwNDE4Nzg2NH0.fjDJuG-47YHU63lydUSZGAGg3FQ-DLGLp9ufnJ4SN30',
+  table:'carescript', row:OFFMIC.row, prow:OFFMIC.privateRow
+};
+var LS_KEY='offmic:local:v1', SCHEMA=1;
+var STATUS_MS=['진행 전','진행 중','완료'];
+var STATUS_EQ=['보유','구매 예정','확인 필요','필요 여부 확인'];
+
+/* 표 정의 — key: 데이터 필드, sel: 고정 선택지, priv: 암호화해서 따로 저장하는 칸 */
+var TABS=[
+  {id:'masterSchedule', name:'마스터 일정', cols:[
+    {k:'order',l:'#',w:44},{k:'stage',l:'단계',w:130},{k:'content',l:'내용',w:360},{k:'due',l:'기한',w:150},{k:'owner',l:'담당',w:90},{k:'status',l:'상태',w:110,sel:STATUS_MS}],
+    blank:{order:'',stage:'',content:'',due:'',owner:'',status:'진행 전'}},
+  {id:'shootDays', name:'촬영일별 정보', dup:true, cols:[
+    {k:'date',l:'날짜',w:150},{k:'callTime',l:'콜타임',w:80},{k:'shootTime',l:'촬영 시간',w:90},{k:'location',l:'장소',w:150},{k:'scenes',l:'씬',w:110},{k:'cast',l:'출연',w:180},{k:'parking',l:'주차',w:100},{k:'meals',l:'식사',w:100},{k:'notes',l:'메모',w:280}],
+    blank:{date:'',callTime:'',shootTime:'',location:'',scenes:'',cast:'',parking:'',meals:'',notes:''}},
+  {id:'scenes', name:'씬 리스트', dup:true, cols:[
+    {k:'id',l:'씬',w:56},{k:'location',l:'장소',w:150},{k:'summary',l:'내용',w:380},{k:'cast',l:'출연',w:170},{k:'notes',l:'메모',w:240}],
+    blank:{id:'',location:'',summary:'',cast:'',notes:''}},
+  {id:'locations', name:'로케이션', cols:[
+    {k:'name',l:'장소',w:180},{k:'scenes',l:'씬',w:110},{k:'status',l:'상태',w:160},{k:'address',l:'주소',w:180},{k:'parking',l:'주차',w:100},{k:'power',l:'전원',w:90},{k:'permit',l:'허가',w:100},{k:'notes',l:'메모',w:240}],
+    blank:{name:'',scenes:'',status:'',address:'',parking:'',power:'',permit:'',notes:''}},
+  {id:'contacts', name:'연락망', cols:[
+    {k:'group',l:'구분',w:80},{k:'name',l:'이름',w:140},{k:'role',l:'역할',w:160},{k:'phone',l:'연락처',w:130,priv:1},{k:'emergency',l:'비상연락처',w:130,priv:1},{k:'availability',l:'가능 일정',w:200},{k:'dietHealth',l:'식이·건강',w:140}],
+    blank:{group:'',name:'',role:'',phone:'',emergency:'',availability:'',dietHealth:''}},
+  {id:'equipment', name:'장비', cols:[
+    {k:'category',l:'분류',w:100},{k:'item',l:'품목',w:300},{k:'qty',l:'수량',w:60},{k:'owner',l:'소유',w:100},{k:'storage',l:'보관',w:100},{k:'schedule',l:'사용 일정',w:150},{k:'status',l:'상태',w:130,sel:STATUS_EQ}],
+    blank:{category:'',item:'',qty:'',owner:'',storage:'',schedule:'',status:'확인 필요'}}
+];
+var OVERVIEW={id:'overview', cols:[{k:'label',l:'항목',w:120},{k:'value',l:'내용',w:600}], blank:{label:'',value:''}};
+
+var S=null, db=null, rev=0, saveT=null, pendingPull=false, curTab='masterSchedule';
+var PRIV={}, prev=0, pkey=null, privState='none'; /* none | locked | open */
+
+function clone(o){return JSON.parse(JSON.stringify(o));}
+function rid(){return 'r'+Math.random().toString(36).slice(2,10);}
+function esc(v){return String(v==null?'':v).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+/* 행마다 고정 id(_id)를 붙인다 — 연락처 암호 저장분을 행과 잇기 위함 */
+function ensureIds(d){
+  OFFMIC.TABLES.forEach(function(k){(d[k]||[]).forEach(function(r){ if(!r._id) r._id=rid(); });});
+  (d.contacts||[]).forEach(function(r){ r.phone=''; r.emergency=''; }); /* 공용 행에는 연락처를 절대 두지 않음 */
+  return d;
+}
+function fresh(){var d=ensureIds(clone(OFFMIC.DEFAULT)); d.schema=SCHEMA; return d;}
+
+/* ═══ 그리기 ═══ */
+function setStatus(cls,txt){document.getElementById('dot').className='dot'+(cls?' '+cls:'');document.getElementById('statusTxt').textContent=txt;}
+function isTbd(v){return typeof v==='string'&&(v.indexOf('미정')>=0||v.indexOf('확인 필요')>=0);}
+function selCls(v){return v==='완료'?'s-done':v==='진행 중'?'s-doing':(v==='확인 필요'||v==='필요 여부 확인')?'s-tbd':'';}
+
+function renderHead(){
+  document.getElementById('title').textContent=S.title||'SoliDeo:OFFMIC';
+  document.getElementById('subtitle').textContent=S.subtitle||'';
+  var m=OFFMIC.summary(S), pct=m.total?Math.round(m.done/m.total*100):0;
+  document.getElementById('kpis').innerHTML=
+    '<div class="kpi"><span>완성 목표</span><b>'+esc(OFFMIC.target)+'</b></div>'+
+    '<div class="kpi"><span>마스터 일정</span><b>'+m.done+' / '+m.total+' 완료</b><div class="bar"><i style="width:'+pct+'%"></i></div></div>'+
+    '<div class="kpi"><span>다음 할 일</span><b>'+(m.next?esc(m.next.stage):'없음')+'</b></div>'+
+    '<div class="kpi"><span>미정·확인 필요</span><b>'+m.open+'칸</b></div>';
+}
+
+function tableHTML(def,rows){
+  var h='<div class="tbl-wrap"><table><thead><tr>'+def.cols.map(function(c){return '<th style="min-width:'+c.w+'px">'+esc(c.l)+'</th>';}).join('')+'<th></th></tr></thead><tbody>';
+  rows.forEach(function(r,i){
+    h+='<tr data-i="'+i+'">';
+    def.cols.forEach(function(c){
+      if(c.sel){
+        var v=r[c.k]||'';
+        var opts=c.sel.slice(); if(v&&opts.indexOf(v)<0) opts.unshift(v);
+        h+='<td><select data-t="'+def.id+'" data-i="'+i+'" data-k="'+c.k+'" class="'+selCls(v)+'">'+opts.map(function(o){return '<option'+(o===v?' selected':'')+'>'+esc(o)+'</option>';}).join('')+'</select></td>';
+      }else if(c.priv){
+        var pv=(PRIV[r._id]||{})[c.k]||'';
+        var open=privState==='open';
+        h+='<td class="private'+(open?'':' locked')+'"><div class="cell" '+(open?'contenteditable="plaintext-only" ':'')+'data-t="'+def.id+'" data-i="'+i+'" data-k="'+c.k+'" data-p="1">'+(open?esc(pv):'🔒')+'</div></td>';
+      }else{
+        var v2=r[c.k]==null?'':String(r[c.k]);
+        h+='<td><div class="cell'+(isTbd(v2)?' tbd':'')+'" contenteditable="plaintext-only" data-t="'+def.id+'" data-i="'+i+'" data-k="'+c.k+'">'+esc(v2)+'</div></td>';
+      }
+    });
+    h+='<td class="acts">'+(def.dup?'<button class="ib" title="행 복제" data-dup="'+def.id+'" data-i="'+i+'">⧉</button>':'')+
+       '<button class="ib del" title="행 삭제" data-del="'+def.id+'" data-i="'+i+'">✕</button></td></tr>';
+  });
+  h+='</tbody></table></div><button class="add" data-add="'+def.id+'">＋ 행 추가</button>';
+  return h;
+}
+
+function lockBar(){
+  if(privState==='open') return '<div class="lock"><span class="ok">● 연락처 잠금 해제됨</span><span>연락처·비상연락처는 암호화해서 따로 저장돼요.</span><span class="spacer" style="flex:1"></span><button id="plock" style="background:var(--surface-2);color:var(--ink)">다시 잠그기</button></div>';
+  var first=!PRIV_EXISTS;
+  return '<div class="lock"><span>'+(first?'연락처 칸은 개인정보라 암호를 정해야 쓸 수 있어요.':'연락처·비상연락처는 잠겨 있어요.')+'</span>'+
+    '<input type="password" id="ppass" placeholder="'+(first?'새 암호 (6자 이상)':'암호')+'" autocomplete="off">'+
+    (first?'<input type="password" id="ppass2" placeholder="한 번 더" autocomplete="off">':'')+
+    '<button id="punlock">'+(first?'암호 정하기':'잠금 해제')+'</button><span id="pmsg"></span></div>';
+}
+
+function render(){
+  if(!S) return;
+  renderHead();
+  document.getElementById('overview').innerHTML=tableHTML(OVERVIEW,S.overview||[]);
+  document.getElementById('tabs').innerHTML=TABS.map(function(t){return '<button class="tab'+(t.id===curTab?' on':'')+'" data-tab="'+t.id+'">'+esc(t.name)+'</button>';}).join('');
+  var def=TABS.filter(function(t){return t.id===curTab;})[0];
+  var h=(def.id==='contacts'?lockBar():'')+tableHTML(def,S[def.id]||[]);
+  if(def.id==='contacts') h+='<p class="note">연락처와 비상연락처는 공개 저장소(Git)와 공용 저장소 어디에도 그대로 남지 않아요. 같은 암호를 아는 팀원만 볼 수 있어요.</p>';
+  document.getElementById('panel').innerHTML=h;
+}
+
+/* ═══ 편집 ═══ */
+function busy(){var a=document.activeElement;return !!(a&&(a.isContentEditable||a.tagName==='INPUT'||a.tagName==='SELECT'));}
+document.addEventListener('input',function(e){
+  var el=e.target; if(!el.dataset||!el.dataset.t) return;
+  var rows=el.dataset.t==='overview'?S.overview:S[el.dataset.t], r=rows[+el.dataset.i]; if(!r) return;
+  if(el.dataset.p){ if(privState!=='open') return; (PRIV[r._id]=PRIV[r._id]||{})[el.dataset.k]=el.innerText.replace(/\n$/,''); savePriv(); return; }
+  var v=el.tagName==='SELECT'?el.value:el.innerText.replace(/\n$/,'');
+  if(el.dataset.k==='order'&&/^\d+$/.test(v)) v=+v;
+  r[el.dataset.k]=v;
+  if(el.tagName==='SELECT'){ el.className=selCls(v); }
+  else el.classList.toggle('tbd',isTbd(v));
+  save(); renderHead();
+});
+document.addEventListener('change',function(e){ if(e.target.tagName==='SELECT'&&e.target.dataset.t) e.target.blur(); });
+document.addEventListener('focusout',function(){ setTimeout(function(){ if(pendingPull&&!busy()){pendingPull=false;pull();} },50); });
+document.addEventListener('click',function(e){
+  var b=e.target.closest('button'); if(!b) return;
+  if(b.dataset.tab){curTab=b.dataset.tab;render();return;}
+  var t=b.dataset.add||b.dataset.del||b.dataset.dup; if(!t) return;
+  var def=t==='overview'?OVERVIEW:TABS.filter(function(x){return x.id===t;})[0];
+  var rows=t==='overview'?(S.overview=S.overview||[]):(S[t]=S[t]||[]);
+  if(b.dataset.add){var nr=clone(def.blank);nr._id=rid();rows.push(nr);}
+  else if(b.dataset.dup){var i=+b.dataset.i,cp=clone(rows[i]);cp._id=rid();rows.splice(i+1,0,cp);}
+  else{var j=+b.dataset.i,del=rows[j];if(!del) return;rows.splice(j,1);if(PRIV[del._id]){delete PRIV[del._id];savePriv();}}
+  save();render();
+  if(b.dataset.add){var cells=document.querySelectorAll('#'+(t==='overview'?'overview':'panel')+' tbody tr:last-child .cell[contenteditable]');if(cells[0])cells[0].focus();}
+});
+
+/* ═══ 저장 ═══ */
+function save(){
+  S.updatedAt=new Date().toISOString().slice(0,10);
+  try{localStorage.setItem(LS_KEY,JSON.stringify(S));}catch(e){}
+  setStatus('wait','저장 대기');
+  clearTimeout(saveT);saveT=setTimeout(push,900);
+}
+function push(){
+  if(!db){setStatus('err','오프라인 (이 기기에만 저장)');return;}
+  setStatus('wait','저장 중');
+  S.schema=SCHEMA;
+  db.from(SB.table).upsert({id:SB.row,content:S,rev:rev+1,updated_at:new Date().toISOString()})
+    .then(function(res){ if(res.error){setStatus('err','저장 실패');console.error(res.error);} else{rev=rev+1;setStatus('sync','저장됨');} });
+}
+function pull(){
+  if(!db) return Promise.resolve();
+  return db.from(SB.table).select('content,rev').eq('id',SB.row).maybeSingle().then(function(res){
+    if(res.error){setStatus('err','불러오기 실패');return;}
+    var c=res.data&&res.data.content;
+    if(c&&c.schema===SCHEMA&&c.masterSchedule){
+      S=ensureIds(c);rev=res.data.rev||0;
+      try{localStorage.setItem(LS_KEY,JSON.stringify(S));}catch(e){}
+      setStatus('sync','저장됨');render();
+    }else{
+      rev=res.data?(res.data.rev||0):0;
+      setStatus('wait','첫 저장 중');push();render();
+    }
+  });
+}
+
+/* ═══ 연락처 암호 저장 (PBKDF2-SHA256 → AES-GCM, 브라우저 WebCrypto만 사용) ═══ */
+var PRIV_EXISTS=false, privBlob=null;
+var enc=new TextEncoder(), dec=new TextDecoder();
+function b64(u){var s='';u=new Uint8Array(u);for(var i=0;i<u.length;i++)s+=String.fromCharCode(u[i]);return btoa(s);}
+function unb64(s){var b=atob(s),u=new Uint8Array(b.length);for(var i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return u;}
+function deriveKey(pass,salt){
+  return crypto.subtle.importKey('raw',enc.encode(pass),'PBKDF2',false,['deriveKey']).then(function(k){
+    return crypto.subtle.deriveKey({name:'PBKDF2',salt:salt,iterations:310000,hash:'SHA-256'},k,{name:'AES-GCM',length:256},false,['encrypt','decrypt']);
+  });
+}
+function decryptBlob(blob,key){
+  return crypto.subtle.decrypt({name:'AES-GCM',iv:unb64(blob.iv)},key,unb64(blob.data)).then(function(p){return JSON.parse(dec.decode(p));});
+}
+var privSalt=null, savePT=null;
+function savePriv(){
+  if(privState!=='open'||!pkey) return;
+  setStatus('wait','저장 대기');
+  clearTimeout(savePT); savePT=setTimeout(function(){
+    var iv=crypto.getRandomValues(new Uint8Array(12));
+    crypto.subtle.encrypt({name:'AES-GCM',iv:iv},pkey,enc.encode(JSON.stringify(PRIV))).then(function(ct){
+      var blob={v:1,kdf:'PBKDF2-SHA256',iter:310000,salt:b64(privSalt),iv:b64(iv),data:b64(ct)};
+      if(!db){setStatus('err','오프라인');return;}
+      db.from(SB.table).upsert({id:SB.prow,content:{enc:blob},rev:prev+1,updated_at:new Date().toISOString()}).then(function(res){
+        if(res.error){setStatus('err','연락처 저장 실패');console.error(res.error);} else {prev=prev+1;privBlob=blob;PRIV_EXISTS=true;setStatus('sync','저장됨');}
+      });
+    });
+  },700);
+}
+function pullPriv(){
+  if(!db) return Promise.resolve();
+  return db.from(SB.table).select('content,rev').eq('id',SB.prow).maybeSingle().then(function(res){
+    if(res.error||!res.data||!res.data.content||!res.data.content.enc){PRIV_EXISTS=false;return;}
+    PRIV_EXISTS=true; privBlob=res.data.content.enc; prev=res.data.rev||0;
+    if(privState==='open'&&pkey){ return decryptBlob(privBlob,pkey).then(function(p){PRIV=p; if(!busy()) render();}).catch(function(){}); }
+  });
+}
+function unlock(){
+  var p=document.getElementById('ppass').value, p2=document.getElementById('ppass2'), msg=document.getElementById('pmsg');
+  if(!PRIV_EXISTS){
+    if(p.length<6){msg.className='bad';msg.textContent='6자 이상으로 정해 주세요';return;}
+    if(p!==p2.value){msg.className='bad';msg.textContent='두 번 입력한 암호가 달라요';return;}
+    privSalt=crypto.getRandomValues(new Uint8Array(16));
+    deriveKey(p,privSalt).then(function(k){pkey=k;PRIV={};privState='open';try{sessionStorage.setItem('offmic:pp',p);}catch(e){}render();savePriv();});
+    return;
+  }
+  msg.className='';msg.textContent='확인 중…';
+  privSalt=unb64(privBlob.salt);
+  deriveKey(p,privSalt).then(function(k){
+    return decryptBlob(privBlob,k).then(function(data){pkey=k;PRIV=data;privState='open';try{sessionStorage.setItem('offmic:pp',p);}catch(e){}render();});
+  }).catch(function(){msg.className='bad';msg.textContent='암호가 맞지 않아요';});
+}
+document.addEventListener('click',function(e){
+  if(e.target.id==='punlock') unlock();
+  if(e.target.id==='plock'){pkey=null;PRIV={};privState='locked';try{sessionStorage.removeItem('offmic:pp');}catch(x){}render();}
+});
+document.addEventListener('keydown',function(e){ if(e.key==='Enter'&&(e.target.id==='ppass'||e.target.id==='ppass2')) unlock(); });
+
+/* ═══ 시작 ═══ */
+(function(){
+  try{var c=localStorage.getItem(LS_KEY);if(c){var p=JSON.parse(c);if(p&&p.schema===SCHEMA&&p.masterSchedule)S=ensureIds(p);}}catch(e){}
+  if(!S) S=fresh();
+  render();
+  if(window.supabase&&window.supabase.createClient){
+    db=window.supabase.createClient(SB.url,SB.anon);
+    pull().then(function(){
+      return pullPriv().then(function(){
+        var saved=null; try{saved=sessionStorage.getItem('offmic:pp');}catch(e){}
+        if(saved&&PRIV_EXISTS){ privSalt=unb64(privBlob.salt); deriveKey(saved,privSalt).then(function(k){return decryptBlob(privBlob,k).then(function(d){pkey=k;PRIV=d;privState='open';render();});}).catch(function(){}); }
+        else render();
+      });
+    }).then(function(){
+      db.channel('offmic').on('postgres_changes',{event:'*',schema:'public',table:SB.table,filter:'id=eq.'+SB.row},
+        function(){ if(busy()){pendingPull=true;return;} pull(); }).subscribe();
+      db.channel('offmic-p').on('postgres_changes',{event:'*',schema:'public',table:SB.table,filter:'id=eq.'+SB.prow},
+        function(){ if(!busy()) pullPriv(); }).subscribe();
+    });
+  }else{ setStatus('err','오프라인 (이 기기에만 저장)'); }
+})();
+</script>
+</body>
+</html>
