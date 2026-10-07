@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<script>
+  /* 설치된 앱(홈 화면 아이콘)으로 이 서브앱이 직접 열리면 허브 메인으로 먼저 보냄 (OFFMIC과 같은 처리) */
+  (function(){
+    var standalone = window.navigator.standalone === true ||
+      (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches);
+    if (standalone && !document.referrer) location.replace("../");
+  })();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="stylesheet" href="../shell.css">
+<script src="../shell.js" defer></script>
+<meta name="theme-color" content="#0b0c0e">
+<meta name="description" content="CARECENTER CARECOLOR — DaVinci Resolve 컬러그레이딩 작업 지시서와 진행 기록">
+<link rel="icon" href="../icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="CARECOLOR">
+<title>CARECOLOR · CARECENTER</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.58.0/dist/umd/supabase.js"></script>
+<style>
+:root{
+  color-scheme: dark;
+  --ground:#0b0c0e; --surface:#15161a; --surface-2:#1c1e23;
+  --hair:rgba(231,232,234,0.10); --hair-strong:rgba(231,232,234,0.20);
+  --ink:#e7e8ea; --ink-soft:#9a9ea6; --ink-faint:#6b6f78;
+  --accent:#5b6fd8; --accent-2:#8f9be8; --accent-soft:rgba(91,111,216,0.18);
+  --amber:#e0ab4c; --done:#4caf80; --err:#d9604a;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--ground);color:var(--ink);font:14px/1.5 "IBM Plex Sans",system-ui,sans-serif;-webkit-text-size-adjust:100%}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+input,select,textarea{font:inherit;color:inherit}
+.wrap{max-width:1100px;margin:0 auto;padding:22px clamp(14px,3.4vw,44px) 110px}
+
+.topbar{display:flex;align-items:center;gap:10px;margin-bottom:22px;flex-wrap:wrap}
+.topbar .spacer{flex:1}
+.back{color:var(--ink-soft);font-size:13px;text-decoration:none}
+.status{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--ink-soft)}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--ink-faint);flex:none}
+.dot.sync{background:var(--done)}.dot.wait{background:var(--amber)}.dot.err{background:var(--err)}
+
+h1{font:700 clamp(26px,4vw,38px)/1.1 "Bricolage Grotesque",sans-serif;margin:0;letter-spacing:-.01em}
+.sub{color:var(--ink-soft);margin-top:6px;font-size:14px}
+
+section{margin:30px 0 0}
+.sec-h{display:flex;align-items:center;gap:10px;margin:0 0 10px}
+.sec-h h2{font:600 15px/1.3 "IBM Plex Sans",sans-serif;margin:0}
+.sec-h .spacer{flex:1}
+.card{background:var(--surface);border:1px solid var(--hair);border-radius:12px;padding:14px}
+
+.form{display:grid;grid-template-columns:1fr 1fr;gap:12px 14px}
+.form .full{grid-column:1/-1}
+@media(max-width:640px){.form{grid-template-columns:1fr}}
+label.f{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--ink-soft)}
+label.f .req{color:var(--amber);margin-left:4px}
+label.f .lh{display:block}
+.in{background:var(--surface-2);border:1px solid var(--hair-strong);border-radius:8px;padding:8px 10px;width:100%;min-width:0}
+.in:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+textarea.in{resize:vertical;min-height:64px;line-height:1.5}
+.in.empty-req{border-color:rgba(224,171,76,.55)}
+
+.locs{display:flex;flex-direction:column;gap:6px}
+.loc{display:grid;grid-template-columns:1fr 1.2fr auto;gap:6px}
+.ib{width:32px;height:34px;border-radius:7px;color:var(--ink-faint);display:inline-flex;align-items:center;justify-content:center}
+.ib:hover{background:var(--surface-2);color:var(--err)}
+.add{align-self:flex-start;margin-top:4px;padding:7px 12px;border:1px dashed var(--hair-strong);border-radius:9px;color:var(--ink-soft);font-size:13px}
+.add:hover{color:var(--ink);border-color:var(--accent-2)}
+.hint{font-size:11.5px;color:var(--ink-faint)}
+
+.warn{border:1px solid rgba(224,171,76,.45);background:rgba(224,171,76,.08);color:var(--amber);border-radius:10px;padding:9px 12px;font-size:13px;margin-bottom:10px}
+.warn:empty{display:none}
+.copy{background:var(--accent);color:#fff;border-radius:8px;padding:7px 14px;font-size:13px}
+.copy.ok{background:var(--done)}
+pre.prompt{margin:0;background:var(--surface);border:1px solid var(--hair);border-radius:12px;padding:14px;max-height:460px;overflow:auto;
+  font:12.5px/1.6 "IBM Plex Mono",ui-monospace,monospace;white-space:pre-wrap;word-break:break-word;color:var(--ink-soft)}
+pre.prompt mark{background:transparent;color:var(--ink)}
+pre.prompt mark.miss{color:var(--amber)}
+
+.steps{display:flex;flex-direction:column}
+.step{display:grid;grid-template-columns:28px minmax(150px,1fr) 120px minmax(160px,1.4fr);gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--hair)}
+.step:last-child{border-bottom:0}
+.step .n{font:500 12px "IBM Plex Mono",monospace;color:var(--ink-faint);text-align:center}
+.step .t{font-size:13.5px}
+@media(max-width:640px){.step{grid-template-columns:24px 1fr 110px}.step .note{grid-column:2/-1}}
+select.in{padding:7px 8px}
+select.in option{background:var(--surface)}
+.s-doing{color:var(--accent-2)} .s-done{color:var(--done)} .s-blocked{color:var(--err)}
+.prog{font-size:12px;color:var(--ink-faint)}
+
+.checks{display:flex;flex-direction:column;gap:2px}
+.chk{display:flex;align-items:flex-start;gap:10px;padding:8px 2px;font-size:13.5px;cursor:pointer}
+.chk input{margin-top:3px;width:16px;height:16px;accent-color:var(--done);flex:none}
+.chk.on span{color:var(--ink-soft)}
+.mcpname{margin:2px 0 4px 28px;width:calc(100% - 28px);max-width:360px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="topbar" data-cc-replace>
+    <a class="back" href="../">‹ 케어센터</a>
+    <span class="spacer"></span>
+    <span class="status" data-cc-action><span class="dot" id="dot"></span><span id="statusTxt">불러오는 중</span></span>
+  </header>
+
+  <h1>CARECOLOR</h1>
+  <div class="sub">DaVinci Resolve 컬러그레이딩 작업 지시서와 진행 기록</div>
+
+  <section>
+    <div class="sec-h"><h2>작업 입력</h2></div>
+    <div class="card form" id="form">
+      <label class="f"><span class="lh">Resolve 프로젝트 이름<span class="req">필수</span></span><input class="in" data-k="projectName"></label>
+      <label class="f"><span class="lh">만들 타임라인 이름<span class="req">필수</span></span><input class="in" data-k="timelineName"></label>
+      <label class="f"><span class="lh">소스 클립 (S-Log3 한 개) 파일명<span class="req">필수</span></span><input class="in" data-k="sourceClip"></label>
+      <label class="f"><span class="lh">파워그레이드 .drx 경로 (IDT+ODT 포함)<span class="req">필수</span></span><input class="in" data-k="drxPath"></label>
+      <label class="f full">컷 타임코드 <span class="hint">한 줄에 하나, 또는 "scene detection". 비워 두면 에이전트가 물어봐요.</span><textarea class="in" data-k="cutPoints" rows="3"></textarea></label>
+      <div class="f full" style="display:flex;flex-direction:column;gap:5px">
+        <span style="font-size:12px;color:var(--ink-soft)">촬영 장소 <span class="hint">비워 두면 에이전트가 장소 구분을 제안하고 확인을 기다려요.</span></span>
+        <div class="locs" id="locs"></div>
+        <button class="add" id="addLoc">＋ 장소 추가</button>
+      </div>
+      <label class="f">기본 교정할 첫 클립 수<input class="in" type="number" min="1" step="1" data-k="firstN"></label>
+      <span></span>
+      <label class="f full">메모<textarea class="in" data-k="notes" rows="3"></textarea></label>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-h"><h2>Codex 프롬프트</h2><span class="spacer"></span><button class="copy" id="copy">복사</button></div>
+    <div class="warn" id="warn"></div>
+    <pre class="prompt" id="prompt"></pre>
+  </section>
+
+  <section>
+    <div class="sec-h"><h2>진행 체크리스트</h2><span class="spacer"></span><span class="prog" id="prog"></span></div>
+    <div class="card steps" id="steps"></div>
+  </section>
+
+  <section>
+    <div class="sec-h"><h2>사전 조건과 확인 필요 항목</h2></div>
+    <div class="card checks" id="checks"></div>
+  </section>
+</div>
+
+<script>
+/* ═══ 저장소 (OFFMIC·팀 달력과 같은 방식: Supabase carescript 테이블의 행 하나) ═══ */
+var SB = {
+  url:'https://mgvqhrdhshpuamihfvnp.supabase.co',
+  anon:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1ndnFocmRoc2hwdWFtaWhmdm5wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg2MTE4NjQsImV4cCI6MjEwNDE4Nzg2NH0.fjDJuG-47YHU63lydUSZGAGg3FQ-DLGLp9ufnJ4SN30',
+  table:'carescript', row:'carecolor'
+};
+var LS_KEY='carecolor:local:v1', SCHEMA=1;
+
+var REQUIRED=[['projectName','프로젝트 이름'],['timelineName','타임라인 이름'],['sourceClip','소스 클립'],['drxPath','.drx 경로']];
+var STEP_TITLES=['사전 점검 (MCP 도구 확인, 백업)','클립을 컷으로 잘라 타임라인 만들기','장소 구분 확정',
+  '컬러 그룹 만들기 (클립이 1개뿐인 장소는 그룹 없음)','파워그레이드를 전체 클립에 적용','첫 N개 클립 기본 교정 (노출, 화이트밸런스만)','최종 보고 확인'];
+var STATUS=[['todo','미시작'],['doing','진행 중'],['done','완료'],['blocked','막힘']];
+var PREFLIGHT=[
+  ['resolveRunning','Resolve가 실행 중이고 MCP 서버와 같은 컴퓨터인가'],
+  ['scriptingOk','외부 스크립팅이 가능한 Resolve 버전인가 (Studio 필요 여부는 쓰는 MCP 서버 문서로 확인)'],
+  ['backedUp','프로젝트를 복제하거나 백업했는가'],
+  ['mcpTools','MCP 서버에 DRX 적용, 컬러 그룹, CDL 도구가 있는가'],
+  ['codexMcp','Codex에 MCP 서버를 등록했는가']
+];
+var NO_LOCATIONS='없음 — 에이전트가 제안 후 내 확인을 기다림';
+
+/* 프롬프트 원문. {변수명} 자리만 입력값으로 바뀐다. */
+var TEMPLATE=[
+'You control DaVinci Resolve ONLY through the connected MCP tools.',
+'Do not use screenshots, UI automation, or ad-hoc scripts against Resolve.',
+'If a tool you need is missing, STOP and tell me which tool is missing.',
+'Never delete clips, timelines, or projects. Never render. Never change',
+'project-level color management settings.',
+'',
+'## Setup',
+'- Project: {projectName}',
+'- Source: one long S-Log3 clip: {sourceClip}',
+'- Working color space: DaVinci Wide Gamut',
+'- Power grade file: {drxPath}',
+'  It ALREADY contains the IDT and ODT. Do NOT add any other color space',
+'  transform on top of it (that would double-transform).',
+'',
+'## Tasks (do them in this order; report after each step)',
+'',
+'0. Preflight',
+'   - List the MCP tools you have for: timeline creation, cutting/appending',
+'     clips, color groups, applying DRX grades, CDL/primary adjustments.',
+'   - Confirm Resolve version and that the current project is {projectName}.',
+'   - Duplicate the timeline (or save a backup) before changing anything.',
+'',
+'1. Cut the clip into a timeline',
+'   - Cut points: {cutPoints}',
+'   - If no cut points are given, use scene-cut detection if a tool exists;',
+'     otherwise stop and ask me for cut points.',
+'   - Result: one timeline named {timelineName} with one clip per shot.',
+'',
+'2. Decide locations',
+'   - Locations: {locations}',
+'   - If locations are not given: export a still for each shot via MCP,',
+'     propose a grouping by location, and WAIT for my confirmation',
+'     before creating any color group.',
+'',
+'3. Color groups (Color page workflow)',
+'   - Create one color group per location, named "LOC_<location>".',
+'   - Do NOT create a group for a location that has only one clip.',
+'   - Assign each shot to its location\'s group.',
+'',
+'4. Power grade',
+'   - Apply the DRX power grade to EVERY clip on the timeline.',
+'   - Verify by reading back the node graph of at least 3 clips.',
+'',
+'5. Basic correction on the first {firstN} clips',
+'   - Work ONE location at a time.',
+'   - Basic correction = exposure and white balance only.',
+'   - Use the CDL/primary tools available via MCP. Keep adjustments',
+'     conservative. Do not change contrast, saturation, or creative look.',
+'   - Record the values you set for every clip.',
+'',
+'6. Final report',
+'   - Groups created (name + clip count), clips without a group,',
+'     the first {firstN} clips corrected (with the values set),',
+'     any step that was skipped or failed and why.',
+'',
+'## Rules',
+'- One location at a time when grading.',
+'- If a step fails, stop and report; do not improvise a different method.',
+'- Do not repeat steps that are already done (re-running must be safe).'
+].join('\n');
+
+var S=null, db=null, rev=0, saveT=null, pendingPull=false, dirty=false;
+
+function esc(v){return String(v==null?'':v).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function fresh(){
+  return {id:'carecolor',title:'CARECOLOR',schema:SCHEMA,
+    inputs:{projectName:'',timelineName:'',sourceClip:'',drxPath:'',cutPoints:'',locations:[{name:'',clips:''}],firstN:10,notes:''},
+    steps:STEP_TITLES.map(function(t,i){return {id:i,title:t,status:'todo',note:''};}),
+    preflight:PREFLIGHT.map(function(p){return {key:p[0],label:p[1],checked:false};}),
+    mcpServerName:''};
+}
+/* 저장본에 빠진 칸은 기본값으로 채운다 — 나중에 항목이 늘어도 schema를 올리지 않아도 됨 */
+function normalize(c){
+  var d=fresh(); if(!c) return d;
+  Object.keys(d.inputs).forEach(function(k){ if(c.inputs&&c.inputs[k]!=null) d.inputs[k]=c.inputs[k]; });
+  d.steps.forEach(function(s){ var o=(c.steps||[]).filter(function(x){return x.id===s.id;})[0]; if(o){s.status=o.status||'todo';s.note=o.note||'';} });
+  d.preflight.forEach(function(p){ var o=(c.preflight||[]).filter(function(x){return x.key===p.key;})[0]; if(o) p.checked=!!o.checked; });
+  d.mcpServerName=c.mcpServerName||'';
+  return d;
+}
+
+/* ═══ 프롬프트 만들기 ═══ */
+function filledLocations(inp){
+  return (inp.locations||[]).filter(function(l){return (l.name||'').trim()||(l.clips||'').trim();});
+}
+function missing(inp){
+  return REQUIRED.filter(function(r){return !String(inp[r[0]]||'').trim();});
+}
+/* mark=true면 화면 표시용 HTML(치환된 값 강조), false면 복사용 평문 */
+function buildPrompt(inp,mark){
+  var locs=filledLocations(inp);
+  var vals={
+    projectName:inp.projectName, timelineName:inp.timelineName, sourceClip:inp.sourceClip, drxPath:inp.drxPath,
+    cutPoints:String(inp.cutPoints||'').trim().split(/\n+/).map(function(s){return s.trim();}).filter(Boolean).join(', ')||'(none given)',
+    locations:locs.length?locs.map(function(l){return '\n     - '+((l.name||'').trim()||'(unnamed)')+((l.clips||'').trim()?': '+l.clips.trim():'');}).join(''):NO_LOCATIONS,
+    firstN:String(+inp.firstN>0?Math.floor(+inp.firstN):10)
+  };
+  var src=mark?esc(TEMPLATE):TEMPLATE;
+  return src.replace(/\{(\w+)\}/g,function(all,k){
+    if(!(k in vals)) return all;
+    var v=String(vals[k]==null?'':vals[k]).trim()?String(vals[k]):'';
+    if(!v) return mark?'<mark class="miss">'+all+'</mark>':all; /* 빈 필수값은 {자리} 그대로 남겨 눈에 띄게 */
+    return mark?'<mark>'+esc(v)+'</mark>':v;
+  });
+}
+
+/* ═══ 그리기 ═══ */
+function setStatus(cls,txt){document.getElementById('dot').className='dot'+(cls?' '+cls:'');document.getElementById('statusTxt').textContent=txt;}
+
+function renderPrompt(){
+  var inp=S.inputs, miss=missing(inp);
+  document.getElementById('warn').textContent=miss.length?'비어 있는 필수 값: '+miss.map(function(r){return r[1];}).join(', ')+' — 복사하면 {자리}가 그대로 들어가요.':'';
+  document.getElementById('prompt').innerHTML=buildPrompt(inp,true);
+  document.querySelectorAll('#form [data-k]').forEach(function(el){
+    el.classList.toggle('empty-req',REQUIRED.some(function(r){return r[0]===el.dataset.k;})&&!String(inp[el.dataset.k]||'').trim());
+  });
+}
+function renderProg(){
+  var done=S.steps.filter(function(s){return s.status==='done';}).length, bl=S.steps.filter(function(s){return s.status==='blocked';}).length;
+  document.getElementById('prog').textContent=done+' / '+S.steps.length+' 완료'+(bl?' · 막힘 '+bl:'');
+}
+function render(){
+  if(!S) return;
+  var inp=S.inputs;
+  document.querySelectorAll('#form [data-k]').forEach(function(el){ el.value=inp[el.dataset.k]==null?'':inp[el.dataset.k]; });
+  document.getElementById('locs').innerHTML=(inp.locations||[]).map(function(l,i){
+    return '<div class="loc"><input class="in" placeholder="장소 이름" data-loc="'+i+'" data-f="name" value="'+esc(l.name)+'">'+
+      '<input class="in" placeholder="클립 번호 또는 구간 (예: 1-4, 9)" data-loc="'+i+'" data-f="clips" value="'+esc(l.clips)+'">'+
+      '<button class="ib" title="장소 삭제" data-delloc="'+i+'">✕</button></div>';
+  }).join('');
+  document.getElementById('steps').innerHTML=S.steps.map(function(s,i){
+    return '<div class="step"><span class="n">'+s.id+'</span><span class="t">'+esc(s.title)+'</span>'+
+      '<select class="in s-'+s.status+'" data-step="'+i+'">'+STATUS.map(function(o){return '<option value="'+o[0]+'"'+(o[0]===s.status?' selected':'')+'>'+o[1]+'</option>';}).join('')+'</select>'+
+      '<input class="in note" placeholder="메모" data-stepnote="'+i+'" value="'+esc(s.note)+'"></div>';
+  }).join('');
+  document.getElementById('checks').innerHTML=S.preflight.map(function(p,i){
+    return '<label class="chk'+(p.checked?' on':'')+'"><input type="checkbox" data-pf="'+i+'"'+(p.checked?' checked':'')+'><span>'+esc(p.label)+'</span></label>'+
+      (p.key==='codexMcp'?'<input class="in mcpname" placeholder="사용하는 MCP 서버 이름" id="mcpName" value="'+esc(S.mcpServerName)+'">':'');
+  }).join('');
+  renderPrompt(); renderProg();
+}
+
+/* ═══ 편집 — 입력 중엔 전체 다시 그리지 않음(커서 유지) ═══ */
+function busy(){var a=document.activeElement;return !!(a&&(a.tagName==='INPUT'||a.tagName==='TEXTAREA'||a.tagName==='SELECT'));}
+document.addEventListener('input',function(e){
+  var el=e.target, d=el.dataset||{};
+  if(d.k){ S.inputs[d.k]=d.k==='firstN'?(el.value===''?'':+el.value):el.value; renderPrompt(); }
+  else if(d.loc){ S.inputs.locations[+d.loc][d.f]=el.value; renderPrompt(); }
+  else if(d.step){ S.steps[+d.step].status=el.value; el.className='in s-'+el.value; renderProg(); }
+  else if(d.stepnote){ S.steps[+d.stepnote].note=el.value; }
+  else if(d.pf){ S.preflight[+d.pf].checked=el.checked; el.parentNode.classList.toggle('on',el.checked); }
+  else if(el.id==='mcpName'){ S.mcpServerName=el.value; }
+  else return;
+  save();
+});
+document.addEventListener('change',function(e){ if(e.target.tagName==='SELECT'||e.target.type==='checkbox') e.target.blur(); });
+document.addEventListener('focusout',function(){ setTimeout(function(){ if(pendingPull&&!busy()&&!dirty){pendingPull=false;pull();} },50); });
+document.addEventListener('click',function(e){
+  var b=e.target.closest('button'); if(!b) return;
+  if(b.id==='addLoc'){ S.inputs.locations.push({name:'',clips:''}); save(); render(); var ins=document.querySelectorAll('#locs .loc:last-child input'); if(ins[0]) ins[0].focus(); }
+  else if(b.dataset.delloc!=null){ S.inputs.locations.splice(+b.dataset.delloc,1); save(); render(); }
+  else if(b.id==='copy') copyPrompt(b);
+});
+function copyPrompt(b){
+  var text=buildPrompt(S.inputs,false);
+  function ok(){ b.textContent=missing(S.inputs).length?'복사됨 (빈 값 있음)':'복사됨'; b.classList.add('ok'); setTimeout(function(){b.textContent='복사';b.classList.remove('ok');},1600); }
+  function fallback(){ var t=document.createElement('textarea'); t.value=text; t.style.position='fixed'; t.style.opacity='0'; document.body.appendChild(t); t.select(); try{document.execCommand('copy');ok();}catch(x){} t.remove(); }
+  if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(ok,fallback); else fallback();
+}
+
+/* ═══ 저장 ═══ */
+function save(){
+  dirty=true;
+  try{localStorage.setItem(LS_KEY,JSON.stringify(S));}catch(e){}
+  setStatus('wait','저장 대기');
+  clearTimeout(saveT);saveT=setTimeout(push,900);
+}
+function push(){
+  if(!db){setStatus('err','오프라인 (이 기기에만 저장)');return;}
+  setStatus('wait','저장 중');
+  S.schema=SCHEMA; S.updatedAt=new Date().toISOString();
+  db.from(SB.table).upsert({id:SB.row,content:S,rev:rev+1,updated_at:S.updatedAt})
+    .then(function(res){ if(res.error){setStatus('err','저장 실패');console.error(res.error);} else{rev=rev+1;dirty=false;setStatus('sync','저장됨');if(pendingPull&&!busy()){pendingPull=false;pull();}} });
+}
+function pull(){
+  if(!db) return Promise.resolve();
+  return db.from(SB.table).select('content,rev').eq('id',SB.row).maybeSingle().then(function(res){
+    if(res.error){setStatus('err','불러오기 실패');return;}
+    var c=res.data&&res.data.content;
+    if(c&&c.schema===SCHEMA&&c.inputs){
+      S=normalize(c);rev=res.data.rev||0;
+      try{localStorage.setItem(LS_KEY,JSON.stringify(S));}catch(e){}
+      setStatus('sync','저장됨');render();
+    }else{
+      rev=res.data?(res.data.rev||0):0;
+      setStatus('wait','첫 저장 중');push();render();
+    }
+  });
+}
+
+/* ═══ 시작 ═══ */
+(function(){
+  try{var c=localStorage.getItem(LS_KEY);if(c){var p=JSON.parse(c);if(p&&p.schema===SCHEMA&&p.inputs)S=normalize(p);}}catch(e){}
+  if(!S) S=fresh();
+  render();
+  if(window.supabase&&window.supabase.createClient){
+    db=window.supabase.createClient(SB.url,SB.anon);
+    pull().then(function(){
+      db.channel('carecolor').on('postgres_changes',{event:'*',schema:'public',table:SB.table,filter:'id=eq.'+SB.row},
+        function(){ if(busy()||dirty){pendingPull=true;return;} pull(); }).subscribe();
+    });
+  }else{ setStatus('err','오프라인 (이 기기에만 저장)'); }
+})();
+</script>
+</body>
+</html>
