@@ -50,7 +50,7 @@ eng = load('english/sentences.json') or {}
 for pack in eng.get('packs', []):
     for mod in pack.get('modules', []):
         for it in mod.get('items', []):
-            add('영어 공부방', 'english/', it.get('en'), it.get('ko'))
+            add('영어 공부방', 'english/sentence.html', it.get('en'), it.get('ko'))
 
 # ── 말하기 훈련 (주제 목록) ────────────────────────────
 imp = os.path.join(BASE, 'impromptu/index.html')
