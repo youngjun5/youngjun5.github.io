@@ -158,7 +158,11 @@ function load(){
   if(!P||!P.cards) P={cards:{},introduced:0,newDay:'',newToday:0,days:[]};
 }
 function save(){try{localStorage.setItem(LS,JSON.stringify(P));}catch(e){}}
-function rollDay(){ if(P.newDay!==today()){P.newDay=today();P.newToday=0;} }
+/* 일차(DAY)는 '완료 체크'를 눌러야만 다음으로 넘어감. 그날 30개 중 아직 안 본 단어만 새 단어로 나옴 */
+function rollDay(){ if(!P.day) P.day=Math.floor(P.introduced/PER_DAY)+1; }
+function dayWords(){ return WORDS.slice((P.day-1)*PER_DAY,P.day*PER_DAY); }
+function newPending(){ return P.doneOn===today()?[]:dayWords().filter(function(x){return !P.cards[x.w];}); }
+function finishDay(){ if(P.day*PER_DAY<WORDS.length){P.day++;} P.doneOn=today(); save(); }
 
 /* ═══ 간격 반복 (Anki SM-2 단순화) ═══
    card: {s:'learn'|'review', step, due(ms), ivl(일), ease, lapses} */
@@ -194,7 +198,7 @@ function counts(){
   rollDay();
   var t=now(), eod=endOfToday(), learn=0, rev=0;
   Object.keys(P.cards).forEach(function(w){var c=P.cards[w]; if(c.s==='learn') learn++; else if(c.due<=eod) rev++;});
-  var newLeft=Math.max(0,Math.min(PER_DAY-P.newToday,WORDS.length-P.introduced));
+  var newLeft=newPending().length;
   return {learn:learn,rev:rev,newLeft:newLeft};
 }
 /* 다음 카드: 시간 된 학습 카드 → 오늘 복습 → 새 단어 → (남은 게 학습 카드뿐이면) 가장 빠른 학습 카드 */
@@ -208,13 +212,13 @@ function nextCard(){
   });
   if(dueLearn) return dueLearn;
   if(rev) return rev;
-  if(P.newToday<PER_DAY&&P.introduced<WORDS.length) return WORDS[P.introduced].w;
+  var np=newPending(); if(np.length) return np[0].w;
   return ahead;
 }
 function rate(w,r){
   var t=now(), isNew=!P.cards[w];
   P.cards[w]=schedule(P.cards[w],r,t);
-  if(isNew){P.introduced++;P.newToday++;}
+  if(isNew){P.introduced++;P.newToday=(P.newDay===today()?P.newToday:0)+1;P.newDay=today();}
   if(P.days.indexOf(today())<0){P.days.push(today());if(P.days.length>400)P.days.shift();}
   save();
 }
@@ -256,14 +260,15 @@ function render(){
   if(view==='list') return renderList(V);
   if(session) return renderCard(V);
   var c=counts(), learned=Object.keys(P.cards).length, mature=Object.keys(P.cards).filter(function(w){return P.cards[w].ivl>=21;}).length;
-  var day=Math.min(Math.floor(Math.max(0,P.introduced-P.newToday)/PER_DAY)+1,Math.ceil(WORDS.length/PER_DAY));
+  var day=P.day, canFinish=P.doneOn!==today(), seen=dayWords().length-c.newLeft;
   var todo=c.learn+c.rev+c.newLeft;
   V.innerHTML='<div class="hero"><div class="day">DAY '+day+' / '+Math.ceil(WORDS.length/PER_DAY)+'</div>'+
     '<h1>'+(todo?'오늘 '+todo+'장 남았어요':'오늘 공부 끝!')+'</h1>'+
     '<div class="sub">'+(todo?'새 단어 '+c.newLeft+' · 복습 '+c.rev+' · 다시 볼 카드 '+c.learn:'내일 새 단어 '+PER_DAY+'개와 복습이 기다려요.')+'</div>'+
     '<div class="stats"><div class="stat"><b>'+learned+'</b><span>만난 단어</span></div><div class="stat"><b>'+mature+'</b><span>장기 기억</span></div><div class="stat"><b>'+streak()+'</b><span>연속 공부일</span></div></div>'+
     '<div class="prog-l"><span>3,000 단어 중</span><span>'+Math.round(learned/WORDS.length*1000)/10+'%</span></div><div class="bar"><i style="width:'+(learned/WORDS.length*100)+'%"></i></div>'+
-    '<button class="go" id="start"'+(todo?'':' disabled')+'>'+(todo?'공부 시작':'오늘은 여기까지')+'</button></div>'+
+    '<button class="go" id="start"'+(todo?'':' disabled')+'>'+(todo?'공부 시작':'오늘은 여기까지')+'</button>'+
+    (canFinish?'<button class="go" id="finish" style="margin-top:10px;background:var(--easy)">✓ DAY '+day+' 끝 — 내일 단어로 넘기기 ('+seen+'/'+dayWords().length+')</button>':'<div class="sub" style="margin-top:12px">✓ DAY '+(day-1)+' 완료! 내일 DAY '+day+'이(가) 열려요.</div>')+'</div>'+
     '<div class="how"><b>이렇게 외워요.</b> 앞면엔 단어만 나와요. 뜻을 먼저 <b>스스로 떠올려 본 다음</b> 뒤집으세요(능동 회상). 얼마나 잘 떠올렸는지 '+
     '<b>다시 · 어려움 · 알맞음 · 쉬움</b> 중에 고르면, 잊어버릴 때쯤 다시 보여줘요(간격 반복). 뜻만 보지 말고 <b>예문을 통째로 소리 내 읽으세요.</b> '+
     '하루 30개씩 100일이면 3,000개, 미드 대사의 95%를 알아듣는 양이에요.</div>'+
@@ -280,7 +285,7 @@ function renderCard(V){
   var t=now(), labels=['다시','어려움','알맞음','쉬움'], cls=['again','hard','good','easy'];
   D.innerHTML=labels.map(function(l,i){ return '<button class="rate '+cls[i]+'" data-rate="'+i+'"><small>'+fmtGap(schedule(P.cards[w],i,t).due-t)+'</small><b>'+l+'</b><span class="kbd">'+(i+1)+'</span></button>'; }).join('');
 }
-function session_done_msg(){ return '새 단어 '+P.newToday+'개를 만났어요. 내일 다시 와서 복습하면 오래 기억돼요.'; }
+function session_done_msg(){ return '홈에서 "끝 — 내일 단어로 넘기기"를 눌러야 내일 새 단어가 열려요.'; }
 function startSession(){ session={cur:nextCard(),flip:false}; render(); window.scrollTo(0,0); }
 
 function renderList(V){
@@ -290,7 +295,7 @@ function renderList(V){
   for(var d=0;d<days;d++){
     var items=WORDS.slice(d*PER_DAY,(d+1)*PER_DAY).filter(function(x){return !ql||x.w.toLowerCase().indexOf(ql)>=0||x.ko.indexOf(q.trim())>=0;});
     if(!items.length) continue;
-    if(!ql&&d*PER_DAY>P.introduced+PER_DAY*2&&d>2){ html+='<div class="dayh"><span>DAY '+(d+1)+' – '+days+'</span><span>검색하면 미리 볼 수 있어요</span></div>'; any=true; break; }
+    if(!ql&&d*PER_DAY>P.day*PER_DAY+PER_DAY*2&&d>2){ html+='<div class="dayh"><span>DAY '+(d+1)+' – '+days+'</span><span>검색하면 미리 볼 수 있어요</span></div>'; any=true; break; }
     any=true;
     html+='<div class="dayh"><span>DAY '+(d+1)+'</span><span>'+(d*PER_DAY+1)+'–'+Math.min(WORDS.length,(d+1)*PER_DAY)+'</span></div><div class="list">'+items.map(function(x){
       var c=P.cards[x.w], st=!c?'':c.s==='learn'?'learn':c.ivl>=21?'mature':'review';
@@ -318,6 +323,7 @@ document.addEventListener('click',function(e){
   if(b.dataset.view) return setView(b.dataset.view);
   if(b.dataset.say){ say(b.dataset.say); return; }
   if(b.id==='start') return startSession();
+  if(b.id==='finish'){ var left=counts().newLeft; if(left&&!confirm('아직 안 본 새 단어가 '+left+'개 남았어요. 그래도 오늘을 끝내고 내일로 넘길까요?')) return; finishDay(); render(); return; }
   if(b.id==='flip'){ session.flip=true; render(); return; }
   if(b.dataset.rate!=null){ rate(session.cur,+b.dataset.rate); session={cur:nextCard(),flip:false}; render(); window.scrollTo(0,0); return; }
   if(b.dataset.open){ var x=BY[b.dataset.open]; document.getElementById('sheet').innerHTML='<button class="x" id="closeM">닫기</button>'+wordHead(x)+backHTML(x); document.getElementById('modal').hidden=false; return; }
