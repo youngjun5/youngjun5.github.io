@@ -198,3 +198,7 @@ canvas.gl{filter:var(--glf)}
 .cv3 .mk{pointer-events:none}
 .printonly{display:none}
 @media print{.printonly{display:block}.cv3{display:none!important}}
+
+.tray .chip{touch-action:pan-x;user-select:none;-webkit-user-select:none}
+.tray .chip .bd{min-width:20px;height:20px;border-radius:6px;color:#fff;font-size:11px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;padding:0 4px}
+.ghost{position:fixed;z-index:200;transform:translate(-50%,-70%) scale(1.12);pointer-events:none;opacity:.92;box-shadow:0 6px 18px #0006}

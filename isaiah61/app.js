@@ -440,10 +440,10 @@ function buildPV(){
     const mo=e.target.closest('[data-m]');if(mo){setMode(mo.dataset.m);return;}
     const z=e.target.closest('[data-z]');if(z){zoomBy(z.dataset.z);return;}
     const fl=e.target.closest('[data-f]');if(fl){V.filter=fl.dataset.f;V.sel=null;V.armed=null;render();return;}
-    const tr=e.target.closest('[data-tray]');if(tr){trayTap(tr.dataset.tray,tr.dataset.id);return;}
   });
   bindGestures(PV.stage);
   PV.stage.addEventListener('pointerdown',markDown);
+  PV.tray.addEventListener('pointerdown',trayDown);
   PV.insp.addEventListener('click',inspClick);
   PV.insp.addEventListener('input',e=>{let p=byId(S.pins,V.sel);if(!p)return;const s=e.target.dataset.s;if(s&&V.part&&!p.part){p=ownPin(p);V.sel=p.id;}if(!s)return;const v=Number(e.target.value);p[s]=(s==='rot'||s==='fov'||s==='w'||s==='d'||s==='h')?v:v/100;renderMarks();});
   PV.insp.addEventListener('input',e=>{if(e.target.dataset.nm===undefined)return;let p=byId(S.pins,V.sel);if(!p)return;if(V.part&&!p.part){p=ownPin(p);V.sel=p.id;}p.name=e.target.value;renderMarks();});
@@ -523,8 +523,32 @@ function renderTray(){
   const placed=new Set(pinsFor(V.day,V.part,pl.id).map(p=>p.kind+p.ref));
   const cams=camsFor(V.day,V.part),ops=opSet(V.day,V.part),crew=working(V.day).filter(c=>!ops.has(c.id));
   const on=(t,id)=>V.armed&&V.armed.t===t&&V.armed.id===id?'on':'';
-  PV.tray.innerHTML=`<div class="row"><span class="lbl">CAM</span><div class="scx">${Object.entries(AREA_PRE).map(([k,v])=>`<button class="chip ${on('area',k)}" data-tray="area" data-id="${k}"><span style="width:9px;height:9px;border-radius:3px;background:${ACOL[v.c]}"></span>+ ${v.n}</button>`).join('')}${cams.map(c=>`<button class="chip ${on('cam',c.id)} ${placed.has('cam'+c.id)?'done':''}" data-tray="cam" data-id="${c.id}"><span style="width:9px;height:9px;border-radius:3px;background:${RIGC[rig0(c)]||RIGC.기타}"></span>${esc(c.no)} ${esc((opOf(c)||{}).name||'')} <small style="opacity:.7">${esc(rigTxt(c))}</small></button>`).join('')}</div></div>
-  <div class="row"><span class="lbl">CREW</span><div class="scx">${crew.map(c=>`<button class="chip ${on('crew',c.id)} ${placed.has('crew'+c.id)?'done':''}" data-tray="crew" data-id="${c.id}">${esc(c.name||'?')}</button>`).join('')||'<span style="color:var(--faint)">크루 탭에서 추가</span>'}</div></div>`;
+  /* 사람 한 칩 = 이름 + (카메라 탭에서 정한 포지션 글자). 끌어서 도면에 놓으면 그 포지션으로 바로 올라간다 */
+  const chip=(t,id,name,bd,col)=>`<button class="chip ${on(t,id)} ${placed.has(t+id)?'done':''}" data-tray="${t}" data-id="${id}">${bd?`<span class="bd" style="background:${col}">${esc(bd)}</span>`:''}${esc(name)}</button>`;
+  const people=cams.map(c=>chip('cam',c.id,(opOf(c)||{}).name||'CAM '+c.no,rigInit(c),RIGC[rig0(c)]||RIGC.기타)).join('')+crew.map(c=>chip('crew',c.id,c.name||'?','','')).join('');
+  PV.tray.innerHTML=`<div class="row"><div class="scx">${Object.entries(AREA_PRE).map(([k,v])=>`<button class="chip ${on('area',k)}" data-tray="area" data-id="${k}"><span style="width:9px;height:9px;border-radius:3px;background:${ACOL[v.c]}"></span>+ ${v.n}</button>`).join('')}</div></div>
+  <div class="row"><div class="scx">${people||'<span style="color:var(--faint)">카메라 탭에서 인원을 등록하세요</span>'}</div></div>`;
+}
+/* 하단 칩: 끌어서 도면에 놓기(권장) 또는 눌러서 선택한 뒤 도면 누르기 */
+function trayDown(e){
+  const b=e.target.closest('[data-tray]');if(!b)return;
+  const item={t:b.dataset.tray,id:b.dataset.id},sx=e.clientX,sy=e.clientY;let ghost=null;
+  const mv=ev=>{
+    if(!ghost&&Math.hypot(ev.clientX-sx,ev.clientY-sy)>10){ghost=b.cloneNode(true);ghost.classList.add('ghost');document.body.append(ghost);}
+    if(ghost){ghost.style.left=ev.clientX+'px';ghost.style.top=ev.clientY+'px';}
+  };
+  const end=()=>{removeEventListener('pointermove',mv);removeEventListener('pointerup',up);removeEventListener('pointercancel',cancel);};
+  const cancel=()=>{end();if(ghost)ghost.remove();};
+  const up=ev=>{
+    end();
+    if(ghost){
+      ghost.remove();const r=PV.stage.getBoundingClientRect();
+      if(ev.clientX>=r.left&&ev.clientX<=r.right&&ev.clientY>=r.top&&ev.clientY<=r.bottom){const pos=stagePos(ev.clientX,ev.clientY,true);if(pos){place(item,pos);V.armed=null;render();}}
+      return;
+    }
+    trayTap(item.t,item.id);
+  };
+  addEventListener('pointermove',mv);addEventListener('pointerup',up);addEventListener('pointercancel',cancel);
 }
 function renderMarks(){
   const pl=planNow();if(!pl)return;
