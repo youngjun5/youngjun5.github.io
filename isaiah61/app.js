@@ -35,6 +35,7 @@ const IC={
   len:'<path d="M3 17L17 3M6 14l2 2M9 11l2 2M12 8l2 2"/>',
   user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.500-7 8-7s8 3 8 7"/>',
   wand:'<path d="M5 19L16 8"/><path d="M14 4l2 2M18 8l2 2M17 2v3M20 5h-3M7 5v2M8 6H6"/>', layers:'<path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/>', flag:'<path d="M5 21V4M5 5h12l-2 4 2 4H5"/>',
+  doc:'<path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h5"/>',
   chev:'<path d="M9 5l7 7-7 7"/>', send:'<path d="M4 12l16-8-6 16-3-7z"/>',
   /* 카메라 종류 */
   gimbal:'<rect x="8" y="3" width="8" height="6" rx="1.500"/><path d="M5.500 8a6.500 6.500 0 0 0 13 0"/><path d="M12 14.500V21M10 21h4"/>',
@@ -63,13 +64,13 @@ const TABS=[{k:'plan',n:'도면',i:'plan',c:'--c-plan'},{k:'people',n:'인원',i
 const KEY='isaiah61.v1', UIK='isaiah61.ui';
 const COLS=['people','gear','sessions','plans','marks'];
 const fresh=()=>({schema:1,cfg:{date1:'',u:0},people:[],gear:[],sessions:[],plans:[],marks:[],del:{},
-  presets:{roles:['총괄','카메라','짐벌','지미집','스위처','모니터','오디오','송출','스태프'],
+  presets:{roles:['프로듀서','디렉터','TD','셰이더','카메라','짐벌','지미집','핸드헬드','다나돌리','CG','텔레프롬프터','스테이지','오디오','스태프'],
     wear:['무전기','인컴','이어피스','조끼','명찰','헤드셋','배터리벨트','우비'],
     cats:['카메라','렌즈','짐벌','삼각대','지미집','돌리','모니터','오디오','조명','전원','케이블','기타']}});
 let S=null;
 try{S=JSON.parse(localStorage.getItem(KEY));}catch(e){}
 if(!S||S.schema!==1)S=fresh();
-{const f=fresh();S.presets=S.presets||f.presets;for(const k in f.presets)S.presets[k]=S.presets[k]||f.presets[k];for(const c of COLS)S[c]=S[c]||[];S.del=S.del||{};S.cfg=S.cfg||f.cfg;}
+{const f=fresh();S.presets=S.presets||f.presets;for(const k in f.presets)S.presets[k]=[...new Set([...(S.presets[k]||[]),...f.presets[k]])];for(const c of COLS)S[c]=S[c]||[];S.del=S.del||{};S.cfg=S.cfg||f.cfg;}
 let V={tab:'plan',day:1,plan:null,sheetP:'all',roleF:'',dayOnly:false,catF:''};
 try{Object.assign(V,JSON.parse(localStorage.getItem(UIK))||{});}catch(e){}
 V.sel=null;V.armed=null;V.all=false;
@@ -246,7 +247,7 @@ function form(title,fields,val,onSave,onDel,tc){
 function editPerson(id){
   const p=id?P(id):{days:[1,2,3],wear:[],role:''};
   form(id?'인원':'인원 추가',[
-    {k:'name',l:'이름',t:'text',req:1},{k:'role',l:'역할',t:'chips',pre:'roles'},{k:'phone',l:'연락처',t:'tel'},{k:'emerg',l:'비상연락',t:'tel'},
+    {k:'name',l:'이름',t:'text',req:1},{k:'role',l:'역할',t:'chips',pre:'roles'},{k:'phone',l:'연락처',t:'tel'},{k:'emerg',l:'비상연락',t:'tel'},{k:'call',l:'콜타임',t:'time'},
     {k:'wear',l:'착용장비',t:'multi',pre:'wear'},{k:'days',l:'근무일',t:'days'},{k:'note',l:'메모',t:'area'}
   ],p,v=>put('people',{...p,...v,id:p.id||uid()}),id&&(()=>drop('people',id)),'var(--c-people)');
 }
@@ -271,7 +272,7 @@ function editGear(id){
 function editSession(id){
   const s=id?byId(S.sessions,id):{day:V.day,crew:[],start:'09:00',end:'10:00'};
   form(id?'세션':'세션 추가',[
-    {k:'title',l:'세션',t:'text',req:1},{k:'day',l:'날짜',t:'day'},{k:'start',l:'시작',t:'time'},{k:'end',l:'끝',t:'time'},
+    {k:'title',l:'세션',t:'text',req:1},{k:'kind',l:'구분',t:'chips',opts:['콜','리허설','본행사','철수']},{k:'day',l:'날짜',t:'day'},{k:'start',l:'시작',t:'time'},{k:'end',l:'끝',t:'time'},
     {k:'place',l:'장소',t:'text'},{k:'crew',l:'담당',t:'persons'},{k:'note',l:'메모',t:'area'}
   ],s,v=>put('sessions',{...s,...v,id:s.id||uid()}),id&&(()=>drop('sessions',id)),'var(--c-time)');
 }
@@ -317,7 +318,7 @@ let drag=null,pendR=false;
 
 function buildPV(){
   const el=document.createElement('section');el.className='pv';
-  el.innerHTML=`<div class="pbar"><div class="pchips"></div><div class="seg"><button data-m="2d" aria-label="2D">${ic('sq',20)}</button><button data-m="3d" aria-label="3D">${ic('cube',20)}</button></div><button class="ib" data-pa="all" aria-label="전체 보기">${ic('layers',20)}</button><button class="ib" data-pa="auto" aria-label="자동 배치">${ic('wand',20)}</button><button class="ib" data-pa="edit" aria-label="도면 편집">${ic('edit',20)}</button></div>
+  el.innerHTML=`<div class="pbar"><div class="pchips"></div><div class="seg"><button data-m="2d" aria-label="2D">${ic('sq',20)}</button><button data-m="3d" aria-label="3D">${ic('cube',20)}</button></div><button class="ib" data-pa="report" aria-label="텍스트">${ic('doc',20)}</button><button class="ib" data-pa="all" aria-label="전체 보기">${ic('layers',20)}</button><button class="ib" data-pa="auto" aria-label="자동 배치">${ic('wand',20)}</button><button class="ib" data-pa="edit" aria-label="도면 편집">${ic('edit',20)}</button></div>
   <div class="stage">
     <div class="world"><img draggable="false" alt=""><svg preserveAspectRatio="none"></svg><div class="marks m2"></div></div>
     <canvas id="gl" hidden></canvas><div class="marks m3" hidden></div>
@@ -332,7 +333,7 @@ function buildPV(){
 
   el.addEventListener('click',e=>{
     const pl=e.target.closest('[data-pl]');if(pl){V.plan=pl.dataset.pl;V.sel=null;saveUI();render();return;}
-    const pa=e.target.closest('[data-pa]');if(pa){const a=pa.dataset.pa;if(a==='add')addPlan();else if(a==='edit')editPlan();else if(a==='auto')autoPlan();else if(a==='demo')loadDemo();else if(a==='all'){V.all=!V.all;V.sel=null;V.armed=null;render();}return;}
+    const pa=e.target.closest('[data-pa]');if(pa){const a=pa.dataset.pa;if(a==='add')addPlan();else if(a==='edit')editPlan();else if(a==='auto')autoPlan();else if(a==='demo')loadDemo();else if(a==='report')reportModal();else if(a==='all'){V.all=!V.all;V.sel=null;V.armed=null;render();}return;}
     const mo=e.target.closest('[data-m]');if(mo){setMode(mo.dataset.m);return;}
     const z=e.target.closest('[data-z]');if(z){zoomBy(z.dataset.z);return;}
   });
@@ -344,6 +345,7 @@ function buildPV(){
   PV.pal.addEventListener('pointerdown',palDown);
   PV.wbar.addEventListener('input',wallInput);
   PV.wbar.addEventListener('change',()=>{save();});
+  PV.wbar.addEventListener('click',e=>{if(!e.target.closest('[data-tx]'))return;const pl=planNow();if(!pl)return;pl.tx=(txOf(pl)+1)%3;touch(pl);save();PV.buildFor='';build3D();drawWbar();});
   new ResizeObserver(()=>onResize()).observe(PV.stage);
 }
 
@@ -510,13 +512,15 @@ function renderInsp(){
   <div class="r"><div class="types">${Object.keys(CAMS).map(k=>`<button style="--c:${CAMS[k].c}" class="${m.type===k?'on':''}" data-t="${k}" aria-label="${CAMS[k].n}">${ic(k,22)}</button>`).join('')}</div>
     <input class="lb" value="${esc(m.label||'')}" maxlength="6" data-lb><span class="grow"></span>
     <button class="ib" data-i="dup">${ic('copy',20)}</button><button class="ib red" data-i="del">${ic('trash',20)}</button><button class="ib" data-i="close">${ic('x',20)}</button></div>
+  <div class="r"><div class="ops">${SHOTS.map(x=>`<button class="chip sm ${m.shot===x?'on':''}" data-shot="${x}">${x}</button>`).join('')}</div></div>
   <div class="r"><div class="ops">${ops||''}</div>${per&&per.phone?`<a class="call" style="width:40px;height:40px" href="tel:${esc(per.phone)}">${ic('phone',20)}</a>`:''}</div>
   <div class="r"><label class="sl">${ic('rot',18)}<input type="range" min="0" max="359" value="${m.rot||0}" data-s="rot"></label><label class="sl">${ic('fov',18)}<input type="range" min="10" max="140" value="${val('fov',T.fov)}" data-s="fov"></label></div>
   <div class="r"><label class="sl">${ic('dist',18)}<input type="range" min="5" max="70" value="${Math.round(val('rng',T.rng)*100)}" data-s="rng"></label>${T.len?`<label class="sl">${ic('len',18)}<input type="range" min="5" max="60" value="${Math.round(val('len',T.len)*100)}" data-s="len"></label>`:'<span class="sl"></span>'}</div>`;
 }
 function inspClick(e){
   const m=byId(S.marks,V.sel);if(!m)return;
-  const i=e.target.closest('[data-i]'),t=e.target.closest('[data-t]'),op=e.target.closest('[data-op]');
+  const i=e.target.closest('[data-i]'),t=e.target.closest('[data-t]'),op=e.target.closest('[data-op]'),sh=e.target.closest('[data-shot]');
+  if(sh){m.shot=m.shot===sh.dataset.shot?'':sh.dataset.shot;touch(m);save();render();}
   if(i){const a=i.dataset.i;
     if(a==='close'){V.sel=null;render();}
     else if(a==='del')removeMark(m.id);
@@ -600,54 +604,109 @@ function editPlan(){
 }
 
 /* ═══ 3D (벽 분석 + three.js) ═══ */
-const wallKey=pl=>[pl.ws||0,pl.wh||5,pl.wn==null?25:pl.wn,pl.inv?1:0].join(',');
+const wallKey=pl=>[pl.ws||0,pl.wh||5,pl.wn==null?25:pl.wn,pl.inv?1:0,pl.tx==null?1:pl.tx].join(',');
 const WALLC={};
+function h2rgb(h,sat,l){const a=sat*Math.min(l,1-l),f=n=>{const k=(n+h/30)%12;return l-a*Math.max(-1,Math.min(k-3,9-k,1));};return [f(0),f(8),f(4)].map(v=>Math.round(v*255));}
+/* 도면 분석: 선 → 벽/방/가구 구분 (위상 + 크기). 반환: 직사각형 목록(벽·가구·구조물), 방 색칠한 바닥, 통계 */
 function analyze(pl,img){
   const key=ikey(pl)+'|'+(pl.ws||0)+'|'+(pl.inv?1:0)+'|'+(pl.wn==null?25:pl.wn);
   if(WALLC[key])return WALLC[key];
-  const SW=Math.min(1200,pl.w),SH=Math.max(1,Math.round(SW*pl.h/pl.w));
-  const c=document.createElement('canvas');c.width=SW;c.height=SH;
-  const x=c.getContext('2d',{willReadFrequently:true});x.fillStyle='#fff';x.fillRect(0,0,SW,SH);x.drawImage(img,0,0,SW,SH);
-  const px=x.getImageData(0,0,SW,SH).data;
-  const gw=Math.min(240,SW),gh=Math.max(1,Math.round(gw*SH/SW)),bx=SW/gw,by=SH/gh;
-  const L=new Uint8Array(gw*gh),hist=new Array(256).fill(0);
+  const SW=Math.min(1400,pl.w),SH=Math.max(1,Math.round(SW*pl.h/pl.w));
+  const cv=document.createElement('canvas');cv.width=SW;cv.height=SH;
+  const cx=cv.getContext('2d',{willReadFrequently:true});cx.fillStyle='#fff';cx.fillRect(0,0,SW,SH);cx.drawImage(img,0,0,SW,SH);
+  const px=cx.getImageData(0,0,SW,SH).data;
+  const gw=Math.min(300,SW),gh=Math.max(1,Math.round(gw*SH/SW)),N=gw*gh,bx=SW/gw,by=SH/gh;
+  /* 어두운 배경(청사진)이면 자동 반전 */
+  let sum=0,cnt=0;for(let i=0;i<px.length;i+=16){sum+=(px[i]*299+px[i+1]*587+px[i+2]*114)/1000;cnt++;}
+  const inv=(sum/cnt<105)!==!!pl.inv;
+  /* 칸마다 가장 진한 값(얇은 선 보존) */
+  const L=new Float32Array(N),hist=new Array(256).fill(0);
   for(let gy=0;gy<gh;gy++)for(let gx=0;gx<gw;gx++){
-    let best=pl.inv?0:255;
-    const x0=Math.floor(gx*bx),x1=Math.min(SW,Math.floor((gx+1)*bx)),y0=Math.floor(gy*by),y1=Math.min(SH,Math.floor((gy+1)*by));
-    for(let yy=y0;yy<y1;yy++)for(let xx=x0;xx<x1;xx++){const i=(yy*SW+xx)*4,v=(px[i]*299+px[i+1]*587+px[i+2]*114)/1000;best=pl.inv?Math.max(best,v):Math.min(best,v);}
-    const v=Math.round(best);L[gy*gw+gx]=v;hist[v]++;
+    let best=inv?0:255;const x0=Math.floor(gx*bx),x1=Math.max(x0+1,Math.min(SW,Math.floor((gx+1)*bx))),y0=Math.floor(gy*by),y1=Math.max(y0+1,Math.min(SH,Math.floor((gy+1)*by)));
+    for(let y=y0;y<y1;y++)for(let x=x0;x<x1;x++){const i=(y*SW+x)*4,v=(px[i]*299+px[i+1]*587+px[i+2]*114)/1000;best=inv?(v>best?v:best):(v<best?v:best);}
+    L[gy*gw+gx]=best;hist[Math.round(best)]++;
   }
-  /* 오츠 임계값 */
-  const tot=gw*gh;let sum=0;for(let i=0;i<256;i++)sum+=i*hist[i];
+  /* 오츠 임계값 + 국소 평균(그림자·스캔 얼룩 대응) */
+  let tot=0;for(let i=0;i<256;i++)tot+=i*hist[i];
   let sB=0,wB=0,mx=-1,t0=128;
-  for(let i=0;i<256;i++){wB+=hist[i];if(!wB)continue;const wF=tot-wB;if(!wF)break;sB+=i*hist[i];const mB=sB/wB,mF=(sum-sB)/wF,v=wB*wF*(mB-mF)*(mB-mF);if(v>mx){mx=v;t0=i;}}
-  const th=clamp(t0+(pl.ws||0),4,250),wall=new Uint8Array(tot);
-  for(let i=0;i<tot;i++)wall[i]=(pl.inv?L[i]>th:L[i]<th)?1:0;
-  /* 작은 덩어리(글자·치수선) 제거 */
-  const noise=pl.wn==null?25:pl.wn;
-  if(noise>0){
-    const seen=new Uint8Array(tot),st=new Int32Array(tot);
-    for(let s=0;s<tot;s++){
-      if(!wall[s]||seen[s])continue;
-      let sp=0,n=0;st[sp++]=s;seen[s]=1;const comp=[];
-      while(sp){const i=st[--sp];comp.push(i);n++;const cx=i%gw,cy=(i/gw)|0;
-        for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){const nx=cx+dx,ny=cy+dy;if(nx<0||ny<0||nx>=gw||ny>=gh)continue;const j=ny*gw+nx;if(wall[j]&&!seen[j]){seen[j]=1;st[sp++]=j;}}}
-      if(n<noise)for(const i of comp)wall[i]=0;
-    }
+  for(let i=0;i<256;i++){wB+=hist[i];if(!wB)continue;const wF=N-wB;if(!wF)break;sB+=i*hist[i];const mB=sB/wB,mF=(tot-sB)/wF,v=wB*wF*(mB-mF)*(mB-mF);if(v>mx){mx=v;t0=i;}}
+  const th=clamp(t0+(pl.ws||0),4,250);
+  const I=new Float64Array((gw+1)*(gh+1));
+  for(let y=0;y<gh;y++){let row=0;for(let x=0;x<gw;x++){row+=L[y*gw+x];I[(y+1)*(gw+1)+x+1]=I[y*(gw+1)+x+1]+row;}}
+  const R=Math.max(6,gw>>4),wall=new Uint8Array(N);
+  for(let y=0;y<gh;y++)for(let x=0;x<gw;x++){
+    const x0=Math.max(0,x-R),x1=Math.min(gw,x+R+1),y0=Math.max(0,y-R),y1=Math.min(gh,y+R+1);
+    const m=(I[y1*(gw+1)+x1]-I[y0*(gw+1)+x1]-I[y1*(gw+1)+x0]+I[y0*(gw+1)+x0])/((x1-x0)*(y1-y0)),v=L[y*gw+x];
+    wall[y*gw+x]=inv?(v>th&&v>m*1.15?1:0):(v<th&&v<m*.85?1:0);
   }
-  /* 가로 줄 → 세로로 합쳐 직사각형 */
-  const rects=[];let prev=new Map();
-  for(let y=0;y<gh;y++){
-    const cur=new Map();let xx=0;
-    while(xx<gw){
-      if(!wall[y*gw+xx]){xx++;continue;}
-      const x0=xx;while(xx<gw&&wall[y*gw+xx])xx++;
-      const k=x0+':'+(xx-x0),p=prev.get(k);
-      if(p){p.h++;cur.set(k,p);}else{const r={x:x0,y,w:xx-x0,h:1};rects.push(r);cur.set(k,r);}
-    }
-    prev=cur;
+  /* 문틈을 메운 뒤 바깥에서 물 채우기 → 건물 안/밖 */
+  const dil=new Uint8Array(N);
+  for(let y=0;y<gh;y++)for(let x=0;x<gw;x++)if(wall[y*gw+x])for(let dy=-2;dy<=2;dy++)for(let dx=-2;dx<=2;dx++){const xx=x+dx,yy=y+dy;if(xx>=0&&yy>=0&&xx<gw&&yy<gh)dil[yy*gw+xx]=1;}
+  const out=new Uint8Array(N),stk=new Int32Array(N);let sp=0;
+  const push=i=>{if(!dil[i]&&!out[i]){out[i]=1;stk[sp++]=i;}};
+  for(let x=0;x<gw;x++){push(x);push((gh-1)*gw+x);}for(let y=0;y<gh;y++){push(y*gw);push(y*gw+gw-1);}
+  while(sp){const i=stk[--sp],x=i%gw,y=(i/gw)|0;if(x>0)push(i-1);if(x<gw-1)push(i+1);if(y>0)push(i-gw);if(y<gh-1)push(i+gw);}
+  /* 방(벽으로 나뉜 빈 영역) */
+  const reg=new Int32Array(N),rSize=[0],rOut=[0];let nr=0;
+  for(let s0=0;s0<N;s0++){
+    if(wall[s0]||reg[s0])continue;
+    nr++;let size=0,oc=0;sp=0;stk[sp++]=s0;reg[s0]=nr;
+    while(sp){const i=stk[--sp];size++;if(out[i])oc++;const x=i%gw,y=(i/gw)|0;
+      if(x>0&&!wall[i-1]&&!reg[i-1]){reg[i-1]=nr;stk[sp++]=i-1;}
+      if(x<gw-1&&!wall[i+1]&&!reg[i+1]){reg[i+1]=nr;stk[sp++]=i+1;}
+      if(y>0&&!wall[i-gw]&&!reg[i-gw]){reg[i-gw]=nr;stk[sp++]=i-gw;}
+      if(y<gh-1&&!wall[i+gw]&&!reg[i+gw]){reg[i+gw]=nr;stk[sp++]=i+gw;}}
+    rSize[nr]=size;rOut[nr]=oc/size>.4?1:0;
   }
-  return WALLC[key]={gw,gh,rects};
+  const minR=Math.max(8,N*.0004),isRoom=r=>rSize[r]>=minR&&!rOut[r];
+  /* 선 덩어리(연결 성분) + 어느 방들과 맞닿는지 */
+  const comp=new Int32Array(N),C=[];
+  for(let s0=0;s0<N;s0++){
+    if(!wall[s0]||comp[s0])continue;
+    const c={area:0,x0:gw,y0:gh,x1:0,y1:0,adj:new Set(),cells:[]};C.push(c);const id=C.length;sp=0;stk[sp++]=s0;comp[s0]=id;
+    while(sp){const i=stk[--sp],x=i%gw,y=(i/gw)|0;c.cells.push(i);c.area++;if(x<c.x0)c.x0=x;if(x>c.x1)c.x1=x;if(y<c.y0)c.y0=y;if(y>c.y1)c.y1=y;
+      for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){const xx=x+dx,yy=y+dy;if(xx<0||yy<0||xx>=gw||yy>=gh)continue;const j=yy*gw+xx;
+        if(wall[j]){if(!comp[j]){comp[j]=id;stk[sp++]=j;}}
+        else if((dx===0||dy===0)&&rSize[reg[j]]>=6)c.adj.add(reg[j]);}}
+  }
+  const minA=pl.wn==null?25:pl.wn,info=C.map(c=>{const bw=c.x1-c.x0+1,bh=c.y1-c.y0+1;return {bw,bh,ext:Math.max(bw,bh)/gw,fill:c.area/(bw*bh),thick:c.area/Math.max(bw,bh)};});
+  const cls=new Array(C.length).fill(0); /* 0 버림(글자·치수선) 1 벽 2 가구 3 구조물 */
+  const classify=strict=>C.forEach((c,k)=>{
+    const f=info[k];let t=0;
+    if(c.area>=minA&&f.ext>=.035){
+      const adjRoom=[...c.adj].filter(isRoom).length,adj2=c.adj.size>=2&&adjRoom>=1;
+      if(f.fill>.6&&Math.min(f.bw,f.bh)>=.03*gw)t=3;
+      else if(strict?(adj2||(f.bw>=.3*gw&&f.bh>=.25*gw&&f.thick>=2)):f.ext>=.12)t=1;
+      else if(adjRoom)t=2;
+    }
+    cls[k]=t;
+  });
+  classify(true);
+  let wc=0,tc=0,nRoom=0;C.forEach((c,k)=>{if(cls[k]===1)wc+=c.area;if(cls[k])tc+=c.area;});
+  for(let r=1;r<=nr;r++)if(isRoom(r))nRoom++;
+  if(!nRoom||wc<tc*.4||wc<N*.002)classify(false);
+  /* 건물 영역 밖 덩어리(표제란·치수 박스)는 버림 */
+  let big=-1;C.forEach((c,k)=>{if(cls[k]===1&&(big<0||c.area>C[big].area))big=k;});
+  if(big>=0){const B=C[big],m=Math.max(3,gw*.01);C.forEach((c,k)=>{if(!cls[k]||k===big)return;const cxm=(c.x0+c.x1)/2,cym=(c.y0+c.y1)/2;if(cxm<B.x0-m||cxm>B.x1+m||cym<B.y0-m||cym>B.y1+m)cls[k]=0;});}
+  const masks=[null,new Uint8Array(N),new Uint8Array(N),new Uint8Array(N)],cntC=[0,0,0,0];
+  C.forEach((c,k)=>{if(cls[k]){cntC[cls[k]]++;for(const i of c.cells)masks[cls[k]][i]=1;}});
+  const rectsOf=m=>{const rs=[];let prev=new Map();
+    for(let y=0;y<gh;y++){const cur=new Map();let x=0;
+      while(x<gw){if(!m[y*gw+x]){x++;continue;}const x0=x;while(x<gw&&m[y*gw+x])x++;
+        const k=x0+':'+(x-x0),p=prev.get(k);if(p){p.h++;cur.set(k,p);}else{const r={x:x0,y,w:x-x0,h:1};rs.push(r);cur.set(k,r);}}
+      prev=cur;}
+    return rs;};
+  /* 방마다 다른 색으로 칠한 바닥 */
+  const fc=document.createElement('canvas');fc.width=gw;fc.height=gh;
+  const fx=fc.getContext('2d'),fd=fx.createImageData(gw,gh),pal={};let ri=0;
+  for(let r=1;r<=nr;r++)if(isRoom(r))pal[r]=h2rgb((ri++*47+200)%360,.5,.86);
+  for(let i=0;i<N;i++){
+    const r=reg[i];let c;
+    if(wall[i])c=[74,84,104];else if(rOut[r]&&rSize[r]>=minR)c=[203,208,217];else if(pal[r])c=pal[r];else c=[241,239,232];
+    fd.data[i*4]=c[0];fd.data[i*4+1]=c[1];fd.data[i*4+2]=c[2];fd.data[i*4+3]=255;
+  }
+  fx.putImageData(fd,0,0);
+  return WALLC[key]={gw,gh,rects:{wall:rectsOf(masks[1]),block:rectsOf(masks[2]),plat:rectsOf(masks[3])},floor:fc,inv,stats:{rooms:nRoom,walls:cntC[1],objs:cntC[2]+cntC[3]}};
 }
 function loadScript(src){return new Promise((res,rej)=>{const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=rej;document.head.append(s);});}
 async function ensureThree(){
@@ -671,24 +730,29 @@ function build3D(){
   const k=ikey(pl);
   loadImg(data).then(img=>{
     if(planNow()!==pl)return;
-    const T=THREE,G=PV.G,W=100,D=100*pl.h/pl.w;
+    const T=THREE,G=PV.G,W=100,D=100*pl.h/pl.w,wh=pl.wh||5,an=analyze(pl,img);
     disposeGroup(G.world);
-    const tex=new T.TextureLoader().load(data,()=>dirty3());
-    tex.anisotropy=8;
+    const ft=new T.CanvasTexture(an.floor);ft.magFilter=T.NearestFilter;ft.minFilter=T.LinearFilter;
     const fg=new T.PlaneGeometry(W,D);fg.rotateX(-Math.PI/2);
-    G.world.add(new T.Mesh(fg,new T.MeshBasicMaterial({map:tex})));
-    const an=analyze(pl,img),wh=pl.wh||5;
-    if(an.rects.length){
+    G.world.add(new T.Mesh(fg,new T.MeshBasicMaterial({map:ft})));
+    PV.autoTx=an.inv?0:1;const tx=txOf(pl);
+    if(tx){const tex=new T.TextureLoader().load(data,()=>dirty3()),og=new T.PlaneGeometry(W,D);og.rotateX(-Math.PI/2);og.translate(0,.04,0);
+      G.world.add(new T.Mesh(og,new T.MeshBasicMaterial({map:tex,transparent:true,opacity:tx===2?1:.55,blending:T.MultiplyBlending,premultipliedAlpha:true,depthWrite:false})));}
+    const boxes=(rects,h,col)=>{
+      if(!rects.length)return;
       const bg=new T.BoxGeometry(1,1,1);bg.translate(.5,.5,.5);
-      const im=new T.InstancedMesh(bg,new T.MeshLambertMaterial({color:0x5b6577}),an.rects.length),mt=new T.Matrix4(),cw=W/an.gw,cd=D/an.gh;
-      an.rects.forEach((r,i)=>{mt.makeScale(r.w*cw,wh,r.h*cd);mt.setPosition(r.x*cw-W/2,0,r.y*cd-D/2);im.setMatrixAt(i,mt);});
-      im.instanceMatrix.needsUpdate=true;G.world.add(im);
-    }
+      const im=new T.InstancedMesh(bg,new T.MeshLambertMaterial({color:col}),rects.length),mt=new T.Matrix4(),cw=W/an.gw,cd=D/an.gh;
+      rects.forEach((r,i)=>{mt.makeScale(r.w*cw,h,r.h*cd);mt.setPosition(r.x*cw-W/2,0,r.y*cd-D/2);im.setMatrixAt(i,mt);});
+      im.instanceMatrix.needsUpdate=true;G.world.add(im);};
+    boxes(an.rects.wall,wh,0x5b6577);boxes(an.rects.block,wh*.3,0xb3bac8);boxes(an.rects.plat,wh*.6,0xe0a63c);
+    PV.stats=an.stats;const st=$('.wstat',PV.wbar);if(st)st.textContent=statText();
     PV.buildFor=k+'|'+wallKey(pl);
     if(PV.orbitFor!==k){PV.orbitFor=k;resetOrbit();}
     shapes3D(marksNow(),pl);project3D();dirty3();
   });
 }
+const txOf=pl=>pl.tx==null?(PV.autoTx==null?1:PV.autoTx):pl.tx;
+const statText=()=>PV.stats?`방 ${PV.stats.rooms} · 벽 ${PV.stats.walls} · 물체 ${PV.stats.objs}`:'';
 function resetOrbit(){const pl=planNow();if(!pl)return;const D=100*pl.h/pl.w;Object.assign(PV.th,{theta:.3,phi:.95,dist:Math.max(100,D)*1.3,tx:0,tz:0});}
 function ribbon(x1,z1,x2,z2,w,col,y,op){
   const T=THREE,dx=x2-x1,dz=z2-z1,l=Math.hypot(dx,dz)||1,nx=-dz/l*w/2,nz=dx/l*w/2,g=new T.BufferGeometry();
@@ -746,8 +810,8 @@ function pan3(dx,dy){
 }
 /* 벽 설정 막대 */
 function drawWbar(){
-  const pl=planNow();if(!pl)return;
-  PV.wbar.innerHTML=`<span>민감도</span><input type="range" min="-70" max="70" value="${pl.ws||0}" data-w="ws"><span>높이</span><input type="range" min="1" max="16" step=".5" value="${pl.wh||5}" data-w="wh"><span>잡음</span><input type="range" min="0" max="120" value="${pl.wn==null?25:pl.wn}" data-w="wn"><label class="tg"><input type="checkbox" data-w="inv" ${pl.inv?'checked':''}>반전</label>`;
+  const pl=planNow();if(!pl)return;const tx=txOf(pl);
+  PV.wbar.innerHTML=`<div class="wstat" style="grid-column:1/3;font-weight:800;color:var(--ink)">${statText()}</div><span>민감도</span><input type="range" min="-70" max="70" value="${pl.ws||0}" data-w="ws"><span>높이</span><input type="range" min="1" max="16" step=".5" value="${pl.wh||5}" data-w="wh"><span>잡음</span><input type="range" min="0" max="120" value="${pl.wn==null?25:pl.wn}" data-w="wn"><label class="tg"><input type="checkbox" data-w="inv" ${pl.inv?'checked':''}>반전</label><button class="chip sm" style="grid-column:1/3;justify-content:center" data-tx>도면 ${['끔','흐리게','선명'][tx]}</button>`;
 }
 let wT=0;
 function wallInput(e){
@@ -792,7 +856,7 @@ function vTime(){
     const cls=live?(hm>=s.start&&hm<s.end?'now':hm>=s.end?'past':''):'';
     const crew=(s.crew||[]).map(P).filter(Boolean);
     return `<div class="tl ${cls}"><div class="t">${esc(s.start)}<small>${esc(s.end)}</small></div><div class="bar"></div>
-      <button class="card" data-a="editSession" data-id="${s.id}"><div class="nm">${esc(s.title)}</div>${s.place?`<div class="sub">${ic('pin',14)} ${esc(s.place)}</div>`:''}
+      <button class="card" data-a="editSession" data-id="${s.id}"><div class="nm">${s.kind&&s.kind!=='본행사'?`<span class="chip sm" style="margin-right:6px">${esc(s.kind)}</span>`:''}${esc(s.title)}</div>${s.place?`<div class="sub">${ic('pin',14)} ${esc(s.place)}</div>`:''}
       ${crew.length?`<div class="faces">${crew.map(p=>avHTML(p,'sm')).join('')}</div>`:''}</button></div>`;}).join('');
   return `<div class="list" style="padding-top:4px">${rows||`<div class="empty" style="height:50vh"><button data-a="addSession">${ic('plus',48)}</button></div>`}</div>
     <div class="fab"><button data-a="addSession" aria-label="추가">${ic('plus',28)}</button></div>`;
@@ -815,18 +879,21 @@ function vSheet(){
   if(!ppl.length)return `<div class="empty"><button data-a="addPerson">${ic('plus',48)}</button></div>`;
   const head=`<div class="scroll-x noprint" style="padding-top:2px;padding-bottom:8px"><button class="chip ${V.sheetP==='all'?'on':''}" data-a="sheetP" data-v="all">${ic('people',16)}</button>${ppl.map(p=>`<button class="chip ${V.sheetP===p.id?'on':''}" data-a="sheetP" data-v="${p.id}">${esc(p.name)}</button>`).join('')}</div>`;
   const sel=V.sheetP==='all'?ppl.filter(p=>(p.days||[1,2,3]).includes(V.day)):[P(V.sheetP)].filter(Boolean);
-  return head+`<div class="pad">${sel.map(sheetCard).join('')}</div><div class="fab"><button data-a="print" aria-label="인쇄">${ic('print',26)}</button></div>`;
+  return head+`<div class="pad">${sel.map(sheetCard).join('')}</div><div class="fab"><button class="sec" data-a="report" aria-label="텍스트">${ic('doc',22)}</button><button data-a="print" aria-label="인쇄">${ic('print',26)}</button></div>`;
 }
 const VIEWS={people:vPeople,gear:vGear,time:vTime,sheet:vSheet};
 
 /* ═══ 자동 배치 ═══ */
-const kindOf=r=>{r=String(r||'');return /짐벌/.test(r)?'gimbal':/지미/.test(r)?'jib':/돌리/.test(r)?'dolly':/핸드/.test(r)?'hand':/카메라|트라이|캠/.test(r)?'tripod':null;};
+const SHOTS=['와이드','미디엄','클로즈','군중','인서트'];
+const kindOf=r=>{r=String(r||'');return /짐벌/.test(r)?'gimbal':/지미/.test(r)?'jib':/돌리/.test(r)?'dolly':/핸드|모바일/.test(r)?'hand':/카메라|스튜디오|트라이|캠/.test(r)?'tripod':null;};
+const zoneOf=r=>/스테이지|크루/.test(r||'')?'stage':/오디오|FOH|음향/.test(r||'')?'foh':'ctrl';
+const SHOT0={tripod:['와이드','미디엄'],gimbal:['인서트'],jib:['와이드'],dolly:['클로즈'],hand:['인서트','군중']};
 const SLOT={ /* [가로 위치, 앞(무대)→뒤 깊이 비율] */
   dolly:(i,n)=>[.5+(i-(n-1)/2)*.2,.04],
   jib:(i,n)=>{const s=i%2?1:-1,k=Math.floor(i/2);return [.5+s*.38,.10+k*.12];},
   gimbal:(i,n)=>{const s=i%2?1:-1,k=Math.floor(i/2);return [.5+s*(.26+k*.08),.34];},
-  hand:(i,n)=>{const s=i%2?1:-1,k=Math.floor(i/2);return [.5+s*(.40+k*.04),.50];},
-  tripod:(i,n)=>[.5+(i-(n-1)/2)*.15,.70]
+  hand:(i,n)=>{const s=i%2?1:-1,k=Math.floor(i/2);return [.5+s*(.40+k*.04),.44];},
+  tripod:(i,n,dir)=>i===0?[.5,.58]:[.5+(i%2?1:-1)*dir*(.3+.06*Math.floor((i-1)/2)),.24]
 };
 function autoLayout(pl,days){
   const st=S.marks.find(x=>x.plan===pl.id&&x.type==='stage'),sx=st?st.x:.5,sy=st?st.y:.2,dir=sy<.5?1:-1;
@@ -842,11 +909,13 @@ function autoLayout(pl,days){
     for(const p of ppl){const k=kindOf(p.role);if(k)(cams[k]=cams[k]||[]).push(p);else ctrl.push(p);}
     let n=0;
     for(const k of ['tripod','gimbal','jib','dolly','hand'])for(const [i,p] of (cams[k]||[]).entries()){
-      const [x,dy]=SLOT[k](i,cams[k].length),px=clamp(x,.05,.95),py=yAt(dy);
-      add({type:k,ref:p.id,label:'C'+(++n),x:px,y:py,rot:Math.round(face(px,py))});
+      const [x,dy]=SLOT[k](i,cams[k].length,dir),px=clamp(x,.05,.95),py=yAt(dy);
+      add({type:k,ref:p.id,label:'C'+(++n),shot:SHOT0[k][Math.min(i,SHOT0[k].length-1)],x:px,y:py,rot:Math.round(face(px,py))});
     }
-    const gap=Math.min(.12,.8/Math.max(1,ctrl.length));
-    ctrl.forEach((p,i)=>add({type:'person',ref:p.id,x:clamp(.5+(i-(ctrl.length-1)/2)*gap,.05,.95),y:yAt(.92)}));
+    const Z={stage:[],foh:[],ctrl:[]};ctrl.forEach(p=>Z[zoneOf(p.role)].push(p));
+    const row=(list,f)=>{const gap=Math.min(.12,.8/Math.max(1,list.length));list.forEach((p,i)=>add({type:'person',ref:p.id,x:clamp(.5+(i-(list.length-1)/2)*gap,.05,.95),y:yAt(f)}));};
+    Z.stage.forEach((p,i)=>add({type:'person',ref:p.id,x:i%2?.92:.08,y:clamp(sy+dir*Math.floor(i/2)*.08,.05,.95)}));
+    row(Z.foh,.82);row(Z.ctrl,.95);
   }
   V.sel=null;save();render();
 }
@@ -875,15 +944,15 @@ async function loadDemo(){
   if(S.plans.some(p=>p.id==='demo-plan')){V.plan='demo-plan';V.tab='plan';render();return;}
   const pl={id:'demo-plan',name:'예시 · 메인홀',w:1600,h:1000,iv:now(),ws:0,wh:5,wn:60,inv:false};
   await putImg(pl,demoImage());
-  const PP=[['김도윤','총괄',[1,2,3]],['이서준','카메라 1',[1,2,3]],['박민재','카메라 2',[1,2,3]],['최유진','짐벌',[1,2,3]],['정하린','지미집',[1,2,3]],['한지우','핸드헬드',[1,3]],['오세린','다나돌리',[2,3]],['강태오','스위처',[1,2,3]],['윤서아','모니터',[1,2,3]],['임도현','오디오',[1,2,3]],['송지안','송출',[1,2,3]],['문가온','스태프',[1,2,3]]];
-  PP.forEach((p,i)=>S.people.push(touch({id:'demo-p'+i,name:p[0],role:p[1],phone:'010-0000-'+String(1000+i),emerg:'',wear:i%2?['무전기','인컴']:['무전기','이어피스','조끼'],days:p[2],note:''})));
-  const G=[['FX6','카메라',3,'ok','demo-p1'],['A7S III','카메라',2,'ok','demo-p2'],['RS3 Pro','짐벌',2,'check','demo-p3'],['지미집 6m','지미집',1,'ok','demo-p4'],['다나돌리 세트','돌리',1,'check','demo-p6'],['삼각대','삼각대',4,'ok'],['모니터 17"','모니터',3,'ok','demo-p8'],['무선 마이크','오디오',8,'miss','demo-p9'],['배터리','전원',16,'miss'],['SDI 케이블 50m','케이블',6,'ok']];
+  const PP=[['김도윤','프로듀서',[1,2,3],'07:00'],['이서준','카메라 1',[1,2,3],'07:30'],['박민재','카메라 2',[1,2,3],'07:30'],['최유진','짐벌',[1,2,3],'07:30'],['정하린','지미집',[1,2,3],'07:00'],['한지우','핸드헬드',[1,3],'07:30'],['오세린','다나돌리',[2,3],'07:00'],['강태오','TD',[1,2,3],'07:00'],['윤서아','셰이더',[1,2,3],'07:30'],['임도현','오디오',[1,2,3],'06:30'],['송지안','CG',[1,2,3],'08:00'],['문가온','스테이지',[1,2,3],'07:00'],['한서진','디렉터',[1,2,3],'07:00']];
+  PP.forEach((p,i)=>S.people.push(touch({id:'demo-p'+i,name:p[0],role:p[1],phone:'010-0000-'+String(1000+i),emerg:'',call:p[3],wear:i%2?['무전기','인컴']:['무전기','이어피스','조끼'],days:p[2],note:''})));
+  const G=[['FX6','카메라',3,'ok','demo-p1'],['A7S III','카메라',2,'ok','demo-p2'],['RS3 Pro','짐벌',2,'check','demo-p3'],['지미집 6m','지미집',1,'ok','demo-p4'],['다나돌리 세트','돌리',1,'check','demo-p6'],['삼각대','삼각대',4,'ok'],['CCU/셰이딩 모니터','모니터',2,'ok','demo-p8'],['무선 마이크','오디오',8,'miss','demo-p9'],['배터리','전원',16,'miss'],['SDI 케이블 50m','케이블',6,'ok']];
   G.forEach((g,i)=>S.gear.push(touch({id:'demo-g'+i,name:g[0],cat:g[1],qty:g[2],status:g[3],owner:g[4]||null,note:''})));
-  const all=['demo-p0','demo-p1','demo-p2','demo-p3','demo-p4','demo-p7','demo-p8','demo-p9','demo-p10'];
-  const SES=[[1,'등록 · 리허설','08:00','09:30',all],[1,'오프닝 워십','10:00','11:30',[...all,'demo-p5']],[1,'말씀 1','13:00','14:30',all],[1,'찬양 집회','19:00','21:00',[...all,'demo-p5']],
-    [2,'세미나 A','09:30','11:00',['demo-p0','demo-p1','demo-p7','demo-p9']],[2,'말씀 2','13:00','14:30',[...all,'demo-p6']],[2,'저녁 집회','19:00','21:00',[...all,'demo-p6']],
-    [3,'기도회','08:30','09:30',['demo-p0','demo-p1','demo-p9']],[3,'마지막 말씀','11:00','12:30',[...all,'demo-p5','demo-p6']],[3,'파송 예배','14:00','15:30',[...all,'demo-p5','demo-p6']]];
-  SES.forEach((s,i)=>S.sessions.push(touch({id:'demo-s'+i,day:s[0],title:s[1],start:s[2],end:s[3],place:'메인홀',crew:s[4],note:''})));
+  const all=['demo-p0','demo-p1','demo-p2','demo-p3','demo-p4','demo-p7','demo-p8','demo-p9','demo-p10','demo-p12'];
+  const SES=[[1,'로드인 · 셋업','06:30','08:00','콜',['demo-p0','demo-p9','demo-p11']],[1,'런스루 · 리허설','08:00','09:30','리허설',all],[1,'오프닝 워십','10:00','11:30','본행사',[...all,'demo-p5']],[1,'말씀 1','13:00','14:30','본행사',all],[1,'찬양 집회','19:00','21:00','본행사',[...all,'demo-p5']],
+    [2,'콜타임 · 체크','07:00','08:30','콜',all],[2,'세미나 A','09:30','11:00','본행사',['demo-p0','demo-p1','demo-p7','demo-p9']],[2,'말씀 2','13:00','14:30','본행사',[...all,'demo-p6']],[2,'저녁 집회','19:00','21:00','본행사',[...all,'demo-p6']],
+    [3,'리허설','08:00','09:30','리허설',all],[3,'마지막 말씀','11:00','12:30','본행사',[...all,'demo-p5','demo-p6']],[3,'파송 예배','14:00','15:30','본행사',[...all,'demo-p5','demo-p6']],[3,'철수','16:00','18:00','철수',['demo-p0','demo-p9','demo-p11']]];
+  SES.forEach((x,i)=>S.sessions.push(touch({id:'demo-s'+i,day:x[0],title:x[1],start:x[2],end:x[3],kind:x[4],place:'메인홀',crew:x[5],note:''})));
   S.plans.push(touch(pl));V.plan=pl.id;V.tab='plan';V.day=1;V.all=true;V.sel=null;saveUI();
   autoLayout(pl,[1,2,3]);
 }
@@ -893,14 +962,62 @@ function removeDemo(){
   if(V.plan==='demo-plan')V.plan=null;V.all=false;V.sel=null;save();render();
 }
 
+/* ═══ 텍스트 리포트 ═══ */
+function whereText(m,st,dir){
+  st=st||{x:.5,y:.2};dir=dir||1;
+  const maxd=dir>0?.95-st.y:st.y-.05,f=maxd>0?Math.abs(m.y-st.y)/maxd:0,dx=m.x-st.x;
+  const depth=f<.15?'무대 앞':f<.4?'앞쪽':f<.65?'중간':'후방';
+  const sl=dir>0?dx>.1:dx<-.1,sr=dir>0?dx<-.1:dx>.1;
+  return depth+' '+(sl?'무대좌(SL)':sr?'무대우(SR)':'중앙');
+}
+function reportText(days){
+  const L=[],ds=n=>{const d=dayDate(n);return d?` (${d.getMonth()+1}/${d.getDate()})`:'';},num=m=>parseInt(String(m.label||'').replace(/\D/g,''))||0;
+  L.push('ISAIAH 61 · Solidoegloria — 미디어팀 촬영 계획');
+  if(S.cfg.look)L.push('공통 카메라 설정: '+S.cfg.look);
+  L.push('방향 기준: 무대 위에서 객석을 보는 시점 (SL=무대 좌, SR=무대 우)');
+  for(const d of days){
+    L.push('','■ DAY '+d+ds(d));
+    const ses=S.sessions.filter(s=>s.day===d).sort((a,b)=>String(a.start).localeCompare(String(b.start)));
+    if(ses.length){L.push('▸ 시간표');for(const s of ses){const cr=(s.crew||[]).map(P).filter(Boolean).map(p=>p.name).join(', ');L.push(`  ${s.start}~${s.end}  ${s.kind&&s.kind!=='본행사'?'['+s.kind+'] ':''}${s.title}${s.place?' @'+s.place:''}${cr?' — '+cr:''}`);}}
+    for(const pl of S.plans){
+      const ms=S.marks.filter(m=>m.plan===pl.id&&m.day===d);if(!ms.length)continue;
+      const st=ms.find(m=>m.type==='stage'),dir=st&&st.y>=.5?-1:1;
+      const cams=ms.filter(isCam).sort((a,b)=>num(a)-num(b));
+      if(cams.length){L.push('▸ 카메라 · '+pl.name);for(const m of cams){const p=P(m.ref);L.push(`  ${m.label||'-'}  ${CAMS[m.type].n}${m.shot?' · '+m.shot:''} — ${p?p.name+(p.phone?' '+p.phone:''):'담당 미정'} — ${whereText(m,st,dir)}`);}}
+      const pm=ms.filter(m=>m.type==='person').map(m=>({m,p:P(m.ref)})).filter(x=>x.p);
+      if(pm.length){L.push('▸ 현장 인원 · '+pl.name);for(const {m,p} of pm)L.push(`  ${p.name} (${p.role||'-'})${p.phone?' '+p.phone:''}${p.call?' · 콜 '+p.call:''} — ${whereText(m,st,dir)}`);}
+    }
+    const placed=new Set(S.marks.filter(m=>m.day===d&&m.ref).map(m=>m.ref));
+    const un=S.people.filter(p=>(p.days||[1,2,3]).includes(d)&&!placed.has(p.id));
+    if(un.length)L.push('▸ 미배치: '+un.map(p=>p.name).join(', '));
+  }
+  if(S.people.length){L.push('','■ 인원 명단');for(const p of S.people.slice().sort(sortKo))L.push(`  ${p.name} | ${p.role||'-'} | ${p.phone||'-'}${p.emerg?' | 비상 '+p.emerg:''}${p.call?' | 콜 '+p.call:''}${(p.wear||[]).length?' | '+p.wear.join('·'):''} | ${(p.days||[]).map(x=>x+'일').join('·')}`);}
+  if(S.gear.length){L.push('','■ 장비');for(const g of S.gear.slice().sort((a,b)=>String(a.cat).localeCompare(String(b.cat),'ko'))){const o=P(g.owner);L.push(`  [${g.cat||'-'}] ${g.name} ×${g.qty==null?1:g.qty} · ${STAT[g.status||'ok'].n}${o?' · '+o.name:''}`);}}
+  L.push('','콜 용어: Ready(대기) → Standby → Take(컷) → Clear(해제)');
+  return L.join('\n');
+}
+function reportModal(){
+  let sel=V.all?[1,2,3]:[V.day];
+  const m=modal(`<h3>${ic('doc')}<button class="ib" data-x>${ic('x')}</button></h3><div class="chips" data-days></div>
+    <textarea class="in" readonly style="min-height:46vh;font:13px/1.55 ui-monospace,Menlo,monospace;white-space:pre-wrap;overflow:auto"></textarea>
+    <div class="btns"><button class="btn" data-cp>${ic('copy')}복사</button>${navigator.share?`<button class="btn ghostb" data-sh>${ic('send')}</button>`:''}</div>`);
+  const ta=$('textarea',m.box),dv=$('[data-days]',m.box);
+  const draw=()=>{dv.innerHTML=[1,2,3].map(n=>`<button class="chip ${sel.includes(n)&&sel.length<3?'on':''}" data-d="${n}">${n}일</button>`).join('')+`<button class="chip ${sel.length===3?'on':''}" data-d="0">전체</button>`;ta.value=reportText(sel);};
+  dv.addEventListener('click',e=>{const b=e.target.closest('[data-d]');if(!b)return;const n=Number(b.dataset.d);sel=n?[n]:[1,2,3];draw();});
+  draw();
+  $('[data-cp]',m.box).onclick=async()=>{try{await navigator.clipboard.writeText(ta.value);}catch(_){ta.removeAttribute('readonly');ta.select();document.execCommand('copy');ta.setAttribute('readonly','');}const b=$('[data-cp]',m.box);b.innerHTML=ic('check')+'복사됨';setTimeout(()=>{b.innerHTML=ic('copy')+'복사';},1400);};
+  const sh=$('[data-sh]',m.box);if(sh)sh.onclick=()=>navigator.share({text:ta.value}).catch(()=>{});
+}
+
 /* 설정 */
 function settings(){
   const m=modal(`<h3>${ic('cog')}<button class="ib" data-x>${ic('x')}</button></h3>
     <label class="fld"><span>DAY 1</span><input class="in" type="date" value="${esc(S.cfg.date1||'')}" data-d></label>
+    <label class="fld"><span>카메라 공통 설정</span><input class="in" value="${esc(S.cfg.look||'')}" placeholder="5600K · 24p · S-Log3" data-look></label>
     <div class="btns"><button class="btn ghostb" data-ex>${ic('dl')}</button><button class="btn ghostb" data-im>${ic('ul')}</button><button class="btn ghostb" data-sync>${ic('rot')}</button></div>
     <div class="btns"><button class="btn ghostb" data-demo>${ic('wand')}</button>${S.plans.some(p=>p.id==='demo-plan')?`<button class="btn del" data-undemo>${ic('trash')}</button>`:''}</div>
     <div class="btns"><button class="btn" data-ok>${ic('check')}저장</button></div>`);
-  $('[data-ok]',m.box).onclick=()=>{S.cfg.date1=$('[data-d]',m.box).value;S.cfg.u=now();const t=todayN();if(t)V.day=t;m.close();save();render();};
+  $('[data-ok]',m.box).onclick=()=>{S.cfg.date1=$('[data-d]',m.box).value;S.cfg.look=$('[data-look]',m.box).value.trim();S.cfg.u=now();const t=todayN();if(t)V.day=t;m.close();save();render();};
   $('[data-ex]',m.box).onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(S)],{type:'application/json'}));a.download='isaiah61-backup.json';a.click();};
   $('[data-im]',m.box).onclick=()=>{const f=document.createElement('input');f.type='file';f.accept='.json';f.onchange=async()=>{try{const j=JSON.parse(await f.files[0].text());if(mergeIn(j)||true){m.close();save();render();}}catch(e){console.warn(e);}};f.click();};
   $('[data-sync]',m.box).onclick=()=>{m.close();pull();};
@@ -916,7 +1033,7 @@ const A={
   cycle:d=>{const g=byId(S.gear,d.id);g.status={ok:'check',check:'miss',miss:'ok'}[g.status||'ok'];put('gear',g);},
   role:d=>{V.roleF=d.v;saveUI();render();},cat:d=>{V.catF=d.v;saveUI();render();},
   dayOnly:()=>{V.dayOnly=!V.dayOnly;saveUI();render();},
-  sheetP:d=>{V.sheetP=d.v;saveUI();render();},print:()=>print()
+  sheetP:d=>{V.sheetP=d.v;saveUI();render();},print:()=>print(),report:reportModal
 };
 function render(){
   if(drag){pendR=true;return;}
