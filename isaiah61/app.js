@@ -263,15 +263,15 @@ const crewOpts=n=>[['','—'],...working(n).map(c=>[c.id,c.name||'(이름 없음
 
 /* ═══ 콜시트 ═══ */
 function vCall(){
-  const n=V.day,d=dayRec(n),ses=S.sched.filter(s=>s.day===n&&(!V.part||partOfTime(s.start)===V.part)).sort(byStart),crew=working(n),absent=S.crew.filter(c=>!crew.includes(c));
+  const n=V.day,d=dayRec(n),ses=S.sched.filter(s=>s.day===n&&(!V.part||partOfTime(s.start)===V.part)).sort(byStart),crew=working(n),cams=camsFor(n,V.part),absent=S.crew.filter(c=>!crew.includes(c));
   return `<div class="doc">
   <div class="dh"><div><h1>CALL SHEET</h1><div style="color:var(--soft);font-weight:600">${esc(S.proj.title)} · ${esc(S.proj.sub)} · ${VENUE}</div></div><div class="r"><b>DAY ${n} / 3${V.part?' · '+V.part:''}</b>${esc(dateStr(n))}</div></div>
   <div class="clock"><b id="clk">${clockText()}</b></div>
   <div class="cnts"><div class="cn"><span>총원</span><b>${S.crew.length}</b></div><div class="cn ok"><span>현재원</span><b>${crew.length}</b></div><div class="cn ${absent.length?'bad':''}"><span>불참</span><b>${absent.length}</b>${absent.length?`<small>${esc(absent.slice(0,6).map(c=>c.name||'이름 없음').join(', '))}${absent.length>6?' 외 '+(absent.length-6)+'명':''}</small>`:''}</div></div>
   <div class="sec">일정</div>
   ${ses.length?`<div class="tw"><table class="t"><thead><tr><th>시간</th><th>구분</th><th>항목</th><th>장소</th><th>담당</th><th>비고</th></tr></thead><tbody>${ses.map(s=>`<tr><td class="ro" style="white-space:nowrap;font-variant-numeric:tabular-nums">${esc(s.start)}${s.end?'–'+esc(s.end):''}</td><td class="ro">${esc(s.kind)}</td><td class="ro"><b>${esc(s.title)}</b></td><td class="ro">${esc(s.place)}</td><td class="ro">${esc(s.who)}</td><td class="ro">${esc(s.note)}</td></tr>`).join('')}</tbody></table></div>`:`<div class="empty">일정 탭에서 입력</div>`}
-  <div class="sec">크루 · ${crew.length}명</div>
-  ${crew.length?`<div class="tw"><table class="t"><thead><tr><th>#</th><th>이름</th><th>번호</th><th>장비</th><th>비고</th></tr></thead><tbody>${crew.map((c,i)=>`<tr><td class="ro idx">${i+1}</td><td class="ro"><b>${esc(c.name)}</b></td><td class="ro">${c.phone?`<a href="tel:${esc(c.phone)}" style="color:inherit">${esc(c.phone)}</a>`:''}</td><td class="ro">${esc(c.wear)}</td><td class="ro">${esc(c.note)}</td></tr>`).join('')}</tbody></table></div>`:`<div class="empty">크루 탭에서 입력</div>`}
+  <div class="sec">카메라 · ${cams.length}대</div>
+  ${cams.length?`<div class="tw"><table class="t"><thead><tr><th>CAM</th>${V.part?'':'<th>파트</th>'}<th>담당</th><th>포지션</th><th>장비</th><th>샷</th><th>비고</th></tr></thead><tbody>${cams.map(c=>`<tr><td class="ro"><b>${esc(c.no)}</b></td>${V.part?'':`<td class="ro">${esc(c.part||'공통')}</td>`}<td class="ro">${esc((opOf(c)||{}).name||'')}</td><td class="ro">${esc(rigTxt(c))}</td><td class="ro">${esc(gearNames(c).join(', '))}</td><td class="ro">${esc(c.shot)}</td><td class="ro">${esc(c.note)}</td></tr>`).join('')}</tbody></table></div>`:`<div class="empty">카메라 탭에서 입력</div>`}
   ${miniPlots(n)}
   <div class="sec">공지</div><div class="kv"><label class="wide"><textarea rows="4" data-c="days" data-id="${d.id}" data-k="notes">${esc(d.notes)}</textarea></label></div>
   </div>`;
@@ -704,7 +704,7 @@ function textOf(tab){
   if(tab==='call'){const d=dayRec(n);head(`CALL SHEET  DAY ${n}/3${V.part?' '+V.part:''}  ${dateStr(n)}`);
     {const wk=working(n),ab=S.crew.filter(c=>!wk.includes(c));L.push(`장소: ${VENUE}`);L.push(`총원 ${S.crew.length} · 현재원 ${wk.length} · 불참 ${ab.length}${ab.length?' ('+ab.map(c=>c.name||'이름 없음').join(', ')+')':''}`);}
     const ses=S.sched.filter(s=>s.day===n&&(!V.part||partOfTime(s.start)===V.part)).sort(byStart);if(ses.length){L.push('','[일정]');for(const s of ses)L.push(`${s.start||'--:--'}${s.end?'~'+s.end:''}  [${s.kind}] ${s.title}${s.place?' @'+s.place:''}${s.who?' / '+s.who:''}${s.note?' ('+s.note+')':''}`);}
-    L.push('','[크루]');for(const c of working(n))L.push(`  ${c.name}  ${c.phone||''}${c.wear?'  ['+c.wear+']':''}${c.note?' ('+c.note+')':''}`);
+    L.push('','[카메라]');for(const c of camsFor(n,V.part))L.push(`  CAM ${c.no}${c.part&&!V.part?' ('+c.part+')':''}  ${(opOf(c)||{}).name||'담당 미정'}  ${rigTxt(c)}${gearNames(c).length?'  ['+gearNames(c).join(', ')+']':''}${c.shot?'  '+c.shot:''}${c.note?' ('+c.note+')':''}`);
     for(const pl of S.plans){const ps=pinsFor(n,V.part,pl.id);if(!ps.length)continue;L.push('',`[카메라 플랏 · ${pl.name}] (${pl.real?'미터 기준':'도면 화면 기준'})`);if(pl.real)L.push(`  기준: 도면 좌상단 0m · 가로 ${pl.real.w}m × 세로 ${pl.real.h}m · 높이 ${pl.real.H}m`);for(const p of ps){if(p.kind==='cam'){const c=byId(S.cams,p.ref);if(c)L.push(`  CAM ${c.no} ${rigTxt(c)}${c.shot?' · '+c.shot:''}  ${opOf(c)?opOf(c).name:'담당 미정'}${gearNames(c).length?'  ['+gearNames(c).join(', ')+']':''}  ${where(p)}`);}else if(p.kind==='area')L.push(`  [구역] ${p.name||'구역'} ${p.w||10}×${p.d||10}m 높이 ${p.h==null?3:p.h}m  ${where(p)}`);else{const c=crewOf(p.ref);if(c)L.push(`  ${c.name}  ${where(p)}`);}}}
     if(d.notes)L.push('','[공지]',d.notes);}
   if(tab==='sched'){head(`RUN OF SHOW  DAY ${n}/3${V.part?' '+V.part:''}  ${dateStr(n)}`);for(const s of S.sched.filter(s=>s.day===n&&(!V.part||partOfTime(s.start)===V.part)).sort(byStart))L.push([s.start,s.end,s.kind,s.title,s.place,s.who,s.note].join('\t'));}
