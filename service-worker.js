@@ -33,6 +33,7 @@ self.addEventListener("fetch", (e) => {
   if (url.pathname.indexOf("/retro/") === 0) return;         // 주간 회고록 — 매주 갱신되는 데이터, 캐시 없이 항상 최신으로
   if (url.pathname.indexOf("/accounts/") === 0) return;       // 계정 — 비밀번호/갱신일 편집되는 데이터, 캐시 없이 항상 최신으로
   if (url.pathname.indexOf("/offmic/") === 0) return;         // SoliDeo:OFFMIC — 실시간 편집 데이터, 캐시 없이 항상 최신으로
+  if (url.pathname.indexOf("/isaiah61/") === 0) return;       // ISAIAH 61 — 실시간 편집 데이터, 캐시 없이 항상 최신으로
   if (url.pathname.indexOf("/carecolor/") === 0) return;      // CARECOLOR — 실시간 편집 데이터, 캐시 없이 항상 최신으로
 
   const isPage = e.request.mode === "navigate" || url.pathname.endsWith("/") || url.pathname.endsWith("index.html");
