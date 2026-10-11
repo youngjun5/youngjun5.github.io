@@ -278,7 +278,7 @@ function vCall(){
 }
 function miniPlots(n){
   return S.plans.map(pl=>{
-    const ps=pinsFor(n,V.part,pl.id);if(!ps.length)return '';
+    const ps=pinsFor(n,V.part,pl.id);
     const data=imgOf(pl);
     const mini=`<div class="mini ${V.cs3?'printonly':''}" style="aspect-ratio:${pl.w}/${pl.h}">${data?`<img src="${data}" style="position:absolute;inset:0;width:100%;height:100%">`:''}<svg viewBox="0 0 ${pl.w} ${pl.h}" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%">${ps.filter(p=>p.kind==='area').map(p=>areaSVG(p,pl)).join('')}${ps.filter(p=>p.kind==='cam').map(p=>coneSVG(p,pl)).join('')}</svg><div class="marks">${ps.map(p=>markHTML(p)).join('')}</div></div>`;
     const v3=V.cs3?`<div class="cv3 noprint" data-plan="${pl.id}"><canvas class="gl"></canvas><div class="marks m3"></div><div class="zoom"><button data-cvz="in">+</button><button data-cvz="out">−</button><button data-cvz="fit" aria-label="맞춤">${ic('fit',18)}</button></div></div>`:'';
