@@ -68,6 +68,9 @@ const dayRec=n=>{let d=S.days.find(x=>x.n===n);if(!d){d={id:'day'+n,n,loc:'',gen
 const crewOf=id=>byId(S.crew,id);
 const rigsOf=c=>c&&c.rigs&&c.rigs.length?c.rigs:(c&&c.rig?[c.rig]:[]);
 const rig0=c=>rigsOf(c)[0]||'기타';
+/* 배치도 마커 가운데 글자: 포지션 영어 이름의 첫 글자(대문자) — Tripod / Gimbal / Handheld / Jimmy Jib / Dana Dolly / Etc */
+const RIGL={트라이포드:'T',짐벌:'G',핸드헬드:'H',지미집:'J',다나돌리:'D',기타:'E'};
+const rigInit=c=>{const l=rigsOf(c).map(r=>RIGL[r]||'?').join('').slice(0,3);return l||'?';};
 const rigTxt=c=>rigsOf(c).join('·')||'-';
 const gearNames=c=>((c&&c.gear)||[]).map(id=>(byId(S.gear,id)||{}).name).filter(Boolean);
 const gearUse=g=>DAYN.map(d=>{const l=S.cams.filter(c=>c.day===d&&(c.gear||[]).includes(g.id)).sort((a,b)=>(a.no||0)-(b.no||0));return l.length?`${dayLabel(d)} ${l.map(c=>'C'+c.no+(c.part?'·'+c.part:'')).join(',')}`:'';}).filter(Boolean).join(' · ');
@@ -89,11 +92,15 @@ const attends=(id,n)=>{const c=crewOf(id);return !!c&&(c.days||DAYN).includes(n)
 const opOf=c=>c&&c.op&&attends(c.op,c.day)?crewOf(c.op):null;
 const ownerOf=g=>{const c=crewOf(g.owner);return c&&(c.days||DAYN).length?c:null;};
 const pinOk=p=>p.kind!=='crew'||attends(p.ref,p.day);
+/* 한 사람은 한 번만: 카메라 담당으로 지정된 사람은 카메라(CAM)로만 나오고, 크루 칩·크루 핀에는 나오지 않는다 */
+const opSet=(day,part)=>new Set(S.cams.filter(c=>c.day===day&&inPart(c.part,part)).map(c=>(opOf(c)||{}).id).filter(Boolean));
 const camsFor=(day,part)=>S.cams.filter(c=>c.day===day&&inPart(c.part,part)).sort((a,b)=>(a.no||0)-(b.no||0));
 const pinKey=p=>p.of?'o:'+p.of:(p.kind==='area'?'o:'+p.id:p.kind+':'+p.ref);
 /* 그 파트에서 실제로 보이는 핀: 파트 전용(덮어쓰기) 우선, 없으면 공통. hide=true 는 "이 파트에선 빼기" */
 function pinsFor(day,part,planId){
   const all=S.pins.filter(p=>p.plan===planId&&p.day===day&&pinOk(p)&&(p.kind!=='cam'||(()=>{const c=byId(S.cams,p.ref);return !!c&&inPart(c.part,part);})()));
+  const ops=opSet(day,part);
+  for(let i=all.length-1;i>=0;i--)if(all[i].kind==='crew'&&ops.has(all[i].ref))all.splice(i,1);
   const out=[],seen=new Set();
   if(part){
     for(const p of all)if(p.part===part){seen.add(pinKey(p));if(!p.hide)out.push(p);}
@@ -413,7 +420,7 @@ function markHTML(p,o={}){
   const sel=p.id===V.sel?'sel':'',st=`left:${p.x*100}%;top:${p.y*100}%`;
   if(p.kind==='area')return `<div class="mk area ${sel}" data-id="${p.id}" style="${st}"><span class="pill big"><i style="background:${ACOL[p.col||0]}"></i>${esc(p.name||'구역')}</span></div>`;
   if(p.kind==='cam'){const c=byId(S.cams,p.ref);if(!c)return '';const op=opOf(c);
-    return `<div class="mk cam ${sel} ${o.dim?'dim':''}" data-id="${p.id}" style="${st}"><span class="tk" style="--c:${RIGC[rig0(c)]||RIGC.기타}">${esc(c.no)}</span>${op?`<span class="pill">${esc(short(op.name))}</span>`:''}</div>`;}
+    return `<div class="mk cam ${sel} ${o.dim?'dim':''}" data-id="${p.id}" style="${st}"><span class="tk" style="--c:${RIGC[rig0(c)]||RIGC.기타};font-size:${rigInit(c).length>2?11:rigInit(c).length>1?13:16}px">${esc(rigInit(c))}</span><span class="pill">${esc(c.no)}${op?' '+esc(short(op.name)):''}</span></div>`;}
   const c=crewOf(p.ref);if(!c)return '';
   return `<div class="mk crew ${sel} ${o.dim?'dim':''}" data-id="${p.id}" style="${st}"><span class="tk" style="--c:#475569">${esc(ini(c.name))}</span><span class="pill">${esc(short(c.name))}</span></div>`;
 }
@@ -514,7 +521,7 @@ function trayTap(t,id){
 function renderTray(){
   const pl=planNow();if(!pl)return;
   const placed=new Set(pinsFor(V.day,V.part,pl.id).map(p=>p.kind+p.ref));
-  const cams=camsFor(V.day,V.part),crew=working(V.day);
+  const cams=camsFor(V.day,V.part),ops=opSet(V.day,V.part),crew=working(V.day).filter(c=>!ops.has(c.id));
   const on=(t,id)=>V.armed&&V.armed.t===t&&V.armed.id===id?'on':'';
   PV.tray.innerHTML=`<div class="row"><span class="lbl">CAM</span><div class="scx">${Object.entries(AREA_PRE).map(([k,v])=>`<button class="chip ${on('area',k)}" data-tray="area" data-id="${k}"><span style="width:9px;height:9px;border-radius:3px;background:${ACOL[v.c]}"></span>+ ${v.n}</button>`).join('')}${cams.map(c=>`<button class="chip ${on('cam',c.id)} ${placed.has('cam'+c.id)?'done':''}" data-tray="cam" data-id="${c.id}"><span style="width:9px;height:9px;border-radius:3px;background:${RIGC[rig0(c)]||RIGC.기타}"></span>${esc(c.no)} ${esc((opOf(c)||{}).name||'')} <small style="opacity:.7">${esc(rigTxt(c))}</small></button>`).join('')}</div></div>
   <div class="row"><span class="lbl">CREW</span><div class="scx">${crew.map(c=>`<button class="chip ${on('crew',c.id)} ${placed.has('crew'+c.id)?'done':''}" data-tray="crew" data-id="${c.id}">${esc(c.name||'?')}</button>`).join('')||'<span style="color:var(--faint)">크루 탭에서 추가</span>'}</div></div>`;
