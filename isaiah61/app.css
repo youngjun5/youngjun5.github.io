@@ -194,3 +194,6 @@ textarea.in{height:auto;min-height:84px;padding:10px 13px;resize:vertical}
   .mk .tk svg{width:18px;height:18px}
   .mk .pill{font-size:11px;padding:0 6px}
 }
+
+.ib.on{background:var(--c-plan);color:#fff;border-color:var(--c-plan)}
+.demoadd{position:absolute;left:50%;top:calc(50% + 100px);transform:translateX(-50%);width:52px;height:52px;border-radius:99px;background:var(--c-plan);color:#fff;display:flex;align-items:center;justify-content:center;z-index:4}

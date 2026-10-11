@@ -34,6 +34,7 @@ const IC={
   fov:'<path d="M12 20L4 6M12 20l8-14"/><path d="M4 6a12 12 0 0 1 16 0"/>', dist:'<path d="M4 12h16M4 8v8M20 8v8"/>',
   len:'<path d="M3 17L17 3M6 14l2 2M9 11l2 2M12 8l2 2"/>',
   user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.500-7 8-7s8 3 8 7"/>',
+  wand:'<path d="M5 19L16 8"/><path d="M14 4l2 2M18 8l2 2M17 2v3M20 5h-3M7 5v2M8 6H6"/>', layers:'<path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/>', flag:'<path d="M5 21V4M5 5h12l-2 4 2 4H5"/>',
   chev:'<path d="M9 5l7 7-7 7"/>', send:'<path d="M4 12l16-8-6 16-3-7z"/>',
   /* 카메라 종류 */
   gimbal:'<rect x="8" y="3" width="8" height="6" rx="1.500"/><path d="M5.500 8a6.500 6.500 0 0 0 13 0"/><path d="M12 14.500V21M10 21h4"/>',
@@ -71,9 +72,10 @@ if(!S||S.schema!==1)S=fresh();
 {const f=fresh();S.presets=S.presets||f.presets;for(const k in f.presets)S.presets[k]=S.presets[k]||f.presets[k];for(const c of COLS)S[c]=S[c]||[];S.del=S.del||{};S.cfg=S.cfg||f.cfg;}
 let V={tab:'plan',day:1,plan:null,sheetP:'all',roleF:'',dayOnly:false,catF:''};
 try{Object.assign(V,JSON.parse(localStorage.getItem(UIK))||{});}catch(e){}
-V.sel=null;V.armed=null;
+V.sel=null;V.armed=null;V.all=false;
 const saveUI=()=>{try{localStorage.setItem(UIK,JSON.stringify({tab:V.tab,day:V.day,plan:V.plan,sheetP:V.sheetP,roleF:V.roleF,dayOnly:V.dayOnly,catF:V.catF}));}catch(e){}};
 const P=id=>byId(S.people,id);
+const isCam=m=>!!CAMS[m.type];
 const sortKo=(a,b)=>String(a.name||'').localeCompare(String(b.name||''),'ko');
 
 /* 날짜 */
@@ -293,6 +295,7 @@ function shapeSVG(m,pl,dim){
   return s+'</g>';
 }
 function markHTML(m,o={}){
+  if(m.type==='stage')return `<div class="mk ${m.id===V.sel?'sel':''} ${o.dim?'dim':''}" data-id="${m.id}" style="left:${m.x*100}%;top:${m.y*100}%"><span class="tk cam" style="--c:#f59e0b">${ic('flag',22)}</span></div>`;
   const per=P(m.ref),isP=m.type==='person';
   const col=isP?hue(per&&(per.role||per.name)):CAMS[m.type].c;
   const tok=isP?`<span class="tk" style="--c:${col}">${esc(ini(per?per.name:'?'))}</span>`:`<span class="tk cam" style="--c:${col}">${ic(m.type,22)}</span>`;
@@ -301,24 +304,26 @@ function markHTML(m,o={}){
 }
 function mini(pl,day,pid){
   const data=imgOf(pl),ms=S.marks.filter(m=>m.plan===pl.id&&m.day===day),mine=m=>m.ref===pid;
-  return `<div class="mini" style="aspect-ratio:${pl.w}/${pl.h}">${data?`<img src="${data}">`:''}<svg class="sh" viewBox="0 0 ${pl.w} ${pl.h}" preserveAspectRatio="none">${ms.filter(m=>m.type!=='person').map(m=>shapeSVG(m,pl,!mine(m))).join('')}</svg><div class="marks">${ms.map(m=>markHTML(m,{dim:!mine(m),hl:mine(m)})).join('')}</div></div>`;
+  return `<div class="mini" style="aspect-ratio:${pl.w}/${pl.h}">${data?`<img src="${data}">`:''}<svg class="sh" viewBox="0 0 ${pl.w} ${pl.h}" preserveAspectRatio="none">${ms.filter(isCam).map(m=>shapeSVG(m,pl,!mine(m))).join('')}</svg><div class="marks">${ms.map(m=>markHTML(m,{dim:!mine(m),hl:mine(m)})).join('')}</div></div>`;
 }
 
 /* ═══ 도면 뷰 ═══ */
 const PV={el:null,mode:'2d',z:1,tx:0,ty:0,fitFor:'',buildFor:'',th:{theta:.3,phi:.95,dist:140,tx:0,tz:0},G:null};
 const planNow=()=>{let p=byId(S.plans,V.plan);if(!p){p=S.plans[0]||null;V.plan=p&&p.id;}return p;};
-const marksNow=()=>{const pl=planNow();return pl?S.marks.filter(m=>m.plan===pl.id&&m.day===V.day):[];};
+const marksNow=()=>{const pl=planNow();if(!pl)return [];
+  if(V.all){const seen=new Set();return S.marks.filter(m=>m.plan===pl.id).filter(m=>{const k=[m.type,m.ref||'',m.label||'',Math.round(m.x*40),Math.round(m.y*40)].join('|');if(seen.has(k))return false;seen.add(k);return true;});}
+  return S.marks.filter(m=>m.plan===pl.id&&m.day===V.day);};
 let drag=null,pendR=false;
 
 function buildPV(){
   const el=document.createElement('section');el.className='pv';
-  el.innerHTML=`<div class="pbar"><div class="pchips"></div><div class="seg"><button data-m="2d" aria-label="2D">${ic('sq',20)}</button><button data-m="3d" aria-label="3D">${ic('cube',20)}</button></div><button class="ib" data-pa="edit" aria-label="도면 편집">${ic('edit',20)}</button></div>
+  el.innerHTML=`<div class="pbar"><div class="pchips"></div><div class="seg"><button data-m="2d" aria-label="2D">${ic('sq',20)}</button><button data-m="3d" aria-label="3D">${ic('cube',20)}</button></div><button class="ib" data-pa="all" aria-label="전체 보기">${ic('layers',20)}</button><button class="ib" data-pa="auto" aria-label="자동 배치">${ic('wand',20)}</button><button class="ib" data-pa="edit" aria-label="도면 편집">${ic('edit',20)}</button></div>
   <div class="stage">
     <div class="world"><img draggable="false" alt=""><svg preserveAspectRatio="none"></svg><div class="marks m2"></div></div>
     <canvas id="gl" hidden></canvas><div class="marks m3" hidden></div>
     <div class="wbar" hidden></div>
     <div class="zoom"><button data-z="in">+</button><button data-z="out">−</button><button data-z="fit" aria-label="맞춤">${ic('fit',20)}</button><button data-z="wall" hidden aria-label="벽">${ic('cube',20)}</button></div>
-    <button class="bigadd" data-pa="add" aria-label="도면 올리기">${ic('image',56)}</button>
+    <button class="bigadd" data-pa="add" aria-label="도면 올리기">${ic('image',56)}</button><button class="demoadd" data-pa="demo" aria-label="예시">${ic('wand',26)}</button>
     <div class="insp" hidden></div>
   </div>
   <div class="pal"></div>`;
@@ -327,7 +332,7 @@ function buildPV(){
 
   el.addEventListener('click',e=>{
     const pl=e.target.closest('[data-pl]');if(pl){V.plan=pl.dataset.pl;V.sel=null;saveUI();render();return;}
-    const pa=e.target.closest('[data-pa]');if(pa){if(pa.dataset.pa==='add')addPlan();else if(pa.dataset.pa==='edit')editPlan();return;}
+    const pa=e.target.closest('[data-pa]');if(pa){const a=pa.dataset.pa;if(a==='add')addPlan();else if(a==='edit')editPlan();else if(a==='auto')autoPlan();else if(a==='demo')loadDemo();else if(a==='all'){V.all=!V.all;V.sel=null;V.armed=null;render();}return;}
     const mo=e.target.closest('[data-m]');if(mo){setMode(mo.dataset.m);return;}
     const z=e.target.closest('[data-z]');if(z){zoomBy(z.dataset.z);return;}
   });
@@ -347,11 +352,12 @@ function updatePV(){
   $('.pchips',PV.el).innerHTML=S.plans.map(p=>`<button class="chip ${pl&&p.id===pl.id?'on':''}" data-pl="${p.id}">${esc(p.name)}</button>`).join('')+`<button class="chip add" data-pa="add" aria-label="도면 추가">${ic('plus',18)}</button>`;
   $$('.seg button',PV.el).forEach(b=>b.classList.toggle('on',b.dataset.m===PV.mode));
   $('[data-z="wall"]',PV.el).hidden=PV.mode!=='3d';
-  $('.bigadd',PV.el).hidden=!!pl;
+  $('.bigadd',PV.el).hidden=!!pl;$('.demoadd',PV.el).hidden=!!pl;
+  $('[data-pa="all"]',PV.el).classList.toggle('on',!!V.all);$('[data-pa="auto"]',PV.el).hidden=!pl||!!V.all;
   $('[data-pa="edit"]',PV.el).hidden=!pl;
   PV.stage.classList.toggle('armed',!!V.armed);
   PV.world.hidden=PV.mode!=='2d'||!pl;PV.gl.hidden=PV.mode!=='3d'||!pl;PV.m3.hidden=PV.mode!=='3d'||!pl;
-  PV.pal.hidden=!pl;
+  PV.pal.hidden=!pl||!!V.all;
   if(!pl){PV.insp.hidden=true;return;}
   const data=imgOf(pl),k=ikey(pl);
   PV.world.style.width=pl.w+'px';PV.world.style.height=pl.h+'px';
@@ -420,6 +426,7 @@ function bindGestures(el){
   el.addEventListener('contextmenu',e=>e.preventDefault());
 }
 function tap(cx,cy){
+  if(V.all)return;
   if(V.armed){const pos=screenToPlan(cx,cy,true);if(pos){placeAt(V.armed,pos);if(V.armed.t==='person')V.armed=null;render();}return;}
   if(V.sel){V.sel=null;render();}
 }
@@ -442,8 +449,9 @@ function placeAt(item,pos){
     if(m){m.x=pos.x;m.y=pos.y;}else m={id:uid(),plan:pl.id,day:V.day,type:'person',ref:item.id,x:pos.x,y:pos.y,rot:0};
     touch(m);const i=S.marks.findIndex(x=>x.id===m.id);if(i<0)S.marks.push(m);V.sel=m.id;
   }else{
-    const n=S.marks.filter(m=>m.plan===pl.id&&m.day===V.day&&m.type!=='person').length+1;
-    const m=touch({id:uid(),plan:pl.id,day:V.day,type:item.id,ref:null,x:pos.x,y:pos.y,rot:0,label:'C'+n});
+    if(item.id==='stage'){for(const o of S.marks.filter(o=>o.plan===pl.id&&o.day===V.day&&o.type==='stage'))S.del[o.id]=now();S.marks=S.marks.filter(o=>!(o.plan===pl.id&&o.day===V.day&&o.type==='stage'));}
+    const n=S.marks.filter(m=>m.plan===pl.id&&m.day===V.day&&isCam(m)).length+1;
+    const m=touch({id:uid(),plan:pl.id,day:V.day,type:item.id,ref:null,x:pos.x,y:pos.y,rot:0,label:item.id==='stage'?'':'C'+n});
     S.marks.push(m);V.sel=m.id;
   }
   save();
@@ -452,6 +460,7 @@ function removeMark(id){S.marks=S.marks.filter(m=>m.id!==id);S.del[id]=now();if(
 
 /* 마커 드래그 */
 function markDown(e){
+  if(V.all)return;
   const el=e.target.closest('.mk');if(!el||!PV.stage.contains(el))return;
   const m=byId(S.marks,el.dataset.id);if(!m)return;
   e.preventDefault();e.stopPropagation();
@@ -476,7 +485,7 @@ function renderMarks(){
   const pl=planNow();if(!pl)return;
   const ms=marksNow().slice().sort((a,b)=>(a.id===V.sel)-(b.id===V.sel));
   PV.svg.setAttribute('viewBox',`0 0 ${pl.w} ${pl.h}`);
-  PV.svg.innerHTML=ms.filter(m=>m.type!=='person').map(m=>shapeSVG(m,pl,false)).join('');
+  PV.svg.innerHTML=ms.filter(isCam).map(m=>shapeSVG(m,pl,false)).join('');
   const host=PV.mode==='2d'?PV.m2:PV.m3;
   PV.m2.innerHTML='';PV.m3.innerHTML='';
   host.innerHTML=ms.map(m=>markHTML(m)).join('');
@@ -486,7 +495,7 @@ function renderMarks(){
 /* 인스펙터 */
 function renderInsp(){
   const m=V.sel&&byId(S.marks,V.sel),pl=planNow();
-  if(!m||!pl||m.plan!==pl.id||m.day!==V.day){PV.insp.hidden=true;return;}
+  if(V.all||!m||!pl||m.plan!==pl.id||m.day!==V.day){PV.insp.hidden=true;return;}
   if(document.activeElement&&PV.insp.contains(document.activeElement)&&drag)return;
   PV.insp.hidden=false;
   const per=P(m.ref);
@@ -494,6 +503,7 @@ function renderInsp(){
     PV.insp.innerHTML=`<div class="r">${avHTML(per)}<div class="grow"><div class="nm">${esc(per&&per.name)}</div><div class="sub">${esc(per&&per.role)}</div></div>${per&&per.phone?`<a class="call" href="tel:${esc(per.phone)}">${ic('phone')}</a>`:''}<button class="ib" data-i="editp">${ic('edit',20)}</button><button class="ib red" data-i="del">${ic('trash',20)}</button><button class="ib" data-i="close">${ic('x',20)}</button></div>`;
     return;
   }
+  if(m.type==='stage'){PV.insp.innerHTML=`<div class="r"><span class="tk" style="width:42px;height:42px;border-radius:13px;background:#f59e0b;color:#fff;display:flex;align-items:center;justify-content:center">${ic('flag',22)}</span><span class="grow"></span><button class="ib red" data-i="del">${ic('trash',20)}</button><button class="ib" data-i="close">${ic('x',20)}</button></div>`;return;}
   const T=CAMS[m.type],val=(k,d)=>m[k]==null?d:m[k];
   const ops=S.people.slice().sort(sortKo).map(p=>`<span class="av sm ${m.ref===p.id?'on':''}" style="--c:${hue(p.role||p.name)}" data-op="${p.id}">${esc(ini(p.name))}</span>`).join('');
   PV.insp.innerHTML=`
@@ -526,11 +536,11 @@ function inspInput(e){
 /* 팔레트 */
 function renderPal(){
   const pl=planNow();if(!pl)return;
-  const placed=new Set(S.marks.filter(m=>m.plan===pl.id&&m.day===V.day&&m.type==='person').map(m=>m.ref));
+  const placed=new Set(S.marks.filter(m=>m.plan===pl.id&&m.day===V.day&&m.ref).map(m=>m.ref));
   let ppl=S.people.filter(p=>(p.days||[1,2,3]).includes(V.day));if(!ppl.length)ppl=S.people;
   ppl=ppl.slice().sort(sortKo);
   const on=(t,id)=>V.armed&&V.armed.t===t&&V.armed.id===id?'on':'';
-  PV.pal.innerHTML=`<div class="scroll-x">${Object.keys(CAMS).map(k=>`<div class="pi ${on('cam',k)}" data-p="cam" data-id="${k}" style="--c:${CAMS[k].c}"><span class="tk">${ic(k,24)}</span>${CAMS[k].n}</div>`).join('')}</div>
+  PV.pal.innerHTML=`<div class="scroll-x">${Object.keys(CAMS).map(k=>`<div class="pi ${on('cam',k)}" data-p="cam" data-id="${k}" style="--c:${CAMS[k].c}"><span class="tk">${ic(k,24)}</span>${CAMS[k].n}</div>`).join('')}<div class="pi ${on('cam','stage')}" data-p="cam" data-id="stage" style="--c:#f59e0b"><span class="tk">${ic('flag',24)}</span>무대</div></div>
   <div class="scroll-x">${ppl.map(p=>`<div class="pi ${on('person',p.id)} ${placed.has(p.id)?'done':''}" data-p="person" data-id="${p.id}">${avHTML(p)}${esc(short(p.name))}</div>`).join('')}<div class="pi" data-p="newp" style="--c:var(--faint)"><span class="tk" style="background:var(--card2);color:var(--soft)">${ic('plus',22)}</span>&nbsp;</div></div>`;
 }
 function palDown(e){
@@ -558,7 +568,7 @@ function dropItem(item,cx,cy){
   if(item.t==='person'){
     const hit=document.elementsFromPoint(cx,cy).find(n=>n.classList&&n.classList.contains('mk'));
     const cm=hit&&byId(S.marks,hit.dataset.id);
-    if(cm&&cm.type!=='person'){cm.ref=item.id;touch(cm);V.sel=cm.id;save();render();return;}
+    if(cm&&isCam(cm)){cm.ref=item.id;touch(cm);V.sel=cm.id;save();render();return;}
   }
   const pos=screenToPlan(cx,cy,true);if(!pos)return;
   placeAt(item,pos);V.armed=item.t==='person'?null:V.armed;render();
@@ -690,7 +700,7 @@ function shapes3D(ms,pl){
   const T=THREE,G=PV.G,W=100,D=100*pl.h/pl.w;disposeGroup(G.shapes);
   const wx=px=>(px/pl.w-.5)*W,wz=py=>(py/pl.h-.5)*D;
   for(const m of ms){
-    if(m.type==='person')continue;
+    if(!isCam(m))continue;
     const g=geo(m,pl),col=new T.Color(CAMS[m.type].c),pos=[wx(g.pts[0][0]),.15,wz(g.pts[0][1])],idx=[];
     for(let i=1;i<g.pts.length;i++)pos.push(wx(g.pts[i][0]),.15,wz(g.pts[i][1]));
     for(let i=1;i<g.pts.length-1;i++)idx.push(0,i,i+1);
@@ -809,16 +819,93 @@ function vSheet(){
 }
 const VIEWS={people:vPeople,gear:vGear,time:vTime,sheet:vSheet};
 
+/* ═══ 자동 배치 ═══ */
+const kindOf=r=>{r=String(r||'');return /짐벌/.test(r)?'gimbal':/지미/.test(r)?'jib':/돌리/.test(r)?'dolly':/핸드/.test(r)?'hand':/카메라|트라이|캠/.test(r)?'tripod':null;};
+const SLOT={ /* [가로 위치, 앞(무대)→뒤 깊이 비율] */
+  dolly:(i,n)=>[.5+(i-(n-1)/2)*.2,.04],
+  jib:(i,n)=>{const s=i%2?1:-1,k=Math.floor(i/2);return [.5+s*.38,.10+k*.12];},
+  gimbal:(i,n)=>{const s=i%2?1:-1,k=Math.floor(i/2);return [.5+s*(.26+k*.08),.34];},
+  hand:(i,n)=>{const s=i%2?1:-1,k=Math.floor(i/2);return [.5+s*(.40+k*.04),.50];},
+  tripod:(i,n)=>[.5+(i-(n-1)/2)*.15,.70]
+};
+function autoLayout(pl,days){
+  const st=S.marks.find(x=>x.plan===pl.id&&x.type==='stage'),sx=st?st.x:.5,sy=st?st.y:.2,dir=sy<.5?1:-1;
+  const front=clamp(sy+dir*.17,.08,.92),span=dir>0?.9-front:front-.1,yAt=f=>clamp(front+dir*span*f,.05,.95);
+  const face=(x,y)=>((Math.atan2(sx-x,-(sy-y))*180/Math.PI)+360)%360;
+  for(const d of days){
+    for(const x of S.marks)if(x.plan===pl.id&&x.day===d)S.del[x.id]=now();
+    S.marks=S.marks.filter(x=>!(x.plan===pl.id&&x.day===d));
+    const add=o=>S.marks.push(touch({id:uid(),plan:pl.id,day:d,rot:0,ref:null,...o}));
+    add({type:'stage',x:sx,y:sy});
+    const ppl=S.people.filter(p=>(p.days||[1,2,3]).includes(d)).sort(sortKo);
+    const cams={},ctrl=[];
+    for(const p of ppl){const k=kindOf(p.role);if(k)(cams[k]=cams[k]||[]).push(p);else ctrl.push(p);}
+    let n=0;
+    for(const k of ['tripod','gimbal','jib','dolly','hand'])for(const [i,p] of (cams[k]||[]).entries()){
+      const [x,dy]=SLOT[k](i,cams[k].length),px=clamp(x,.05,.95),py=yAt(dy);
+      add({type:k,ref:p.id,label:'C'+(++n),x:px,y:py,rot:Math.round(face(px,py))});
+    }
+    const gap=Math.min(.12,.8/Math.max(1,ctrl.length));
+    ctrl.forEach((p,i)=>add({type:'person',ref:p.id,x:clamp(.5+(i-(ctrl.length-1)/2)*gap,.05,.95),y:yAt(.92)}));
+  }
+  V.sel=null;save();render();
+}
+function autoPlan(){
+  const pl=planNow();if(!pl)return;
+  const m=modal(`<h3>${ic('wand')}<button class="ib" data-x>${ic('x')}</button></h3><div class="sub">현재 배치가 새로 만들어집니다</div>
+    <div class="btns"><button class="btn" data-a1>${V.day}일</button><button class="btn" data-a3 style="--tc:var(--c-people)">${ic('layers')}1·2·3일</button></div>`);
+  $('[data-a1]',m.box).onclick=()=>{m.close();autoLayout(pl,[V.day]);};
+  $('[data-a3]',m.box).onclick=()=>{m.close();V.all=true;autoLayout(pl,[1,2,3]);};
+}
+
+/* ═══ 예시 ═══ */
+function demoImage(){
+  const c=document.createElement('canvas');c.width=1600;c.height=1000;const x=c.getContext('2d');
+  x.fillStyle='#fff';x.fillRect(0,0,1600,1000);
+  const R=(a,b,w,h,col)=>{x.fillStyle=col||'#111';x.fillRect(a,b,w,h);},t=14;
+  R(60,60,1480,t);R(60,926,1480,t);R(60,60,t,880);R(1526,60,t,880);          // 바깥 벽
+  R(480,90,640,t);R(480,300,640,t);R(480,90,t,224);R(1106,90,t,224);          // 무대
+  R(60,700,330,t);R(376,700,t,226);R(1210,700,330,t);R(1210,700,t,226);      // 양쪽 방
+  x.fillStyle='#d4d4d8';for(let r=0;r<7;r++){for(let b=0;b<2;b++)x.fillRect(190+b*660,400+r*40,540,18);}   // 좌석
+  R(700,800,200,70,'#9ca3af');                                                  // 믹서(FOH)
+  x.fillStyle='#111';x.font='bold 38px sans-serif';x.fillText('STAGE',760,215);x.fillText('FOH',760,845);
+  return c.toDataURL('image/jpeg',.9);
+}
+async function loadDemo(){
+  if(S.plans.some(p=>p.id==='demo-plan')){V.plan='demo-plan';V.tab='plan';render();return;}
+  const pl={id:'demo-plan',name:'예시 · 메인홀',w:1600,h:1000,iv:now(),ws:0,wh:5,wn:60,inv:false};
+  await putImg(pl,demoImage());
+  const PP=[['김도윤','총괄',[1,2,3]],['이서준','카메라 1',[1,2,3]],['박민재','카메라 2',[1,2,3]],['최유진','짐벌',[1,2,3]],['정하린','지미집',[1,2,3]],['한지우','핸드헬드',[1,3]],['오세린','다나돌리',[2,3]],['강태오','스위처',[1,2,3]],['윤서아','모니터',[1,2,3]],['임도현','오디오',[1,2,3]],['송지안','송출',[1,2,3]],['문가온','스태프',[1,2,3]]];
+  PP.forEach((p,i)=>S.people.push(touch({id:'demo-p'+i,name:p[0],role:p[1],phone:'010-0000-'+String(1000+i),emerg:'',wear:i%2?['무전기','인컴']:['무전기','이어피스','조끼'],days:p[2],note:''})));
+  const G=[['FX6','카메라',3,'ok','demo-p1'],['A7S III','카메라',2,'ok','demo-p2'],['RS3 Pro','짐벌',2,'check','demo-p3'],['지미집 6m','지미집',1,'ok','demo-p4'],['다나돌리 세트','돌리',1,'check','demo-p6'],['삼각대','삼각대',4,'ok'],['모니터 17"','모니터',3,'ok','demo-p8'],['무선 마이크','오디오',8,'miss','demo-p9'],['배터리','전원',16,'miss'],['SDI 케이블 50m','케이블',6,'ok']];
+  G.forEach((g,i)=>S.gear.push(touch({id:'demo-g'+i,name:g[0],cat:g[1],qty:g[2],status:g[3],owner:g[4]||null,note:''})));
+  const all=['demo-p0','demo-p1','demo-p2','demo-p3','demo-p4','demo-p7','demo-p8','demo-p9','demo-p10'];
+  const SES=[[1,'등록 · 리허설','08:00','09:30',all],[1,'오프닝 워십','10:00','11:30',[...all,'demo-p5']],[1,'말씀 1','13:00','14:30',all],[1,'찬양 집회','19:00','21:00',[...all,'demo-p5']],
+    [2,'세미나 A','09:30','11:00',['demo-p0','demo-p1','demo-p7','demo-p9']],[2,'말씀 2','13:00','14:30',[...all,'demo-p6']],[2,'저녁 집회','19:00','21:00',[...all,'demo-p6']],
+    [3,'기도회','08:30','09:30',['demo-p0','demo-p1','demo-p9']],[3,'마지막 말씀','11:00','12:30',[...all,'demo-p5','demo-p6']],[3,'파송 예배','14:00','15:30',[...all,'demo-p5','demo-p6']]];
+  SES.forEach((s,i)=>S.sessions.push(touch({id:'demo-s'+i,day:s[0],title:s[1],start:s[2],end:s[3],place:'메인홀',crew:s[4],note:''})));
+  S.plans.push(touch(pl));V.plan=pl.id;V.tab='plan';V.day=1;V.all=true;V.sel=null;saveUI();
+  autoLayout(pl,[1,2,3]);
+}
+function removeDemo(){
+  for(const c of COLS)for(const it of S[c])if(String(it.id).startsWith('demo-')||it.plan==='demo-plan')S.del[it.id]=now();
+  for(const c of COLS)S[c]=S[c].filter(it=>!(String(it.id).startsWith('demo-')||it.plan==='demo-plan'));
+  if(V.plan==='demo-plan')V.plan=null;V.all=false;V.sel=null;save();render();
+}
+
 /* 설정 */
 function settings(){
   const m=modal(`<h3>${ic('cog')}<button class="ib" data-x>${ic('x')}</button></h3>
     <label class="fld"><span>DAY 1</span><input class="in" type="date" value="${esc(S.cfg.date1||'')}" data-d></label>
     <div class="btns"><button class="btn ghostb" data-ex>${ic('dl')}</button><button class="btn ghostb" data-im>${ic('ul')}</button><button class="btn ghostb" data-sync>${ic('rot')}</button></div>
+    <div class="btns"><button class="btn ghostb" data-demo>${ic('wand')}</button>${S.plans.some(p=>p.id==='demo-plan')?`<button class="btn del" data-undemo>${ic('trash')}</button>`:''}</div>
     <div class="btns"><button class="btn" data-ok>${ic('check')}저장</button></div>`);
   $('[data-ok]',m.box).onclick=()=>{S.cfg.date1=$('[data-d]',m.box).value;S.cfg.u=now();const t=todayN();if(t)V.day=t;m.close();save();render();};
   $('[data-ex]',m.box).onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(S)],{type:'application/json'}));a.download='isaiah61-backup.json';a.click();};
   $('[data-im]',m.box).onclick=()=>{const f=document.createElement('input');f.type='file';f.accept='.json';f.onchange=async()=>{try{const j=JSON.parse(await f.files[0].text());if(mergeIn(j)||true){m.close();save();render();}}catch(e){console.warn(e);}};f.click();};
   $('[data-sync]',m.box).onclick=()=>{m.close();pull();};
+  $('[data-demo]',m.box).onclick=()=>{m.close();V.tab='plan';loadDemo();};
+  const ud=$('[data-undemo]',m.box);if(ud)ud.onclick=()=>{m.close();removeDemo();};
 }
 
 /* ═══ 렌더 · 이벤트 ═══ */
@@ -836,7 +923,7 @@ function render(){
   const tab=TABS.find(t=>t.k===V.tab)||TABS[0],col=`var(${tab.c})`;
   const dn=$('#days'),today=todayN();
   dn.style.setProperty('--tc',col);
-  dn.innerHTML=[1,2,3].map(n=>{const dt=dayDate(n);return `<button class="${V.day===n?'on':''} ${today===n?'today':''}" data-day="${n}">${n}<small>${dt?(dt.getMonth()+1)+'/'+dt.getDate():'DAY'}</small></button>`;}).join('');
+  dn.innerHTML=[1,2,3].map(n=>{const dt=dayDate(n);return `<button class="${V.day===n&&!V.all?'on':''} ${today===n?'today':''}" data-day="${n}">${n}<small>${dt?(dt.getMonth()+1)+'/'+dt.getDate():'DAY'}</small></button>`;}).join('');
   $('#tabs').innerHTML=TABS.map(t=>`<button class="${t.k===V.tab?'on':''}" data-tab="${t.k}" style="--tc:var(${t.c})">${ic(t.i,26)}${t.n}</button>`).join('');
   const main=$('#main');main.style.setProperty('--tc',col);
   if(V.tab==='plan'){
@@ -849,7 +936,7 @@ function render(){
 }
 function boot(){
   buildPV();
-  $('#days').addEventListener('click',e=>{const b=e.target.closest('[data-day]');if(b){V.day=Number(b.dataset.day);V.sel=null;saveUI();render();}});
+  $('#days').addEventListener('click',e=>{const b=e.target.closest('[data-day]');if(b){V.day=Number(b.dataset.day);V.all=false;V.sel=null;saveUI();render();}});
   $('#tabs').addEventListener('click',e=>{const b=e.target.closest('[data-tab]');if(b){V.tab=b.dataset.tab;V.sel=null;V.armed=null;saveUI();render();}});
   $('#main').addEventListener('click',e=>{
     if(V.tab==='plan')return;
