@@ -146,3 +146,7 @@ pre.txt{margin:0;white-space:pre-wrap;font:12.5px/1.6 ui-monospace,Menlo,monospa
   .kv label{border-color:#999}
   .dh{border-color:#000}
 }
+
+.fbar{padding:0 14px 8px}
+.mk.dim{opacity:.16;pointer-events:none}
+.mk.dim .pill{display:none}
