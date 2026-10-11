@@ -266,7 +266,7 @@ function vCall(){
   const n=V.day,d=dayRec(n),ses=S.sched.filter(s=>s.day===n&&(!V.part||partOfTime(s.start)===V.part)).sort(byStart),crew=working(n),absent=S.crew.filter(c=>!crew.includes(c));
   return `<div class="doc">
   <div class="dh"><div><h1>CALL SHEET</h1><div style="color:var(--soft);font-weight:600">${esc(S.proj.title)} · ${esc(S.proj.sub)} · ${VENUE}</div></div><div class="r"><b>DAY ${n} / 3${V.part?' · '+V.part:''}</b>${esc(dateStr(n))}</div></div>
-  <div class="clock"><span>현재 시각</span><b id="clk">${clockText()}</b></div>
+  <div class="clock"><b id="clk">${clockText()}</b></div>
   <div class="cnts"><div class="cn"><span>총원</span><b>${S.crew.length}</b></div><div class="cn ok"><span>현재원</span><b>${crew.length}</b></div><div class="cn ${absent.length?'bad':''}"><span>불참</span><b>${absent.length}</b>${absent.length?`<small>${esc(absent.slice(0,6).map(c=>c.name||'이름 없음').join(', '))}${absent.length>6?' 외 '+(absent.length-6)+'명':''}</small>`:''}</div></div>
   <div class="sec">일정</div>
   ${ses.length?`<div class="tw"><table class="t"><thead><tr><th>시간</th><th>구분</th><th>항목</th><th>장소</th><th>담당</th><th>비고</th></tr></thead><tbody>${ses.map(s=>`<tr><td class="ro" style="white-space:nowrap;font-variant-numeric:tabular-nums">${esc(s.start)}${s.end?'–'+esc(s.end):''}</td><td class="ro">${esc(s.kind)}</td><td class="ro"><b>${esc(s.title)}</b></td><td class="ro">${esc(s.place)}</td><td class="ro">${esc(s.who)}</td><td class="ro">${esc(s.note)}</td></tr>`).join('')}</tbody></table></div>`:`<div class="empty">일정 탭에서 입력</div>`}
@@ -345,7 +345,7 @@ function pickMulti(kind,c){
 /* ═══ 플랏 ═══ */
 /* 행사장 기본 도면: KINTEX 제2전시장 9홀 (9A+9B) — 도면 표기 치수 기준 99m × 132m, 높이 15m (kintex.com 시설 안내) */
 /* 현재 시각(시:분:초) — 1초마다 해당 글자만 갱신(화면 전체를 다시 그리지 않음) */
-const clockText=()=>{const d=new Date(),p=n=>String(n).padStart(2,'0');return `${d.getFullYear()}.${d.getMonth()+1}.${d.getDate()} (${WD[d.getDay()]})  ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;};
+const clockText=()=>{const d=new Date(),p=n=>String(n).padStart(2,'0');return `${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;};
 /* 행사장은 바뀌지 않으므로 고정 문구 */
 const VENUE='KINTEX 제2전시장 9홀';
 const KINTEX={id:'kintex9',name:'KINTEX 9홀',gen:'hall',w:1110,h:1440,iv:2,

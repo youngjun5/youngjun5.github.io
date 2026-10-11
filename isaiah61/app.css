@@ -191,6 +191,5 @@ canvas.gl{filter:var(--glf)}
 
 .days.parts button{min-width:52px;padding:0 10px}
 
-.clock{display:flex;align-items:baseline;justify-content:space-between;gap:12px;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:10px 16px;margin-bottom:10px}
-.clock span{font-size:12px;font-weight:800;color:var(--soft);letter-spacing:.04em}
-.clock b{font-size:26px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.01em;white-space:pre}
+.clock{display:flex;align-items:center;justify-content:center;background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:18px 16px;margin-bottom:10px}
+.clock b{font-size:clamp(52px,14vw,96px);line-height:1;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:.01em;text-align:center}
