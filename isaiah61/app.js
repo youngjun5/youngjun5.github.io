@@ -78,6 +78,11 @@ function unifyTerms(){
 unifyTerms();
 if(todayN())V.day=todayN();
 const working=n=>S.crew.filter(c=>(c.days||DAYN).includes(n));
+/* 참여일 체크가 모든 곳의 기준: 그날 체크 안 한 인원은 담당·배치·목록·텍스트 어디에도 나오지 않는다(데이터는 남겨서 다시 체크하면 복원) */
+const attends=(id,n)=>{const c=crewOf(id);return !!c&&(c.days||DAYN).includes(n);};
+const opOf=c=>c&&c.op&&attends(c.op,c.day)?crewOf(c.op):null;
+const ownerOf=g=>{const c=crewOf(g.owner);return c&&(c.days||DAYN).length?c:null;};
+const pinOk=p=>p.kind!=='crew'||attends(p.ref,p.day);
 
 /* ═══ 저장 · 동기화 ═══ */
 const SB={url:'https://mgvqhrdhshpuamihfvnp.supabase.co',
@@ -222,7 +227,7 @@ function modal(inner){
   $$('[data-x]',o).forEach(b=>b.onclick=close);
   return {o,box:o.firstElementChild,close};
 }
-function toast(t){const e=document.createElement('div');e.className='toast';e.textContent=t;document.body.append(e);setTimeout(()=>e.remove(),1500);}
+function toast(t,ms){const e=document.createElement('div');e.className='toast';e.textContent=t;document.body.append(e);setTimeout(()=>e.remove(),ms||1500);}
 async function copyText(t){
   try{await navigator.clipboard.writeText(t);}catch(_){const a=document.createElement('textarea');a.value=t;document.body.append(a);a.select();document.execCommand('copy');a.remove();}
   toast('복사됨');
@@ -252,7 +257,7 @@ function vCall(){
 }
 function miniPlots(n){
   const out=S.plans.map(pl=>{
-    const ps=S.pins.filter(p=>p.plan===pl.id&&p.day===n);if(!ps.length)return '';
+    const ps=S.pins.filter(p=>p.plan===pl.id&&p.day===n&&pinOk(p));if(!ps.length)return '';
     const data=imgOf(pl);
     return `<div class="sec">카메라 플랏 · ${esc(pl.name)}</div><div class="mini" style="aspect-ratio:${pl.w}/${pl.h}">${data?`<img src="${data}" style="position:absolute;inset:0;width:100%;height:100%">`:''}<svg viewBox="0 0 ${pl.w} ${pl.h}" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%">${ps.filter(p=>p.kind==='area').map(p=>areaSVG(p,pl)).join('')}${ps.filter(p=>p.kind==='cam').map(p=>coneSVG(p,pl)).join('')}</svg><div class="marks">${ps.map(p=>markHTML(p)).join('')}</div></div>`;
   }).join('');
@@ -279,7 +284,7 @@ function vCrew(){
 /* ═══ 장비 ═══ */
 function vGear(){
   const cats=[...new Set([...CATS,...S.gear.map(g=>g.cat)])].filter(c=>S.gear.some(g=>g.cat===c));
-  const body=cats.map(cat=>{const l=S.gear.filter(g=>g.cat===cat);return `<tr class="grp"><td colspan="8"><div class="gc">${esc(cat)} · ${l.length}종 · 준비 ${l.filter(g=>(g.status||'ok')==='ok').length}/${l.length}</div></td></tr>`+l.map(g=>`<tr><td style="width:110px">${sel('gear',g,'cat',[...new Set([...CATS,g.cat])],{re:1})}</td><td style="min-width:180px">${inp('gear',g,'name',{ph:'품목'})}</td><td style="width:70px" class="num">${inp('gear',g,'qty',{t:'number'})}</td><td style="min-width:130px">${sel('gear',g,'owner',[['','—'],...S.crew.map(c=>[c.id,c.name||'(이름 없음)'])])}</td><td style="width:84px"><span class="${g.status||'ok'}">${sel('gear',g,'status',Object.entries(STAT),{re:1})}</span></td><td class="ro" style="min-width:150px;font-size:12px;color:var(--soft)">${esc(gearUse(g))}</td><td style="min-width:140px">${inp('gear',g,'note',{ph:'비고'})}</td>${xb('gear',g.id)}</tr>`).join('');}).join('');
+  const body=cats.map(cat=>{const l=S.gear.filter(g=>g.cat===cat);return `<tr class="grp"><td colspan="8"><div class="gc">${esc(cat)} · ${l.length}종 · 준비 ${l.filter(g=>(g.status||'ok')==='ok').length}/${l.length}</div></td></tr>`+l.map(g=>`<tr><td style="width:110px">${sel('gear',g,'cat',[...new Set([...CATS,g.cat])],{re:1})}</td><td style="min-width:180px">${inp('gear',g,'name',{ph:'품목'})}</td><td style="width:70px" class="num">${inp('gear',g,'qty',{t:'number'})}</td><td style="min-width:130px">${sel('gear',g,'owner',[['','—'],...S.crew.filter(c=>(c.days||DAYN).length).map(c=>[c.id,c.name||'(이름 없음)'])])}</td><td style="width:84px"><span class="${g.status||'ok'}">${sel('gear',g,'status',Object.entries(STAT),{re:1})}</span></td><td class="ro" style="min-width:150px;font-size:12px;color:var(--soft)">${esc(gearUse(g))}</td><td style="min-width:140px">${inp('gear',g,'note',{ph:'비고'})}</td>${xb('gear',g.id)}</tr>`).join('');}).join('');
   const total=S.gear.reduce((a,g)=>a+(Number(g.qty)||0),0);
   return `<div class="doc"><div class="dh"><div><h1>EQUIPMENT LIST</h1><div style="color:var(--soft);font-weight:600">${esc(S.proj.title)} · ${esc(S.proj.sub)}</div></div><div class="r"><b>${S.gear.length}종 · ${total}개</b>부족 ${S.gear.filter(g=>g.status==='miss').length} · 점검 ${S.gear.filter(g=>g.status==='check').length}</div></div>
   <div class="tw"><table class="t" style="min-width:900px"><thead><tr><th>분류</th><th>품목</th><th>수량</th><th>담당</th><th>상태</th><th>카메라 배정</th><th>비고</th><th class="noprint"></th></tr></thead><tbody>${body||`<tr><td colspan="8" class="empty">분류를 눌러 추가</td></tr>`}</tbody></table></div>
@@ -307,7 +312,7 @@ function pickMulti(kind,c){
       const used=S.cams.filter(x=>x.day===c.day&&x.id!==c.id&&(x.gear||[]).includes(g.id)).length,q=g.qty==null?1:g.qty,warn=used>=q;
       return `<button class="pk ${sel.has(g.id)?'on':''} ${warn?'warn':''}" data-v="${g.id}"><span class="bx">${sel.has(g.id)?'✓':''}</span><b>${esc(g.name||'(이름 없음)')}</b><span class="sub">${used}/${q} 사용${warn?' · 소진':''}</span></button>`;}).join('')).join('');
   };
-  const m=modal(`<h3>${kind==='rigs'?'포지션':'장비'} · CAM ${esc(c.no)} ${esc((crewOf(c.op)||{}).name||'')}<button class="ib" data-x>${ic('x',16)}</button></h3><div class="pks" style="display:flex;flex-direction:column;gap:6px"></div><div class="btns"><button class="btn" data-ok>${ic('check',18)}완료</button></div>`);
+  const m=modal(`<h3>${kind==='rigs'?'포지션':'장비'} · CAM ${esc(c.no)} ${esc((opOf(c)||{}).name||'')}<button class="ib" data-x>${ic('x',16)}</button></h3><div class="pks" style="display:flex;flex-direction:column;gap:6px"></div><div class="btns"><button class="btn" data-ok>${ic('check',18)}완료</button></div>`);
   const box=$('.pks',m.box),draw=()=>{box.innerHTML=body();};draw();
   box.addEventListener('click',e=>{const b=e.target.closest('[data-v]');if(!b)return;const v=b.dataset.v;sel.has(v)?sel.delete(v):sel.add(v);draw();});
   $('[data-ok]',m.box).onclick=()=>{const arr=[...sel];if(kind==='rigs'){c.rigs=arr;c.rig=arr[0]||'';}else c.gear=arr;touch(c);save();m.close();render();};
@@ -343,7 +348,7 @@ function genHall(pl){
 const RIGH={트라이포드:1.6,짐벌:1.5,핸드헬드:1.5,지미집:3.5,다나돌리:.9,기타:1.5};
 const PV={el:null,z:1,tx:0,ty:0,z0:0,fitFor:'',mode:'2d',G:null,buildFor:'',orbitFor:'',th:{theta:.35,phi:.85,dist:190,tx:0,tz:0}};
 const planNow=()=>{let p=byId(S.plans,V.plan);if(!p){p=S.plans[0]||null;V.plan=p&&p.id;}return p;};
-const pinsNow=()=>{const pl=planNow();return pl?S.pins.filter(p=>p.plan===pl.id&&p.day===V.day):[];};
+const pinsNow=()=>{const pl=planNow();return pl?S.pins.filter(p=>p.plan===pl.id&&p.day===V.day&&pinOk(p)):[];};
 const dimOf=p=>p.kind==='area'?false:(!!V.filter&&!(p.kind==='cam'&&rigsOf(byId(S.cams,p.ref)).includes(V.filter)));
 /* 이미지 좌표(0~1) ↔ 미터(홀 중심 기준). 실측 정보가 없는 도면은 가로 100m로 가정 */
 const realOf=pl=>pl.real||{w:100,h:100*pl.h/pl.w,H:0,box:[0,0,1,1],zones:[]};
@@ -370,7 +375,7 @@ function areaSVG(p,pl){
 function markHTML(p,o={}){
   const sel=p.id===V.sel?'sel':'',st=`left:${p.x*100}%;top:${p.y*100}%`;
   if(p.kind==='area')return `<div class="mk area ${sel}" data-id="${p.id}" style="${st}"><span class="pill big"><i style="background:${ACOL[p.col||0]}"></i>${esc(p.name||'구역')}</span></div>`;
-  if(p.kind==='cam'){const c=byId(S.cams,p.ref);if(!c)return '';const op=crewOf(c.op);
+  if(p.kind==='cam'){const c=byId(S.cams,p.ref);if(!c)return '';const op=opOf(c);
     return `<div class="mk cam ${sel} ${o.dim?'dim':''}" data-id="${p.id}" style="${st}"><span class="tk" style="--c:${RIGC[rig0(c)]||RIGC.기타}">${esc(c.no)}</span>${op?`<span class="pill">${esc(short(op.name))}</span>`:''}</div>`;}
   const c=crewOf(p.ref);if(!c)return '';
   return `<div class="mk crew ${sel} ${o.dim?'dim':''}" data-id="${p.id}" style="${st}"><span class="tk" style="--c:#475569">${esc(ini(c.name))}</span><span class="pill">${esc(short(c.name))}</span></div>`;
@@ -406,7 +411,7 @@ function updatePV(){
   $('[data-plans]',PV.el).innerHTML=S.plans.map(p=>`<button class="chip ${pl&&p.id===pl.id?'on':''}" data-pl="${p.id}">${esc(p.name)}</button>`).join('')+`<button class="chip dash" data-pa="add">${ic('plus',14)}도면</button>`;
   $$('.seg button',PV.el).forEach(b=>b.classList.toggle('on',b.dataset.m===PV.mode));
   const fb=$('[data-filter]',PV.el);fb.hidden=!pl;
-  if(pl){const cnt=r=>S.pins.filter(p=>p.plan===pl.id&&p.day===V.day&&p.kind==='cam'&&rigsOf(byId(S.cams,p.ref)).includes(r)).length,tot=S.pins.filter(p=>p.plan===pl.id&&p.day===V.day&&p.kind!=='area').length;
+  if(pl){const cnt=r=>S.pins.filter(p=>p.plan===pl.id&&p.day===V.day&&p.kind==='cam'&&rigsOf(byId(S.cams,p.ref)).includes(r)).length,tot=S.pins.filter(p=>p.plan===pl.id&&p.day===V.day&&p.kind!=='area'&&pinOk(p)).length;
     fb.innerHTML=`<button class="chip ${!V.filter?'on':''}" data-f="">전체 ${tot}</button>`+FILTERS.map(([r,l])=>`<button class="chip ${V.filter===r?'on':''}" data-f="${r}"><span style="width:9px;height:9px;border-radius:3px;background:${RIGC[r]}"></span>${l} ${cnt(r)}</button>`).join('');}
   $('[data-pa="edit"]',PV.el).hidden=!pl;$('.bigadd',PV.el).hidden=!!pl;PV.tray.hidden=!pl;PV.stage.classList.toggle('armed',!!V.armed);
   PV.world.hidden=!pl||m3;PV.gl.hidden=!pl||!m3;PV.m3.hidden=!pl||!m3;
@@ -474,7 +479,7 @@ function renderTray(){
   const placed=new Set(S.pins.filter(p=>p.plan===pl.id&&p.day===V.day).map(p=>p.kind+p.ref));
   const cams=S.cams.filter(c=>c.day===V.day).sort((a,b)=>(a.no||0)-(b.no||0)),crew=working(V.day);
   const on=(t,id)=>V.armed&&V.armed.t===t&&V.armed.id===id?'on':'';
-  PV.tray.innerHTML=`<div class="row"><span class="lbl">CAM</span><div class="scx">${Object.entries(AREA_PRE).map(([k,v])=>`<button class="chip ${on('area',k)}" data-tray="area" data-id="${k}"><span style="width:9px;height:9px;border-radius:3px;background:${ACOL[v.c]}"></span>+ ${v.n}</button>`).join('')}${cams.map(c=>`<button class="chip ${on('cam',c.id)} ${placed.has('cam'+c.id)?'done':''}" data-tray="cam" data-id="${c.id}"><span style="width:9px;height:9px;border-radius:3px;background:${RIGC[rig0(c)]||RIGC.기타}"></span>${esc(c.no)} ${esc((crewOf(c.op)||{}).name||'')} <small style="opacity:.7">${esc(rigTxt(c))}</small></button>`).join('')}</div></div>
+  PV.tray.innerHTML=`<div class="row"><span class="lbl">CAM</span><div class="scx">${Object.entries(AREA_PRE).map(([k,v])=>`<button class="chip ${on('area',k)}" data-tray="area" data-id="${k}"><span style="width:9px;height:9px;border-radius:3px;background:${ACOL[v.c]}"></span>+ ${v.n}</button>`).join('')}${cams.map(c=>`<button class="chip ${on('cam',c.id)} ${placed.has('cam'+c.id)?'done':''}" data-tray="cam" data-id="${c.id}"><span style="width:9px;height:9px;border-radius:3px;background:${RIGC[rig0(c)]||RIGC.기타}"></span>${esc(c.no)} ${esc((opOf(c)||{}).name||'')} <small style="opacity:.7">${esc(rigTxt(c))}</small></button>`).join('')}</div></div>
   <div class="row"><span class="lbl">CREW</span><div class="scx">${crew.map(c=>`<button class="chip ${on('crew',c.id)} ${placed.has('crew'+c.id)?'done':''}" data-tray="crew" data-id="${c.id}">${esc(c.name||'?')}</button>`).join('')||'<span style="color:var(--faint)">크루 탭에서 추가</span>'}</div></div>`;
 }
 function renderMarks(){
@@ -488,7 +493,7 @@ function renderMarks(){
 }
 function renderInsp(){
   const p=V.sel&&byId(S.pins,V.sel),pl=planNow();
-  if(!p||!pl||p.plan!==pl.id||p.day!==V.day){PV.insp.hidden=true;return;}
+  if(!p||!pl||p.plan!==pl.id||p.day!==V.day||!pinOk(p)){PV.insp.hidden=true;return;}
   PV.insp.hidden=false;
   const close=`<button class="ib red" data-i="del" aria-label="도면에서 빼기">${ic('trash',16)}</button><button class="ib" data-i="close">${ic('x',16)}</button>`,loc=`<div style="color:var(--soft);font-size:12px;font-weight:600">${esc(where(p))}</div>`;
   if(p.kind==='area'){PV.insp.innerHTML=`<div class="r"><input class="in" style="height:38px;flex:1;min-width:0" value="${esc(p.name||'')}" data-nm placeholder="이름"><button class="ib" data-i="dup" aria-label="복제">${ic('copy',16)}</button>${close}</div>
@@ -496,7 +501,7 @@ function renderInsp(){
     <div class="r"><label class="sl">가로<input type="range" min="1" max="80" value="${p.w||10}" data-s="w"></label><label class="sl">세로<input type="range" min="1" max="60" value="${p.d||10}" data-s="d"></label></div>
     <div class="r"><label class="sl">높이<input type="range" min="0" max="15" step=".5" value="${p.h==null?3:p.h}" data-s="h"></label><label class="sl">${ic('rot',16)}<input type="range" min="0" max="359" value="${p.rot||0}" data-s="rot"></label></div>${loc}`;return;}
   if(p.kind==='crew'){const c=crewOf(p.ref)||{};PV.insp.innerHTML=`<div class="r"><div style="flex:1;min-width:0"><b>${esc(c.name)}</b>${loc}</div>${c.phone?`<a class="ib" href="tel:${esc(c.phone)}">${esc(c.phone)}</a>`:''}${close}</div>`;return;}
-  const c=byId(S.cams,p.ref)||{},op=crewOf(c.op),rig=rig0(c),eq=gearNames(c);
+  const c=byId(S.cams,p.ref)||{},op=opOf(c),rig=rig0(c),eq=gearNames(c);
   PV.insp.innerHTML=`<div class="r"><div style="flex:1;min-width:0"><b>CAM ${esc(c.no)}</b> <span style="color:var(--soft)">${esc(rigTxt(c))}${c.shot?' · '+esc(c.shot):''}${op?' · '+esc(op.name):''}</span>${loc}</div>${close}</div>
   ${eq.length?`<div class="eq">${eq.map(x=>`<span>${esc(x)}</span>`).join('')}</div>`:''}
   <div class="r"><label class="sl">${ic('rot',16)}<input type="range" min="0" max="359" value="${p.rot||0}" data-s="rot"></label><label class="sl">${ic('fov',16)}<input type="range" min="10" max="140" value="${p.fov==null?RIGF[rig]:p.fov}" data-s="fov"></label><label class="sl">${ic('dist',16)}<input type="range" min="5" max="70" value="${Math.round((p.rng==null?.22:p.rng)*100)}" data-s="rng"></label></div>`;
@@ -632,13 +637,13 @@ function textOf(tab){
     L.push(`장소: ${d.loc||'-'}   집합: ${d.general||'-'}   날씨: ${d.weather||'-'}`);if(d.safety)L.push('안전·주차·병원: '+d.safety);
     const ses=S.sched.filter(s=>s.day===n).sort(byStart);if(ses.length){L.push('','[일정]');for(const s of ses)L.push(`${s.start||'--:--'}${s.end?'~'+s.end:''}  [${s.kind}] ${s.title}${s.place?' @'+s.place:''}${s.who?' / '+s.who:''}${s.note?' ('+s.note+')':''}`);}
     L.push('','[크루]');for(const c of working(n))L.push(`  ${c.name}  ${c.phone||''}${c.wear?'  ['+c.wear+']':''}${c.note?' ('+c.note+')':''}`);
-    for(const pl of S.plans){const ps=S.pins.filter(p=>p.plan===pl.id&&p.day===n);if(!ps.length)continue;L.push('',`[카메라 플랏 · ${pl.name}] (${pl.real?'미터 기준':'도면 화면 기준'})`);if(pl.real)L.push(`  기준: 도면 좌상단 0m · 가로 ${pl.real.w}m × 세로 ${pl.real.h}m · 높이 ${pl.real.H}m`);for(const p of ps){if(p.kind==='cam'){const c=byId(S.cams,p.ref);if(c)L.push(`  CAM ${c.no} ${rigTxt(c)}${c.shot?' · '+c.shot:''}  ${crewOf(c.op)?crewOf(c.op).name:'담당 미정'}${gearNames(c).length?'  ['+gearNames(c).join(', ')+']':''}  ${where(p)}`);}else if(p.kind==='area')L.push(`  [구역] ${p.name||'구역'} ${p.w||10}×${p.d||10}m 높이 ${p.h==null?3:p.h}m  ${where(p)}`);else{const c=crewOf(p.ref);if(c)L.push(`  ${c.name}  ${where(p)}`);}}}
+    for(const pl of S.plans){const ps=S.pins.filter(p=>p.plan===pl.id&&p.day===n&&pinOk(p));if(!ps.length)continue;L.push('',`[카메라 플랏 · ${pl.name}] (${pl.real?'미터 기준':'도면 화면 기준'})`);if(pl.real)L.push(`  기준: 도면 좌상단 0m · 가로 ${pl.real.w}m × 세로 ${pl.real.h}m · 높이 ${pl.real.H}m`);for(const p of ps){if(p.kind==='cam'){const c=byId(S.cams,p.ref);if(c)L.push(`  CAM ${c.no} ${rigTxt(c)}${c.shot?' · '+c.shot:''}  ${opOf(c)?opOf(c).name:'담당 미정'}${gearNames(c).length?'  ['+gearNames(c).join(', ')+']':''}  ${where(p)}`);}else if(p.kind==='area')L.push(`  [구역] ${p.name||'구역'} ${p.w||10}×${p.d||10}m 높이 ${p.h==null?3:p.h}m  ${where(p)}`);else{const c=crewOf(p.ref);if(c)L.push(`  ${c.name}  ${where(p)}`);}}}
     if(d.notes)L.push('','[공지]',d.notes);}
   if(tab==='sched'){head(`RUN OF SHOW  DAY ${n}/3  ${dateStr(n)}`);for(const s of S.sched.filter(s=>s.day===n).sort(byStart))L.push([s.start,s.end,s.kind,s.title,s.place,s.who,s.note].join('\t'));}
   if(tab==='crew'){head('CREW LIST');L.push(['#','이름','번호','장비',DAYN.map(dayLabel).join(' '),'비고'].join('\t'));S.crew.forEach((c,i)=>L.push([i+1,c.name,c.phone,c.wear,DAYN.map(n=>(c.days||[]).includes(n)?'O':'-').join(' '),c.note].join('\t')));}
-  if(tab==='gear'){head('EQUIPMENT LIST');for(const cat of [...new Set([...CATS,...S.gear.map(g=>g.cat)])]){const l=S.gear.filter(g=>g.cat===cat);if(!l.length)continue;L.push(`[${cat}]`);for(const g of l)L.push([g.name,'×'+(g.qty==null?1:g.qty),STAT[g.status||'ok'],(crewOf(g.owner)||{}).name||'',g.note].join('\t'));}}
-  if(tab==='cams'){head(`CAMERA LIST  DAY ${n}/3`);for(const c of S.cams.filter(c=>c.day===n).sort((a,b)=>(a.no||0)-(b.no||0)))L.push([`CAM ${c.no}`,(crewOf(c.op)||{}).name||'',rigTxt(c),gearNames(c).join(' + '),c.shot,c.note].join('\t'));}
-  if(tab==='plot'){head(`CAMERA PLOT  DAY ${n}/3 (도면 화면 기준)`);for(const p of pinsNow()){if(p.kind==='cam'){const c=byId(S.cams,p.ref);if(c)L.push(`CAM ${c.no}\t${rigTxt(c)}\t${(crewOf(c.op)||{}).name||''}\t${gearNames(c).join(' + ')}\t${where(p)}`);}else if(p.kind==='area')L.push(`구역\t${p.name||'구역'}\t${p.w||10}×${p.d||10}m\t높이 ${p.h==null?3:p.h}m\t${where(p)}`);else{const c=crewOf(p.ref);if(c)L.push(`${c.name}\t${where(p)}`);}}}
+  if(tab==='gear'){head('EQUIPMENT LIST');for(const cat of [...new Set([...CATS,...S.gear.map(g=>g.cat)])]){const l=S.gear.filter(g=>g.cat===cat);if(!l.length)continue;L.push(`[${cat}]`);for(const g of l)L.push([g.name,'×'+(g.qty==null?1:g.qty),STAT[g.status||'ok'],(ownerOf(g)||{}).name||'',g.note].join('\t'));}}
+  if(tab==='cams'){head(`CAMERA LIST  DAY ${n}/3`);for(const c of S.cams.filter(c=>c.day===n).sort((a,b)=>(a.no||0)-(b.no||0)))L.push([`CAM ${c.no}`,(opOf(c)||{}).name||'',rigTxt(c),gearNames(c).join(' + '),c.shot,c.note].join('\t'));}
+  if(tab==='plot'){head(`CAMERA PLOT  DAY ${n}/3 (도면 화면 기준)`);for(const p of pinsNow()){if(p.kind==='cam'){const c=byId(S.cams,p.ref);if(c)L.push(`CAM ${c.no}\t${rigTxt(c)}\t${(opOf(c)||{}).name||''}\t${gearNames(c).join(' + ')}\t${where(p)}`);}else if(p.kind==='area')L.push(`구역\t${p.name||'구역'}\t${p.w||10}×${p.d||10}m\t높이 ${p.h==null?3:p.h}m\t${where(p)}`);else{const c=crewOf(p.ref);if(c)L.push(`${c.name}\t${where(p)}`);}}}
   return L.join('\n');
 }
 
@@ -745,7 +750,10 @@ function boot(){
       remove(dl.dataset.del,dl.dataset.id);render();return;
     }
     const tg=e.target.closest('[data-tg]');
-    if(tg){const it=byId(S[tg.dataset.tg],tg.dataset.id),n=Number(tg.dataset.d);it.days=(it.days||[]).includes(n)?it.days.filter(x=>x!==n):[...(it.days||[]),n].sort();touch(it);save();render();return;}
+    if(tg){const it=byId(S[tg.dataset.tg],tg.dataset.id),n=Number(tg.dataset.d);const was=(it.days||[]).includes(n);it.days=was?it.days.filter(x=>x!==n):[...(it.days||[]),n].sort();touch(it);save();render();
+      if(tg.dataset.tg==='crew'){const nc=S.cams.filter(c=>c.day===n&&c.op===it.id).length,np=S.pins.filter(p=>p.day===n&&p.kind==='crew'&&p.ref===it.id).length;
+        if(nc||np)toast(`${it.name||'이름 없음'} · ${dayLabel(n)} ${was?'제외':'다시 포함'} — 카메라 담당 ${nc} · 배치도 ${np} ${was?'숨김':'복원'}`,2600);}
+      return;}
     const cd=e.target.closest('[data-copyday]');
     if(cd&&V.day>1){
       for(const c of S.cams.filter(c=>c.day===V.day)){S.del[c.id]=now();}
