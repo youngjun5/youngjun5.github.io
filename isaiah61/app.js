@@ -60,10 +60,10 @@ try{S=JSON.parse(localStorage.getItem(KEY));}catch(e){}
 if(!S||S.schema!==2)S=fresh();
 for(const c of COLS)S[c]=S[c]||[];S.del=S.del||{};S.proj=S.proj||fresh().proj;
 if(!S.proj.date1){S.proj.date1='2027-01-26';S.proj.u=now();}
-let V={tab:'call',day:1,part:'',plan:null,lastCat:'카메라'};
+let V={tab:'call',day:1,part:'',plan:null,lastCat:'카메라',cs3:false};
 try{Object.assign(V,JSON.parse(localStorage.getItem(UIK))||{});}catch(e){}
 V.sel=null;V.armed=null;V.filter='';
-const saveUI=()=>{try{localStorage.setItem(UIK,JSON.stringify({tab:V.tab,day:V.day,part:V.part,plan:V.plan,lastCat:V.lastCat}));}catch(e){}};
+const saveUI=()=>{try{localStorage.setItem(UIK,JSON.stringify({tab:V.tab,day:V.day,part:V.part,plan:V.plan,lastCat:V.lastCat,cs3:V.cs3}));}catch(e){}};
 const dayRec=n=>{let d=S.days.find(x=>x.n===n);if(!d){d={id:'day'+n,n,loc:'',general:'',weather:'',safety:'',notes:'',u:0};S.days.push(d);}return d;};
 const crewOf=id=>byId(S.crew,id);
 const rigsOf=c=>c&&c.rigs&&c.rigs.length?c.rigs:(c&&c.rig?[c.rig]:[]);
@@ -277,12 +277,13 @@ function vCall(){
   </div>`;
 }
 function miniPlots(n){
-  const out=S.plans.map(pl=>{
+  return S.plans.map(pl=>{
     const ps=pinsFor(n,V.part,pl.id);if(!ps.length)return '';
     const data=imgOf(pl);
-    return `<div class="sec">카메라 플랏 · ${esc(pl.name)}</div><div class="mini" style="aspect-ratio:${pl.w}/${pl.h}">${data?`<img src="${data}" style="position:absolute;inset:0;width:100%;height:100%">`:''}<svg viewBox="0 0 ${pl.w} ${pl.h}" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%">${ps.filter(p=>p.kind==='area').map(p=>areaSVG(p,pl)).join('')}${ps.filter(p=>p.kind==='cam').map(p=>coneSVG(p,pl)).join('')}</svg><div class="marks">${ps.map(p=>markHTML(p)).join('')}</div></div>`;
+    const mini=`<div class="mini ${V.cs3?'printonly':''}" style="aspect-ratio:${pl.w}/${pl.h}">${data?`<img src="${data}" style="position:absolute;inset:0;width:100%;height:100%">`:''}<svg viewBox="0 0 ${pl.w} ${pl.h}" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%">${ps.filter(p=>p.kind==='area').map(p=>areaSVG(p,pl)).join('')}${ps.filter(p=>p.kind==='cam').map(p=>coneSVG(p,pl)).join('')}</svg><div class="marks">${ps.map(p=>markHTML(p)).join('')}</div></div>`;
+    const v3=V.cs3?`<div class="cv3 noprint" data-plan="${pl.id}"><canvas class="gl"></canvas><div class="marks m3"></div><div class="zoom"><button data-cvz="in">+</button><button data-cvz="out">−</button><button data-cvz="fit" aria-label="맞춤">${ic('fit',18)}</button></div></div>`:'';
+    return `<div class="sec">카메라 플랏 · ${esc(pl.name)}<span class="sp"></span><div class="seg noprint"><button data-cs3="0" class="${V.cs3?'':'on'}">2D</button><button data-cs3="1" class="${V.cs3?'on':''}">3D</button></div></div>${v3}${mini}`;
   }).join('');
-  return out;
 }
 
 /* ═══ 일정 ═══ */
@@ -559,26 +560,29 @@ function markDown(e){
   addEventListener('pointermove',mv);addEventListener('pointerup',up);addEventListener('pointercancel',up);
 }
 
-/* ═══ 3D (three.js · 실측 미터 단위) ═══ */
+/* ═══ 3D (three.js · 실측 미터 단위) ═══
+   X = 3D 화면 하나(플랏 탭의 PV, 콜시트의 보기 전용 뷰어). 같은 코드로 여러 화면에서 쓴다. */
 const loadScript=src=>new Promise((res,rej)=>{const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=rej;document.head.append(s);});
 async function ensureThree(){if(window.THREE)return true;try{await loadScript('https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js');return !!window.THREE;}catch(e){console.warn(e);return false;}}
-function initGL(){
-  const T=THREE,R=new T.WebGLRenderer({canvas:PV.gl,antialias:true,alpha:true});R.setPixelRatio(Math.min(devicePixelRatio||1,2));
+const planOf=X=>X.plan||planNow();
+const pinsOf=X=>X.pins?X.pins():pinsNow();
+function initGL(X=PV){
+  const T=THREE,R=new T.WebGLRenderer({canvas:X.gl,antialias:true,alpha:true});R.setPixelRatio(Math.min(devicePixelRatio||1,2));
   const scene=new T.Scene(),cam=new T.PerspectiveCamera(38,1,.5,4000);
   scene.add(new T.AmbientLight(0xffffff,.85));const dl=new T.DirectionalLight(0xffffff,.6);dl.position.set(-60,120,80);scene.add(dl);
-  PV.G={R,scene,cam,world:new T.Group(),shapes:new T.Group()};scene.add(PV.G.world);scene.add(PV.G.shapes);
-  resize3D();
+  X.G={R,scene,cam,world:new T.Group(),shapes:new T.Group()};scene.add(X.G.world);scene.add(X.G.shapes);
+  resize3D(X);
 }
-function resize3D(){if(!PV.G||PV.mode!=='3d')return;const r=PV.stage.getBoundingClientRect();if(!r.width)return;PV.G.R.setSize(r.width,r.height,false);PV.G.cam.aspect=r.width/r.height;PV.G.cam.updateProjectionMatrix();dirty3();}
+function resize3D(X=PV){if(!X.G||X.mode!=='3d')return;const r=X.stage.getBoundingClientRect();if(!r.width)return;X.G.R.setSize(r.width,r.height,false);X.G.cam.aspect=r.width/r.height;X.G.cam.updateProjectionMatrix();dirty3(X);}
 function disposeGroup(g){for(const c of [...g.children]){g.remove(c);if(c.geometry)c.geometry.dispose();if(c.material){if(c.material.map)c.material.map.dispose();c.material.dispose();}}}
-function resetOrbit(){const pl=planNow();if(!pl)return;const r=realOf(pl);Object.assign(PV.th,{theta:.35,phi:.85,dist:Math.max(r.w,r.h)*1.45,tx:0,tz:0});}
-function build3D(){
-  const pl=planNow();if(!pl||!window.THREE)return;
-  if(!PV.G)initGL();
+function resetOrbit(X=PV){const pl=planOf(X);if(!pl)return;const r=realOf(pl);Object.assign(X.th,{theta:.35,phi:.85,dist:Math.max(r.w,r.h)*1.45,tx:0,tz:0});}
+function build3D(X=PV){
+  const pl=planOf(X);if(!pl||!window.THREE)return;
+  if(!X.G)initGL(X);
   const data=imgOf(pl);if(!data)return;
-  const T=THREE,G=PV.G,r=realOf(pl),[fw,fh]=mPerFrac(pl);
+  const T=THREE,G=X.G,r=realOf(pl),[fw,fh]=mPerFrac(pl);
   disposeGroup(G.world);
-  const tex=new T.TextureLoader().load(data,()=>dirty3());tex.anisotropy=8;
+  const tex=new T.TextureLoader().load(data,()=>dirty3(X));tex.anisotropy=8;
   const fg=new T.PlaneGeometry(fw,fh);fg.rotateX(-Math.PI/2);fg.translate((.5-(r.box[0]+r.box[2])/2)*fw,0,(.5-(r.box[1]+r.box[3])/2)*fh);
   G.world.add(new T.Mesh(fg,new T.MeshBasicMaterial({map:tex})));
   if(pl.real){
@@ -589,15 +593,15 @@ function build3D(){
     for(const z of (r.zones||[]))if(z[1]>0){const lg=new T.BufferGeometry();lg.setAttribute('position',new T.Float32BufferAttribute([-w/2,.1,z[1]-d/2,w/2,.1,z[1]-d/2],3));G.world.add(new T.Line(lg,new T.LineBasicMaterial({color:0xdc2626})));}
   }
   const span=Math.ceil(Math.max(r.w,r.h)*1.4/10)*10,gh=new T.GridHelper(span,span/10,0x64748b,0x94a3b8);gh.position.y=.06;gh.material.transparent=true;gh.material.opacity=.3;G.world.add(gh);
-  PV.buildFor=ikey(pl)+(pl.real?'r':'');
-  if(PV.orbitFor!==PV.buildFor){PV.orbitFor=PV.buildFor;resetOrbit();}
-  shapes3D(pinsNow(),pl);project3D();dirty3();
+  X.buildFor=ikey(pl)+(pl.real?'r':'');
+  if(X.orbitFor!==X.buildFor){X.orbitFor=X.buildFor;resetOrbit(X);}
+  shapes3D(pinsOf(X),pl,X);project3D(X);dirty3(X);
 }
-function shapes3D(ps,pl){
-  if(!PV.G||!window.THREE)return;
-  const T=THREE,G=PV.G,[fw]=mPerFrac(pl);disposeGroup(G.shapes);
+function shapes3D(ps,pl,X=PV){
+  if(!X.G||!window.THREE)return;
+  const T=THREE,G=X.G,[fw]=mPerFrac(pl);disposeGroup(G.shapes);
   for(const p of ps){
-    const [mx,mz]=toM(pl,p.x,p.y),a=(p.rot||0)*Math.PI/180,op=dimOf(p)?.12:1;
+    const [mx,mz]=toM(pl,p.x,p.y),a=(p.rot||0)*Math.PI/180,op=(!X.nodim&&dimOf(p))?.12:1;
     const mat=(col,o)=>new T.MeshLambertMaterial({color:col,transparent:true,opacity:(o==null?1:o)*op});
     const put=(g,col,o,y,rotY)=>{const m=new T.Mesh(g,mat(col,o));m.position.set(mx,y||0,mz);if(rotY)m.rotation.y=rotY;G.shapes.add(m);};
     if(p.kind==='area'){const h=Math.max(.1,p.h==null?3:p.h),g=new T.BoxGeometry(p.w||10,h,p.d||10);g.translate(0,h/2,0);put(g,new T.Color(ACOL[p.col||0]),.85,0,-a);continue;}
@@ -613,17 +617,16 @@ function shapes3D(ps,pl){
     G.shapes.add(new T.Mesh(geom,new T.MeshBasicMaterial({color:col,transparent:true,opacity:.28*op,side:T.DoubleSide,depthWrite:false})));
   }
 }
-let raf3=0;
-function dirty3(){if(raf3||!PV.G)return;raf3=requestAnimationFrame(()=>{raf3=0;draw3();});}
-function updCam(){const t=PV.th,c=PV.G.cam;c.position.set(t.tx+t.dist*Math.sin(t.phi)*Math.sin(t.theta),t.dist*Math.cos(t.phi),t.tz+t.dist*Math.sin(t.phi)*Math.cos(t.theta));c.lookAt(t.tx,0,t.tz);c.updateMatrixWorld();}
-function draw3(){if(!PV.G||PV.mode!=='3d')return;updCam();PV.G.R.render(PV.G.scene,PV.G.cam);project3D();}
-function project3D(){
-  if(!PV.G||PV.mode!=='3d')return;const pl=planNow();if(!pl)return;
-  const T=THREE,r=PV.stage.getBoundingClientRect(),v=new T.Vector3();PV.G.cam.updateMatrixWorld();
-  for(const el of $$('.mk',PV.m3)){
+function dirty3(X=PV){if(X.raf||!X.G)return;X.raf=requestAnimationFrame(()=>{X.raf=0;draw3(X);});}
+function updCam(X=PV){const t=X.th,c=X.G.cam;c.position.set(t.tx+t.dist*Math.sin(t.phi)*Math.sin(t.theta),t.dist*Math.cos(t.phi),t.tz+t.dist*Math.sin(t.phi)*Math.cos(t.theta));c.lookAt(t.tx,0,t.tz);c.updateMatrixWorld();}
+function draw3(X=PV){if(!X.G||X.mode!=='3d')return;updCam(X);X.G.R.render(X.G.scene,X.G.cam);project3D(X);}
+function project3D(X=PV){
+  if(!X.G||X.mode!=='3d')return;const pl=planOf(X);if(!pl)return;
+  const T=THREE,r=X.stage.getBoundingClientRect(),v=new T.Vector3();X.G.cam.updateMatrixWorld();
+  for(const el of $$('.mk',X.m3)){
     const p=byId(S.pins,el.dataset.id);if(!p)continue;
     const cam=p.kind==='cam'&&byId(S.cams,p.ref),top=p.kind==='area'?(p.h==null?3:p.h)+.8:p.kind==='crew'?2.3:(RIGH[rig0(cam)]||1.5)+.9,[mx,mz]=toM(pl,p.x,p.y);
-    v.set(mx,top,mz).project(PV.G.cam);
+    v.set(mx,top,mz).project(X.G.cam);
     el.style.left=((v.x*.5+.5)*r.width)+'px';el.style.top=((-v.y*.5+.5)*r.height)+'px';el.style.display=v.z>1?'none':'';
   }
 }
@@ -633,8 +636,37 @@ function ray(cx,cy){
   const v=new T.Vector3(((cx-r.left)/r.width)*2-1,-((cy-r.top)/r.height)*2+1,.5).unproject(c),o=c.position,d=v.sub(o).normalize();
   if(Math.abs(d.y)<1e-5)return null;const t=-o.y/d.y;if(t<0)return null;return {x:o.x+d.x*t,z:o.z+d.z*t};
 }
-function orbit(dx,dy,pan){if(pan){pan3(dx,dy);dirty3();return;}PV.th.theta-=dx*.006;PV.th.phi=clamp(PV.th.phi-dy*.006,.12,1.5);dirty3();}
-function pan3(dx,dy){const t=PV.th,k=t.dist*.0016;t.tx-=(dx*Math.cos(t.theta)+dy*Math.sin(t.theta))*k;t.tz-=(-dx*Math.sin(t.theta)+dy*Math.cos(t.theta))*k;}
+function orbit(dx,dy,pan,X=PV){if(pan){pan3(dx,dy,X);dirty3(X);return;}X.th.theta-=dx*.006;X.th.phi=clamp(X.th.phi-dy*.006,.12,1.5);dirty3(X);}
+function pan3(dx,dy,X=PV){const t=X.th,k=t.dist*.0016;t.tx-=(dx*Math.cos(t.theta)+dy*Math.sin(t.theta))*k;t.tz-=(-dx*Math.sin(t.theta)+dy*Math.cos(t.theta))*k;}
+
+/* 콜시트용 보기 전용 3D: 돌리고(드래그) 확대(휠/두 손가락)만 가능 */
+const CVS=[];let cvTok=0;
+function disposeCV(){cvTok++;for(const X of CVS){try{if(X.ro)X.ro.disconnect();if(X.raf)cancelAnimationFrame(X.raf);if(X.G){X.G.R.dispose();if(X.G.R.forceContextLoss)X.G.R.forceContextLoss();}}catch(e){}}CVS.length=0;}
+function bindOrbit(X){
+  const el=X.stage,Pm=new Map();let last=null;
+  const snap=()=>{if(Pm.size<2)return null;const [a,b]=[...Pm.values()];return {d:Math.hypot(a.x-b.x,a.y-b.y),mx:(a.x+b.x)/2,my:(a.y+b.y)/2};};
+  el.addEventListener('pointerdown',e=>{if(e.target.closest('.zoom'))return;try{el.setPointerCapture(e.pointerId);}catch(_){}Pm.set(e.pointerId,{x:e.clientX,y:e.clientY,b:e.button,sh:e.shiftKey});last=snap();});
+  el.addEventListener('pointermove',e=>{const p=Pm.get(e.pointerId);if(!p)return;const ox=p.x,oy=p.y;p.x=e.clientX;p.y=e.clientY;
+    if(Pm.size===1)orbit(p.x-ox,p.y-oy,p.b===2||p.sh,X);
+    else if(Pm.size===2){const c=snap();if(last){X.th.dist=clamp(X.th.dist*last.d/c.d,10,600);pan3(c.mx-last.mx,c.my-last.my,X);dirty3(X);}last=c;}});
+  const up=e=>{Pm.delete(e.pointerId);last=snap();};
+  el.addEventListener('pointerup',up);el.addEventListener('pointercancel',up);
+  el.addEventListener('wheel',e=>{e.preventDefault();X.th.dist=clamp(X.th.dist/Math.exp(-e.deltaY*.0015),10,600);dirty3(X);},{passive:false});
+  el.addEventListener('contextmenu',e=>e.preventDefault());
+}
+async function mountCV(){
+  const tok=cvTok,els=$$('.cv3',$('#main'));if(!els.length)return;
+  if(!(await ensureThree())){els.forEach(e=>{e.innerHTML='<div class="empty">3D를 불러오지 못했어요 · 인터넷 확인</div>';});return;}
+  if(tok!==cvTok)return;
+  for(const el of els){
+    const pl=byId(S.plans,el.dataset.plan);if(!pl||!el.isConnected)continue;
+    const X={mode:'3d',stage:el,gl:$('canvas',el),m3:$('.m3',el),G:null,th:{theta:.35,phi:.85,dist:190,tx:0,tz:0},buildFor:'',orbitFor:'',plan:pl,nodim:true,pins:()=>pinsFor(V.day,V.part,pl.id)};
+    CVS.push(X);
+    X.m3.innerHTML=X.pins().map(p=>markHTML(p)).join('');
+    bindOrbit(X);build3D(X);
+    X.ro=new ResizeObserver(()=>resize3D(X));X.ro.observe(el);
+  }
+}
 
 /* ═══ 도면 추가 · 편집 ═══ */
 function addPlan(){pickImage(async({data,w,h})=>{const pl={id:uid(),name:'도면 '+(S.plans.length+1),w,h,iv:now()};await putImg(pl,data);V.plan=pl.id;saveUI();add('plans',pl);render();});}
@@ -740,6 +772,7 @@ function render(){
     `<span class="sp"></span><button class="ib" data-bar="theme" aria-label="${effDark()?'밝게':'어둡게'}">${ic(effDark()?'sun':'moon',16)}</button><button class="ib" data-bar="undo" aria-label="실행 취소"${H.u.length?'':' disabled'}>${ic('undo',16)}</button><button class="ib" data-bar="redo" aria-label="다시 실행"${H.r.length?'':' disabled'}>${ic('redo',16)}</button><button class="ib" data-bar="copy" aria-label="텍스트 복사">${ic('copy',16)}복사</button><button class="ib" data-bar="print" aria-label="인쇄">${ic('print',16)}</button><button class="ib" data-bar="cog" aria-label="설정">${ic('cog',16)}</button>`;
   $('#tabs').innerHTML=TABS.map(t=>`<button class="${t.k===V.tab?'on':''}" data-tab="${t.k}">${ic(t.i,22)}${t.n}</button>`).join('');
   const main=$('#main');
+  disposeCV();
   if(V.tab==='plot'){
     main.className='fill';
     if(main.firstChild!==PV.el){main.replaceChildren(PV.el);requestAnimationFrame(()=>fit());}
@@ -747,6 +780,7 @@ function render(){
   }else{
     const st=main.scrollTop,ae=document.activeElement,keep=ae&&ae.dataset&&ae.dataset.id&&{id:ae.dataset.id,k:ae.dataset.k};
     main.className='';main.innerHTML=VIEWS[V.tab]();main.scrollTop=st;
+    if(V.tab==='call'&&V.cs3)mountCV();
     if(V.focus){const el=$(`[data-id="${V.focus}"][data-k="${V.focusK||'name'}"]`,main);if(el)el.focus();V.focus=null;}
   }
 }
@@ -779,6 +813,9 @@ function boot(){
   $('#syncBtn').addEventListener('click',settings);
   main.addEventListener('click',e=>{
     if(V.tab==='plot')return;
+    const c3=e.target.closest('[data-cs3]');if(c3){V.cs3=c3.dataset.cs3==='1';saveUI();render();return;}
+    const cz=e.target.closest('[data-cvz]');
+    if(cz){const X=CVS.find(x=>x.stage===cz.closest('.cv3'));if(X){if(cz.dataset.cvz==='fit')resetOrbit(X);else X.th.dist=clamp(X.th.dist/(cz.dataset.cvz==='in'?1.3:1/1.3),10,600);dirty3(X);}return;}
     const ms=e.target.closest('[data-ms]');if(ms){pickMulti(ms.dataset.ms,byId(S.cams,ms.dataset.id));return;}
     const ad=e.target.closest('[data-add]');if(ad){addRow(ad.dataset.add,ad);return;}
     const dl=e.target.closest('[data-del]');

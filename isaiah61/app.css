@@ -193,3 +193,8 @@ canvas.gl{filter:var(--glf)}
 
 .clock{display:flex;align-items:center;justify-content:center;background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:18px 16px;margin-bottom:10px}
 .clock b{font-size:clamp(52px,14vw,96px);line-height:1;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:.01em;text-align:center}
+
+.cv3{position:relative;height:clamp(320px,58vh,560px);border-radius:12px;overflow:hidden;background:var(--stg);border:1px solid var(--line);touch-action:none;margin-bottom:8px}
+.cv3 .mk{pointer-events:none}
+.printonly{display:none}
+@media print{.printonly{display:block}.cv3{display:none!important}}
