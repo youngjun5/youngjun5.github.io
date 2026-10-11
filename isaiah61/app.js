@@ -19,7 +19,7 @@ const IC={
   gear:'<path d="M3 8l9-5 9 5v9l-9 5-9-5z"/><path d="M3 8l9 5 9-5M12 13v9"/>',
   cams:'<rect x="3" y="7" width="13" height="10" rx="2"/><path d="M16 11l5-2.500v8L16 14"/>',
   plot:'<path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/>',
-  plus:'<path d="M12 5v14M5 12h14"/>', x:'<path d="M6 6l12 12M18 6L6 18"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>', trash:'<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/>', x:'<path d="M6 6l12 12M18 6L6 18"/>',
   copy:'<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/>',
   print:'<path d="M7 9V3h10v6M7 17H4v-7h16v7h-3"/><rect x="7" y="14" width="10" height="7"/>',
   cog:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>',
@@ -134,6 +134,8 @@ const idb=(()=>{let p;const open=()=>p||(p=new Promise((res,rej)=>{const r=index
 const IMG={},PEND={};
 const ikey=pl=>pl.id+'@'+pl.iv;
 function imgOf(pl){
+  if(pl.gen==='hall')return genHall(pl);
+  if(pl.src)return pl.src;
   const k=ikey(pl);
   if(IMG[k])return IMG[k];
   if(!PEND[k]){PEND[k]=(async()=>{
@@ -205,7 +207,7 @@ function miniPlots(n){
   const out=S.plans.map(pl=>{
     const ps=S.pins.filter(p=>p.plan===pl.id&&p.day===n);if(!ps.length)return '';
     const data=imgOf(pl);
-    return `<div class="sec">카메라 플랏 · ${esc(pl.name)}</div><div class="mini" style="aspect-ratio:${pl.w}/${pl.h}">${data?`<img src="${data}" style="position:absolute;inset:0;width:100%;height:100%">`:''}<svg viewBox="0 0 ${pl.w} ${pl.h}" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%">${ps.filter(p=>p.kind==='cam').map(p=>coneSVG(p,pl)).join('')}</svg><div class="marks">${ps.map(p=>markHTML(p)).join('')}</div></div>`;
+    return `<div class="sec">카메라 플랏 · ${esc(pl.name)}</div><div class="mini" style="aspect-ratio:${pl.w}/${pl.h}">${data?`<img src="${data}" style="position:absolute;inset:0;width:100%;height:100%">`:''}<svg viewBox="0 0 ${pl.w} ${pl.h}" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%">${ps.filter(p=>p.kind==='area').map(p=>areaSVG(p,pl)).join('')}${ps.filter(p=>p.kind==='cam').map(p=>coneSVG(p,pl)).join('')}</svg><div class="marks">${ps.map(p=>markHTML(p)).join('')}</div></div>`;
   }).join('');
   return out;
 }
@@ -251,33 +253,81 @@ function vCams(){
 }
 
 /* ═══ 플랏 ═══ */
-const PV={el:null,z:1,tx:0,ty:0,z0:0,fitFor:''};
+/* 행사장 기본 도면: KINTEX 제2전시장 9홀 (9A+9B) — 도면 표기 치수 기준 99m × 132m, 높이 15m (kintex.com 시설 안내) */
+const KINTEX={id:'kintex9',name:'KINTEX 9홀',gen:'hall',w:1110,h:1440,iv:2,
+  real:{w:99,h:132,H:15,box:[60/1110,60/1440,1050/1110,1380/1440],zones:[['9B',0,66],['9A',66,132]],pillar:[48.9,66,2.3]}};
+const ACOL=['#f59e0b','#2563eb','#16a34a','#dc2626','#7c3aed','#0891b2','#64748b'];
+const AREA_PRE={stage:{n:'무대',w:18,d:8,h:1.2,c:0},booth:{n:'부스',w:3,d:3,h:2.5,c:1},zone:{n:'구역',w:10,d:10,h:3,c:2}};
+const GEN={};
+function genHall(pl){
+  const k=ikey(pl);if(GEN[k])return GEN[k];
+  const c=document.createElement('canvas');c.width=pl.w;c.height=pl.h;const x=c.getContext('2d'),r=pl.real,P=10,M=60,W=r.w*P,H=r.h*P;
+  x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.fillStyle='#f3f5f8';x.fillRect(M,M,W,H);
+  x.strokeStyle='#d3d9e1';x.lineWidth=1;
+  for(let i=1;i<r.w/10;i++){x.beginPath();x.moveTo(M+i*10*P,M);x.lineTo(M+i*10*P,M+H);x.stroke();}
+  for(let j=1;j<r.h/10;j++){x.beginPath();x.moveTo(M,M+j*10*P);x.lineTo(M+W,M+j*10*P);x.stroke();}
+  x.fillStyle='#c2c9d3';x.font='bold 130px sans-serif';x.textAlign='center';x.fillText('9B',M+W/2,M+33*P+44);x.fillText('9A',M+W/2,M+99*P+44);
+  x.setLineDash([16,10]);x.strokeStyle='#7b8794';x.lineWidth=2.5;x.beginPath();x.moveTo(M,M+66*P);x.lineTo(M+W,M+66*P);x.stroke();x.setLineDash([]);
+  x.strokeStyle='#1f2937';x.lineWidth=7;x.strokeRect(M,M,W,H);
+  const [px,pz,dia]=r.pillar;x.fillStyle='#6b7280';x.beginPath();x.arc(M+px*P,M+pz*P,dia/2*P,0,7);x.fill();
+  x.fillStyle='#6b7280';x.font='20px sans-serif';x.fillText('기둥 Ø'+dia+'m',M+px*P,M+pz*P-24);
+  x.fillStyle='#8b95a3';x.font='16px sans-serif';
+  for(let i=0;i<=r.w/10;i++)x.fillText(i*10,M+i*10*P,M-14);
+  x.textAlign='right';for(let j=0;j<=r.h/10;j++)x.fillText(j*10,M-12,M+j*10*P+6);
+  x.textAlign='center';x.fillStyle='#1f2937';x.font='bold 24px sans-serif';x.strokeStyle='#1f2937';x.lineWidth=2;
+  const yb=M+H+34;x.beginPath();x.moveTo(M,yb);x.lineTo(M+W,yb);x.moveTo(M,yb-8);x.lineTo(M,yb+8);x.moveTo(M+W,yb-8);x.lineTo(M+W,yb+8);x.stroke();x.fillText('99m',M+W/2,yb-10);
+  for(const [a,b] of [[0,66],[66,132]]){x.save();x.translate(M+W+34,M+(a+b)/2*P);x.rotate(Math.PI/2);x.fillText('66m',0,-10);x.restore();x.beginPath();x.moveTo(M+W+34,M+a*P);x.lineTo(M+W+34,M+b*P);x.moveTo(M+W+26,M+a*P);x.lineTo(M+W+42,M+a*P);x.moveTo(M+W+26,M+b*P);x.lineTo(M+W+42,M+b*P);x.stroke();}
+  return GEN[k]=c.toDataURL('image/png');
+}
+const RIGH={삼각대:1.6,짐벌:1.5,핸드헬드:1.5,지미집:3.5,다나돌리:.9,기타:1.5};
+const PV={el:null,z:1,tx:0,ty:0,z0:0,fitFor:'',mode:'2d',G:null,buildFor:'',orbitFor:'',th:{theta:.35,phi:.85,dist:190,tx:0,tz:0}};
 const planNow=()=>{let p=byId(S.plans,V.plan);if(!p){p=S.plans[0]||null;V.plan=p&&p.id;}return p;};
 const pinsNow=()=>{const pl=planNow();return pl?S.pins.filter(p=>p.plan===pl.id&&p.day===V.day):[];};
+const dimOf=p=>p.kind==='area'?false:(!!V.filter&&!(p.kind==='cam'&&(byId(S.cams,p.ref)||{}).rig===V.filter));
+/* 이미지 좌표(0~1) ↔ 미터(홀 중심 기준). 실측 정보가 없는 도면은 가로 100m로 가정 */
+const realOf=pl=>pl.real||{w:100,h:100*pl.h/pl.w,H:0,box:[0,0,1,1],zones:[]};
+const toM=(pl,x,y)=>{const r=realOf(pl),b=r.box;return [((x-b[0])/(b[2]-b[0])-.5)*r.w,((y-b[1])/(b[3]-b[1])-.5)*r.h];};
+const fromM=(pl,mx,mz)=>{const r=realOf(pl),b=r.box;return [b[0]+(mx/r.w+.5)*(b[2]-b[0]),b[1]+(mz/r.h+.5)*(b[3]-b[1])];};
+const mPerFrac=pl=>{const r=realOf(pl),b=r.box;return [r.w/(b[2]-b[0]),r.h/(b[3]-b[1])];};
+const where=p=>{const pl=byId(S.plans,p.plan),r=pl&&pl.real;if(!r)return zone(p);const [mx,mz]=toM(pl,p.x,p.y),xm=mx+r.w/2,ym=mz+r.h/2,z=(r.zones||[]).find(z=>ym>=z[1]&&ym<z[2]);return `${z?z[0]+' ':''}가로 ${Math.round(xm)}m · 세로 ${Math.round(ym)}m`;};
+function ensureKintex(){
+  const ex=byId(S.plans,'kintex9');
+  if(ex){if(ex.src||ex.iv<KINTEX.iv){Object.assign(ex,KINTEX);delete ex.src;touch(ex);return true;}return false;}
+  if(S.del['kintex9'])return false;S.plans.unshift(touch({...KINTEX}));return true;
+}
+
 function coneGeo(p,pl){
   const cam=byId(S.cams,p.ref),rig=cam?cam.rig:'기타',a=(p.rot||0)*Math.PI/180,f=(p.fov==null?RIGF[rig]:p.fov)*Math.PI/360,R=(p.rng==null?.22:p.rng)*pl.w,px=p.x*pl.w,py=p.y*pl.h,pts=[[px,py]];
   for(let k=0;k<=12;k++){const g=a-f+2*f*k/12;pts.push([px+Math.sin(g)*R,py-Math.cos(g)*R]);}
   return pts;
 }
 function coneSVG(p,pl,dim){const cam=byId(S.cams,p.ref),c=RIGC[cam?cam.rig:'기타'];return `<polygon opacity="${dim?.1:1}" points="${coneGeo(p,pl).map(q=>q.join(',')).join(' ')}" fill="${c}" fill-opacity=".22" stroke="${c}" stroke-width="2" vector-effect="non-scaling-stroke"/>`;}
+function areaSVG(p,pl){
+  const [fw,fh]=mPerFrac(pl),a=(p.rot||0)*Math.PI/180,w=(p.w||10)/2,d=(p.d||10)/2,col=ACOL[p.col||0],pts=[[-w,-d],[w,-d],[w,d],[-w,d]].map(([cx,cy])=>{const rx=cx*Math.cos(a)-cy*Math.sin(a),ry=cx*Math.sin(a)+cy*Math.cos(a);return [p.x*pl.w+rx/fw*pl.w,p.y*pl.h+ry/fh*pl.h].join(',');}).join(' ');
+  return `<polygon points="${pts}" fill="${col}" fill-opacity=".3" stroke="${col}" stroke-width="2" vector-effect="non-scaling-stroke"/>`;
+}
 function markHTML(p,o={}){
+  const sel=p.id===V.sel?'sel':'',st=`left:${p.x*100}%;top:${p.y*100}%`;
+  if(p.kind==='area')return `<div class="mk area ${sel}" data-id="${p.id}" style="${st}"><span class="pill big"><i style="background:${ACOL[p.col||0]}"></i>${esc(p.name||'구역')}</span></div>`;
   if(p.kind==='cam'){const c=byId(S.cams,p.ref);if(!c)return '';const op=crewOf(c.op);
-    return `<div class="mk cam ${p.id===V.sel?'sel':''} ${o.dim?'dim':''}" data-id="${p.id}" style="left:${p.x*100}%;top:${p.y*100}%"><span class="tk" style="--c:${RIGC[c.rig]||RIGC.기타}">${esc(c.no)}</span>${op?`<span class="pill">${esc(short(op.name))}</span>`:''}</div>`;}
+    return `<div class="mk cam ${sel} ${o.dim?'dim':''}" data-id="${p.id}" style="${st}"><span class="tk" style="--c:${RIGC[c.rig]||RIGC.기타}">${esc(c.no)}</span>${op?`<span class="pill">${esc(short(op.name))}</span>`:''}</div>`;}
   const c=crewOf(p.ref);if(!c)return '';
-  return `<div class="mk crew ${p.id===V.sel?'sel':''} ${o.dim?'dim':''}" data-id="${p.id}" style="left:${p.x*100}%;top:${p.y*100}%"><span class="tk" style="--c:#475569">${esc(ini(c.name))}</span><span class="pill">${esc(short(c.pos||c.name))}</span></div>`;
+  return `<div class="mk crew ${sel} ${o.dim?'dim':''}" data-id="${p.id}" style="${st}"><span class="tk" style="--c:#475569">${esc(ini(c.name))}</span><span class="pill">${esc(short(c.pos||c.name))}</span></div>`;
 }
 function buildPV(){
   const el=document.createElement('section');el.className='pv';
-  el.innerHTML=`<div class="pbar"><div class="scx" data-plans></div><button class="ib" data-pa="edit" aria-label="도면 편집">${ic('edit',18)}</button></div>
+  el.innerHTML=`<div class="pbar"><div class="scx" data-plans></div><div class="seg"><button data-m="2d">2D</button><button data-m="3d">3D</button></div><button class="ib" data-pa="edit" aria-label="도면 편집">${ic('edit',18)}</button></div>
   <div class="fbar scx" data-filter></div>
   <div class="stage"><div class="world"><img draggable="false" alt=""><svg preserveAspectRatio="none"></svg><div class="marks"></div></div>
+    <canvas class="gl" hidden></canvas><div class="marks m3" hidden></div>
     <div class="zoom"><button data-z="in">+</button><button data-z="out">−</button><button data-z="fit" aria-label="맞춤">${ic('fit',18)}</button></div>
     <button class="bigadd" data-pa="add">${ic('image',40)}도면 올리기</button><div class="insp" hidden></div></div>
   <div class="tray"></div>`;
-  PV.el=el;PV.stage=$('.stage',el);PV.world=$('.world',el);PV.img=$('.world img',el);PV.svg=$('.world>svg',el);PV.marks=$('.marks',el);PV.insp=$('.insp',el);PV.tray=$('.tray',el);
+  PV.el=el;PV.stage=$('.stage',el);PV.world=$('.world',el);PV.img=$('.world img',el);PV.svg=$('.world>svg',el);PV.marks=$('.world .marks',el);PV.m3=$('.m3',el);PV.gl=$('.gl',el);PV.insp=$('.insp',el);PV.tray=$('.tray',el);
   el.addEventListener('click',e=>{
     const pl=e.target.closest('[data-pl]');if(pl){V.plan=pl.dataset.pl;V.sel=null;saveUI();render();return;}
-    const pa=e.target.closest('[data-pa]');if(pa){if(pa.dataset.pa==='add')addPlan();else editPlan();return;}
+    const pa=e.target.closest('[data-pa]');if(pa){if(pa.dataset.pa==='add')addPlanMenu();else editPlan();return;}
+    const mo=e.target.closest('[data-m]');if(mo){setMode(mo.dataset.m);return;}
     const z=e.target.closest('[data-z]');if(z){zoomBy(z.dataset.z);return;}
     const fl=e.target.closest('[data-f]');if(fl){V.filter=fl.dataset.f;V.sel=null;V.armed=null;render();return;}
     const tr=e.target.closest('[data-tray]');if(tr){trayTap(tr.dataset.tray,tr.dataset.id);return;}
@@ -285,46 +335,70 @@ function buildPV(){
   bindGestures(PV.stage);
   PV.stage.addEventListener('pointerdown',markDown);
   PV.insp.addEventListener('click',inspClick);
-  PV.insp.addEventListener('input',e=>{const p=byId(S.pins,V.sel);if(!p)return;const s=e.target.dataset.s;if(!s)return;const v=Number(e.target.value);p[s]=s==='rot'||s==='fov'?v:v/100;renderMarks();});
+  PV.insp.addEventListener('input',e=>{const p=byId(S.pins,V.sel);if(!p)return;const s=e.target.dataset.s;if(!s)return;const v=Number(e.target.value);p[s]=(s==='rot'||s==='fov'||s==='w'||s==='d'||s==='h')?v:v/100;renderMarks();});
+  PV.insp.addEventListener('input',e=>{if(e.target.dataset.nm===undefined)return;const p=byId(S.pins,V.sel);if(p){p.name=e.target.value;renderMarks();}});
   PV.insp.addEventListener('change',()=>{const p=byId(S.pins,V.sel);if(p){touch(p);save();}});
-  new ResizeObserver(()=>{if(PV.el.isConnected&&PV.fitFor&&!PV.z0)fit();}).observe(PV.stage);
+  new ResizeObserver(()=>{if(!PV.el.isConnected)return;if(PV.fitFor&&!PV.z0)fit();resize3D();}).observe(PV.stage);
 }
 function updatePV(){
-  const pl=planNow();
+  const pl=planNow(),m3=PV.mode==='3d';
   $('[data-plans]',PV.el).innerHTML=S.plans.map(p=>`<button class="chip ${pl&&p.id===pl.id?'on':''}" data-pl="${p.id}">${esc(p.name)}</button>`).join('')+`<button class="chip dash" data-pa="add">${ic('plus',14)}도면</button>`;
+  $$('.seg button',PV.el).forEach(b=>b.classList.toggle('on',b.dataset.m===PV.mode));
   const fb=$('[data-filter]',PV.el);fb.hidden=!pl;
-  if(pl){const cnt=r=>S.pins.filter(p=>p.plan===pl.id&&p.day===V.day&&p.kind==='cam'&&(byId(S.cams,p.ref)||{}).rig===r).length,tot=S.pins.filter(p=>p.plan===pl.id&&p.day===V.day).length;
+  if(pl){const cnt=r=>S.pins.filter(p=>p.plan===pl.id&&p.day===V.day&&p.kind==='cam'&&(byId(S.cams,p.ref)||{}).rig===r).length,tot=S.pins.filter(p=>p.plan===pl.id&&p.day===V.day&&p.kind!=='area').length;
     fb.innerHTML=`<button class="chip ${!V.filter?'on':''}" data-f="">전체 ${tot}</button>`+FILTERS.map(([r,l])=>`<button class="chip ${V.filter===r?'on':''}" data-f="${r}"><span style="width:9px;height:9px;border-radius:3px;background:${RIGC[r]}"></span>${l} ${cnt(r)}</button>`).join('');}
-  $('[data-pa="edit"]',PV.el).hidden=!pl;$('.bigadd',PV.el).hidden=!!pl;PV.world.hidden=!pl;PV.tray.hidden=!pl;PV.stage.classList.toggle('armed',!!V.armed);
+  $('[data-pa="edit"]',PV.el).hidden=!pl;$('.bigadd',PV.el).hidden=!!pl;PV.tray.hidden=!pl;PV.stage.classList.toggle('armed',!!V.armed);
+  PV.world.hidden=!pl||m3;PV.gl.hidden=!pl||!m3;PV.m3.hidden=!pl||!m3;
   if(!pl){PV.insp.hidden=true;return;}
   const data=imgOf(pl),k=ikey(pl);
   PV.world.style.width=pl.w+'px';PV.world.style.height=pl.h+'px';
   if(data&&PV.img.dataset.k!==k){PV.img.src=data;PV.img.dataset.k=k;}
   if(PV.fitFor!==k){PV.fitFor=k;fit();}
+  if(m3&&data&&PV.buildFor!==k+(pl.real?'r':''))build3D();
   renderMarks();renderInsp();renderTray();
 }
 function applyWorld(){PV.world.style.transform=`translate(${PV.tx}px,${PV.ty}px) scale(${PV.z})`;PV.world.style.setProperty('--inv',1/PV.z);}
 function fit(){const pl=planNow();if(!pl)return;const r=PV.stage.getBoundingClientRect();if(!r.width)return;PV.z=Math.min(r.width/pl.w,r.height/pl.h)*.96;PV.z0=PV.z;PV.tx=(r.width-pl.w*PV.z)/2;PV.ty=(r.height-pl.h*PV.z)/2;applyWorld();}
 function zoomAt(s,mx,my,dx,dy){const r=PV.stage.getBoundingClientRect(),px=mx-r.left,py=my-r.top,nz=clamp(PV.z*s,(PV.z0||1)*.3,(PV.z0||1)*10),k=nz/PV.z;PV.tx=px-(px-PV.tx)*k+dx;PV.ty=py-(py-PV.ty)*k+dy;PV.z=nz;applyWorld();}
-function zoomBy(a){if(a==='fit'){fit();return;}const r=PV.stage.getBoundingClientRect();zoomAt(a==='in'?1.3:1/1.3,r.left+r.width/2,r.top+r.height/2,0,0);}
+function zoomBy(a){
+  if(PV.mode==='3d'){if(a==='fit')resetOrbit();else PV.th.dist=clamp(PV.th.dist/(a==='in'?1.3:1/1.3),10,600);dirty3();return;}
+  if(a==='fit'){fit();return;}const r=PV.stage.getBoundingClientRect();zoomAt(a==='in'?1.3:1/1.3,r.left+r.width/2,r.top+r.height/2,0,0);
+}
+async function setMode(m){
+  if(m===PV.mode)return;
+  if(m==='3d'&&!(await ensureThree())){toast('3D를 불러오지 못했어요 · 인터넷 확인');return;}
+  PV.mode=m;V.sel=V.sel;render();
+  if(m==='3d')requestAnimationFrame(()=>resize3D());
+}
 function bindGestures(el){
   const Pm=new Map();let last=null,t0=0,moved=0;
   const snap=()=>{if(Pm.size<2)return null;const [a,b]=[...Pm.values()];return {d:Math.hypot(a.x-b.x,a.y-b.y),mx:(a.x+b.x)/2,my:(a.y+b.y)/2};};
-  el.addEventListener('pointerdown',e=>{if(e.target.closest('.mk,.insp,.zoom,.bigadd'))return;try{el.setPointerCapture(e.pointerId);}catch(_){}Pm.set(e.pointerId,{x:e.clientX,y:e.clientY});if(Pm.size===1){moved=0;t0=now();}last=snap();});
+  el.addEventListener('pointerdown',e=>{if(e.target.closest('.mk,.insp,.zoom,.bigadd'))return;try{el.setPointerCapture(e.pointerId);}catch(_){}Pm.set(e.pointerId,{x:e.clientX,y:e.clientY,b:e.button,sh:e.shiftKey});if(Pm.size===1){moved=0;t0=now();}last=snap();});
   el.addEventListener('pointermove',e=>{const p=Pm.get(e.pointerId);if(!p)return;const ox=p.x,oy=p.y;p.x=e.clientX;p.y=e.clientY;
-    if(Pm.size===1){const dx=p.x-ox,dy=p.y-oy;moved+=Math.abs(dx)+Math.abs(dy);PV.tx+=dx;PV.ty+=dy;applyWorld();}
-    else if(Pm.size===2){const c=snap();moved=99;if(last)zoomAt(c.d/last.d,c.mx,c.my,c.mx-last.mx,c.my-last.my);last=c;}});
+    if(Pm.size===1){const dx=p.x-ox,dy=p.y-oy;moved+=Math.abs(dx)+Math.abs(dy);
+      if(PV.mode==='3d')orbit(dx,dy,p.b===2||p.sh);else{PV.tx+=dx;PV.ty+=dy;applyWorld();}}
+    else if(Pm.size===2){const c=snap();moved=99;
+      if(last){if(PV.mode==='3d'){PV.th.dist=clamp(PV.th.dist*last.d/c.d,10,600);pan3(c.mx-last.mx,c.my-last.my);dirty3();}else zoomAt(c.d/last.d,c.mx,c.my,c.mx-last.mx,c.my-last.my);}
+      last=c;}});
   const up=e=>{if(!Pm.has(e.pointerId))return;if(Pm.size===1&&moved<8&&now()-t0<600&&e.type==='pointerup')tapStage(e.clientX,e.clientY);Pm.delete(e.pointerId);last=snap();};
   el.addEventListener('pointerup',up);el.addEventListener('pointercancel',up);
-  el.addEventListener('wheel',e=>{e.preventDefault();zoomAt(Math.exp(-e.deltaY*.0015),e.clientX,e.clientY,0,0);},{passive:false});
+  el.addEventListener('wheel',e=>{e.preventDefault();const s=Math.exp(-e.deltaY*.0015);if(PV.mode==='3d'){PV.th.dist=clamp(PV.th.dist/s,10,600);dirty3();}else zoomAt(s,e.clientX,e.clientY,0,0);},{passive:false});
+  el.addEventListener('contextmenu',e=>e.preventDefault());
 }
-const stagePos=(cx,cy,strict)=>{const r=PV.world.getBoundingClientRect(),x=(cx-r.left)/r.width,y=(cy-r.top)/r.height;if(strict&&(x<0||x>1||y<0||y>1))return null;return {x:clamp(x,0,1),y:clamp(y,0,1)};};
+function stagePos(cx,cy,strict){
+  const pl=planNow();if(!pl)return null;let x,y;
+  if(PV.mode==='3d'){const g=ray(cx,cy);if(!g)return null;[x,y]=fromM(pl,g.x,g.z);}
+  else{const r=PV.world.getBoundingClientRect();x=(cx-r.left)/r.width;y=(cy-r.top)/r.height;}
+  if(strict&&(x<0||x>1||y<0||y>1))return null;
+  return {x:clamp(x,0,1),y:clamp(y,0,1)};
+}
 function tapStage(cx,cy){
   if(V.armed){const pos=stagePos(cx,cy,true);if(pos){place(V.armed,pos);V.armed=null;render();}return;}
   if(V.sel){V.sel=null;render();}
 }
 function place(it,pos){
   const pl=planNow();if(!pl)return;
+  if(it.t==='area'){const d=AREA_PRE[it.id];const q=add('pins',{plan:pl.id,day:V.day,kind:'area',ref:'a'+uid(),x:pos.x,y:pos.y,rot:0,name:d.n,w:d.w,d:d.d,h:d.h,col:d.c});V.sel=q.id;save();return;}
   let p=S.pins.find(x=>x.plan===pl.id&&x.day===V.day&&x.kind===it.t&&x.ref===it.id);
   if(p){p.x=pos.x;p.y=pos.y;touch(p);}else p=add('pins',{plan:pl.id,day:V.day,kind:it.t,ref:it.id,x:pos.x,y:pos.y,rot:0});
   V.sel=p.id;save();
@@ -339,28 +413,36 @@ function renderTray(){
   const placed=new Set(S.pins.filter(p=>p.plan===pl.id&&p.day===V.day).map(p=>p.kind+p.ref));
   const cams=S.cams.filter(c=>c.day===V.day).sort((a,b)=>(a.no||0)-(b.no||0)),crew=working(V.day);
   const on=(t,id)=>V.armed&&V.armed.t===t&&V.armed.id===id?'on':'';
-  PV.tray.innerHTML=`<div class="row"><span class="lbl">CAM</span><div class="scx">${cams.map(c=>`<button class="chip ${on('cam',c.id)} ${placed.has('cam'+c.id)?'done':''}" data-tray="cam" data-id="${c.id}"><span style="width:9px;height:9px;border-radius:3px;background:${RIGC[c.rig]||RIGC.기타}"></span>${esc(c.no)} ${esc(c.rig)}</button>`).join('')||'<span style="color:var(--faint)">카메라 탭에서 추가</span>'}</div></div>
+  PV.tray.innerHTML=`<div class="row"><span class="lbl">CAM</span><div class="scx">${Object.entries(AREA_PRE).map(([k,v])=>`<button class="chip ${on('area',k)}" data-tray="area" data-id="${k}"><span style="width:9px;height:9px;border-radius:3px;background:${ACOL[v.c]}"></span>+ ${v.n}</button>`).join('')}${cams.map(c=>`<button class="chip ${on('cam',c.id)} ${placed.has('cam'+c.id)?'done':''}" data-tray="cam" data-id="${c.id}"><span style="width:9px;height:9px;border-radius:3px;background:${RIGC[c.rig]||RIGC.기타}"></span>${esc(c.no)} ${esc(c.rig)}</button>`).join('')}</div></div>
   <div class="row"><span class="lbl">CREW</span><div class="scx">${crew.map(c=>`<button class="chip ${on('crew',c.id)} ${placed.has('crew'+c.id)?'done':''}" data-tray="crew" data-id="${c.id}">${esc(c.name||'?')}</button>`).join('')||'<span style="color:var(--faint)">크루 탭에서 추가</span>'}</div></div>`;
 }
 function renderMarks(){
   const pl=planNow();if(!pl)return;
-  const ps=pinsNow().slice().sort((a,b)=>(a.id===V.sel)-(b.id===V.sel));
+  const ps=pinsNow().slice().sort((a,b)=>(a.id===V.sel)-(b.id===V.sel)),m3=PV.mode==='3d';
   PV.svg.setAttribute('viewBox',`0 0 ${pl.w} ${pl.h}`);
-  const dimOf=p=>!!V.filter&&!(p.kind==='cam'&&(byId(S.cams,p.ref)||{}).rig===V.filter);
-  PV.svg.innerHTML=ps.filter(p=>p.kind==='cam').map(p=>coneSVG(p,pl,dimOf(p))).join('');
-  PV.marks.innerHTML=ps.map(p=>markHTML(p,{dim:dimOf(p)})).join('');
+  PV.svg.innerHTML=ps.filter(p=>p.kind==='area').map(p=>areaSVG(p,pl)).join('')+ps.filter(p=>p.kind==='cam').map(p=>coneSVG(p,pl,dimOf(p))).join('');
+  const html=ps.map(p=>markHTML(p,{dim:dimOf(p)})).join('');
+  if(m3){PV.marks.innerHTML='';PV.m3.innerHTML=html;shapes3D(ps,pl);project3D();dirty3();}
+  else{PV.m3.innerHTML='';PV.marks.innerHTML=html;}
 }
 function renderInsp(){
   const p=V.sel&&byId(S.pins,V.sel),pl=planNow();
   if(!p||!pl||p.plan!==pl.id||p.day!==V.day){PV.insp.hidden=true;return;}
   PV.insp.hidden=false;
-  if(p.kind==='crew'){const c=crewOf(p.ref)||{};PV.insp.innerHTML=`<div class="r"><div style="flex:1;min-width:0"><b>${esc(c.name)}</b> <span style="color:var(--soft)">${esc(c.pos)}</span></div>${c.phone?`<a class="ib" href="tel:${esc(c.phone)}">${esc(c.phone)}</a>`:''}<button class="ib red" data-i="del" aria-label="도면에서 빼기">${ic('trash',16)}</button><button class="ib" data-i="close">${ic('x',16)}</button></div>`;return;}
+  const close=`<button class="ib red" data-i="del" aria-label="도면에서 빼기">${ic('trash',16)}</button><button class="ib" data-i="close">${ic('x',16)}</button>`,loc=`<div style="color:var(--soft);font-size:12px;font-weight:600">${esc(where(p))}</div>`;
+  if(p.kind==='area'){PV.insp.innerHTML=`<div class="r"><input class="in" style="height:38px;flex:1;min-width:0" value="${esc(p.name||'')}" data-nm placeholder="이름"><button class="ib" data-i="dup" aria-label="복제">${ic('copy',16)}</button>${close}</div>
+    <div class="r">${ACOL.map((c,i)=>`<button class="sw ${(p.col||0)===i?'on':''}" data-col="${i}" style="background:${c}" aria-label="색"></button>`).join('')}<span style="margin-left:auto;color:var(--soft);font-size:12px;font-weight:600">${p.w||10}×${p.d||10}m · 높이 ${p.h==null?3:p.h}m</span></div>
+    <div class="r"><label class="sl">가로<input type="range" min="1" max="80" value="${p.w||10}" data-s="w"></label><label class="sl">세로<input type="range" min="1" max="60" value="${p.d||10}" data-s="d"></label></div>
+    <div class="r"><label class="sl">높이<input type="range" min="0" max="15" step=".5" value="${p.h==null?3:p.h}" data-s="h"></label><label class="sl">${ic('rot',16)}<input type="range" min="0" max="359" value="${p.rot||0}" data-s="rot"></label></div>${loc}`;return;}
+  if(p.kind==='crew'){const c=crewOf(p.ref)||{};PV.insp.innerHTML=`<div class="r"><div style="flex:1;min-width:0"><b>${esc(c.name)}</b> <span style="color:var(--soft)">${esc(c.pos)}</span>${loc}</div>${c.phone?`<a class="ib" href="tel:${esc(c.phone)}">${esc(c.phone)}</a>`:''}${close}</div>`;return;}
   const c=byId(S.cams,p.ref)||{},op=crewOf(c.op),rig=c.rig||'기타';
-  PV.insp.innerHTML=`<div class="r"><div style="flex:1;min-width:0"><b>CAM ${esc(c.no)}</b> <span style="color:var(--soft)">${esc(rig)}${c.shot?' · '+esc(c.shot):''}${op?' · '+esc(op.name):''}</span></div><button class="ib red" data-i="del" aria-label="도면에서 빼기">${ic('trash',16)}</button><button class="ib" data-i="close">${ic('x',16)}</button></div>
+  PV.insp.innerHTML=`<div class="r"><div style="flex:1;min-width:0"><b>CAM ${esc(c.no)}</b> <span style="color:var(--soft)">${esc(rig)}${c.shot?' · '+esc(c.shot):''}${op?' · '+esc(op.name):''}</span>${loc}</div>${close}</div>
   <div class="r"><label class="sl">${ic('rot',16)}<input type="range" min="0" max="359" value="${p.rot||0}" data-s="rot"></label><label class="sl">${ic('fov',16)}<input type="range" min="10" max="140" value="${p.fov==null?RIGF[rig]:p.fov}" data-s="fov"></label><label class="sl">${ic('dist',16)}<input type="range" min="5" max="70" value="${Math.round((p.rng==null?.22:p.rng)*100)}" data-s="rng"></label></div>`;
 }
 function inspClick(e){
+  const sw=e.target.closest('[data-col]');if(sw){const p=byId(S.pins,V.sel);if(p){p.col=Number(sw.dataset.col);touch(p);save();render();}return;}
   const i=e.target.closest('[data-i]');if(!i)return;
+  if(i.dataset.i==='dup'){const p=byId(S.pins,V.sel);if(p){const q=add('pins',{...p,id:undefined,ref:'a'+uid(),x:clamp(p.x+.02,0,1),y:clamp(p.y+.02,0,1)});V.sel=q.id;save();render();}return;}
   if(i.dataset.i==='close'){V.sel=null;render();}
   if(i.dataset.i==='del'){const p=byId(S.pins,V.sel);if(p){S.pins=S.pins.filter(x=>x.id!==p.id);S.del[p.id]=now();V.sel=null;save();render();}}
 }
@@ -373,14 +455,99 @@ function markDown(e){
   const up=()=>{removeEventListener('pointermove',mv);removeEventListener('pointerup',up);removeEventListener('pointercancel',up);drag=null;if(moved){touch(p);save();}V.sel=p.id;render();};
   addEventListener('pointermove',mv);addEventListener('pointerup',up);addEventListener('pointercancel',up);
 }
+
+/* ═══ 3D (three.js · 실측 미터 단위) ═══ */
+const loadScript=src=>new Promise((res,rej)=>{const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=rej;document.head.append(s);});
+async function ensureThree(){if(window.THREE)return true;try{await loadScript('https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js');return !!window.THREE;}catch(e){console.warn(e);return false;}}
+function initGL(){
+  const T=THREE,R=new T.WebGLRenderer({canvas:PV.gl,antialias:true,alpha:true});R.setPixelRatio(Math.min(devicePixelRatio||1,2));
+  const scene=new T.Scene(),cam=new T.PerspectiveCamera(38,1,.5,4000);
+  scene.add(new T.AmbientLight(0xffffff,.85));const dl=new T.DirectionalLight(0xffffff,.6);dl.position.set(-60,120,80);scene.add(dl);
+  PV.G={R,scene,cam,world:new T.Group(),shapes:new T.Group()};scene.add(PV.G.world);scene.add(PV.G.shapes);
+  resize3D();
+}
+function resize3D(){if(!PV.G||PV.mode!=='3d')return;const r=PV.stage.getBoundingClientRect();if(!r.width)return;PV.G.R.setSize(r.width,r.height,false);PV.G.cam.aspect=r.width/r.height;PV.G.cam.updateProjectionMatrix();dirty3();}
+function disposeGroup(g){for(const c of [...g.children]){g.remove(c);if(c.geometry)c.geometry.dispose();if(c.material){if(c.material.map)c.material.map.dispose();c.material.dispose();}}}
+function resetOrbit(){const pl=planNow();if(!pl)return;const r=realOf(pl);Object.assign(PV.th,{theta:.35,phi:.85,dist:Math.max(r.w,r.h)*1.45,tx:0,tz:0});}
+function build3D(){
+  const pl=planNow();if(!pl||!window.THREE)return;
+  if(!PV.G)initGL();
+  const data=imgOf(pl);if(!data)return;
+  const T=THREE,G=PV.G,r=realOf(pl),[fw,fh]=mPerFrac(pl);
+  disposeGroup(G.world);
+  const tex=new T.TextureLoader().load(data,()=>dirty3());tex.anisotropy=8;
+  const fg=new T.PlaneGeometry(fw,fh);fg.rotateX(-Math.PI/2);fg.translate((.5-(r.box[0]+r.box[2])/2)*fw,0,(.5-(r.box[1]+r.box[3])/2)*fh);
+  G.world.add(new T.Mesh(fg,new T.MeshBasicMaterial({map:tex})));
+  if(pl.real){
+    const H=r.H||15,w=r.w,d=r.h,t=.5,wallMat=new T.MeshLambertMaterial({color:0x94a3b8,transparent:true,opacity:.2,side:T.DoubleSide,depthWrite:false});
+    [[w,t,0,-d/2],[w,t,0,d/2],[t,d,-w/2,0],[t,d,w/2,0]].forEach(([ww,dd,x,z])=>{const g=new T.BoxGeometry(ww,H,dd);g.translate(x,H/2,z);G.world.add(new T.Mesh(g,wallMat));});
+    const eg=new T.EdgesGeometry(new T.BoxGeometry(w,H,d));eg.translate(0,H/2,0);G.world.add(new T.LineSegments(eg,new T.LineBasicMaterial({color:0x475569})));
+    if(r.pillar){const [px,pz,dia]=r.pillar,cg=new T.CylinderGeometry(dia/2,dia/2,H,20);cg.translate(px-w/2,H/2,pz-d/2);G.world.add(new T.Mesh(cg,new T.MeshLambertMaterial({color:0x6b7280})));}
+    for(const z of (r.zones||[]))if(z[1]>0){const lg=new T.BufferGeometry();lg.setAttribute('position',new T.Float32BufferAttribute([-w/2,.1,z[1]-d/2,w/2,.1,z[1]-d/2],3));G.world.add(new T.Line(lg,new T.LineBasicMaterial({color:0xdc2626})));}
+  }
+  const span=Math.ceil(Math.max(r.w,r.h)*1.4/10)*10,gh=new T.GridHelper(span,span/10,0x64748b,0x94a3b8);gh.position.y=.06;gh.material.transparent=true;gh.material.opacity=.3;G.world.add(gh);
+  PV.buildFor=ikey(pl)+(pl.real?'r':'');
+  if(PV.orbitFor!==PV.buildFor){PV.orbitFor=PV.buildFor;resetOrbit();}
+  shapes3D(pinsNow(),pl);project3D();dirty3();
+}
+function shapes3D(ps,pl){
+  if(!PV.G||!window.THREE)return;
+  const T=THREE,G=PV.G,[fw]=mPerFrac(pl);disposeGroup(G.shapes);
+  for(const p of ps){
+    const [mx,mz]=toM(pl,p.x,p.y),a=(p.rot||0)*Math.PI/180,op=dimOf(p)?.12:1;
+    const mat=(col,o)=>new T.MeshLambertMaterial({color:col,transparent:true,opacity:(o==null?1:o)*op});
+    const put=(g,col,o,y,rotY)=>{const m=new T.Mesh(g,mat(col,o));m.position.set(mx,y||0,mz);if(rotY)m.rotation.y=rotY;G.shapes.add(m);};
+    if(p.kind==='area'){const h=Math.max(.1,p.h==null?3:p.h),g=new T.BoxGeometry(p.w||10,h,p.d||10);g.translate(0,h/2,0);put(g,new T.Color(ACOL[p.col||0]),.85,0,-a);continue;}
+    if(p.kind==='crew'){const g=new T.CylinderGeometry(.28,.28,1.4,12);g.translate(0,.7,0);put(g,0x475569);const s=new T.SphereGeometry(.26,12,10);s.translate(0,1.65,0);put(s,0x475569);continue;}
+    const cam=byId(S.cams,p.ref);if(!cam)continue;
+    const rig=cam.rig||'기타',col=new T.Color(RIGC[rig]),h=RIGH[rig]||1.5;
+    const pg=new T.CylinderGeometry(.08,.08,h,8);pg.translate(0,h/2,0);put(pg,col);
+    put(new T.BoxGeometry(.6,.45,.8),col,1,h,-a);
+    const f=(p.fov==null?RIGF[rig]:p.fov)*Math.PI/360,R=(p.rng==null?.22:p.rng)*fw,pos=[mx,.12,mz],idx=[];
+    for(let k=0;k<=12;k++){const g=a-f+2*f*k/12;pos.push(mx+Math.sin(g)*R,.12,mz-Math.cos(g)*R);}
+    for(let i=1;i<=12;i++)idx.push(0,i,i+1);
+    const geom=new T.BufferGeometry();geom.setAttribute('position',new T.Float32BufferAttribute(pos,3));geom.setIndex(idx);
+    G.shapes.add(new T.Mesh(geom,new T.MeshBasicMaterial({color:col,transparent:true,opacity:.28*op,side:T.DoubleSide,depthWrite:false})));
+  }
+}
+let raf3=0;
+function dirty3(){if(raf3||!PV.G)return;raf3=requestAnimationFrame(()=>{raf3=0;draw3();});}
+function updCam(){const t=PV.th,c=PV.G.cam;c.position.set(t.tx+t.dist*Math.sin(t.phi)*Math.sin(t.theta),t.dist*Math.cos(t.phi),t.tz+t.dist*Math.sin(t.phi)*Math.cos(t.theta));c.lookAt(t.tx,0,t.tz);c.updateMatrixWorld();}
+function draw3(){if(!PV.G||PV.mode!=='3d')return;updCam();PV.G.R.render(PV.G.scene,PV.G.cam);project3D();}
+function project3D(){
+  if(!PV.G||PV.mode!=='3d')return;const pl=planNow();if(!pl)return;
+  const T=THREE,r=PV.stage.getBoundingClientRect(),v=new T.Vector3();PV.G.cam.updateMatrixWorld();
+  for(const el of $$('.mk',PV.m3)){
+    const p=byId(S.pins,el.dataset.id);if(!p)continue;
+    const cam=p.kind==='cam'&&byId(S.cams,p.ref),top=p.kind==='area'?(p.h==null?3:p.h)+.8:p.kind==='crew'?2.3:(RIGH[(cam&&cam.rig)||'기타']||1.5)+.9,[mx,mz]=toM(pl,p.x,p.y);
+    v.set(mx,top,mz).project(PV.G.cam);
+    el.style.left=((v.x*.5+.5)*r.width)+'px';el.style.top=((-v.y*.5+.5)*r.height)+'px';el.style.display=v.z>1?'none':'';
+  }
+}
+function ray(cx,cy){
+  if(!PV.G||!window.THREE)return null;
+  const T=THREE,r=PV.gl.getBoundingClientRect(),c=PV.G.cam;c.updateMatrixWorld();
+  const v=new T.Vector3(((cx-r.left)/r.width)*2-1,-((cy-r.top)/r.height)*2+1,.5).unproject(c),o=c.position,d=v.sub(o).normalize();
+  if(Math.abs(d.y)<1e-5)return null;const t=-o.y/d.y;if(t<0)return null;return {x:o.x+d.x*t,z:o.z+d.z*t};
+}
+function orbit(dx,dy,pan){if(pan){pan3(dx,dy);dirty3();return;}PV.th.theta-=dx*.006;PV.th.phi=clamp(PV.th.phi-dy*.006,.12,1.5);dirty3();}
+function pan3(dx,dy){const t=PV.th,k=t.dist*.0016;t.tx-=(dx*Math.cos(t.theta)+dy*Math.sin(t.theta))*k;t.tz-=(-dx*Math.sin(t.theta)+dy*Math.cos(t.theta))*k;}
+
+/* ═══ 도면 추가 · 편집 ═══ */
 function addPlan(){pickImage(async({data,w,h})=>{const pl={id:uid(),name:'도면 '+(S.plans.length+1),w,h,iv:now()};await putImg(pl,data);V.plan=pl.id;saveUI();add('plans',pl);render();});}
+function addPlanMenu(){
+  if(S.plans.some(p=>p.id==='kintex9')){addPlan();return;}
+  const m=modal(`<h3>도면 추가<button class="ib" data-x>${ic('x',16)}</button></h3><div class="btns"><button class="btn" data-up>${ic('image',18)}이미지 올리기</button><button class="btn g" data-kx>KINTEX 9홀</button></div>`);
+  $('[data-up]',m.box).onclick=()=>{m.close();addPlan();};
+  $('[data-kx]',m.box).onclick=()=>{m.close();delete S.del['kintex9'];ensureKintex();V.plan='kintex9';saveUI();save();render();};
+}
 function editPlan(){
   const pl=planNow();if(!pl)return;
   const m=modal(`<h3>${esc(pl.name)}<button class="ib" data-x>${ic('x',16)}</button></h3><input class="in" value="${esc(pl.name)}" data-n>
-    <div class="btns"><button class="btn g" data-img>${ic('image',18)}교체</button>${V.day>1?`<button class="btn g" data-cp>${ic('copy',18)}${V.day-1}일 → ${V.day}일</button>`:''}<button class="btn d" data-del>${ic('trash',18)}</button></div><div class="btns"><button class="btn" data-ok>${ic('check',18)}저장</button></div>`);
+    <div class="btns">${pl.src?'':`<button class="btn g" data-img>${ic('image',18)}교체</button>`}${V.day>1?`<button class="btn g" data-cp>${ic('copy',18)}${V.day-1}일 → ${V.day}일</button>`:''}<button class="btn d" data-del>${ic('trash',18)}</button></div><div class="btns"><button class="btn" data-ok>${ic('check',18)}저장</button></div>`);
   $('[data-ok]',m.box).onclick=()=>{pl.name=$('[data-n]',m.box).value.trim()||pl.name;touch(pl);save();m.close();render();};
   $('[data-del]',m.box).onclick=()=>{m.close();remove('plans',pl.id);V.plan=null;render();};
-  $('[data-img]',m.box).onclick=()=>{m.close();pickImage(async({data,w,h})=>{pl.w=w;pl.h=h;pl.iv=now();await putImg(pl,data);touch(pl);save();render();});};
+  const im=$('[data-img]',m.box);if(im)im.onclick=()=>{m.close();pickImage(async({data,w,h})=>{pl.w=w;pl.h=h;pl.iv=now();await putImg(pl,data);touch(pl);save();render();});};
   const cp=$('[data-cp]',m.box);
   if(cp)cp.onclick=()=>{
     for(const x of S.pins.filter(x=>x.plan===pl.id&&x.day===V.day))S.del[x.id]=now();
@@ -388,7 +555,7 @@ function editPlan(){
     const prev=S.cams.filter(c=>c.day===V.day-1),cur=S.cams.filter(c=>c.day===V.day);
     for(const x of S.pins.filter(x=>x.plan===pl.id&&x.day===V.day-1).map(x=>({...x}))){
       if(x.kind==='cam'){const src=byId(prev,x.ref),tgt=src&&cur.find(c=>c.no===src.no);if(!tgt)continue;x.ref=tgt.id;}
-      else if(!working(V.day).some(c=>c.id===x.ref))continue;
+      else if(x.kind==='crew'&&!working(V.day).some(c=>c.id===x.ref))continue;
       x.id=uid();x.day=V.day;touch(x);S.pins.push(x);
     }
     m.close();V.sel=null;save();render();
@@ -403,13 +570,13 @@ function textOf(tab){
     L.push(`장소: ${d.loc||'-'}   집합: ${d.general||'-'}   날씨: ${d.weather||'-'}`);if(d.safety)L.push('안전·주차·병원: '+d.safety);
     const ses=S.sched.filter(s=>s.day===n).sort(byStart);if(ses.length){L.push('','[일정]');for(const s of ses)L.push(`${s.start||'--:--'}${s.end?'~'+s.end:''}  [${s.kind}] ${s.title}${s.place?' @'+s.place:''}${s.who?' / '+s.who:''}${s.note?' ('+s.note+')':''}`);}
     L.push('','[크루 콜]');for(const dep of DEPTS){const l=working(n).filter(c=>c.dept===dep);if(!l.length)continue;L.push(`- ${dep}`);for(const c of l)L.push(`  ${c.call||d.general||'--:--'}  ${c.pos||'-'}  ${c.name}  ${c.phone||''}${c.wear?'  ['+c.wear+']':''}${c.note?' ('+c.note+')':''}`);}
-    for(const pl of S.plans){const ps=S.pins.filter(p=>p.plan===pl.id&&p.day===n);if(!ps.length)continue;L.push('',`[카메라 플랏 · ${pl.name}] (도면 화면 기준)`);for(const p of ps){if(p.kind==='cam'){const c=byId(S.cams,p.ref);if(c)L.push(`  CAM ${c.no} ${c.rig}${c.shot?' · '+c.shot:''}  ${crewOf(c.op)?crewOf(c.op).name:'담당 미정'}  ${zone(p)}`);}else{const c=crewOf(p.ref);if(c)L.push(`  ${c.name} (${c.pos||'-'})  ${zone(p)}`);}}}
+    for(const pl of S.plans){const ps=S.pins.filter(p=>p.plan===pl.id&&p.day===n);if(!ps.length)continue;L.push('',`[카메라 플랏 · ${pl.name}] (${pl.real?'미터 기준':'도면 화면 기준'})`);if(pl.real)L.push(`  기준: 도면 좌상단 0m · 가로 ${pl.real.w}m × 세로 ${pl.real.h}m · 높이 ${pl.real.H}m`);for(const p of ps){if(p.kind==='cam'){const c=byId(S.cams,p.ref);if(c)L.push(`  CAM ${c.no} ${c.rig}${c.shot?' · '+c.shot:''}  ${crewOf(c.op)?crewOf(c.op).name:'담당 미정'}  ${where(p)}`);}else if(p.kind==='area')L.push(`  [구역] ${p.name||'구역'} ${p.w||10}×${p.d||10}m 높이 ${p.h==null?3:p.h}m  ${where(p)}`);else{const c=crewOf(p.ref);if(c)L.push(`  ${c.name} (${c.pos||'-'})  ${where(p)}`);}}}
     if(d.notes)L.push('','[공지]',d.notes);}
   if(tab==='sched'){head(`RUN OF SHOW  DAY ${n}/3  ${dateStr(n)}`);for(const s of S.sched.filter(s=>s.day===n).sort(byStart))L.push([s.start,s.end,s.kind,s.title,s.place,s.who,s.note].join('\t'));}
   if(tab==='crew'){head('CREW LIST');for(const dep of DEPTS){const l=S.crew.filter(c=>c.dept===dep);if(!l.length)continue;L.push(`[${dep}]`);for(const c of l)L.push([c.pos,c.name,c.phone,c.call,(c.days||[]).join('/')+'일',c.wear,c.note].join('\t'));}}
   if(tab==='gear'){head('EQUIPMENT LIST');for(const cat of [...new Set([...CATS,...S.gear.map(g=>g.cat)])]){const l=S.gear.filter(g=>g.cat===cat);if(!l.length)continue;L.push(`[${cat}]`);for(const g of l)L.push([g.name,'×'+(g.qty==null?1:g.qty),STAT[g.status||'ok'],(crewOf(g.owner)||{}).name||'',g.note].join('\t'));}}
   if(tab==='cams'){head(`CAMERA LIST  DAY ${n}/3`);for(const c of S.cams.filter(c=>c.day===n).sort((a,b)=>(a.no||0)-(b.no||0)))L.push([`CAM ${c.no}`,c.rig,c.pos,c.lens,(crewOf(c.op)||{}).name||'',c.shot,c.note].join('\t'));}
-  if(tab==='plot'){head(`CAMERA PLOT  DAY ${n}/3 (도면 화면 기준)`);for(const p of pinsNow()){if(p.kind==='cam'){const c=byId(S.cams,p.ref);if(c)L.push(`CAM ${c.no}\t${c.rig}\t${(crewOf(c.op)||{}).name||''}\t${zone(p)}`);}else{const c=crewOf(p.ref);if(c)L.push(`${c.name}\t${c.pos||''}\t${zone(p)}`);}}}
+  if(tab==='plot'){head(`CAMERA PLOT  DAY ${n}/3 (도면 화면 기준)`);for(const p of pinsNow()){if(p.kind==='cam'){const c=byId(S.cams,p.ref);if(c)L.push(`CAM ${c.no}\t${c.rig}\t${(crewOf(c.op)||{}).name||''}\t${where(p)}`);}else if(p.kind==='area')L.push(`구역\t${p.name||'구역'}\t${p.w||10}×${p.d||10}m\t높이 ${p.h==null?3:p.h}m\t${where(p)}`);else{const c=crewOf(p.ref);if(c)L.push(`${c.name}\t${c.pos||''}\t${where(p)}`);}}}
   return L.join('\n');
 }
 
@@ -430,20 +597,9 @@ function settings(){
   $('[data-demo]',m.box).onclick=()=>{m.close();loadDemo();};
   const ud=$('[data-undemo]',m.box);if(ud)ud.onclick=()=>{m.close();removeDemo();};
 }
-function demoImage(){
-  const c=document.createElement('canvas');c.width=1600;c.height=1000;const x=c.getContext('2d');
-  x.fillStyle='#fff';x.fillRect(0,0,1600,1000);
-  const R=(a,b,w,h,col)=>{x.fillStyle=col||'#222';x.fillRect(a,b,w,h);},t=10;
-  R(60,60,1480,t);R(60,930,1480,t);R(60,60,t,880);R(1530,60,t,880);
-  R(480,90,640,t);R(480,300,640,t);R(480,90,t,220);R(1110,90,t,220);
-  x.fillStyle='#e5e7eb';for(let r=0;r<7;r++){x.fillRect(190,400+r*40,540,18);x.fillRect(860,400+r*40,540,18);}
-  R(700,800,200,60,'#9ca3af');
-  x.fillStyle='#222';x.font='bold 36px sans-serif';x.fillText('STAGE',760,215);x.fillText('FOH',765,840);x.font='24px sans-serif';x.fillText('AISLE',775,560);
-  return c.toDataURL('image/jpeg',.9);
-}
 async function loadDemo(){
   if(S.crew.some(c=>String(c.id).startsWith('demo-')))return;
-  const pl={id:'demo-plan',name:'메인홀',w:1600,h:1000,iv:now()};await putImg(pl,demoImage());S.plans.push(touch(pl));
+  ensureKintex();
   const A=(col,o)=>{const it=touch({...o});S[col].push(it);return it;};
   const P=[['연출·제작','프로듀서','김도윤','07:00'],['연출·제작','디렉터','한서진','07:00'],['연출·제작','조연출(AD)','서민아','07:00'],
     ['카메라','카메라 오퍼레이터','이서준','07:30'],['카메라','카메라 오퍼레이터','박민재','07:30'],['카메라','짐벌 오퍼레이터','최유진','07:30'],['카메라','지미집 오퍼레이터','정하린','07:00'],['카메라','핸드헬드','한지우','07:30',[1,3]],['카메라','다나돌리 오퍼레이터','오세린','07:00',[2,3]],
@@ -455,14 +611,18 @@ async function loadDemo(){
   G.forEach((g,i)=>A('gear',{id:'demo-g'+i,cat:g[0],name:g[1],qty:g[2],status:g[3],owner:g[4]?crew[g[4]].id:'',note:''}));
   const SC=[['06:30','08:00','셋업','로드인 · 카메라/케이블 셋업','메인홀','전 부서',''],['08:00','09:30','리허설','런스루 · 카메라 블로킹','메인홀','카메라·스위칭','콜 용어 확인'],['10:00','11:30','본행사','오프닝 워십','메인홀','전 부서','와이드 → 인도자 클로즈업'],['11:30','13:00','식사','점심 · 배터리 교체','로비','',''],['13:00','14:30','본행사','말씀 1','메인홀','전 부서','70% 미디엄·클로즈'],['19:00','21:00','본행사','저녁 집회','메인홀','전 부서',''],['21:00','22:30','철수','장비 철수','메인홀','카메라·스테이지','']];
   for(const d of DAYN)SC.forEach((s,i)=>A('sched',{id:`demo-s${d}${i}`,day:d,start:s[0],end:s[1],kind:s[2],title:d===1?s[3]:s[3].replace('오프닝 워십','세션 '+d).replace('말씀 1','말씀 '+d),place:s[4],who:s[5],note:s[6]}));
-  const CM=[[1,'삼각대','후방 중앙 (FOH)','24-70','이서준','와이드',.5,.62,0],[2,'삼각대','무대 좌측 전방','70-200','박민재','미디엄',.8,.4,300],[3,'짐벌','객석 통로','24-70','최유진','인서트',.3,.52,35],[4,'지미집','무대 우측 전방','24-70','정하린','와이드',.17,.36,45]];
-  const ex={1:[[5,'핸드헬드','무대 앞 이동','24-70','한지우','군중',.5,.4,0]],2:[[5,'다나돌리','무대 앞 레일','24-70','오세린','클로즈업',.5,.37,0]],3:[[5,'핸드헬드','무대 앞 이동','24-70','한지우','군중',.45,.4,0],[6,'다나돌리','무대 앞 레일','24-70','오세린','클로즈업',.58,.37,0]]};
-  for(const d of DAYN)[...CM,...ex[d]].forEach(c=>{
-    const cam=A('cams',{id:`demo-m${d}${c[0]}`,day:d,no:c[0],rig:c[1],pos:c[2],lens:c[3],op:crew[c[4]].id,shot:c[5],note:''});
-    A('pins',{id:'demo-p'+cam.id,plan:'demo-plan',day:d,kind:'cam',ref:cam.id,x:c[6],y:c[7],rot:c[8]});
-  });
-  [['강태오',.62,.9],['한서진',.38,.9],['윤서아',.5,.9],['김도윤',.25,.9],['임도현',.5,.8]].forEach(([nm,x,y],i)=>{for(const d of DAYN)A('pins',{id:`demo-q${d}${i}`,plan:'demo-plan',day:d,kind:'crew',ref:crew[nm].id,x,y,rot:0});});
-  V.plan='demo-plan';V.tab='call';V.day=1;saveUI();save();render();
+  const CM=[[1,'삼각대','후방 중앙 (FOH)','24-70','이서준','와이드',49.5,100,0],[2,'삼각대','무대 좌측 전방','70-200','박민재','미디엄',75,28,305],[3,'짐벌','객석 통로','24-70','최유진','인서트',40,65,5],[4,'지미집','무대 우측 전방','24-70','정하린','와이드',20,26,62]];
+  const ex={1:[[5,'핸드헬드','무대 앞 이동','24-70','한지우','군중',45,30,0]],2:[[5,'다나돌리','무대 앞 레일','24-70','오세린','클로즈업',49.5,24,0]],3:[[5,'핸드헬드','무대 앞 이동','24-70','한지우','군중',40,30,0],[6,'다나돌리','무대 앞 레일','24-70','오세린','클로즈업',58,24,0]]};
+  const K=(xm,ym)=>fromM(KINTEX,xm-49.5,ym-66);
+  for(const d of DAYN){
+    const [sx,sy]=K(49.5,9),[fx,fy]=K(49.5,103);A('pins',{id:'demo-stage'+d,plan:'kintex9',day:d,kind:'area',ref:'demo-a'+d+'0',x:sx,y:sy,rot:0,name:'무대',w:24,d:10,h:1.2,col:0});A('pins',{id:'demo-foh'+d,plan:'kintex9',day:d,kind:'area',ref:'demo-a'+d+'1',x:fx,y:fy,rot:0,name:'FOH',w:8,d:3,h:1.5,col:6});
+    [...CM,...ex[d]].forEach(c=>{
+      const cam=A('cams',{id:`demo-m${d}${c[0]}`,day:d,no:c[0],rig:c[1],pos:c[2],lens:c[3],op:crew[c[4]].id,shot:c[5],note:''}),[fx,fy]=K(c[6],c[7]);
+      A('pins',{id:'demo-p'+cam.id,plan:'kintex9',day:d,kind:'cam',ref:cam.id,x:fx,y:fy,rot:c[8]});
+    });
+  }
+  [['강태오',60,114],['한서진',38,114],['윤서아',49.5,114],['김도윤',27,114],['임도현',49.5,106]].forEach(([nm,xm,ym],i)=>{const [fx,fy]=K(xm,ym);for(const d of DAYN)A('pins',{id:`demo-q${d}${i}`,plan:'kintex9',day:d,kind:'crew',ref:crew[nm].id,x:fx,y:fy,rot:0});});
+  V.plan='kintex9';V.tab='call';V.day=1;saveUI();save();render();
 }
 function removeDemo(){
   const isD=it=>String(it.id).startsWith('demo-');
@@ -499,6 +659,7 @@ function addRow(col,b){
 }
 function boot(){
   buildPV();
+  if(ensureKintex())persist();
   const main=$('#main');
   $('#bar').addEventListener('click',e=>{
     const d=e.target.closest('[data-day]');if(d){V.day=Number(d.dataset.day);V.sel=null;V.armed=null;saveUI();render();return;}
