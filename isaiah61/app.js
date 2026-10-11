@@ -19,6 +19,7 @@ const IC={
   gear:'<path d="M3 8l9-5 9 5v9l-9 5-9-5z"/><path d="M3 8l9 5 9-5M12 13v9"/>',
   cams:'<rect x="3" y="7" width="13" height="10" rx="2"/><path d="M16 11l5-2.500v8L16 14"/>',
   plot:'<path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/>',
+  undo:'<path d="M9 14L4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-3"/>', redo:'<path d="M15 14l5-5-5-5"/><path d="M20 9H9a5 5 0 0 0 0 10h3"/>',
   plus:'<path d="M12 5v14M5 12h14"/>', trash:'<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/>', x:'<path d="M6 6l12 12M18 6L6 18"/>',
   copy:'<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/>',
   print:'<path d="M7 9V3h10v6M7 17H4v-7h16v7h-3"/><rect x="7" y="14" width="10" height="7"/>',
@@ -74,7 +75,11 @@ const SB={url:'https://mgvqhrdhshpuamihfvnp.supabase.co',
 let DB=null,pushT=0,drag=null,pendR=false;
 const setSt=s=>{const d=$('#dot');if(d)d.className='dot '+s;};
 const persist=()=>{try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}};
-function save(){persist();clearTimeout(pushT);setSt(DB?'wait':'');pushT=setTimeout(push,700);}
+/* 실행 취소 이력: 저장 시점마다 전체 스냅샷(도면 이미지는 별도라 작음) */
+const H={u:[],r:[],c:''};
+const snap=()=>JSON.stringify(S);
+function histPush(){const j=snap();if(j===H.c)return;if(H.c){H.u.push(H.c);if(H.u.length>100)H.u.shift();}H.r=[];H.c=j;}
+function save(){histPush();persist();clearTimeout(pushT);setSt(DB?'wait':'');pushT=setTimeout(push,700);}
 const touch=it=>{it.u=now();return it;};
 function mergeIn(rem){
   if(!rem||rem.schema!==2)return false;
@@ -84,7 +89,8 @@ function mergeIn(rem){
     S[c]=[...m.values()].filter(it=>!(del[it.id]>=(it.u||0)));}
   const cut=now()-30*864e5;for(const k in del)if(del[k]<cut)delete del[k];
   S.del=del;if(((rem.proj||{}).u||0)>(S.proj.u||0))S.proj=rem.proj;
-  return JSON.stringify(S)!==before;
+  const ch=JSON.stringify(S)!==before;if(ch){H.u=[];H.r=[];H.c=snap();}
+  return ch;
 }
 async function push(){
   if(!DB)return;
@@ -114,6 +120,27 @@ function initSync(){
   setSt('wait');
   pull().then(()=>{push();DB.channel('i61doc').on('postgres_changes',{event:'*',schema:'public',table:SB.table,filter:'id=eq.'+SB.row},()=>pull()).subscribe();});
   addEventListener('online',push);
+}
+
+/* 스냅샷 복원: 지워진 건 삭제 표시, 되살린/바뀐 건 새 시각을 줘서 동기화에서도 이기게 한다 */
+function restore(j){
+  const T=JSON.parse(j),strip=o=>JSON.stringify({...o,u:0});
+  for(const c of COLS){
+    const cur=new Map(S[c].map(x=>[x.id,x])),out=[];
+    for(const id of cur.keys())if(!T[c].some(x=>x.id===id))S.del[id]=now();
+    for(const it of T[c]){const o=cur.get(it.id);if(o&&strip(o)===strip(it)){out.push(o);continue;}it.u=now();delete S.del[it.id];out.push(it);}
+    S[c]=out;
+  }
+  if(strip(S.proj)!==strip(T.proj))S.proj={...T.proj,u:now()};
+}
+function undoRedo(redo){
+  if($('.ov'))return;
+  const ae=document.activeElement;if(ae&&/INPUT|TEXTAREA|SELECT/.test(ae.tagName))ae.blur();   // 입력 중이던 내용을 먼저 확정
+  const from=redo?H.r:H.u,to=redo?H.u:H.r;
+  if(!from.length){toast(redo?'다시 실행할 게 없어요':'취소할 게 없어요');return;}
+  to.push(H.c);restore(from.pop());H.c=snap();
+  V.sel=null;V.armed=null;persist();clearTimeout(pushT);setSt(DB?'wait':'');pushT=setTimeout(push,700);
+  render();toast(redo?'다시 실행':'실행 취소');
 }
 
 /* CRUD */
@@ -636,7 +663,7 @@ function render(){
   if(drag){pendR=true;return;}
   const tab=TABS.find(t=>t.k===V.tab)||TABS[0],showDays=!['crew','gear'].includes(V.tab),today=todayN();
   $('#bar').innerHTML=(showDays?`<div class="days">${DAYN.map(n=>{const d=dayDate(n);return `<button data-day="${n}" class="${V.day===n?'on':''}">DAY ${n}<small>${d?(d.getMonth()+1)+'/'+d.getDate()+(today===n?' · 오늘':''):'&nbsp;'}</small></button>`;}).join('')}</div>`:`<b style="font-size:15px">${tab.n}</b>`)+
-    `<span class="sp"></span><button class="ib" data-bar="copy" aria-label="텍스트 복사">${ic('copy',16)}복사</button><button class="ib" data-bar="print" aria-label="인쇄">${ic('print',16)}</button><button class="ib" data-bar="cog" aria-label="설정">${ic('cog',16)}</button>`;
+    `<span class="sp"></span><button class="ib" data-bar="undo" aria-label="실행 취소"${H.u.length?'':' disabled'}>${ic('undo',16)}</button><button class="ib" data-bar="redo" aria-label="다시 실행"${H.r.length?'':' disabled'}>${ic('redo',16)}</button><button class="ib" data-bar="copy" aria-label="텍스트 복사">${ic('copy',16)}복사</button><button class="ib" data-bar="print" aria-label="인쇄">${ic('print',16)}</button><button class="ib" data-bar="cog" aria-label="설정">${ic('cog',16)}</button>`;
   $('#tabs').innerHTML=TABS.map(t=>`<button class="${t.k===V.tab?'on':''}" data-tab="${t.k}">${ic(t.i,22)}${t.n}</button>`).join('');
   const main=$('#main');
   if(V.tab==='plot'){
@@ -660,10 +687,13 @@ function addRow(col,b){
 function boot(){
   buildPV();
   if(ensureKintex())persist();
+  DAYN.forEach(dayRec);H.c=snap();
   const main=$('#main');
   $('#bar').addEventListener('click',e=>{
     const d=e.target.closest('[data-day]');if(d){V.day=Number(d.dataset.day);V.sel=null;V.armed=null;saveUI();render();return;}
     const b=e.target.closest('[data-bar]');if(!b)return;
+    if(b.dataset.bar==='undo')undoRedo(false);
+    if(b.dataset.bar==='redo')undoRedo(true);
     if(b.dataset.bar==='copy')copyText(textOf(V.tab));
     if(b.dataset.bar==='print')print();
     if(b.dataset.bar==='cog')settings();
@@ -695,7 +725,11 @@ function boot(){
     it[t.dataset.k]=v;touch(it);save();
     if(t.dataset.re)render();
   });
-  addEventListener('keydown',e=>{if(e.key==='Escape'&&V.tab==='plot'&&(V.sel||V.armed)){V.sel=null;V.armed=null;render();}});
+  addEventListener('keydown',e=>{
+    const k=e.key.toLowerCase();
+    if((e.metaKey||e.ctrlKey)&&k==='z'){e.preventDefault();undoRedo(e.shiftKey);return;}
+    if(e.ctrlKey&&k==='y'){e.preventDefault();undoRedo(true);return;}
+    if(e.key==='Escape'&&V.tab==='plot'&&(V.sel||V.armed)){V.sel=null;V.armed=null;render();}});
   addEventListener('resize',()=>{if(V.tab==='plot')fit();});
   render();initSync();
   window.__i61={S:()=>S,V,render,putImg,PV};
