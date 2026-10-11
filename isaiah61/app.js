@@ -19,11 +19,12 @@ const IC={
   gear:'<path d="M3 8l9-5 9 5v9l-9 5-9-5z"/><path d="M3 8l9 5 9-5M12 13v9"/>',
   cams:'<rect x="3" y="7" width="13" height="10" rx="2"/><path d="M16 11l5-2.500v8L16 14"/>',
   plot:'<path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/>',
+  moon:'<path d="M20 14.500A8.500 8.500 0 1 1 9.500 4a7 7 0 0 0 10.500 10.500z"/>', sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.500 1.500M17.500 17.500L19 19M19 5l-1.500 1.500M6.500 17.500L5 19"/>',
   undo:'<path d="M9 14L4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-3"/>', redo:'<path d="M15 14l5-5-5-5"/><path d="M20 9H9a5 5 0 0 0 0 10h3"/>',
   plus:'<path d="M12 5v14M5 12h14"/>', trash:'<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/>', x:'<path d="M6 6l12 12M18 6L6 18"/>',
   copy:'<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/>',
   print:'<path d="M7 9V3h10v6M7 17H4v-7h16v7h-3"/><rect x="7" y="14" width="10" height="7"/>',
-  cog:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>',
+  cog:'<path d="M4 7h9M19 7h1M4 17h1M11 17h9"/><circle cx="16" cy="7" r="2.5"/><circle cx="8" cy="17" r="2.5"/>',
   check:'<path d="M5 12.500l4.500 4.500L19 7.500"/>', dl:'<path d="M12 4v11M7 11l5 5 5-5M5 20h14"/>', ul:'<path d="M12 16V5M7 9l5-5 5 5M5 20h14"/>',
   image:'<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="1.800"/><path d="M4 18l5-5 4 4 3-3 4 4"/>',
   edit:'<path d="M4 20h4L19 9l-4-4L4 16z"/>', rot:'<path d="M20 12a8 8 0 1 1-2.500-5.800M20 4v5h-5"/>',
@@ -200,7 +201,18 @@ async function shrink(file){
 }
 function pickImage(cb){const f=document.createElement('input');f.type='file';f.accept='image/*';f.onchange=async()=>{if(f.files[0]){try{cb(await shrink(f.files[0]));}catch(e){console.warn(e);}}};f.click();}
 
+/* ═══ 야간 모드 ═══ */
+const THEME_KEY='isaiah61.theme',mq=matchMedia('(prefers-color-scheme: dark)');
+const effDark=()=>{const t=document.documentElement.dataset.theme;return t==='dark'||(t!=='light'&&mq.matches);};
+function applyTheme(t){
+  const h=document.documentElement;if(t)h.dataset.theme=t;else delete h.dataset.theme;
+  try{if(t)localStorage.setItem(THEME_KEY,t);else localStorage.removeItem(THEME_KEY);}catch(e){}
+  const m=document.querySelector('meta[name=theme-color]');if(m)m.content=effDark()?'#07080a':'#f3f4f6';
+}
+mq.addEventListener&&mq.addEventListener('change',()=>{applyTheme(document.documentElement.dataset.theme||'');render();});
+
 /* ═══ 모달 · 토스트 ═══ */
+
 function modal(inner){
   const o=document.createElement('div');o.className='ov';o.innerHTML=`<div class="box">${inner}</div>`;document.body.append(o);
   const kd=e=>{if(e.key==='Escape')close();};
@@ -278,10 +290,9 @@ function vGear(){
 const msel=(kind,c,names)=>`<button class="msel" data-ms="${kind}" data-id="${c.id}">${names.length?names.map(x=>`<span class="mc">${esc(x)}</span>`).join(''):'<span class="ph">선택</span>'}</button>`;
 function vCams(){
   const n=V.day,list=S.cams.filter(c=>c.day===n).sort((a,b)=>(a.no||0)-(b.no||0));
-  const pinned=new Set(S.pins.filter(p=>p.kind==='cam'&&p.day===n).map(p=>p.ref));
-  const rows=list.map(c=>`<tr><td style="width:64px" class="num">${inp('cams',c,'no',{t:'number',re:1})}</td><td style="min-width:150px">${sel('cams',c,'op',crewOpts(n))}</td><td style="min-width:150px">${msel('rigs',c,rigsOf(c))}</td><td style="min-width:220px">${msel('gear',c,gearNames(c))}</td><td style="min-width:130px">${inp('cams',c,'pos',{ph:'위치'})}</td><td style="width:100px">${sel('cams',c,'shot',SHOTS.map(s=>[s,s||'—']))}</td><td style="min-width:130px">${inp('cams',c,'note',{ph:'비고'})}</td><td class="pin">${pinned.has(c.id)?'●':''}</td>${xb('cams',c.id)}</tr>`).join('');
+  const rows=list.map(c=>`<tr><td style="width:64px" class="num">${inp('cams',c,'no',{t:'number',re:1})}</td><td style="min-width:150px">${sel('cams',c,'op',crewOpts(n))}</td><td style="min-width:150px">${msel('rigs',c,rigsOf(c))}</td><td style="min-width:220px">${msel('gear',c,gearNames(c))}</td><td style="width:100px">${sel('cams',c,'shot',SHOTS.map(s=>[s,s||'—']))}</td><td style="min-width:130px">${inp('cams',c,'note',{ph:'비고'})}</td>${xb('cams',c.id)}</tr>`).join('');
   return `<div class="doc"><div class="dh"><div><h1>CAMERA LIST</h1><div style="color:var(--soft);font-weight:600">${esc(S.proj.title)} · ${esc(S.proj.sub)}</div></div><div class="r"><b>${dayLabel(n)} · DAY ${n} / 3</b>${list.length}명</div></div>
-  <div class="tw"><table class="t" style="min-width:900px"><thead><tr><th>CAM</th><th>담당</th><th>포지션</th><th>장비</th><th>위치</th><th>샷</th><th>비고</th><th>도면</th><th class="noprint"></th></tr></thead><tbody>${rows||`<tr><td colspan="9" class="empty">카메라 추가로 시작</td></tr>`}</tbody></table></div>
+  <div class="tw"><table class="t" style="min-width:760px"><thead><tr><th>CAM</th><th>담당</th><th>포지션</th><th>장비</th><th>샷</th><th>비고</th><th class="noprint"></th></tr></thead><tbody>${rows||`<tr><td colspan="7" class="empty">카메라 추가로 시작</td></tr>`}</tbody></table></div>
   <div class="addrow noprint"><button class="ib" data-add="cams">${ic('plus',16)}카메라 추가</button>${n>1?`<button class="ib" data-copyday="cams">${ic('copy',16)}${n-1}일 → ${n}일 복사</button>`:''}</div></div>`;
 }
 /* 멀티 선택 창: 포지션(핸드헬드·지미집·짐벌…) / 장비(장비 탭에 등록된 것) */
@@ -626,7 +637,7 @@ function textOf(tab){
   if(tab==='sched'){head(`RUN OF SHOW  DAY ${n}/3  ${dateStr(n)}`);for(const s of S.sched.filter(s=>s.day===n).sort(byStart))L.push([s.start,s.end,s.kind,s.title,s.place,s.who,s.note].join('\t'));}
   if(tab==='crew'){head('CREW LIST');L.push(['#','이름','번호','장비',DAYN.map(dayLabel).join(' '),'비고'].join('\t'));S.crew.forEach((c,i)=>L.push([i+1,c.name,c.phone,c.wear,DAYN.map(n=>(c.days||[]).includes(n)?'O':'-').join(' '),c.note].join('\t')));}
   if(tab==='gear'){head('EQUIPMENT LIST');for(const cat of [...new Set([...CATS,...S.gear.map(g=>g.cat)])]){const l=S.gear.filter(g=>g.cat===cat);if(!l.length)continue;L.push(`[${cat}]`);for(const g of l)L.push([g.name,'×'+(g.qty==null?1:g.qty),STAT[g.status||'ok'],(crewOf(g.owner)||{}).name||'',g.note].join('\t'));}}
-  if(tab==='cams'){head(`CAMERA LIST  DAY ${n}/3`);for(const c of S.cams.filter(c=>c.day===n).sort((a,b)=>(a.no||0)-(b.no||0)))L.push([`CAM ${c.no}`,(crewOf(c.op)||{}).name||'',rigTxt(c),gearNames(c).join(' + '),c.pos,c.shot,c.note].join('\t'));}
+  if(tab==='cams'){head(`CAMERA LIST  DAY ${n}/3`);for(const c of S.cams.filter(c=>c.day===n).sort((a,b)=>(a.no||0)-(b.no||0)))L.push([`CAM ${c.no}`,(crewOf(c.op)||{}).name||'',rigTxt(c),gearNames(c).join(' + '),c.shot,c.note].join('\t'));}
   if(tab==='plot'){head(`CAMERA PLOT  DAY ${n}/3 (도면 화면 기준)`);for(const p of pinsNow()){if(p.kind==='cam'){const c=byId(S.cams,p.ref);if(c)L.push(`CAM ${c.no}\t${rigTxt(c)}\t${(crewOf(c.op)||{}).name||''}\t${gearNames(c).join(' + ')}\t${where(p)}`);}else if(p.kind==='area')L.push(`구역\t${p.name||'구역'}\t${p.w||10}×${p.d||10}m\t높이 ${p.h==null?3:p.h}m\t${where(p)}`);else{const c=crewOf(p.ref);if(c)L.push(`${c.name}\t${where(p)}`);}}}
   return L.join('\n');
 }
@@ -685,7 +696,7 @@ function render(){
   if(drag){pendR=true;return;}
   const tab=TABS.find(t=>t.k===V.tab)||TABS[0],showDays=!['crew','gear'].includes(V.tab),today=todayN();
   $('#bar').innerHTML=(showDays?`<div class="days">${DAYN.map(n=>{const d=dayDate(n);return `<button data-day="${n}" class="${V.day===n?'on':''}">DAY ${n}<small>${d?dayLabel(n)+(today===n?' · 오늘':''):'&nbsp;'}</small></button>`;}).join('')}</div>`:`<b style="font-size:15px">${tab.n}</b>`)+
-    `<span class="sp"></span><button class="ib" data-bar="undo" aria-label="실행 취소"${H.u.length?'':' disabled'}>${ic('undo',16)}</button><button class="ib" data-bar="redo" aria-label="다시 실행"${H.r.length?'':' disabled'}>${ic('redo',16)}</button><button class="ib" data-bar="copy" aria-label="텍스트 복사">${ic('copy',16)}복사</button><button class="ib" data-bar="print" aria-label="인쇄">${ic('print',16)}</button><button class="ib" data-bar="cog" aria-label="설정">${ic('cog',16)}</button>`;
+    `<span class="sp"></span><button class="ib" data-bar="theme" aria-label="${effDark()?'밝게':'어둡게'}">${ic(effDark()?'sun':'moon',16)}</button><button class="ib" data-bar="undo" aria-label="실행 취소"${H.u.length?'':' disabled'}>${ic('undo',16)}</button><button class="ib" data-bar="redo" aria-label="다시 실행"${H.r.length?'':' disabled'}>${ic('redo',16)}</button><button class="ib" data-bar="copy" aria-label="텍스트 복사">${ic('copy',16)}복사</button><button class="ib" data-bar="print" aria-label="인쇄">${ic('print',16)}</button><button class="ib" data-bar="cog" aria-label="설정">${ic('cog',16)}</button>`;
   $('#tabs').innerHTML=TABS.map(t=>`<button class="${t.k===V.tab?'on':''}" data-tab="${t.k}">${ic(t.i,22)}${t.n}</button>`).join('');
   const main=$('#main');
   if(V.tab==='plot'){
@@ -704,16 +715,18 @@ function addRow(col,b){
   if(col==='gear'){V.lastCat=b.dataset.cat;it=add('gear',{cat:b.dataset.cat,name:'',qty:1,owner:'',status:'ok',note:''});}
   if(col==='sched')it=add('sched',{day:V.day,start:'',end:'',kind:'본행사',title:'',place:'',who:'',note:''});
   if(col==='cams'){const no=Math.max(0,...S.cams.filter(c=>c.day===V.day).map(c=>c.no||0))+1;it=add('cams',{day:V.day,no,rigs:['트라이포드'],rig:'트라이포드',gear:[],pos:'',op:'',shot:'',note:''});}
-  V.focus=it.id;V.focusK=col==='crew'?'name':col==='sched'?'title':col==='cams'?'pos':'name';render();
+  V.focus=it.id;V.focusK=col==='crew'?'name':col==='sched'?'title':col==='cams'?'op':'name';render();
 }
 function boot(){
   buildPV();
+  applyTheme(document.documentElement.dataset.theme||'');
   if(ensureKintex())persist();
   DAYN.forEach(dayRec);H.c=snap();
   const main=$('#main');
   $('#bar').addEventListener('click',e=>{
     const d=e.target.closest('[data-day]');if(d){V.day=Number(d.dataset.day);V.sel=null;V.armed=null;saveUI();render();return;}
     const b=e.target.closest('[data-bar]');if(!b)return;
+    if(b.dataset.bar==='theme'){applyTheme(effDark()?'light':'dark');render();return;}
     if(b.dataset.bar==='undo')undoRedo(false);
     if(b.dataset.bar==='redo')undoRedo(true);
     if(b.dataset.bar==='copy')copyText(textOf(V.tab));
