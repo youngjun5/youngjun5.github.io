@@ -202,3 +202,94 @@ canvas.gl{filter:var(--glf)}
 .tray .chip{touch-action:pan-x;user-select:none;-webkit-user-select:none}
 .tray .chip .bd{min-width:20px;height:20px;border-radius:6px;color:#fff;font-size:11px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;padding:0 4px}
 .ghost{position:fixed;z-index:200;transform:translate(-50%,-70%) scale(1.12);pointer-events:none;opacity:.92;box-shadow:0 6px 18px #0006}
+
+/* ═══ 휴대폰(좁은 화면): 표를 카드로 풀어서 좌우 스크롤 없이 위아래 스크롤만으로 보게 ═══ */
+@media (max-width:640px){
+  .bar{padding:6px 10px 8px;gap:5px}
+  .bar>*{order:1}
+  .bar>.days.parts{order:2;flex:1 1 100%}
+  .days:not(.parts){flex:0 0 auto}
+  .days:not(.parts) button{flex:none;padding:0 7px}
+  .days.parts button{flex:1}
+  .bar .sp{flex:1 1 0;min-width:0}
+  .bar .ib{height:32px;min-width:32px;padding:0 6px}
+  .ib .tx{display:none}
+  [data-bar=print]{display:none}
+  .doc{padding:4px 10px 90px}
+  .dh h1{font-size:20px}
+  .dh .r b{font-size:15px}
+  .cn{padding:10px 12px;min-height:80px}
+  .cn b{font-size:32px}
+  .clock{padding:12px 10px}
+  .cv3{height:clamp(300px,52vh,460px)}
+  .pbar{padding:0 10px 6px}
+  .fbar{padding:0 10px 6px}
+  .tray{padding:6px 10px}
+  .mk .tk{width:30px;height:30px;font-size:14px}
+  .mk .pill{font-size:10px;padding:1px 6px}
+
+  .tw{border:0;background:transparent;overflow:visible}
+  .t{min-width:0!important;display:block;width:100%}
+  .t thead{display:none}
+  .t tbody{display:block}
+  .t tr{display:grid;grid-template-columns:repeat(6,1fr);gap:6px 8px;padding:10px 12px;margin-bottom:8px;background:var(--card);border:1px solid var(--line);border-radius:12px;position:relative}
+  .t tr.grp{display:block;padding:4px 4px 0;margin:12px 0 4px;background:transparent;border:0;border-radius:0}
+  .t tr.grp td{display:block;background:transparent;border:0;padding:0}
+  .t td{display:block;grid-column:span 3;min-width:0!important;width:auto!important;border:0;padding:0}
+  .t td.ro{padding:0}
+  .t td.ro:empty{display:none}
+  .t td::before{display:none;font-size:10px;font-weight:800;color:var(--soft);margin-bottom:2px;letter-spacing:.03em}
+  .t td[data-l]::before{content:attr(data-l);display:block}
+  .t td input,.t td select{border:1px solid var(--line);border-radius:8px;background:var(--card2);padding:9px 10px;font-size:15px}
+  .t td.num input{text-align:left}
+  .t td.idx{display:none}
+  .t td.x{grid-column:1/-1;text-align:right}
+  .t td.ck{grid-column:span 2;text-align:left}
+  .t td[data-l="항목"],.t td[data-l="장비"],.t td[data-l="비고"],.t td[data-l="카메라 배정"]{grid-column:1/-1}
+  .t td:has(.msel){grid-column:1/-1}
+  .t td:has(.msel)::before{display:block}
+
+  /* 칸 이름 (입력 칸) */
+  .t td:has([data-k=start])::before{content:'시작';display:block}
+  .t td:has([data-k=end])::before{content:'끝';display:block}
+  .t td:has([data-k=kind])::before{content:'구분';display:block}
+  .t td:has([data-k=title])::before{content:'항목';display:block}
+  .t td:has([data-k=place])::before{content:'장소';display:block}
+  .t td:has([data-k=who])::before{content:'담당';display:block}
+  .t td:has([data-k=note])::before{content:'비고';display:block}
+  .t td:has([data-k=name])::before{content:'이름';display:block}
+  .t td:has([data-k=phone])::before{content:'번호';display:block}
+  .t td:has([data-k=wear])::before{content:'장비';display:block}
+  .t td:has([data-k=cat])::before{content:'분류';display:block}
+  .t td:has([data-k=qty])::before{content:'수량';display:block}
+  .t td:has([data-k=owner])::before{content:'담당';display:block}
+  .t td:has([data-k=status])::before{content:'상태';display:block}
+  .t td:has([data-k=no])::before{content:'CAM';display:block}
+  .t td:has([data-k=part])::before{content:'파트';display:block}
+  .t td:has([data-k=op])::before{content:'담당';display:block}
+  .t td:has([data-k=shot])::before{content:'샷';display:block}
+  .t td:has([data-ms=rigs])::before{content:'포지션';display:block}
+  .t td:has([data-ms=gear])::before{content:'장비';display:block}
+
+  /* 표별 배치 (6칸 격자) */
+  .t-sched td:has([data-k=start]),.t-sched td:has([data-k=end]),.t-sched td:has([data-k=kind]){grid-column:span 2}
+  .t-sched td:has([data-k=title]),.t-sched td:has([data-k=note]){grid-column:1/-1}
+  .t-crew td:has([data-k=wear]),.t-crew td:has([data-k=note]){grid-column:1/-1}
+  .t-gear td:has([data-k=cat]){grid-column:span 2}
+  .t-gear td:has([data-k=name]){grid-column:span 4}
+  .t-gear td:has([data-k=qty]),.t-gear td:has([data-k=owner]),.t-gear td:has([data-k=status]){grid-column:span 2}
+  .t-gear td:has([data-k=note]){grid-column:1/-1}
+  .t-cams td:has([data-k=no]),.t-cams td:has([data-k=part]),.t-cams td:has([data-k=op]){grid-column:span 2}
+  .t-cams td:has([data-k=shot]){grid-column:span 2}
+  .t-cams td:has([data-k=note]){grid-column:span 4}
+  .t-ro td[data-l="시간"],.t-ro td[data-l="구분"]{grid-column:span 3}
+  .t-ro td[data-l="CAM"],.t-ro td[data-l="파트"]{grid-column:span 2}
+  .t-ro td[data-l="담당"],.t-ro td[data-l="포지션"]{grid-column:span 3}
+  .t-ro td[data-l="샷"]{grid-column:span 3}
+  .t tr.grp .gc{font-size:12px}
+  .t td.empty{grid-column:1/-1}
+  /* 시간 칸은 넓게: 시작·끝 한 줄, 구분+항목 한 줄 */
+  .t-sched td:has([data-k=start]),.t-sched td:has([data-k=end]){grid-column:span 3}
+  .t-sched td:has([data-k=kind]){grid-column:span 2}
+  .t-sched td:has([data-k=title]){grid-column:span 4}
+}
