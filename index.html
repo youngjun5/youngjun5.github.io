@@ -290,9 +290,9 @@ var ROOMS = [
       status: "live"
     },
     {
-      title: "SoliDeo:OFFMIC",
+      title: "SoliDeo:MYSTAGE",
       desc: "영화 제작 관리 문서",
-      href: "https://youngjun5.github.io/offmic/",
+      href: "https://youngjun5.github.io/mystage/",
       icon: "film",
       status: "live",
       summary: "offmic"
@@ -524,9 +524,9 @@ function esc2(v){ return String(v==null?'':v).replace(/[&<>]/g,function(c){retur
   })();
 </script>
 
-<script src="offmic/data.js"></script>
+<script src="mystage/data.js"></script>
 <script>
-  /* SoliDeo:OFFMIC 카드 요약 — 저장된 최신 데이터(없으면 초기 데이터)로 진행률·다음 할 일·미정 칸 수를 보여줌 */
+  /* SoliDeo:MYSTAGE 카드 요약 — 저장된 최신 데이터(없으면 초기 데이터)로 진행률·다음 할 일·미정 칸 수를 보여줌 */
   (function () {
     var el = document.querySelector('.tsum[data-sum="offmic"]');
     if (!el || !window.OFFMIC) return;
@@ -542,7 +542,7 @@ function esc2(v){ return String(v==null?'':v).replace(/[&<>]/g,function(c){retur
       var db = window.supabase.createClient('https://mgvqhrdhshpuamihfvnp.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1ndnFocmRoc2hwdWFtaWhmdm5wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg2MTE4NjQsImV4cCI6MjEwNDE4Nzg2NH0.fjDJuG-47YHU63lydUSZGAGg3FQ-DLGLp9ufnJ4SN30');
       function pull() {
         db.from('carescript').select('content').eq('id', OFFMIC.row).maybeSingle().then(function (res) {
-          if (!res.error && res.data && res.data.content && res.data.content.masterSchedule) show(res.data.content);
+          if (!res.error && res.data && res.data.content && res.data.content.masterSchedule && res.data.content.schema === OFFMIC.schema) show(res.data.content);
         });
       }
       pull();
