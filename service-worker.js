@@ -35,6 +35,7 @@ self.addEventListener("fetch", (e) => {
   if (url.pathname.indexOf("/offmic/") === 0) return;         // SoliDeo:OFFMIC — 실시간 편집 데이터, 캐시 없이 항상 최신으로
   if (url.pathname.indexOf("/isaiah61/") === 0) return;       // ISAIAH 61 — 실시간 편집 데이터, 캐시 없이 항상 최신으로
   if (url.pathname.indexOf("/carecolor/") === 0) return;      // CARECOLOR — 실시간 편집 데이터, 캐시 없이 항상 최신으로
+  if (url.pathname.indexOf("/kit/") === 0) return;            // 장비 셋업 — 실시간 편집 데이터, 캐시 없이 항상 최신으로
 
   const isPage = e.request.mode === "navigate" || url.pathname.endsWith("/") || url.pathname.endsWith("index.html");
   if (isPage) {
