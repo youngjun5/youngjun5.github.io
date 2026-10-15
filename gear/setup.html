@@ -42,7 +42,6 @@ input,select{background:var(--card2);border:1px solid var(--hair);border-radius:
 .warn.bad{color:var(--danger)}
 .stage.placing{outline:2px dashed var(--acc);outline-offset:-2px}
 .stage.placing #plan{cursor:crosshair}
-.adds button.on{background:var(--ink);color:var(--bg)}
 .pick{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;z-index:50;padding:16px}
 .pick[hidden]{display:none}
 .pickbox{background:var(--card);border:1px solid var(--hair2);border-radius:14px;width:min(720px,100%);max-height:86vh;display:flex;flex-direction:column}
@@ -69,8 +68,6 @@ input,select{background:var(--card2);border:1px solid var(--hair);border-radius:
 .bar label{color:var(--soft);font-size:12px}
 .bar input.num{width:56px}
 #setupSel{max-width:220px}
-.adds{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
-.adds button{font-size:13px}
 .seg{display:inline-flex;border:1px solid var(--hair);border-radius:8px;overflow:hidden}
 .seg button{border:0;border-radius:0;background:transparent;color:var(--soft)}
 .seg button.on{background:var(--card2);color:var(--ink)}
@@ -115,16 +112,48 @@ input,select{background:var(--card2);border:1px solid var(--hair);border-radius:
 .it select{font-size:11px;padding:2px 4px;max-width:110px}
 .it .q{font-variant-numeric:tabular-nums;color:var(--soft);font-size:12px}
 .printhead{display:none}
+.ib{min-width:34px;padding:6px 8px;position:relative}
+.bar{gap:8px}
+.menuwrap{position:relative}
+.menuwrap .dot{position:absolute;top:4px;right:4px;width:6px;height:6px}
+.menu{position:absolute;left:0;top:calc(100% + 6px);z-index:30;background:var(--card);border:1px solid var(--hair2);border-radius:12px;padding:12px;width:280px;box-shadow:0 12px 32px rgba(0,0,0,.35);display:flex;flex-direction:column;gap:8px}
+.menu[hidden],.addpop[hidden]{display:none}
+.fl{display:flex;align-items:center;gap:6px;font-size:13px}
+.fl>span:first-child{width:34px;color:var(--soft);font-size:12px}
+.fl input:not(.num){flex:1}
+.mrow{display:flex;gap:6px;align-items:center}
+#status{font-size:11px;color:var(--soft)}
+.fab{position:absolute;right:12px;bottom:12px;z-index:5;background:var(--ink);color:var(--bg);border:0;border-radius:999px;padding:9px 16px;font-weight:600;box-shadow:0 6px 18px rgba(0,0,0,.3)}
+.stage.placing .fab{background:var(--card2);color:var(--ink)}
+.addpop{position:absolute;right:12px;bottom:58px;z-index:6;background:var(--card);border:1px solid var(--hair2);border-radius:14px;padding:8px;display:grid;grid-template-columns:repeat(4,64px);gap:4px;box-shadow:0 12px 32px rgba(0,0,0,.35)}
+.addpop button{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 2px;font-size:12px;background:transparent;border:0;border-radius:10px;color:var(--ink)}
+.addpop button:hover{background:var(--card2)}
+.addpop svg{width:22px;height:22px}
+.ihd{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.ihd svg{width:20px;height:20px;color:var(--soft);flex:none}
+.iname{flex:1;font-size:16px;font-weight:600;background:transparent;border:0;border-bottom:1px solid transparent;border-radius:0;padding:2px 0}
+.iname:focus{outline:0;border-bottom-color:var(--hair2)}
+.chip{border-left:3px solid var(--c,var(--faint))}
+.addrow{display:flex;gap:6px}
+.addrow input{flex:1}
+.more{margin-top:12px;border-top:1px solid var(--hair);padding-top:8px}
+.more summary{cursor:pointer;color:var(--soft);font-size:12px;list-style:none}
+.more summary::before{content:'▸ '}
+.more[open] summary::before{content:'▾ '}
+.more .row{margin-top:8px}
+.bagpick{position:relative;width:22px;height:22px;display:flex;align-items:center;justify-content:center;border-radius:6px;cursor:pointer}
+.bagpick:hover{background:var(--card2)}
+.bagpick i{width:10px;height:10px;border-radius:50%;background:var(--c)}
+.bagpick select{position:absolute;inset:0;opacity:0;cursor:pointer;max-width:none;padding:0}
 
 @media (max-width:820px){
   .main{grid-template-columns:minmax(0,1fr)}
-  #sName{width:100%!important;flex:1}
-  .bar .grp{flex-wrap:wrap;max-width:100%}
+  #setupSel{max-width:130px}
   .stage{height:56vh}
 }
 @media print{
   :root,:root[data-theme]{--bg:#fff;--card:#fff;--card2:#f1f2f4;--ink:#111;--soft:#555;--faint:#888;--hair:#ccc;--hair2:#999;--floor:#fff;--grid:#eee;--grid2:#ccc;--stf:#f1f2f4;--sel:#111;color-scheme:light}
-  .topbar,.gtabs,.pick,.zoom,.bar,.adds,.insp,.hint,.cc-bar,.x,.it select,#gl,.noprint{display:none!important}
+  .topbar,.gtabs,.pick,.zoom,.bar,.adds,.fab,.bagpick,.insp,.hint,.cc-bar,.x,.it select,#gl,.noprint{display:none!important}
   .wrap{padding:0;max-width:none}
   .main{display:block}
   .stage{height:auto;border:0}
@@ -148,34 +177,30 @@ input,select{background:var(--card2);border:1px solid var(--hair);border-radius:
 <div class="wrap">
   <div class="printhead"><h1 id="phT"></h1><div id="phD"></div></div>
   <div class="bar">
-    <div class="grp">
-      <select id="setupSel" aria-label="셋업 선택"></select>
-      <button id="newSetup" title="새 셋업">＋ 새 셋업</button>
-      <button id="dupSetup" title="복제">복제</button>
-      <button id="delSetup" class="danger" title="셋업 삭제">삭제</button>
-    </div>
-    <div class="grp">
-      <input id="sName" placeholder="셋업 이름" style="width:180px">
-      <input id="sDate" type="date">
-    </div>
-    <div class="grp">
-      <label>공간</label><input id="sW" class="num" type="number" min="2" max="60" step="0.5" aria-label="가로(m)"><label>×</label>
-      <input id="sD" class="num" type="number" min="2" max="60" step="0.5" aria-label="세로(m)"><label>m</label>
+    <select id="setupSel" aria-label="셋업 선택"></select>
+    <div class="menuwrap">
+      <button id="menuBtn" class="ib" aria-label="셋업 설정">⋯<span class="dot" id="dot"></span></button>
+      <div class="menu" id="menu" hidden>
+        <label class="fl"><span>이름</span><input id="sName" placeholder="셋업 이름"></label>
+        <label class="fl"><span>날짜</span><input id="sDate" type="date"></label>
+        <div class="fl"><span>공간</span><input id="sW" class="num" type="number" min="2" max="60" step="0.5" aria-label="가로(m)">×<input id="sD" class="num" type="number" min="2" max="60" step="0.5" aria-label="세로(m)">m</div>
+        <div class="mrow"><button id="newSetup">새 셋업</button><button id="dupSetup">복제</button><button id="themeBtn">밝기</button></div>
+        <div class="mrow"><span id="status"><span id="statusTxt">로컬</span></span><span class="spacer"></span><button id="delSetup" class="danger">셋업 삭제</button></div>
+      </div>
     </div>
     <span class="spacer"></span>
+    <button id="undoBtn" class="ib" title="실행 취소 (⌘Z)" aria-label="실행 취소" disabled>↶</button>
+    <button id="redoBtn" class="ib" title="다시 실행 (⌘⇧Z)" aria-label="다시 실행" disabled>↷</button>
     <div class="seg" id="viewSeg"><button data-v="2" class="on">2D</button><button data-v="3">3D</button></div>
-    <button id="undoBtn" title="실행 취소 (⌘Z)" aria-label="실행 취소" disabled>↶</button>
-    <button id="redoBtn" title="다시 실행 (⌘⇧Z)" aria-label="다시 실행" disabled>↷</button>
     <button id="printBtn">PDF</button>
-    <button id="themeBtn" aria-label="테마">◐</button>
-    <span id="status"><span class="dot" id="dot"></span><span id="statusTxt">로컬</span></span>
   </div>
-  <div class="adds" id="adds"></div>
   <div class="main">
     <div class="stage" id="stage">
       <svg id="plan"></svg>
       <div id="gl"></div>
-      <div class="hint" id="hint">자리를 끌어서 옮기고, 눌러서 장비를 적으세요</div>
+      <div class="hint" id="hint"></div>
+      <div class="addpop" id="adds" hidden></div>
+      <button class="fab" id="addBtn">＋ 자리</button>
     </div>
     <aside class="insp" id="insp"></aside>
   </div>
@@ -207,6 +232,15 @@ var BAGCOL={'Monitor 가방':'#5b9bd5','Sound 가방':'#e0a040','Sound 철제 �
   'Grip 박스':'#7a93a8','ETC 박스':'#9aa0a8','우산꽂이함':'#4fb7b3','철창':'#b08a6a','블림프 가방':'#d672a0',
   '무전기 가방':'#6ab0e0','멀티텝 박스':'#a3c45a'};
 var NOBAG='가방 미지정';
+var TICON={desk:'<path d="M3 9h14M5 9v8M15 9v8"/><rect x="7" y="3" width="6" height="4.5" rx=".6"/>',
+  cam:'<rect x="2.5" y="6" width="10.5" height="8" rx="1.5"/><path d="M13 9l4.5-2.2v6.4L13 11"/>',
+  mon:'<rect x="3" y="3.5" width="14" height="9" rx="1"/><path d="M10 12.5v4M7 16.5h6"/>',
+  snd:'<rect x="7.5" y="2.5" width="5" height="9" rx="2.5"/><path d="M4.8 9.5a5.2 5.2 0 0 0 10.4 0M10 14.7v2.8"/>',
+  light:'<path d="M5.5 3h9L13 9H7z"/><path d="M10 9v8M7 17h6"/>',
+  table:'<path d="M2.5 8h15M4.5 8v8M15.5 8v8M2.5 11h15"/>',
+  zone:'<rect x="3" y="4" width="14" height="12" rx="1" stroke-dasharray="2.2 2"/>',
+  etc:'<rect x="5" y="5" width="10" height="10" rx="2"/>'};
+function ticon(k){return '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">'+(TICON[k]||TICON.etc)+'</svg>';}
 function bagColor(b){
   if(b===NOBAG)return '#6b6f78';
   if(BAGCOL[b])return BAGCOL[b];
@@ -270,7 +304,7 @@ function aggregate(s){
 }
 
 /* ═══ 저장 / 동기화 ═══ */
-function setStatus(c,t){$('dot').className='dot '+c;$('statusTxt').textContent=t;}
+function setStatus(c,t){$('dot').className='dot '+c;$('statusTxt').textContent=t;$('menuBtn').title=t;}
 function save(){
   if(cs())cs().u=Date.now();
   snap();persist();
@@ -376,10 +410,10 @@ function svgPt(e){var svg=$('plan'),p=svg.createSVGPoint();p.x=e.clientX;p.y=e.c
 $('plan').addEventListener('pointerdown',function(e){
   if(placing){var pp=svgPt(e),k=placing;setPlacing(null);placeAt(k,pp.x,pp.y);return;}
   var g=e.target.closest('.st');
-  if(!g){if(sel){sel=null;renderInsp();renderPlan();}return;}
+  if(!g){if(sel){sel=null;dirty3=true;renderInsp();renderPlan();}return;}
   var st=cs().st.find(function(x){return x.id===g.dataset.id;}),p=svgPt(e);
   if(document.activeElement)document.activeElement.blur();
-  sel=st.id;drag={st:st,dx:st.x-p.x,dy:st.y-p.y,moved:false};
+  sel=st.id;dirty3=true;drag={st:st,dx:st.x-p.x,dy:st.y-p.y,moved:false};
   $('plan').setPointerCapture(e.pointerId);renderPlan();renderInsp();
 });
 $('plan').addEventListener('pointermove',function(e){
@@ -392,30 +426,34 @@ $('plan').addEventListener('pointerup',function(){if(drag){var m=drag.moved;drag
 
 /* ═══ 자리 편집 패널 ═══ */
 function selSt(){return sel&&cs().st.find(function(x){return x.id===sel;});}
+var moreOpen=false;
 function renderInsp(){
   var st=selSt(),el=$('insp');
-  if(!st){el.innerHTML='<h3>자리</h3><div class="empty">위의 버튼으로 자리를 추가하거나 배치도에서 자리를 누르세요.<br><br>자리마다 장비를 적으면 아래 리스트가 자동으로 만들어지고, 장비 탭의 가방 정보로 색깔별로 나뉩니다.<br><br>수량은 <b>"V마운트 x3"</b> 또는 <b>"3개"</b>처럼 적으세요.</div>';return;}
+  if(!st){el.innerHTML='<div class="empty">자리를 누르면 여기서 장비를 적을 수 있어요.<br>새 자리는 배치도의 <b>＋ 자리</b>.</div>';return;}
   var T=TYPES[st.t]||TYPES.etc,opts=Object.keys(TYPES).map(function(k){return '<option value="'+k+'"'+(k===st.t?' selected':'')+'>'+TYPES[k].n+'</option>';}).join('');
-  var h='<h3>자리</h3>';
-  h+='<div class="row"><input id="iName" value="'+esc(st.name)+'" placeholder="이름"><select id="iType">'+opts+'</select></div>';
-  h+='<div class="row"><button data-rot="-45">⟲</button><input id="iRot" type="range" min="0" max="345" step="15" value="'+(st.r||0)+'"><button data-rot="45">⟳</button><span style="width:36px;text-align:right;color:var(--soft);font-size:12px">'+(st.r||0)+'°</span></div>';
-  h+='<div class="row"><label style="font-size:12px;color:var(--soft)">크기</label><input id="iW" type="number" step="0.1" min="0.3" value="'+(st.w||T.w)+'"><span>×</span><input id="iD" type="number" step="0.1" min="0.3" value="'+(st.d||T.d)+'"><span style="font-size:12px;color:var(--soft)">m</span></div>';
-  h+='<h3 style="margin-top:12px">장비 ('+(st.g||[]).length+')</h3><div class="chips">';
+  var h='<div class="ihd">'+ticon(st.t)+'<input id="iName" class="iname" value="'+esc(st.name)+'" placeholder="자리 이름"><button id="iClose" class="x" aria-label="닫기">×</button></div>';
+  h+='<div class="chips">';
   (st.g||[]).forEach(function(raw,i){
     var p=parseQty(raw),b=bagOf(p.name),m=match(p.name);
-    h+='<div class="chip">'+(m&&m.img?'<img class="thumb" src="'+m.img+'" data-zoom="'+m.img+'" alt="">':'')+'<span class="dot" style="background:'+bagColor(b)+'"></span><span class="t">'+esc(raw)+'<br><span class="bag">'+esc(b)+'</span></span><button data-delg="'+i+'" aria-label="지우기">×</button></div>';
+    h+='<div class="chip" style="--c:'+bagColor(b)+'">'+(m&&m.img?'<img class="thumb" src="'+m.img+'" data-zoom="'+m.img+'" alt="">':'')+'<span class="t">'+esc(raw)+'<br><span class="bag">'+esc(b)+'</span></span><button data-delg="'+i+'" aria-label="지우기">×</button></div>';
   });
-  h+='</div><div class="row"><input id="iGear" list="gearNames" placeholder="장비 이름 입력 후 Enter" enterkeyhint="done"><button id="iAdd">추가</button></div><div class="row"><button id="iPick" style="flex:1">장비 목록에서 고르기</button></div>';
-  h+='<div class="row" style="margin-top:14px"><button id="iDup">복제</button><span class="spacer"></span><button id="iDel" class="danger">자리 삭제</button></div>';
+  h+='</div><div class="addrow"><input id="iGear" list="gearNames" placeholder="장비 적고 Enter" enterkeyhint="done"><button id="iPick">목록</button></div>';
+  h+='<details class="more" id="iMore"'+(moreOpen?' open':'')+'><summary>자리 설정</summary>'+
+    '<div class="row"><select id="iType">'+opts+'</select><button data-rot="-45" aria-label="왼쪽으로 돌리기">⟲</button><button data-rot="45" aria-label="오른쪽으로 돌리기">⟳</button><span style="font-size:12px;color:var(--soft);width:34px;text-align:right">'+(st.r||0)+'°</span></div>'+
+    '<div class="row"><span style="font-size:12px;color:var(--soft)">크기</span><input id="iW" type="number" step="0.1" min="0.3" value="'+(st.w||T.w)+'"><span>×</span><input id="iD" type="number" step="0.1" min="0.3" value="'+(st.d||T.d)+'"><span style="font-size:12px;color:var(--soft)">m</span></div>'+
+    '<div class="row"><button id="iDup">복제</button><span class="spacer"></span><button id="iDel" class="danger">자리 삭제</button></div></details>';
   el.innerHTML=h;
+  $('iMore').ontoggle=function(){moreOpen=this.open;};
+  $('iClose').onclick=function(){sel=null;dirty3=true;renderPlan();renderInsp();};
   $('iName').oninput=function(){st.name=this.value;renderPlan();renderList();save();dirty3=true;};
   $('iType').onchange=function(){st.t=this.value;delete st.w;delete st.d;save();dirty3=true;renderAll();};
-  $('iRot').oninput=function(){st.r=+this.value;this.nextElementSibling.nextElementSibling.textContent=st.r+'°';renderPlan();save();dirty3=true;};
   el.querySelectorAll('[data-rot]').forEach(function(b){b.onclick=function(){st.r=((st.r||0)+(+b.dataset.rot)+360)%360;save();dirty3=true;renderAll();};});
-  if($('iW')){$('iW').onchange=function(){st.w=Math.max(0.3,+this.value);save();dirty3=true;renderPlan();};$('iD').onchange=function(){st.d=Math.max(0.3,+this.value);save();dirty3=true;renderPlan();};}
-  function addG(){var v=$('iGear').value.trim();if(!v)return;(st.g=st.g||[]).push(v);save();dirty3=true;renderAll();$('iGear').focus();}
-  $('iGear').onkeydown=function(e){if(e.key==='Enter'&&!e.isComposing){e.preventDefault();addG();}};
-  $('iAdd').onclick=addG;
+  $('iW').onchange=function(){st.w=Math.max(0.3,+this.value);save();dirty3=true;renderPlan();};
+  $('iD').onchange=function(){st.d=Math.max(0.3,+this.value);save();dirty3=true;renderPlan();};
+  $('iGear').onkeydown=function(e){
+    if(e.key!=='Enter'||e.isComposing)return;e.preventDefault();
+    var v=this.value.trim();if(!v)return;(st.g=st.g||[]).push(v);save();dirty3=true;renderAll();$('iGear').focus();
+  };
   $('iPick').onclick=function(){openPick(st);};
   el.querySelectorAll('[data-delg]').forEach(function(b){b.onclick=function(){st.g.splice(+b.dataset.delg,1);save();dirty3=true;renderAll();};});
   $('iDup').onclick=function(){var c=JSON.parse(JSON.stringify(st));c.id=uid();c.x=Math.min(cs().W,c.x+0.6);c.y=Math.min(cs().D,c.y+0.6);cs().st.push(c);sel=c.id;save();dirty3=true;renderAll();};
@@ -437,7 +475,7 @@ function renderList(){
     h+='<div class="bagc" style="--c:'+c+'"><div class="bh"><span class="sw"></span>'+esc(g.bag)+'<span class="n">'+dn+'/'+g.items.length+'</span></div>';
     g.items.forEach(function(e){
       var sub=e.at.join(', ')+(e.m&&norm(e.m.name)!==e.k?' · 장비탭: '+e.m.name:'');
-      var o='<option value="">'+(e.m&&e.m.loc?'자동 ('+e.m.loc+')':'가방 지정…')+'</option>'+bags.map(function(b){return '<option'+(S.bags[e.k]&&S.bags[e.k].b===b?' selected':'')+'>'+esc(b)+'</option>';}).join('')+'<option value="__new">+ 새 가방…</option>';
+      var o='<option value="">'+(e.m&&e.m.loc?'자동: '+e.m.loc:'가방 고르기')+'</option>'+bags.map(function(b){return '<option'+(S.bags[e.k]&&S.bags[e.k].b===b?' selected':'')+'>'+esc(b)+'</option>';}).join('')+'<option value="__new">+ 새 가방…</option>';
       var m=e.m,w='';
       if(m){
         if(m.qty&&e.q>m.qty)w+='<span class="warn bad">보유 '+m.qty+'개뿐 · '+(e.q-m.qty)+'개 부족</span> ';
@@ -446,7 +484,7 @@ function renderList(){
       }
       h+='<div class="it'+(s.packed[e.k]?' done':'')+'"><input type="checkbox" data-pk="'+e.k+'"'+(s.packed[e.k]?' checked':'')+' aria-label="챙김">'+
         '<span class="nm" style="display:flex;gap:8px;align-items:center">'+(m&&m.img?'<img class="thumb" src="'+m.img+'" data-zoom="'+m.img+'" alt="">':'')+'<span><b>'+esc(e.name)+'</b>'+(e.q>1?' <span class="q">×'+e.q+'</span>':'')+(m&&m.qty?' <span class="q">/ 보유 '+m.qty+'</span>':'')+'<span class="sub">'+esc(sub)+'</span>'+(w?'<span style="display:block">'+w+'</span>':'')+'</span></span>'+
-        '<select data-bag="'+e.k+'" aria-label="가방">'+o+'</select>'+
+        '<label class="bagpick" style="--c:'+bagColor(e.bag)+'" title="가방 바꾸기"><i></i><select data-bag="'+e.k+'" aria-label="가방 바꾸기">'+o+'</select></label>'+
         '<button class="x" data-del="'+e.k+'" title="모든 자리에서 지우기">×</button></div>';
     });
     h+='</div>';
@@ -482,10 +520,42 @@ function init3(){
       var sc=new THREE.Scene();
       sc.add(new THREE.HemisphereLight(0xffffff,0x444455,0.9));
       var dl=new THREE.DirectionalLight(0xffffff,0.6);dl.position.set(5,10,6);sc.add(dl);
-      G3={r:r,cam:cam,ctl:ctl,sc:sc,root:null};
+      G3={r:r,cam:cam,ctl:ctl,sc:sc,root:null,objs:{},picks:[]};
+      wire3(el);
       (function loop(){requestAnimationFrame(loop);if(view!=='3')return;size3();ctl.update();r.render(sc,cam);})();
       return G3;
     });
+}
+/* 3D 조작: 자리를 누르면 선택, 끌면 바닥 위로 이동. 빈 곳은 OrbitControls(돌려보기)에 넘김.
+   부모(#gl) 캡처 단계에서 먼저 받아 OrbitControls 보다 앞섬 */
+function wire3(el){
+  var ray=new THREE.Raycaster(),ndc=new THREE.Vector2(),plane=new THREE.Plane(new THREE.Vector3(0,1,0),0),d3=null,down=null;
+  function aim(e){var r=G3.r.domElement.getBoundingClientRect();ndc.set((e.clientX-r.left)/r.width*2-1,-(e.clientY-r.top)/r.height*2+1);ray.setFromCamera(ndc,G3.cam);}
+  function floor(){var p=new THREE.Vector3();return ray.ray.intersectPlane(plane,p)?{x:p.x+cs().W/2,y:p.z+cs().D/2}:null;}
+  el.addEventListener('pointerdown',function(e){
+    if(e.button>0)return;aim(e);down={x:e.clientX,y:e.clientY};
+    if(placing){var f=floor();if(f){var k=placing;setPlacing(null);placeAt(k,f.x,f.y);}down=null;e.stopPropagation();return;}
+    var hit=ray.intersectObjects(G3.picks,true)[0];if(!hit)return;
+    var o=hit.object;while(o&&!o.userData.id)o=o.parent;if(!o)return;
+    var st=cs().st.find(function(x){return x.id===o.userData.id;}),f=floor();if(!st||!f)return;
+    e.stopPropagation();if(document.activeElement)document.activeElement.blur();
+    d3={st:st,dx:st.x-f.x,dy:st.y-f.y,moved:false};drag=d3;
+    try{el.setPointerCapture(e.pointerId);}catch(_){}
+    if(sel!==st.id){sel=st.id;build3(false);renderPlan();renderInsp();}
+  },true);
+  el.addEventListener('pointermove',function(e){
+    if(!d3)return;e.stopPropagation();aim(e);var f=floor();if(!f)return;var s=cs();
+    d3.st.x=Math.round(Math.min(s.W,Math.max(0,f.x+d3.dx))*10)/10;
+    d3.st.y=Math.round(Math.min(s.D,Math.max(0,f.y+d3.dy))*10)/10;
+    d3.moved=true;var ob=G3.objs[d3.st.id];
+    ob.g.position.x=d3.st.x-s.W/2;ob.g.position.z=d3.st.y-s.D/2;ob.lb.position.x=ob.g.position.x;ob.lb.position.z=ob.g.position.z;
+  },true);
+  el.addEventListener('pointerup',function(e){
+    if(d3){e.stopPropagation();var m=d3.moved;d3=null;drag=null;if(m){save();renderPlan();}if(pending){pending=false;remoteChanged();}return;}
+    /* 빈 곳을 끌지 않고 톡 누르면 선택 해제 */
+    if(down&&Math.abs(e.clientX-down.x)+Math.abs(e.clientY-down.y)<5&&sel){sel=null;build3(false);renderPlan();renderInsp();}
+    down=null;
+  },true);
 }
 function size3(){var el=$('gl'),w=el.clientWidth,h=el.clientHeight;if(!w)return;var c=G3.r.domElement;if(c.width!==Math.round(w*G3.r.getPixelRatio())||c.height!==Math.round(h*G3.r.getPixelRatio())){G3.r.setSize(w,h);G3.cam.aspect=w/h;G3.cam.updateProjectionMatrix();}}
 function label3(txt,sub){
@@ -511,7 +581,7 @@ function build3(fit){
   for(y=0;y<=s.D;y++)gp.push(-s.W/2,0.002,y-s.D/2,s.W/2,0.002,y-s.D/2);
   var gg=new T3.BufferGeometry();gg.setAttribute('position',new T3.Float32BufferAttribute(gp,3));
   root.add(new T3.LineSegments(gg,new T3.LineBasicMaterial({color:light?0xd0d3d8:0x2c2e35})));
-  var DK=0x2b2d33,MD=0x55585f,LT=0x9aa0a8;
+  var DK=0x2b2d33,MD=0x55585f,LT=0x9aa0a8;G3.objs={};G3.picks=[];
   s.st.forEach(function(st){
     var T=TYPES[st.t]||TYPES.etc,w=st.w||T.w,d=st.d||T.d,g=new T3.Group(),top=1;
     g.position.set(st.x-s.W/2,0,st.y-s.D/2);g.rotation.y=-(st.r||0)*Math.PI/180;
@@ -531,8 +601,12 @@ function build3(fit){
     }else if(st.t==='zone'){
       var z=new T3.Mesh(new T3.PlaneGeometry(w,d),new T3.MeshBasicMaterial({color:0x8a7fd8,transparent:true,opacity:0.12}));z.rotation.x=-Math.PI/2;z.position.y=0.005;g.add(z);top=0.4;
     }else{box(w*0.7,0.6,d*0.7,MD,0,0.3,0,g);top=0.9;}
-    root.add(g);
-    var n=(st.g||[]).length,lb=label3(st.name,n?('장비 '+n+'개'):'');lb.position.set(st.x-s.W/2,top+0.3,st.y-s.D/2);root.add(lb);
+    /* 누르기 쉬운 투명 박스 + 선택 표시 */
+    var hb=new T3.Mesh(new T3.BoxGeometry(Math.max(w,0.6),top,Math.max(d,0.6)),new T3.MeshBasicMaterial({visible:false}));hb.position.y=top/2;g.add(hb);
+    if(st.id===sel){var rg=new T3.Mesh(new T3.PlaneGeometry(w+0.25,d+0.25),new T3.MeshBasicMaterial({color:light?0x17181b:0xffffff,transparent:true,opacity:0.22}));rg.rotation.x=-Math.PI/2;rg.position.y=0.01;g.add(rg);}
+    g.userData.id=st.id;root.add(g);
+    var n=(st.g||[]).length,lb=label3(st.name,n?('장비 '+n+'개'):'');lb.position.set(st.x-s.W/2,top+0.3,st.y-s.D/2);lb.userData.id=st.id;root.add(lb);
+    G3.objs[st.id]={g:g,lb:lb};G3.picks.push(g,lb);
   });
   if(fit){var m=Math.max(s.W,s.D);G3.cam.position.set(0,m*0.8,m*0.95);G3.ctl.target.set(0,0,0);G3.ctl.update();}
   dirty3=false;
@@ -540,7 +614,7 @@ function build3(fit){
 function setView(v){
   view=v;$('stage').classList.toggle('v3',v==='3');
   $('viewSeg').querySelectorAll('button').forEach(function(b){b.classList.toggle('on',b.dataset.v===v);});
-  $('hint').textContent=v==='3'?'끌어서 돌리기 · 휠/핀치 확대 · 두 손가락(우클릭) 이동':'자리를 끌어서 옮기고, 눌러서 장비를 적으세요';
+  setHint();
   try{localStorage.setItem('kit.view',v);}catch(e){}
   if(v==='3')init3().then(function(){build3(!G3.fitted);G3.fitted=true;}).catch(function(){$('hint').textContent='3D를 불러오지 못했어요 (인터넷 확인)';});
 }
@@ -556,14 +630,14 @@ function renderBar(){
 }
 function renderAll(){renderBar();renderPlan();renderInsp();renderList();}
 function fixCur(){if(!cur||!S.setups[cur]||S.setups[cur].del){var l=live();cur=l.length?l[0].id:newSetup('셋업 1');sel=null;}}
-$('adds').innerHTML=Object.keys(TYPES).map(function(k){return '<button data-add="'+k+'">＋ '+TYPES[k].n+'</button>';}).join('');
+$('adds').innerHTML=Object.keys(TYPES).map(function(k){return '<button data-add="'+k+'">'+ticon(k)+TYPES[k].n+'</button>';}).join('');
 /* 자리 놓기: 버튼을 누른 뒤 배치도에서 원하는 곳을 누르면 그 자리에 생김 */
 var placing=null;
 function setPlacing(k){
-  placing=k;if(k&&view==='3')setView('2');
-  $('adds').querySelectorAll('[data-add]').forEach(function(b){b.classList.toggle('on',b.dataset.add===k);});
+  placing=k;$('adds').hidden=true;
   $('stage').classList.toggle('placing',!!k);
-  $('hint').textContent=k?'배치도에서 '+TYPES[k].n+'을(를) 놓을 곳을 누르세요 · Esc 취소':'자리를 끌어서 옮기고, 눌러서 장비를 적으세요';
+  $('addBtn').textContent=k?'취소':'＋ 자리';
+  setHint();
 }
 function placeAt(k,x,y){
   var s=cs(),n=s.st.filter(function(q){return q.t===k;}).length;
@@ -571,9 +645,18 @@ function placeAt(k,x,y){
   s.st.push(st);sel=st.id;save();dirty3=true;renderAll();
   if(innerWidth>820)setTimeout(function(){$('iGear')&&$('iGear').focus();},0);
 }
-$('adds').onclick=function(e){var b=e.target.closest('[data-add]');if(b)setPlacing(placing===b.dataset.add?null:b.dataset.add);};
+function setHint(){
+  $('hint').textContent=placing?TYPES[placing].n+' — 놓을 곳을 누르세요':view==='3'?'자리 끌기 = 이동 · 빈 곳 끌기 = 돌려보기':'자리를 끌어서 옮기세요';
+}
+$('adds').onclick=function(e){var b=e.target.closest('[data-add]');if(b)setPlacing(b.dataset.add);};
+$('addBtn').onclick=function(e){e.stopPropagation();if(placing){setPlacing(null);return;}$('adds').hidden=!$('adds').hidden;$('menu').hidden=true;};
+$('menuBtn').onclick=function(e){e.stopPropagation();$('menu').hidden=!$('menu').hidden;$('adds').hidden=true;};
+document.addEventListener('pointerdown',function(e){
+  if(!e.target.closest('.menuwrap'))$('menu').hidden=true;
+  if(!e.target.closest('#adds,#addBtn'))$('adds').hidden=true;
+});
 $('setupSel').onchange=function(){cur=this.value;sel=null;dirty3=true;save();renderAll();if(view==='3'&&G3)build3(true);};
-$('newSetup').onclick=function(){cur=newSetup('셋업 '+(live().length+1));sel=null;save();dirty3=true;renderAll();$('sName').select();};
+$('newSetup').onclick=function(){cur=newSetup('셋업 '+(live().length+1));sel=null;save();dirty3=true;renderAll();if(view==='3'&&G3)build3(true);$('sName').select();};
 $('dupSetup').onclick=function(){var c=JSON.parse(JSON.stringify(cs())),t=Date.now();c.id=uid();c.c=t;c.u=t;c.name+=' 복사';c.packed={};S.setups[c.id]=c;cur=c.id;save();renderAll();};
 $('delSetup').onclick=function(){
   var b=this;if(b.dataset.arm!=='1'){b.dataset.arm='1';b.textContent='한 번 더';setTimeout(function(){b.dataset.arm='';b.textContent='삭제';},2500);return;}
@@ -592,7 +675,7 @@ $('themeBtn').onclick=function(){
 $('undoBtn').onclick=undo;$('redoBtn').onclick=redo;
 document.addEventListener('keydown',function(e){
   var a=document.activeElement,typing=a&&a.tagName==='INPUT'&&/^(text|search|number|)$/.test(a.type);
-  if(e.key==='Escape'){if(placing)setPlacing(null);if(!$('pick').hidden)closePick();$('zoom').hidden=true;}
+  if(e.key==='Escape'){if(placing)setPlacing(null);$('menu').hidden=true;$('adds').hidden=true;if(!$('pick').hidden)closePick();$('zoom').hidden=true;}
   if((e.metaKey||e.ctrlKey)&&!typing){
     var k=e.key.toLowerCase();
     if(k==='z'&&!e.shiftKey){e.preventDefault();undo();return;}
@@ -636,6 +719,7 @@ $('zoom').onclick=function(){this.hidden=true;};
 (function(){
   try{var c=JSON.parse(localStorage.getItem(LS)||'null');if(c&&c.schema===1)S=c;cur=localStorage.getItem(LS+':cur');}catch(e){}
   fixCur();renderAll();resetHist();
+  setHint();
   try{if(localStorage.getItem('kit.view')==='3')setView('3');}catch(e){}
   fetch('gear_data.json').then(function(r){return r.json();}).then(function(d){
     CAT=d.map(function(x){return {name:x.name,k:norm(x.name),loc:x.loc||'',cat:x.cat,qty:+x.qty||0,status:x.status||'',stage:x.stage||'',img:x.imgs&&x.imgs[0]?'images/'+x.imgs[0]:''};});
@@ -650,7 +734,7 @@ $('zoom').onclick=function(){this.hidden=true;};
       db.channel('kit').on('postgres_changes',{event:'*',schema:'public',table:SB.table,filter:'id=eq.'+SB.row},remoteChanged).subscribe();
     });
   }else setStatus('','이 기기에만 저장');
-  window.__kit={S:S,get cur(){return cur;},aggregate:aggregate,match:match,parseQty:parseQty};
+  window.__kit={S:S,get cur(){return cur;},get G3(){return G3;},aggregate:aggregate,match:match,parseQty:parseQty};
 })();
 </script>
 </body>
