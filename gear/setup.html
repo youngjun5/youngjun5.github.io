@@ -1,0 +1,657 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script>try{var t=localStorage.getItem("kit.theme");if(t)document.documentElement.dataset.theme=t;}catch(e){}</script>
+<link rel="stylesheet" href="../shell.css">
+<script src="../shell.js" defer></script>
+<meta name="theme-color" content="#0b0c0e">
+<meta name="description" content="CARECENTER KIT — 배치도에 장비를 적으면 가방별 챙김 리스트가 자동으로 만들어짐">
+<link rel="icon" href="../icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="장비 셋업">
+<title>장비 셋업 · GEAR · CARECENTER</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.58.0/dist/umd/supabase.js"></script>
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#0b0c0e; --card:#15161a; --card2:#1c1e23; --hair:rgba(231,232,234,.10); --hair2:rgba(231,232,234,.22);
+  --ink:#e7e8ea; --soft:#9a9ea6; --faint:#6b6f78; --acc:#c3c6cc; --danger:#e06a6a;
+  --floor:#121317; --grid:rgba(231,232,234,.06); --grid2:rgba(231,232,234,.14); --stf:#23252b; --sel:#e7e8ea;
+}
+:root[data-theme="light"]{
+  color-scheme:light;
+  --bg:#f3f4f6; --card:#fff; --card2:#eceef1; --hair:rgba(20,22,26,.10); --hair2:rgba(20,22,26,.24);
+  --ink:#17181b; --soft:#5d626b; --faint:#8b9098; --acc:#3a3d44;
+  --floor:#fafafb; --grid:rgba(20,22,26,.06); --grid2:rgba(20,22,26,.16); --stf:#e7e9ed; --sel:#17181b;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 -apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard",sans-serif}
+button,input,select{font:inherit;color:inherit}
+button{background:var(--card2);border:1px solid var(--hair);border-radius:8px;padding:6px 10px;cursor:pointer}
+button:hover{border-color:var(--hair2)}
+button:disabled{opacity:.35;cursor:default}
+input,select{background:var(--card2);border:1px solid var(--hair);border-radius:8px;padding:6px 8px;min-width:0}
+.topbar{display:flex;align-items:center;gap:8px;padding:10px 16px}
+.gtabs{display:flex;gap:4px;padding:8px 16px 4px;max-width:1400px;margin:0 auto}
+.gtabs a{padding:6px 16px;border-radius:999px;color:var(--soft);text-decoration:none;font-weight:600;font-size:14px;border:1px solid var(--hair)}
+.gtabs a.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.thumb{width:34px;height:34px;border-radius:6px;object-fit:cover;background:var(--card2);flex:none;cursor:zoom-in}
+.warn{color:#e0ab4c;font-size:11px}
+.warn.bad{color:var(--danger)}
+.stage.placing{outline:2px dashed var(--acc);outline-offset:-2px}
+.stage.placing #plan{cursor:crosshair}
+.adds button.on{background:var(--ink);color:var(--bg)}
+.pick{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;z-index:50;padding:16px}
+.pick[hidden]{display:none}
+.pickbox{background:var(--card);border:1px solid var(--hair2);border-radius:14px;width:min(720px,100%);max-height:86vh;display:flex;flex-direction:column}
+.pickhd{display:flex;gap:8px;align-items:center;padding:12px;border-bottom:1px solid var(--hair)}
+.pickhd input{flex:1}
+.pickcats{display:flex;gap:4px;flex-wrap:wrap;padding:8px 12px 0}
+.pickcats button{font-size:12px;padding:3px 9px;border-radius:999px}
+.pickcats button.on{background:var(--ink);color:var(--bg)}
+.picklist{overflow:auto;padding:8px 12px 12px;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(200px,100%),1fr));gap:6px}
+.pi{display:flex;gap:8px;align-items:center;text-align:left;padding:6px;border-radius:9px;background:var(--card2);border:1px solid transparent}
+.pi:hover{border-color:var(--hair2)}
+.pi .thumb{width:44px;height:44px;cursor:pointer}
+.pi .pn{font-size:13px;font-weight:500;word-break:break-all}
+.pi .pm{font-size:11px;color:var(--soft)}
+.pi .cnt{margin-left:auto;font-size:12px;font-weight:600;color:var(--bg);background:var(--ink);border-radius:999px;padding:0 7px}
+.zoom{position:fixed;inset:0;background:rgba(0,0,0,.8);display:flex;align-items:center;justify-content:center;z-index:60;cursor:zoom-out}
+.zoom[hidden]{display:none}
+.zoom img{max-width:92vw;max-height:88vh;border-radius:10px}
+.topbar .back{color:var(--soft);text-decoration:none}
+.spacer{flex:1}
+.wrap{max-width:1400px;margin:0 auto;padding:0 16px 40px}
+.bar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:4px 0 10px}
+.bar .grp{display:flex;gap:6px;align-items:center}
+.bar label{color:var(--soft);font-size:12px}
+.bar input.num{width:56px}
+#setupSel{max-width:220px}
+.adds{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.adds button{font-size:13px}
+.seg{display:inline-flex;border:1px solid var(--hair);border-radius:8px;overflow:hidden}
+.seg button{border:0;border-radius:0;background:transparent;color:var(--soft)}
+.seg button.on{background:var(--card2);color:var(--ink)}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block;background:var(--faint)}
+.dot.ok{background:#5fb67a}.dot.wait{background:#e0ab4c}.dot.err{background:var(--danger)}
+#status{font-size:12px;color:var(--soft);display:flex;gap:6px;align-items:center}
+
+.main{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:12px}
+.main>*{min-width:0}
+.stage{position:relative;background:var(--floor);border:1px solid var(--hair);border-radius:12px;overflow:hidden;height:min(68vh,720px)}
+#plan{width:100%;height:100%;display:block;touch-action:none;user-select:none;-webkit-user-select:none}
+#gl{position:absolute;inset:0;display:none}
+.stage.v3 #plan{display:none}.stage.v3 #gl{display:block}
+.hint{position:absolute;left:12px;bottom:10px;font-size:12px;color:var(--faint);pointer-events:none}
+.insp{background:var(--card);border:1px solid var(--hair);border-radius:12px;padding:12px;align-self:start}
+.insp h3{margin:0 0 8px;font-size:13px;color:var(--soft);font-weight:600}
+.insp .row{display:flex;gap:6px;align-items:center;margin-bottom:8px}
+.insp .row>input,.insp .row>select{flex:1}
+.insp .empty{color:var(--faint);font-size:13px}
+.chips{display:flex;flex-direction:column;gap:4px;margin:6px 0 8px}
+.chip{display:flex;align-items:center;gap:6px;background:var(--card2);border-radius:7px;padding:4px 6px 4px 8px;font-size:13px}
+.chip span.t{flex:1;word-break:break-all}
+.chip .bag{font-size:11px;color:var(--soft)}
+.chip button,.x{border:0;background:transparent;color:var(--faint);padding:0 4px;font-size:16px;line-height:1}
+.chip button:hover,.x:hover{color:var(--danger)}
+.danger{color:var(--danger)}
+
+.list{margin-top:14px;background:var(--card);border:1px solid var(--hair);border-radius:12px;padding:12px 14px}
+.list h2{margin:0 0 4px;font-size:15px;display:flex;align-items:center;gap:10px}
+.list h2 small{color:var(--soft);font-weight:400;font-size:12px}
+.bags{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(300px,100%),1fr));gap:10px;margin-top:10px}
+.bagc{border:1px solid var(--hair);border-left:4px solid var(--c);border-radius:10px;padding:8px 10px;break-inside:avoid}
+.bagc .bh{display:flex;align-items:center;gap:8px;font-weight:600;margin-bottom:4px}
+.bagc .bh .sw{width:12px;height:12px;border-radius:3px;background:var(--c)}
+.bagc .bh .n{margin-left:auto;font-weight:400;color:var(--soft);font-size:12px}
+.it{display:grid;grid-template-columns:20px 1fr auto auto;gap:6px;align-items:center;padding:4px 0;border-top:1px solid var(--hair)}
+.it:first-of-type{border-top:0}
+.it .nm{word-break:break-all}
+.it .nm b{font-weight:500}
+.it .nm .sub{display:block;font-size:11px;color:var(--soft)}
+.it.done .nm b{text-decoration:line-through;color:var(--faint)}
+.it select{font-size:11px;padding:2px 4px;max-width:110px}
+.it .q{font-variant-numeric:tabular-nums;color:var(--soft);font-size:12px}
+.printhead{display:none}
+
+@media (max-width:820px){
+  .main{grid-template-columns:minmax(0,1fr)}
+  #sName{width:100%!important;flex:1}
+  .bar .grp{flex-wrap:wrap;max-width:100%}
+  .stage{height:56vh}
+}
+@media print{
+  :root,:root[data-theme]{--bg:#fff;--card:#fff;--card2:#f1f2f4;--ink:#111;--soft:#555;--faint:#888;--hair:#ccc;--hair2:#999;--floor:#fff;--grid:#eee;--grid2:#ccc;--stf:#f1f2f4;--sel:#111;color-scheme:light}
+  .topbar,.gtabs,.pick,.zoom,.bar,.adds,.insp,.hint,.cc-bar,.x,.it select,#gl,.noprint{display:none!important}
+  .wrap{padding:0;max-width:none}
+  .main{display:block}
+  .stage{height:auto;border:0}
+  .stage.v3 #plan{display:block}
+  #plan{height:15.5cm;width:100%}
+  .printhead{display:block;margin:0 0 6px}
+  .printhead h1{font-size:18px;margin:0}
+  .printhead div{color:#555;font-size:12px}
+  .list{break-before:page;border:0;padding:0}
+  .it{grid-template-columns:16px 1fr auto}
+  @page{size:A4 landscape;margin:12mm}
+}
+</style>
+</head>
+<body data-cc-title="GEAR · 셋업">
+<header class="topbar" data-cc-replace>
+  <a class="back" href="../">‹ 케어센터</a>
+  <span class="spacer"></span>
+</header>
+<nav class="gtabs"><a href="./">목록</a><a href="setup.html" class="on">셋업</a></nav>
+<div class="wrap">
+  <div class="printhead"><h1 id="phT"></h1><div id="phD"></div></div>
+  <div class="bar">
+    <div class="grp">
+      <select id="setupSel" aria-label="셋업 선택"></select>
+      <button id="newSetup" title="새 셋업">＋ 새 셋업</button>
+      <button id="dupSetup" title="복제">복제</button>
+      <button id="delSetup" class="danger" title="셋업 삭제">삭제</button>
+    </div>
+    <div class="grp">
+      <input id="sName" placeholder="셋업 이름" style="width:180px">
+      <input id="sDate" type="date">
+    </div>
+    <div class="grp">
+      <label>공간</label><input id="sW" class="num" type="number" min="2" max="60" step="0.5" aria-label="가로(m)"><label>×</label>
+      <input id="sD" class="num" type="number" min="2" max="60" step="0.5" aria-label="세로(m)"><label>m</label>
+    </div>
+    <span class="spacer"></span>
+    <div class="seg" id="viewSeg"><button data-v="2" class="on">2D</button><button data-v="3">3D</button></div>
+    <button id="undoBtn" title="실행 취소 (⌘Z)" aria-label="실행 취소" disabled>↶</button>
+    <button id="redoBtn" title="다시 실행 (⌘⇧Z)" aria-label="다시 실행" disabled>↷</button>
+    <button id="printBtn">PDF</button>
+    <button id="themeBtn" aria-label="테마">◐</button>
+    <span id="status"><span class="dot" id="dot"></span><span id="statusTxt">로컬</span></span>
+  </div>
+  <div class="adds" id="adds"></div>
+  <div class="main">
+    <div class="stage" id="stage">
+      <svg id="plan"></svg>
+      <div id="gl"></div>
+      <div class="hint" id="hint">자리를 끌어서 옮기고, 눌러서 장비를 적으세요</div>
+    </div>
+    <aside class="insp" id="insp"></aside>
+  </div>
+  <section class="list" id="list"></section>
+</div>
+<datalist id="gearNames"></datalist>
+<div class="pick" id="pick" hidden><div class="pickbox" role="dialog" aria-label="장비 목록에서 고르기">
+  <div class="pickhd"><input id="pq" placeholder="장비 검색 (이름·가방)"><button id="pClose">완료</button></div>
+  <div class="pickcats" id="pcats"></div>
+  <div class="picklist" id="plist"></div>
+</div></div>
+<div class="zoom" id="zoom" hidden><img id="zimg" alt=""></div>
+
+<script>
+/* ═══ 기본값 ═══ */
+var SB={url:'https://mgvqhrdhshpuamihfvnp.supabase.co',
+  anon:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1ndnFocmRoc2hwdWFtaWhmdm5wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg2MTE4NjQsImV4cCI6MjEwNDE4Nzg2NH0.fjDJuG-47YHU63lydUSZGAGg3FQ-DLGLp9ufnJ4SN30',
+  table:'carescript', row:'kit-setups'};
+var LS='kit:v1', SOLO=/[?&]solo/.test(location.search);
+/* 자리 종류: 2D 크기(m)와 3D 모양 */
+var TYPES={
+  desk:{n:'감독석',w:1.6,d:0.8}, cam:{n:'카메라',w:0.8,d:0.8}, mon:{n:'모니터',w:0.6,d:0.5},
+  snd:{n:'사운드',w:1.0,d:0.7}, light:{n:'조명',w:0.7,d:0.7}, table:{n:'테이블',w:1.8,d:0.8},
+  zone:{n:'구역',w:3,d:2}, etc:{n:'기타',w:0.8,d:0.8}
+};
+/* 가방 색 — 장비 탭(gear_data.json)의 '위치' 값이 곧 가방 */
+var BAGCOL={'Monitor 가방':'#5b9bd5','Sound 가방':'#e0a040','Sound 철제 가방':'#b9822f','Battery 가방':'#5fb67a',
+  'Lens 가방':'#b672d6','Light 가방':'#e3c84a','Filter 박스':'#8a7fd8','HDMI 박스':'#e06a6a','USB 박스':'#d98a5a',
+  'Grip 박스':'#7a93a8','ETC 박스':'#9aa0a8','우산꽂이함':'#4fb7b3','철창':'#b08a6a','블림프 가방':'#d672a0',
+  '무전기 가방':'#6ab0e0','멀티텝 박스':'#a3c45a'};
+var NOBAG='가방 미지정';
+function bagColor(b){
+  if(b===NOBAG)return '#6b6f78';
+  if(BAGCOL[b])return BAGCOL[b];
+  var h=0;for(var i=0;i<b.length;i++)h=(h*31+b.charCodeAt(i))%360;return 'hsl('+h+',55%,58%)';
+}
+
+var S={schema:1,setups:{},bags:{}}, cur=null, sel=null, view='2', CAT=[], db=null, saveT=null, drag=null, pending=false;
+function uid(){return Math.random().toString(36).slice(2,10);}
+function esc(v){return String(v==null?'':v).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function $(id){return document.getElementById(id);}
+function cs(){return S.setups[cur];}
+function live(){return Object.values(S.setups).filter(function(s){return !s.del;}).sort(function(a,b){return a.c-b.c;});}
+function newSetup(name){var id=uid(),t=Date.now();S.setups[id]={id:id,c:t,u:t,name:name||'새 셋업',date:'',W:10,D:8,st:[],packed:{}};return id;}
+
+/* ═══ 장비 이름 → 카탈로그 매칭 ═══ */
+function norm(s){return String(s).toLowerCase().replace(/[\s\-_.\/()·,'"]+/g,'').replace(/트라이포드/g,'삼각대');}  /* 팀 용어 '트라이포드' = 장비 탭 '삼각대' */
+/* "SmallHD 702 x2", "V마운트 3개" → {name, q} */
+function parseQty(s){
+  s=String(s).trim();
+  var m=s.match(/^(.*?)\s*(?:[x×*]\s*(\d+)|(\d+)\s*(?:개|대|ea|EA|세트|set))$/);
+  if(m&&m[1])return {name:m[1].trim(),q:+(m[2]||m[3])};
+  return {name:s,q:1};
+}
+function match(name){
+  var k=norm(name);if(!k)return null;
+  var cand=[];
+  for(var i=0;i<CAT.length;i++){
+    var c=CAT[i];
+    if(c.k===k)return c;
+    if(k.length>=3&&c.k.length>=3&&(c.k.indexOf(k)>=0||k.indexOf(c.k)>=0))cand.push(c);
+  }
+  return cand.length===1?cand[0]:null;  /* 후보가 여럿이면 추측하지 않음 → 미지정, 목록에서 고르면 정확히 연결 */
+}
+function bagOf(name){
+  var o=S.bags[norm(name)];if(o&&o.b)return o.b;
+  var m=match(name);return m&&m.loc?m.loc:NOBAG;
+}
+function allBags(){
+  var seen={};CAT.forEach(function(c){if(c.loc)seen[c.loc]=1;});
+  Object.values(S.bags).forEach(function(o){if(o.b)seen[o.b]=1;});
+  return Object.keys(seen).sort();
+}
+
+/* ═══ 리스트 집계: 모든 자리의 장비를 이름별로 합침 ═══ */
+function aggregate(s){
+  var map={};
+  s.st.forEach(function(st){
+    (st.g||[]).forEach(function(raw){
+      var p=parseQty(raw),k=norm(p.name);if(!k)return;
+      var e=map[k]||(map[k]={k:k,name:p.name,q:0,at:[]});
+      e.q+=p.q;if(e.at.indexOf(st.name)<0)e.at.push(st.name);
+    });
+  });
+  var groups={};
+  Object.values(map).forEach(function(e){
+    e.bag=bagOf(e.name);e.m=match(e.name);
+    (groups[e.bag]||(groups[e.bag]=[])).push(e);
+  });
+  return Object.keys(groups).sort(function(a,b){return (a===NOBAG)-(b===NOBAG)||a.localeCompare(b);})
+    .map(function(b){return {bag:b,items:groups[b].sort(function(x,y){return x.name.localeCompare(y.name);})};});
+}
+
+/* ═══ 저장 / 동기화 ═══ */
+function setStatus(c,t){$('dot').className='dot '+c;$('statusTxt').textContent=t;}
+function save(){
+  if(cs())cs().u=Date.now();
+  snap();persist();
+}
+function persist(){
+  try{localStorage.setItem(LS,JSON.stringify(S));localStorage.setItem(LS+':cur',cur);}catch(e){}
+  if(!db)return;
+  setStatus('wait','저장 대기');clearTimeout(saveT);saveT=setTimeout(push,800);
+}
+/* ═══ 실행 취소 — 바뀔 때마다 전체 스냅샷(최대 100), 같은 칸 연속 입력은 하나로 묶음 ═══ */
+var H=[],HI=-1,snapT=0,snapK='';
+function snapJ(){return JSON.stringify({setups:S.setups,bags:S.bags});}
+function resetHist(){H=[snapJ()];HI=0;snapK='';updUndo();}
+function snap(){
+  var a=document.activeElement,k=a&&a.id||'',t=Date.now(),j=snapJ();
+  if(/^(iName|sName|iRot|iW|iD|sW|sD)$/.test(k)&&k===snapK&&t-snapT<800&&HI>0)H[HI]=j;
+  else{H=H.slice(0,HI+1);H.push(j);if(H.length>100)H.shift();HI=H.length-1;}
+  snapT=t;snapK=k;updUndo();
+}
+function updUndo(){if($('undoBtn')){$('undoBtn').disabled=HI<=0;$('redoBtn').disabled=HI>=H.length-1;}}
+function restore(j){
+  var o=JSON.parse(j),t=Date.now(),changed=[];
+  Object.keys(Object.assign({},S.setups,o.setups)).forEach(function(id){
+    var a=S.setups[id],b=o.setups[id];
+    if(!b){if(a&&!a.del){a.del=true;a.u=t;}}
+    else if(JSON.stringify(a)!==JSON.stringify(b)){b.u=t;S.setups[id]=b;if(!b.del)changed.push(id);}  /* 새 u → 동기화에서 이김 */
+  });
+  Object.keys(Object.assign({},S.bags,o.bags)).forEach(function(k){
+    var a=S.bags[k],b=o.bags[k];
+    if(!b)S.bags[k]={b:'',u:t};
+    else if(JSON.stringify(a)!==JSON.stringify(b)){b.u=t;S.bags[k]=b;}
+  });
+  if(changed.length&&changed.indexOf(cur)<0)cur=changed[0];
+  if(sel&&!(S.setups[cur]&&S.setups[cur].st.some(function(x){return x.id===sel;})))sel=null;
+  fixCur();persist();dirty3=true;renderAll();updUndo();
+}
+function undo(){if(document.activeElement)document.activeElement.blur();if(HI>0){HI--;restore(H[HI]);}}
+function redo(){if(document.activeElement)document.activeElement.blur();if(HI<H.length-1){HI++;restore(H[HI]);}}
+
+function merge(R){
+  if(!R||R.schema!==1)return false;var ch=false;
+  Object.keys(R.setups||{}).forEach(function(id){var a=S.setups[id],b=R.setups[id];if(!a||b.u>a.u){S.setups[id]=b;ch=true;}});
+  Object.keys(R.bags||{}).forEach(function(k){var a=S.bags[k],b=R.bags[k];if(!a||b.u>a.u){S.bags[k]=b;ch=true;}});
+  return ch;
+}
+function pull(){
+  return db.from(SB.table).select('content').eq('id',SB.row).maybeSingle().then(function(r){
+    if(r.error){setStatus('err','불러오기 실패');return false;}
+    return merge(r.data&&r.data.content);
+  });
+}
+function push(){
+  setStatus('wait','저장 중');
+  pull().then(function(){  /* 남의 변경을 먼저 합친 뒤 올림 (셋업 단위 최신 우선) */
+    return db.from(SB.table).upsert({id:SB.row,content:S,rev:Date.now(),updated_at:new Date().toISOString()});
+  }).then(function(r){
+    if(r&&r.error){setStatus('err','저장 실패');console.error(r.error);}
+    else{setStatus('ok','동기화됨');try{localStorage.setItem(LS,JSON.stringify(S));}catch(e){}}
+  });
+}
+function busy(){var a=document.activeElement;return !!drag||!!(a&&(a.tagName==='INPUT'||a.tagName==='SELECT'));}
+function remoteChanged(){
+  if(busy()){pending=true;return;}
+  pull().then(function(ch){if(ch){fixCur();renderAll();resetHist();}setStatus('ok','동기화됨');});
+}
+document.addEventListener('focusout',function(){setTimeout(function(){if(pending&&!busy()){pending=false;remoteChanged();}},50);});
+
+/* ═══ 2D 배치도 (SVG, 단위 = m) ═══ */
+var NS='http://www.w3.org/2000/svg';
+function renderPlan(){
+  var s=cs(),svg=$('plan'),W=s.W,D=s.D,pad=0.6,h='';
+  svg.setAttribute('viewBox',(-pad)+' '+(-pad)+' '+(W+pad*2)+' '+(D+pad*2));
+  h+='<rect x="0" y="0" width="'+W+'" height="'+D+'" fill="var(--floor)" stroke="var(--grid2)" stroke-width="0.03"/>';
+  for(var x=1;x<W;x++)h+='<line x1="'+x+'" y1="0" x2="'+x+'" y2="'+D+'" stroke="'+(x%5?'var(--grid)':'var(--grid2)')+'" stroke-width="0.015"/>';
+  for(var y=1;y<D;y++)h+='<line x1="0" y1="'+y+'" x2="'+W+'" y2="'+y+'" stroke="'+(y%5?'var(--grid)':'var(--grid2)')+'" stroke-width="0.015"/>';
+  h+='<text x="'+(W/2)+'" y="'+(D+0.42)+'" font-size="0.22" fill="var(--faint)" text-anchor="middle">'+W+' m</text>';
+  h+='<text x="-0.32" y="'+(D/2)+'" font-size="0.22" fill="var(--faint)" text-anchor="middle" transform="rotate(-90 -0.32 '+(D/2)+')">'+D+' m</text>';
+  /* 구역을 먼저 깔고 그 위에 자리 */
+  s.st.slice().sort(function(a,b){return (b.t==='zone')-(a.t==='zone');}).forEach(function(st){
+    var T=TYPES[st.t]||TYPES.etc,w=st.w||T.w,d=st.d||T.d,on=st.id===sel;
+    h+='<g class="st" data-id="'+st.id+'" style="cursor:grab">';
+    h+='<g transform="translate('+st.x+' '+st.y+') rotate('+(st.r||0)+')">';
+    if(st.t==='zone')h+='<rect x="'+(-w/2)+'" y="'+(-d/2)+'" width="'+w+'" height="'+d+'" rx="0.08" fill="var(--grid)" stroke="'+(on?'var(--sel)':'var(--grid2)')+'" stroke-width="'+(on?0.05:0.03)+'" stroke-dasharray="0.15 0.1"/>';
+    else h+='<rect x="'+(-w/2)+'" y="'+(-d/2)+'" width="'+w+'" height="'+d+'" rx="0.08" fill="var(--stf)" stroke="'+(on?'var(--sel)':'var(--hair2)')+'" stroke-width="'+(on?0.05:0.025)+'"/>';
+    /* 앞쪽 표시(위 = 정면) */
+    if(st.t==='cam'||st.t==='light')h+='<path d="M'+(-w*0.32)+' '+(-d/2)+' L0 '+(-d/2-0.9)+' L'+(w*0.32)+' '+(-d/2)+'Z" fill="var(--grid2)" opacity="0.6"/>';
+    else if(st.t!=='zone')h+='<line x1="'+(-w*0.3)+'" y1="'+(-d/2+0.07)+'" x2="'+(w*0.3)+'" y2="'+(-d/2+0.07)+'" stroke="var(--soft)" stroke-width="0.04"/>';
+    h+='</g>';
+    /* 이름 + 장비(가방 색 점) — 회전과 무관하게 똑바로 */
+    var ty=st.y-(st.t==='zone'?d/2-0.3:0.04);
+    h+='<text x="'+st.x+'" y="'+ty+'" font-size="0.2" font-weight="600" fill="var(--ink)" text-anchor="middle">'+esc(st.name)+'</text>';
+    var g=st.g||[],ly=st.y+(st.t==='zone'?-d/2+0.6:Math.max(w,d)/2+0.28),lx=st.x-(st.t==='zone'?w/2-0.3:Math.min(w,1.2)/2);
+    g.forEach(function(raw,i){
+      var p=parseQty(raw),yy=ly+i*0.22;
+      h+='<circle cx="'+lx+'" cy="'+(yy-0.05)+'" r="0.05" fill="'+bagColor(bagOf(p.name))+'"/>';
+      h+='<text x="'+(lx+0.1)+'" y="'+yy+'" font-size="0.15" fill="var(--soft)">'+esc(raw)+'</text>';
+    });
+    h+='</g>';
+  });
+  svg.innerHTML=h;
+}
+function svgPt(e){var svg=$('plan'),p=svg.createSVGPoint();p.x=e.clientX;p.y=e.clientY;return p.matrixTransform(svg.getScreenCTM().inverse());}
+$('plan').addEventListener('pointerdown',function(e){
+  if(placing){var pp=svgPt(e),k=placing;setPlacing(null);placeAt(k,pp.x,pp.y);return;}
+  var g=e.target.closest('.st');
+  if(!g){if(sel){sel=null;renderInsp();renderPlan();}return;}
+  var st=cs().st.find(function(x){return x.id===g.dataset.id;}),p=svgPt(e);
+  if(document.activeElement)document.activeElement.blur();
+  sel=st.id;drag={st:st,dx:st.x-p.x,dy:st.y-p.y,moved:false};
+  $('plan').setPointerCapture(e.pointerId);renderPlan();renderInsp();
+});
+$('plan').addEventListener('pointermove',function(e){
+  if(!drag)return;var p=svgPt(e),s=cs();
+  drag.st.x=Math.round(Math.min(s.W,Math.max(0,p.x+drag.dx))*10)/10;
+  drag.st.y=Math.round(Math.min(s.D,Math.max(0,p.y+drag.dy))*10)/10;
+  drag.moved=true;renderPlan();
+});
+$('plan').addEventListener('pointerup',function(){if(drag){var m=drag.moved;drag=null;if(m){save();dirty3=true;}if(pending){pending=false;remoteChanged();}}});
+
+/* ═══ 자리 편집 패널 ═══ */
+function selSt(){return sel&&cs().st.find(function(x){return x.id===sel;});}
+function renderInsp(){
+  var st=selSt(),el=$('insp');
+  if(!st){el.innerHTML='<h3>자리</h3><div class="empty">위의 버튼으로 자리를 추가하거나 배치도에서 자리를 누르세요.<br><br>자리마다 장비를 적으면 아래 리스트가 자동으로 만들어지고, 장비 탭의 가방 정보로 색깔별로 나뉩니다.<br><br>수량은 <b>"V마운트 x3"</b> 또는 <b>"3개"</b>처럼 적으세요.</div>';return;}
+  var T=TYPES[st.t]||TYPES.etc,opts=Object.keys(TYPES).map(function(k){return '<option value="'+k+'"'+(k===st.t?' selected':'')+'>'+TYPES[k].n+'</option>';}).join('');
+  var h='<h3>자리</h3>';
+  h+='<div class="row"><input id="iName" value="'+esc(st.name)+'" placeholder="이름"><select id="iType">'+opts+'</select></div>';
+  h+='<div class="row"><button data-rot="-45">⟲</button><input id="iRot" type="range" min="0" max="345" step="15" value="'+(st.r||0)+'"><button data-rot="45">⟳</button><span style="width:36px;text-align:right;color:var(--soft);font-size:12px">'+(st.r||0)+'°</span></div>';
+  h+='<div class="row"><label style="font-size:12px;color:var(--soft)">크기</label><input id="iW" type="number" step="0.1" min="0.3" value="'+(st.w||T.w)+'"><span>×</span><input id="iD" type="number" step="0.1" min="0.3" value="'+(st.d||T.d)+'"><span style="font-size:12px;color:var(--soft)">m</span></div>';
+  h+='<h3 style="margin-top:12px">장비 ('+(st.g||[]).length+')</h3><div class="chips">';
+  (st.g||[]).forEach(function(raw,i){
+    var p=parseQty(raw),b=bagOf(p.name),m=match(p.name);
+    h+='<div class="chip">'+(m&&m.img?'<img class="thumb" src="'+m.img+'" data-zoom="'+m.img+'" alt="">':'')+'<span class="dot" style="background:'+bagColor(b)+'"></span><span class="t">'+esc(raw)+'<br><span class="bag">'+esc(b)+'</span></span><button data-delg="'+i+'" aria-label="지우기">×</button></div>';
+  });
+  h+='</div><div class="row"><input id="iGear" list="gearNames" placeholder="장비 이름 입력 후 Enter" enterkeyhint="done"><button id="iAdd">추가</button></div><div class="row"><button id="iPick" style="flex:1">장비 목록에서 고르기</button></div>';
+  h+='<div class="row" style="margin-top:14px"><button id="iDup">복제</button><span class="spacer"></span><button id="iDel" class="danger">자리 삭제</button></div>';
+  el.innerHTML=h;
+  $('iName').oninput=function(){st.name=this.value;renderPlan();renderList();save();dirty3=true;};
+  $('iType').onchange=function(){st.t=this.value;delete st.w;delete st.d;save();dirty3=true;renderAll();};
+  $('iRot').oninput=function(){st.r=+this.value;this.nextElementSibling.nextElementSibling.textContent=st.r+'°';renderPlan();save();dirty3=true;};
+  el.querySelectorAll('[data-rot]').forEach(function(b){b.onclick=function(){st.r=((st.r||0)+(+b.dataset.rot)+360)%360;save();dirty3=true;renderAll();};});
+  if($('iW')){$('iW').onchange=function(){st.w=Math.max(0.3,+this.value);save();dirty3=true;renderPlan();};$('iD').onchange=function(){st.d=Math.max(0.3,+this.value);save();dirty3=true;renderPlan();};}
+  function addG(){var v=$('iGear').value.trim();if(!v)return;(st.g=st.g||[]).push(v);save();dirty3=true;renderAll();$('iGear').focus();}
+  $('iGear').onkeydown=function(e){if(e.key==='Enter'&&!e.isComposing){e.preventDefault();addG();}};
+  $('iAdd').onclick=addG;
+  $('iPick').onclick=function(){openPick(st);};
+  el.querySelectorAll('[data-delg]').forEach(function(b){b.onclick=function(){st.g.splice(+b.dataset.delg,1);save();dirty3=true;renderAll();};});
+  $('iDup').onclick=function(){var c=JSON.parse(JSON.stringify(st));c.id=uid();c.x=Math.min(cs().W,c.x+0.6);c.y=Math.min(cs().D,c.y+0.6);cs().st.push(c);sel=c.id;save();dirty3=true;renderAll();};
+  $('iDel').onclick=function(){
+    if(this.dataset.arm!=='1'){this.dataset.arm='1';this.textContent='한 번 더 누르면 삭제';return;}
+    cs().st=cs().st.filter(function(x){return x.id!==st.id;});sel=null;save();dirty3=true;renderAll();
+  };
+}
+
+/* ═══ 하단 챙김 리스트 ═══ */
+function renderList(){
+  var s=cs(),groups=aggregate(s),total=0,done=0,bags=allBags();
+  groups.forEach(function(g){g.items.forEach(function(e){total++;if(s.packed[e.k])done++;});});
+  var h='<h2>챙김 리스트 <small>'+groups.filter(function(g){return g.bag!==NOBAG;}).length+'개 가방 · 장비 '+total+'종 · 챙김 '+done+'/'+total+'</small></h2>';
+  if(!total)h+='<div style="color:var(--faint);font-size:13px;margin-top:6px">배치도의 자리에 장비를 적으면 여기 가방별로 모입니다.</div>';
+  h+='<div class="bags">';
+  groups.forEach(function(g){
+    var c=bagColor(g.bag),dn=g.items.filter(function(e){return s.packed[e.k];}).length;
+    h+='<div class="bagc" style="--c:'+c+'"><div class="bh"><span class="sw"></span>'+esc(g.bag)+'<span class="n">'+dn+'/'+g.items.length+'</span></div>';
+    g.items.forEach(function(e){
+      var sub=e.at.join(', ')+(e.m&&norm(e.m.name)!==e.k?' · 장비탭: '+e.m.name:'');
+      var o='<option value="">'+(e.m&&e.m.loc?'자동 ('+e.m.loc+')':'가방 지정…')+'</option>'+bags.map(function(b){return '<option'+(S.bags[e.k]&&S.bags[e.k].b===b?' selected':'')+'>'+esc(b)+'</option>';}).join('')+'<option value="__new">+ 새 가방…</option>';
+      var m=e.m,w='';
+      if(m){
+        if(m.qty&&e.q>m.qty)w+='<span class="warn bad">보유 '+m.qty+'개뿐 · '+(e.q-m.qty)+'개 부족</span> ';
+        if(m.status.indexOf('분실')>=0)w+='<span class="warn bad">분실</span> ';
+        if(m.stage==='수리'||m.stage==='사용'||m.stage==='개인 보관')w+='<span class="warn">'+esc(m.stage)+' 중</span> ';
+      }
+      h+='<div class="it'+(s.packed[e.k]?' done':'')+'"><input type="checkbox" data-pk="'+e.k+'"'+(s.packed[e.k]?' checked':'')+' aria-label="챙김">'+
+        '<span class="nm" style="display:flex;gap:8px;align-items:center">'+(m&&m.img?'<img class="thumb" src="'+m.img+'" data-zoom="'+m.img+'" alt="">':'')+'<span><b>'+esc(e.name)+'</b>'+(e.q>1?' <span class="q">×'+e.q+'</span>':'')+(m&&m.qty?' <span class="q">/ 보유 '+m.qty+'</span>':'')+'<span class="sub">'+esc(sub)+'</span>'+(w?'<span style="display:block">'+w+'</span>':'')+'</span></span>'+
+        '<select data-bag="'+e.k+'" aria-label="가방">'+o+'</select>'+
+        '<button class="x" data-del="'+e.k+'" title="모든 자리에서 지우기">×</button></div>';
+    });
+    h+='</div>';
+  });
+  h+='</div>';
+  $('list').innerHTML=h;
+  $('list').querySelectorAll('[data-pk]').forEach(function(b){b.onchange=function(){if(this.checked)s.packed[b.dataset.pk]=1;else delete s.packed[b.dataset.pk];save();renderList();};});
+  $('list').querySelectorAll('[data-bag]').forEach(function(b){b.onchange=function(){
+    var v=this.value,k=b.dataset.bag;
+    if(v==='__new'){v=(prompt('새 가방 이름')||'').trim();if(!v){renderList();return;}}
+    S.bags[k]={b:v,u:Date.now()};save();renderAll();
+  };});
+  $('list').querySelectorAll('[data-del]').forEach(function(b){b.onclick=function(){
+    if(b.dataset.arm!=='1'){b.dataset.arm='1';b.textContent='삭제?';b.style.color='var(--danger)';b.style.fontSize='12px';return;}
+    var k=b.dataset.del;
+    s.st.forEach(function(st){st.g=(st.g||[]).filter(function(raw){return norm(parseQty(raw).name)!==k;});});
+    delete s.packed[k];save();dirty3=true;renderAll();
+  };});
+}
+
+/* ═══ 3D (three.js r128) ═══ */
+var G3=null,dirty3=true;
+function loadScript(src){return new Promise(function(ok,no){var s=document.createElement('script');s.src=src;s.onload=ok;s.onerror=no;document.head.appendChild(s);});}
+function init3(){
+  if(G3)return Promise.resolve(G3);
+  return loadScript('https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js')
+    .then(function(){return loadScript('https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js');})
+    .then(function(){
+      var el=$('gl'),r=new THREE.WebGLRenderer({antialias:true});
+      r.setPixelRatio(Math.min(2,devicePixelRatio));el.appendChild(r.domElement);
+      var cam=new THREE.PerspectiveCamera(45,1,0.1,500),ctl=new THREE.OrbitControls(cam,r.domElement);
+      ctl.enableDamping=true;ctl.maxPolarAngle=Math.PI*0.49;
+      var sc=new THREE.Scene();
+      sc.add(new THREE.HemisphereLight(0xffffff,0x444455,0.9));
+      var dl=new THREE.DirectionalLight(0xffffff,0.6);dl.position.set(5,10,6);sc.add(dl);
+      G3={r:r,cam:cam,ctl:ctl,sc:sc,root:null};
+      (function loop(){requestAnimationFrame(loop);if(view!=='3')return;size3();ctl.update();r.render(sc,cam);})();
+      return G3;
+    });
+}
+function size3(){var el=$('gl'),w=el.clientWidth,h=el.clientHeight;if(!w)return;var c=G3.r.domElement;if(c.width!==Math.round(w*G3.r.getPixelRatio())||c.height!==Math.round(h*G3.r.getPixelRatio())){G3.r.setSize(w,h);G3.cam.aspect=w/h;G3.cam.updateProjectionMatrix();}}
+function label3(txt,sub){
+  var cv=document.createElement('canvas');cv.width=512;cv.height=sub?160:96;var x=cv.getContext('2d');
+  x.fillStyle='rgba(15,16,20,.82)';x.fillRect(0,0,512,cv.height);
+  x.fillStyle='#fff';x.font='600 52px -apple-system,sans-serif';x.textAlign='center';x.fillText(txt,256,64);
+  if(sub){x.fillStyle='#b9c0cc';x.font='34px -apple-system,sans-serif';x.fillText(sub,256,128);}
+  var sp=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(cv),depthTest:false}));
+  sp.scale.set(1.6,1.6*cv.height/512,1);return sp;
+}
+function build3(fit){
+  var s=cs(),T3=THREE,sc=G3.sc;
+  if(G3.root)sc.remove(G3.root);
+  var root=new T3.Group();G3.root=root;sc.add(root);
+  var light=document.documentElement.dataset.theme==='light';
+  sc.background=new T3.Color(light?0xeef0f3:0x0e0f12);
+  function M(c){return new T3.MeshStandardMaterial({color:c,roughness:0.8});}
+  function box(w,h,d,c,x,y,z,g){var m=new T3.Mesh(new T3.BoxGeometry(w,h,d),M(c));m.position.set(x,y,z);g.add(m);return m;}
+  function cyl(r,h,c,x,y,z,g){var m=new T3.Mesh(new T3.CylinderGeometry(r,r,h,10),M(c));m.position.set(x,y,z);g.add(m);return m;}
+  var floor=new T3.Mesh(new T3.PlaneGeometry(s.W,s.D),M(light?0xffffff:0x1a1b20));floor.rotation.x=-Math.PI/2;root.add(floor);
+  var gp=[],x,y;
+  for(x=0;x<=s.W;x++)gp.push(x-s.W/2,0.002,-s.D/2,x-s.W/2,0.002,s.D/2);
+  for(y=0;y<=s.D;y++)gp.push(-s.W/2,0.002,y-s.D/2,s.W/2,0.002,y-s.D/2);
+  var gg=new T3.BufferGeometry();gg.setAttribute('position',new T3.Float32BufferAttribute(gp,3));
+  root.add(new T3.LineSegments(gg,new T3.LineBasicMaterial({color:light?0xd0d3d8:0x2c2e35})));
+  var DK=0x2b2d33,MD=0x55585f,LT=0x9aa0a8;
+  s.st.forEach(function(st){
+    var T=TYPES[st.t]||TYPES.etc,w=st.w||T.w,d=st.d||T.d,g=new T3.Group(),top=1;
+    g.position.set(st.x-s.W/2,0,st.y-s.D/2);g.rotation.y=-(st.r||0)*Math.PI/180;
+    if(st.t==='desk'||st.t==='table'){
+      box(w,0.04,d,LT,0,0.74,0,g);[[-1,-1],[1,-1],[-1,1],[1,1]].forEach(function(q){box(0.04,0.72,0.04,MD,q[0]*(w/2-0.05),0.36,q[1]*(d/2-0.05),g);});
+      if(st.t==='desk'){box(0.62,0.38,0.03,DK,0,1.0,-d/2+0.18,g);box(0.12,0.04,0.12,DK,0,0.78,-d/2+0.18,g);box(0.5,0.45,0.5,MD,0,0.23,d/2+0.35,g);}
+      top=st.t==='desk'?1.3:0.9;
+    }else if(st.t==='cam'){
+      for(var i=0;i<3;i++){var a=i*2*Math.PI/3,l=cyl(0.015,1.4,MD,Math.sin(a)*0.2,0.68,Math.cos(a)*0.2,g);l.rotation.set(Math.cos(a)*-0.28,0,Math.sin(a)*0.28);}
+      box(0.18,0.16,0.26,DK,0,1.45,0,g);var ln=cyl(0.05,0.18,0x111111,0,1.45,-0.2,g);ln.rotation.x=Math.PI/2;top=1.8;
+    }else if(st.t==='mon'){
+      cyl(0.015,1.3,MD,0,0.65,0,g);box(0.4,0.04,0.4,MD,0,0.02,0,g);box(0.46,0.3,0.03,DK,0,1.4,0,g);top=1.75;
+    }else if(st.t==='light'){
+      cyl(0.015,1.9,MD,0,0.95,0,g);box(0.5,0.5,0.25,0xe8e3d0,0,2.0,0,g);top=2.4;
+    }else if(st.t==='snd'){
+      box(w,0.9,d,MD,0,0.45,0,g);box(w*0.8,0.06,d*0.6,DK,0,0.93,0,g);top=1.3;
+    }else if(st.t==='zone'){
+      var z=new T3.Mesh(new T3.PlaneGeometry(w,d),new T3.MeshBasicMaterial({color:0x8a7fd8,transparent:true,opacity:0.12}));z.rotation.x=-Math.PI/2;z.position.y=0.005;g.add(z);top=0.4;
+    }else{box(w*0.7,0.6,d*0.7,MD,0,0.3,0,g);top=0.9;}
+    root.add(g);
+    var n=(st.g||[]).length,lb=label3(st.name,n?('장비 '+n+'개'):'');lb.position.set(st.x-s.W/2,top+0.3,st.y-s.D/2);root.add(lb);
+  });
+  if(fit){var m=Math.max(s.W,s.D);G3.cam.position.set(0,m*0.8,m*0.95);G3.ctl.target.set(0,0,0);G3.ctl.update();}
+  dirty3=false;
+}
+function setView(v){
+  view=v;$('stage').classList.toggle('v3',v==='3');
+  $('viewSeg').querySelectorAll('button').forEach(function(b){b.classList.toggle('on',b.dataset.v===v);});
+  $('hint').textContent=v==='3'?'끌어서 돌리기 · 휠/핀치 확대 · 두 손가락(우클릭) 이동':'자리를 끌어서 옮기고, 눌러서 장비를 적으세요';
+  try{localStorage.setItem('kit.view',v);}catch(e){}
+  if(v==='3')init3().then(function(){build3(!G3.fitted);G3.fitted=true;}).catch(function(){$('hint').textContent='3D를 불러오지 못했어요 (인터넷 확인)';});
+}
+setInterval(function(){if(view==='3'&&G3&&dirty3)build3(false);},300);
+
+/* ═══ 상단 ═══ */
+function renderBar(){
+  var s=cs();
+  $('setupSel').innerHTML=live().map(function(x){return '<option value="'+x.id+'"'+(x.id===cur?' selected':'')+'>'+esc(x.name)+(x.date?' · '+x.date:'')+'</option>';}).join('');
+  if(document.activeElement!==$('sName'))$('sName').value=s.name;
+  $('sDate').value=s.date||'';$('sW').value=s.W;$('sD').value=s.D;
+  $('phT').textContent=s.name;$('phD').textContent=(s.date||'')+' · 공간 '+s.W+'×'+s.D+'m · CARECENTER 장비 셋업';
+}
+function renderAll(){renderBar();renderPlan();renderInsp();renderList();}
+function fixCur(){if(!cur||!S.setups[cur]||S.setups[cur].del){var l=live();cur=l.length?l[0].id:newSetup('셋업 1');sel=null;}}
+$('adds').innerHTML=Object.keys(TYPES).map(function(k){return '<button data-add="'+k+'">＋ '+TYPES[k].n+'</button>';}).join('');
+/* 자리 놓기: 버튼을 누른 뒤 배치도에서 원하는 곳을 누르면 그 자리에 생김 */
+var placing=null;
+function setPlacing(k){
+  placing=k;if(k&&view==='3')setView('2');
+  $('adds').querySelectorAll('[data-add]').forEach(function(b){b.classList.toggle('on',b.dataset.add===k);});
+  $('stage').classList.toggle('placing',!!k);
+  $('hint').textContent=k?'배치도에서 '+TYPES[k].n+'을(를) 놓을 곳을 누르세요 · Esc 취소':'자리를 끌어서 옮기고, 눌러서 장비를 적으세요';
+}
+function placeAt(k,x,y){
+  var s=cs(),n=s.st.filter(function(q){return q.t===k;}).length;
+  var st={id:uid(),t:k,name:TYPES[k].n+(n?' '+(n+1):''),x:Math.round(Math.min(s.W,Math.max(0,x))*10)/10,y:Math.round(Math.min(s.D,Math.max(0,y))*10)/10,r:0,g:[]};
+  s.st.push(st);sel=st.id;save();dirty3=true;renderAll();
+  if(innerWidth>820)setTimeout(function(){$('iGear')&&$('iGear').focus();},0);
+}
+$('adds').onclick=function(e){var b=e.target.closest('[data-add]');if(b)setPlacing(placing===b.dataset.add?null:b.dataset.add);};
+$('setupSel').onchange=function(){cur=this.value;sel=null;dirty3=true;save();renderAll();if(view==='3'&&G3)build3(true);};
+$('newSetup').onclick=function(){cur=newSetup('셋업 '+(live().length+1));sel=null;save();dirty3=true;renderAll();$('sName').select();};
+$('dupSetup').onclick=function(){var c=JSON.parse(JSON.stringify(cs())),t=Date.now();c.id=uid();c.c=t;c.u=t;c.name+=' 복사';c.packed={};S.setups[c.id]=c;cur=c.id;save();renderAll();};
+$('delSetup').onclick=function(){
+  var b=this;if(b.dataset.arm!=='1'){b.dataset.arm='1';b.textContent='한 번 더';setTimeout(function(){b.dataset.arm='';b.textContent='삭제';},2500);return;}
+  b.dataset.arm='';b.textContent='삭제';cs().del=true;cs().u=Date.now();fixCur();save();dirty3=true;renderAll();
+};
+$('sName').oninput=function(){cs().name=this.value;save();renderBar();};
+$('sDate').onchange=function(){cs().date=this.value;save();renderBar();};
+$('sW').onchange=function(){cs().W=Math.max(2,Math.min(60,+this.value||10));save();dirty3=true;renderAll();if(G3&&view==='3')build3(true);};
+$('sD').onchange=function(){cs().D=Math.max(2,Math.min(60,+this.value||8));save();dirty3=true;renderAll();if(G3&&view==='3')build3(true);};
+$('viewSeg').onclick=function(e){var b=e.target.closest('button');if(b)setView(b.dataset.v);};
+$('printBtn').onclick=function(){sel=null;renderPlan();renderInsp();window.print();};
+$('themeBtn').onclick=function(){
+  var t=document.documentElement.dataset.theme==='light'?'dark':'light';document.documentElement.dataset.theme=t;
+  try{localStorage.setItem('kit.theme',t);}catch(e){}dirty3=true;
+};
+$('undoBtn').onclick=undo;$('redoBtn').onclick=redo;
+document.addEventListener('keydown',function(e){
+  var a=document.activeElement,typing=a&&a.tagName==='INPUT'&&/^(text|search|number|)$/.test(a.type);
+  if(e.key==='Escape'){if(placing)setPlacing(null);if(!$('pick').hidden)closePick();$('zoom').hidden=true;}
+  if((e.metaKey||e.ctrlKey)&&!typing){
+    var k=e.key.toLowerCase();
+    if(k==='z'&&!e.shiftKey){e.preventDefault();undo();return;}
+    if((k==='z'&&e.shiftKey)||k==='y'){e.preventDefault();redo();return;}
+  }
+  if((e.key==='Delete'||e.key==='Backspace')&&sel&&!busy()){cs().st=cs().st.filter(function(x){return x.id!==sel;});sel=null;save();dirty3=true;renderAll();}
+});
+
+/* ═══ 장비 목록에서 고르기 ═══ */
+var pickSt=null,pickCat='';
+function openPick(st){pickSt=st;$('pick').hidden=false;$('pq').value='';renderPick();if(innerWidth>820)$('pq').focus();}
+function closePick(){$('pick').hidden=true;pickSt=null;renderAll();}
+function stCount(st,k){var n=0;if(!st)return 0;(st.g||[]).forEach(function(raw){var p=parseQty(raw);if(norm(p.name)===k)n+=p.q;});return n;}
+function renderPick(){
+  var cats=[];CAT.forEach(function(c){if(cats.indexOf(c.cat)<0)cats.push(c.cat);});
+  $('pcats').innerHTML=['전체'].concat(cats).map(function(c){var v=c==='전체'?'':c;return '<button data-pc="'+esc(v)+'" class="'+(v===pickCat?'on':'')+'">'+esc(c)+'</button>';}).join('');
+  var q=norm($('pq').value);
+  $('plist').innerHTML=CAT.map(function(c,i){
+    if(pickCat&&c.cat!==pickCat)return '';
+    if(q&&c.k.indexOf(q)<0&&norm(c.loc+c.cat).indexOf(q)<0)return '';
+    var n=stCount(pickSt,c.k);
+    return '<button class="pi" data-pi="'+i+'">'+(c.img?'<img class="thumb" src="'+c.img+'" alt="" loading="lazy">':'<span class="thumb"></span>')+
+      '<span><span class="pn">'+esc(c.name)+'</span><br><span class="pm"><span class="dot" style="background:'+bagColor(c.loc||NOBAG)+'"></span> '+esc(c.loc||NOBAG)+(c.qty?' · 보유 '+c.qty:'')+'</span></span>'+(n?'<span class="cnt">'+n+'</span>':'')+'</button>';
+  }).join('')||'<div style="color:var(--faint)">없어요</div>';
+}
+$('pq').oninput=renderPick;
+$('pClose').onclick=closePick;
+$('pick').onclick=function(e){if(e.target===this)closePick();};
+$('pcats').onclick=function(e){var b=e.target.closest('[data-pc]');if(b){pickCat=b.dataset.pc;renderPick();}};
+$('plist').onclick=function(e){
+  var b=e.target.closest('[data-pi]');if(!b||!pickSt)return;var c=CAT[+b.dataset.pi],g=pickSt.g=pickSt.g||[];
+  /* 같은 장비를 또 누르면 수량 +1 */
+  var i=g.findIndex(function(raw){return norm(parseQty(raw).name)===c.k;});
+  if(i<0)g.push(c.name);else g[i]=c.name+' x'+(parseQty(g[i]).q+1);
+  save();dirty3=true;renderPlan();renderList();renderPick();
+};
+document.addEventListener('click',function(e){var z=e.target.closest('[data-zoom]');if(z){e.stopPropagation();$('zimg').src=z.dataset.zoom;$('zoom').hidden=false;}},true);
+$('zoom').onclick=function(){this.hidden=true;};
+
+/* ═══ 시작 ═══ */
+(function(){
+  try{var c=JSON.parse(localStorage.getItem(LS)||'null');if(c&&c.schema===1)S=c;cur=localStorage.getItem(LS+':cur');}catch(e){}
+  fixCur();renderAll();resetHist();
+  try{if(localStorage.getItem('kit.view')==='3')setView('3');}catch(e){}
+  fetch('gear_data.json').then(function(r){return r.json();}).then(function(d){
+    CAT=d.map(function(x){return {name:x.name,k:norm(x.name),loc:x.loc||'',cat:x.cat,qty:+x.qty||0,status:x.status||'',stage:x.stage||'',img:x.imgs&&x.imgs[0]?'images/'+x.imgs[0]:''};});
+    $('gearNames').innerHTML=d.map(function(x){return '<option value="'+esc(x.name)+'">'+esc(x.loc||'')+'</option>';}).join('');
+    renderAll();dirty3=true;
+  }).catch(function(){});
+  if(!SOLO&&window.supabase&&window.supabase.createClient){
+    db=window.supabase.createClient(SB.url,SB.anon);
+    pull().then(function(ch){
+      if(ch){fixCur();renderAll();dirty3=true;resetHist();}
+      push();
+      db.channel('kit').on('postgres_changes',{event:'*',schema:'public',table:SB.table,filter:'id=eq.'+SB.row},remoteChanged).subscribe();
+    });
+  }else setStatus('','이 기기에만 저장');
+  window.__kit={S:S,get cur(){return cur;},aggregate:aggregate,match:match,parseQty:parseQty};
+})();
+</script>
+</body>
+</html>
