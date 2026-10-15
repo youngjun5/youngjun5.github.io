@@ -721,10 +721,22 @@ $('zoom').onclick=function(){this.hidden=true;};
   fixCur();renderAll();resetHist();
   setHint();
   try{if(localStorage.getItem('kit.view')==='3')setView('3');}catch(e){}
-  fetch('gear_data.json').then(function(r){return r.json();}).then(function(d){
-    CAT=d.map(function(x){return {name:x.name,k:norm(x.name),loc:x.loc||'',cat:x.cat,qty:+x.qty||0,status:x.status||'',stage:x.stage||'',img:x.imgs&&x.imgs[0]?'images/'+x.imgs[0]:''};});
-    $('gearNames').innerHTML=d.map(function(x){return '<option value="'+esc(x.name)+'">'+esc(x.loc||'')+'</option>';}).join('');
+  /* 장비 목록 = gear_data.json + 목록 탭에서 직접 추가한 장비(행 'gear-custom') */
+  var baseCat=[],customCat=[];
+  function setCat(){
+    CAT=baseCat.concat(customCat);
+    $('gearNames').innerHTML=CAT.map(function(x){return '<option value="'+esc(x.name)+'">'+esc(x.loc||'')+'</option>';}).join('');
     renderAll();dirty3=true;
+  }
+  function setCustom(c){
+    customCat=Object.values((c&&c.items)||{}).filter(function(x){return !x.del;}).map(function(x){
+      return {name:x.name,k:norm(x.name),loc:x.loc||'',cat:x.cat,qty:+x.qty||0,status:'',stage:'',img:x.img||''};});
+    setCat();
+  }
+  fetch('gear_data.json').then(function(r){return r.json();}).then(function(d){
+    baseCat=d.map(function(x){return {name:x.name,k:norm(x.name),loc:x.loc||'',cat:x.cat,qty:+x.qty||0,status:x.status||'',stage:x.stage||'',img:x.imgs&&x.imgs[0]?'images/'+x.imgs[0]:''};});
+    try{setCustom(JSON.parse(localStorage.getItem('gear:custom')||'null'));}catch(e){setCat();}
+    if(db)db.from(SB.table).select('content').eq('id','gear-custom').maybeSingle().then(function(r){if(r.data)setCustom(r.data.content);});
   }).catch(function(){});
   if(!SOLO&&window.supabase&&window.supabase.createClient){
     db=window.supabase.createClient(SB.url,SB.anon);
