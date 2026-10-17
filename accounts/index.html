@@ -221,7 +221,7 @@
   <div class="grid" id="grid"></div>
   <p class="loading" id="loadingMsg">불러오는 중...</p>
   <p class="empty" id="emptyMsg" hidden>등록된 계정이 없어요.</p>
-  <p class="footnote">비밀번호가 그대로 보이는 페이지예요 — 링크를 아무한테나 공유하지 마세요. 갱신일/결제필요 표시는 직접 입력한 값을 기준으로 계산돼요(사이트에 자동으로 로그인해서 확인하지는 않아요).</p>
+  <p class="footnote">비밀번호는 여기 적지 말고 비밀번호 앱(아이폰 '암호' 앱의 공유 그룹 등)에 보관하세요 — 이 페이지는 주소만 알면 누구나 볼 수 있어요. 갱신일/결제필요 표시는 직접 입력한 값을 기준으로 계산돼요(사이트에 자동으로 로그인해서 확인하지는 않아요).</p>
 </main>
 
 <div class="modal-overlay" id="modalOverlay" hidden>
@@ -231,7 +231,6 @@
     <div class="mfield"><label>도메인 (로고용, 예: canva.com)</label><input id="mDomain" placeholder="예: canva.com"></div>
     <div class="mfield"><label>로그인 링크</label><input id="mUrl" placeholder="https://..."></div>
     <div class="mfield"><label>아이디</label><input id="mId"></div>
-    <div class="mfield"><label>비밀번호</label><input id="mPw"></div>
     <div class="mfield"><label>비고 (선택)</label><input id="mNote" placeholder="예: 구글 2단계 인증 필요"></div>
     <div class="modal-actions">
       <button class="modal-cancel" id="mCancel">취소</button>
@@ -289,8 +288,6 @@
         '</div>' +
         '<div class="field-row"><span class="field-label">ID</span><span class="field-value">' + esc(it.id) + '</span>' +
           '<span class="copy-btn" data-copy="' + esc(it.id) + '" title="아이디 복사">' + copyIcon() + '</span></div>' +
-        '<div class="field-row"><span class="field-label">PW</span><span class="field-value">' + esc(it.password) + '</span>' +
-          '<span class="copy-btn" data-copy="' + esc(it.password) + '" title="비밀번호 복사">' + copyIcon() + '</span></div>' +
         (it.note ? '<div class="field-row"><span class="field-label">비고</span><span class="field-value" style="white-space:normal">' + esc(it.note) + '</span></div>' : '') +
         '<div class="card-actions">' +
           '<a class="visit-btn" href="' + esc(it.url) + '" target="_blank" rel="noopener">사이트로 이동 ↗</a>' +
@@ -343,10 +340,10 @@
   }
   pull();
 
-  /* 계정 추가 모달 — 비밀번호는 이 브라우저에서 바로 Supabase로 저장됨 (Claude를 거치지 않음) */
+  /* 계정 추가 모달 — 비밀번호는 받지 않음 (공개 페이지라 비밀번호 앱에 보관) */
   var overlay = document.getElementById("modalOverlay");
   document.getElementById("addBtn").addEventListener("click", function () {
-    ["mName", "mDomain", "mUrl", "mId", "mPw", "mNote"].forEach(function (id) { document.getElementById(id).value = ""; });
+    ["mName", "mDomain", "mUrl", "mId", "mNote"].forEach(function (id) { document.getElementById(id).value = ""; });
     overlay.hidden = false;
   });
   document.getElementById("mCancel").addEventListener("click", function () { overlay.hidden = true; });
@@ -356,10 +353,9 @@
     var domain = document.getElementById("mDomain").value.trim();
     var url = document.getElementById("mUrl").value.trim();
     var id = document.getElementById("mId").value.trim();
-    var pw = document.getElementById("mPw").value;
     var note = document.getElementById("mNote").value.trim();
-    if (!name || !domain || !id || !pw) { alert("서비스 이름 / 도메인 / 아이디 / 비밀번호는 꼭 입력해주세요."); return; }
-    items.push({ name: name, domain: domain, url: url || ("https://" + domain), id: id, password: pw, note: note, renewDate: null, paymentNeeded: false });
+    if (!name || !domain || !id) { alert("서비스 이름 / 도메인 / 아이디는 꼭 입력해주세요."); return; }
+    items.push({ name: name, domain: domain, url: url || ("https://" + domain), id: id, note: note, renewDate: null, paymentNeeded: false });
     save();
     render();
     overlay.hidden = true;
