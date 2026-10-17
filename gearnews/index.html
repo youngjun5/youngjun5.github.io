@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="stylesheet" href="../shell.css">
+<script src="../shell.js" defer></script>
+<meta name="theme-color" content="#e9e9eb">
+<title>장비 소식 · CARECENTER</title>
+<link rel="manifest" href="../manifest.json">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<style>
+:root{
+  color-scheme: light;
+  --ground:#e9e9eb; --glass:rgba(255,255,255,.62); --glass-line:rgba(255,255,255,.9);
+  --hair:rgba(20,20,24,.08); --hair-strong:rgba(20,20,24,.16);
+  --ink:#16171a; --ink-soft:#5d6068; --ink-faint:#8d9097;
+  --accent:#2f9e6a; --accent-soft:rgba(47,158,106,.12);
+  --shadow:0 1px 2px rgba(0,0,0,.04), 0 12px 32px rgba(0,0,0,.06);
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  background:radial-gradient(1200px 600px at 70% -10%, #f7f7f8 0%, var(--ground) 60%) fixed;
+  color:var(--ink);
+  font:15px/1.6 -apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Noto Sans KR",sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:760px;margin:0 auto;padding:28px 16px 80px}
+.back{display:inline-block;color:var(--ink-soft);text-decoration:none;font-size:13px;margin-bottom:18px}
+.panel{
+  background:var(--glass);border:1px solid var(--glass-line);border-radius:18px;
+  box-shadow:var(--shadow);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+}
+.head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:0 4px 14px}
+.head h1{font-size:22px;font-weight:650;letter-spacing:-.02em;margin:0}
+.head .upd{font-size:12px;color:var(--ink-faint);white-space:nowrap}
+.who{font-size:12px;color:var(--ink-faint);margin:0 4px 10px;text-align:right}
+.who button{all:unset;cursor:pointer;color:var(--ink-soft);text-decoration:underline;text-underline-offset:3px}
+
+/* 게시판 목록 */
+.list{list-style:none;margin:0;padding:6px 0}
+.row{
+  display:flex;align-items:center;gap:14px;padding:15px 20px;cursor:pointer;
+  border-top:1px solid var(--hair);
+}
+.row:first-child{border-top:0}
+.row:hover{background:rgba(255,255,255,.55)}
+.row .t{flex:1;min-width:0;font-weight:520;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row .new{width:6px;height:6px;border-radius:50%;background:var(--accent);flex:none}
+.row .new.off{background:transparent}
+.row .mk{font-size:11px;color:var(--ink-soft);border:1px solid var(--hair-strong);border-radius:99px;padding:1px 8px;flex:none}
+.row .mk.buy{color:var(--accent);border-color:var(--accent);background:var(--accent-soft)}
+.row .d{font-size:13px;color:var(--ink-faint);font-variant-numeric:tabular-nums;flex:none}
+.empty{padding:40px 20px;text-align:center;color:var(--ink-faint)}
+
+/* 논문처럼 읽기 */
+.paper{padding:44px 48px 40px}
+.paper .meta{font-size:12px;color:var(--ink-faint);letter-spacing:.02em}
+.paper h2{font-size:28px;line-height:1.3;letter-spacing:-.025em;margin:8px 0 18px;font-weight:680}
+.abstract{border-left:2px solid var(--ink);padding:2px 0 2px 16px;color:var(--ink);margin:0 0 30px}
+.sec{margin:30px 0 0}
+.sec h3{font-size:13px;font-weight:650;color:var(--ink-soft);letter-spacing:.04em;margin:0 0 10px}
+.sec h3 b{color:var(--ink-faint);font-weight:500;margin-right:8px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+td{padding:8px 0;border-top:1px solid var(--hair);vertical-align:top}
+td:first-child{width:30%;color:var(--ink-soft);padding-right:12px}
+ul.f{margin:0;padding-left:18px}
+ul.f li{margin:3px 0}
+.cmp{margin:0 0 10px}
+.cmp b{font-weight:600}
+.cmp span{display:block;color:var(--ink-soft);font-size:14px}
+.rv{margin:0 0 12px;font-size:14px}
+.rv a{color:var(--ink);font-weight:600;text-decoration:none;border-bottom:1px solid var(--hair-strong)}
+.rv span{color:var(--ink-soft)}
+td a,.src a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--hair-strong)}
+.src{font-size:13px;color:var(--ink-soft);padding-left:18px;margin:0}
+.none{color:var(--ink-faint);font-size:14px}
+
+.decide{display:flex;gap:8px;margin-top:38px;padding-top:22px;border-top:1px solid var(--hair-strong);flex-wrap:wrap;align-items:center}
+.decide button{
+  font:inherit;font-size:14px;padding:9px 16px;border-radius:99px;cursor:pointer;
+  border:1px solid var(--hair-strong);background:rgba(255,255,255,.7);color:var(--ink);
+}
+.decide button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.decide button[data-s="buy"].on{background:var(--accent);border-color:var(--accent)}
+.decide .by{font-size:12px;color:var(--ink-faint);margin-left:auto}
+.toList{all:unset;cursor:pointer;font-size:13px;color:var(--ink-soft);margin:0 4px 14px;display:inline-block}
+
+/* 이름 입력 */
+.gate{position:fixed;inset:0;display:grid;place-items:center;background:rgba(233,233,235,.7);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:50;padding:16px}
+.gate[hidden]{display:none}
+.gate .panel{padding:26px;width:min(340px,100%)}
+.gate h4{margin:0 0 14px;font-size:16px}
+.gate input{width:100%;font:inherit;padding:10px 12px;border-radius:10px;border:1px solid var(--hair-strong);background:#fff}
+.gate button{margin-top:12px;width:100%;font:inherit;padding:10px;border-radius:10px;border:0;background:var(--ink);color:#fff;cursor:pointer}
+
+@media (max-width:600px){
+  .paper{padding:28px 20px 26px}
+  .paper h2{font-size:22px}
+  .row{padding:13px 16px;gap:10px}
+  .row .mk{display:none}
+  td:first-child{width:36%}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html">‹ 케어센터</a>
+  <div id="view"></div>
+</div>
+
+<div class="gate" id="gate" hidden>
+  <form class="panel" id="gateForm">
+    <h4>이름</h4>
+    <input id="gateName" maxlength="20" autocomplete="name" required>
+    <button type="submit">시작</button>
+  </form>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.58.0/dist/umd/supabase.js"></script>
+<script>
+(function(){
+  'use strict';
+  var SB = { url:'https://mgvqhrdhshpuamihfvnp.supabase.co',
+    anon:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1ndnFocmRoc2hwdWFtaWhmdm5wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg2MTE4NjQsImV4cCI6MjEwNDE4Nzg2NH0.fjDJuG-47YHU63lydUSZGAGg3FQ-DLGLp9ufnJ4SN30',
+    table:'carescript', row:'gearnews-marks' };
+  var LABEL = { review:'검토', skip:'필요 없음', buy:'구매 후보' };
+  var news = { items:[] }, marks = { schema:1, items:{} }, db = null;
+  var view = document.getElementById('view');
+
+  function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function url(u){ return /^https?:\/\//i.test(u || '') ? esc(u) : '#'; }
+  function ls(k, v){ try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch(e){ return null; } }
+  function me(){ return ls('gearnews:name') || ''; }
+  function seen(){ try { return JSON.parse(ls('gearnews:seen')) || {}; } catch(e){ return {}; } }
+  function markSeen(id){ var s = seen(); s[id] = 1; ls('gearnews:seen', JSON.stringify(s)); }
+  function fmt(d){ return (d || '').replace(/-/g, '.'); }
+
+  /* ── 공유 판단 기록 (gear 방과 같은 방식: carescript 표의 한 줄) ── */
+  function merge(R){
+    if (!R || !R.items) return;
+    Object.keys(R.items).forEach(function(k){ var a = marks.items[k], b = R.items[k]; if (!a || b.u > a.u) marks.items[k] = b; });
+  }
+  function pull(){
+    if (!db) return Promise.resolve();
+    return db.from(SB.table).select('content').eq('id', SB.row).maybeSingle().then(function(res){
+      if (res.error) { console.error(res.error); return; }
+      merge(res.data && res.data.content);
+    });
+  }
+  function push(){
+    ls('gearnews:marks', JSON.stringify(marks));
+    if (!db) return Promise.resolve();
+    return pull().then(function(){
+      return db.from(SB.table).upsert({ id:SB.row, content:marks, rev:Date.now(), updated_at:new Date().toISOString() });
+    }).then(function(res){ if (res && res.error) alert('저장 실패: ' + res.error.message); });
+  }
+
+  /* ── 목록 ── */
+  function renderList(){
+    var s = seen();
+    var items = news.items.slice().sort(function(a,b){ return a.date < b.date ? 1 : -1; });
+    var rows = items.map(function(it){
+      var m = marks.items[it.id], st = m && m.s;
+      return '<li class="row" data-id="' + esc(it.id) + '">' +
+        '<span class="new' + (s[it.id] ? ' off' : '') + '"></span>' +
+        '<span class="t">' + esc(it.title) + '</span>' +
+        (st ? '<span class="mk' + (st === 'buy' ? ' buy' : '') + '">' + LABEL[st] + '</span>' : '') +
+        '<span class="d">' + fmt(it.date) + '</span></li>';
+    }).join('');
+    view.innerHTML =
+      '<div class="head"><h1>장비 소식</h1><span class="upd">' + (news.updated ? '업데이트 ' + fmt(news.updated.slice(0,10)) + ' ' + news.updated.slice(11,16) : '') + '</span></div>' +
+      '<div class="panel"><ul class="list">' + (rows || '<li class="empty">소식 없음</li>') + '</ul></div>';
+    document.title = '장비 소식 · CARECENTER';
+  }
+
+  /* ── 논문처럼 읽기 ── */
+  function sec(n, title, body){ return '<section class="sec"><h3><b>' + n + '</b>' + title + '</h3>' + body + '</section>'; }
+  function renderPaper(it){
+    markSeen(it.id);
+    var m = marks.items[it.id];
+    var specs = (it.specs || []).map(function(r){ return '<tr><td>' + esc(r[0]) + '</td><td>' + esc(r[1]) + '</td></tr>'; }).join('');
+    var feats = (it.features || []).map(function(f){ return '<li>' + esc(f) + '</li>'; }).join('');
+    var cmp = (it.compare || []).map(function(c){ return '<div class="cmp"><b>' + esc(c.ours) + '</b><span>' + esc(c.note) + '</span></div>'; }).join('');
+    var shops = (it.shops || []).map(function(p){ return '<tr><td><a href="' + url(p.url) + '" target="_blank" rel="noopener">' + esc(p.name) + '</a></td><td>' + esc(p.price) + '</td></tr>'; }).join('');
+    var revs = (it.reviews || []).map(function(r){ return '<p class="rv"><a href="' + url(r.url) + '" target="_blank" rel="noopener">' + esc(r.src) + '</a> <span>' + esc(r.text) + '</span></p>'; }).join('');
+    var srcs = (it.sources || []).map(function(r){ return '<li><a href="' + url(r.url) + '" target="_blank" rel="noopener">' + esc(r.name) + '</a></li>'; }).join('');
+    var none = '<p class="none">없음</p>';
+    view.innerHTML =
+      '<button class="toList" id="toList">‹ 목록</button>' +
+      '<article class="panel paper">' +
+        '<div class="meta">' + esc(it.cat) + ' · ' + esc(it.status) + ' · ' + fmt(it.date) + '</div>' +
+        '<h2>' + esc(it.title) + '</h2>' +
+        '<p class="abstract">' + esc(it.summary) + '</p>' +
+        sec('1', '제품 정보', specs ? '<table>' + specs + '</table>' : none) +
+        sec('2', '가격 · 출시일', '<table><tr><td>가격</td><td>' + esc(it.price || '미확인') + '</td></tr><tr><td>출시</td><td>' + esc(it.release || '미확인') + '</td></tr></table>') +
+        sec('3', '기능', feats ? '<ul class="f">' + feats + '</ul>' : none) +
+        sec('4', '우리 장비와 비교', cmp || none) +
+        sec('5', '해외 쇼핑몰 가격', shops ? '<table>' + shops + '</table>' : none) +
+        sec('6', '후기', revs || none) +
+        sec('7', '출처', srcs ? '<ol class="src">' + srcs + '</ol>' : none) +
+        '<div class="decide" id="decide">' +
+          ['review','skip','buy'].map(function(k){ return '<button data-s="' + k + '"' + (m && m.s === k ? ' class="on"' : '') + '>' + LABEL[k] + '</button>'; }).join('') +
+          '<span class="by">' + (m && m.s ? esc(m.by) + ' · ' + fmt(new Date(m.u).toISOString().slice(0,10)) : '') + '</span>' +
+        '</div>' +
+      '</article>';
+    document.title = it.title + ' · 장비 소식';
+    window.scrollTo(0, 0);
+    document.getElementById('toList').onclick = function(){ location.hash = ''; };
+    document.getElementById('decide').onclick = function(e){
+      var b = e.target.closest('button'); if (!b) return;
+      var cur = marks.items[it.id], s = b.getAttribute('data-s');
+      marks.items[it.id] = { s:(cur && cur.s === s) ? null : s, by:me(), u:Date.now() };  // 같은 버튼 다시 누르면 해제
+      push(); route();
+    };
+  }
+
+  function route(){
+    var id = decodeURIComponent(location.hash.slice(1));
+    var it = id && news.items.filter(function(x){ return x.id === id; })[0];
+    if (it) renderPaper(it); else renderList();
+  }
+  view.addEventListener('click', function(e){
+    var r = e.target.closest('.row'); if (r) location.hash = encodeURIComponent(r.getAttribute('data-id'));
+  });
+  window.addEventListener('hashchange', route);
+
+  /* ── 이름 ── */
+  function askName(){
+    var g = document.getElementById('gate');
+    if (me()) return;
+    g.hidden = false;
+    document.getElementById('gateName').focus();
+    document.getElementById('gateForm').onsubmit = function(e){
+      e.preventDefault();
+      var v = document.getElementById('gateName').value.trim(); if (!v) return;
+      ls('gearnews:name', v); g.hidden = true;
+    };
+  }
+
+  try { merge(JSON.parse(ls('gearnews:marks'))); } catch(e){}
+  try { if (window.supabase) db = window.supabase.createClient(SB.url, SB.anon); } catch(e){ console.error(e); }
+  fetch('news.json', { cache:'no-store' }).then(function(r){ return r.json(); }).then(function(d){
+    news = d || news; route();
+    return pull().then(route);
+  }).catch(function(e){ console.error(e); view.innerHTML = '<div class="panel empty">소식을 불러오지 못함</div>'; });
+  if (db) db.channel('gearnews').on('postgres_changes', { event:'*', schema:'public', table:SB.table, filter:'id=eq.' + SB.row },
+    function(){ pull().then(route); }).subscribe();
+  askName();
+})();
+</script>
+</body>
+</html>
