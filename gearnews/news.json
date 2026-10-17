@@ -8,14 +8,40 @@
       "cat": "음향",
       "status": "공식",
       "summary": "소니 카메라 슈(MI 슈)에 꽂아 32bit float 소리를 영상 파일에 바로 녹음하는 2채널 무선 마이크. 송신기마다 64GB 내장 녹음.",
+      "img": {
+        "url": "https://petapixel.com/assets/uploads/2026/10/sony-ecm-w5-featured.jpg",
+        "src": "PetaPixel",
+        "page": "https://petapixel.com/2026/10/14/sonys-new-ecm-w5-wireless-mic-system-wants-to-make-audio-easier/"
+      },
       "specs": [
-        ["구성", "수신기 1 + 송신기 2 + 충전 케이스 (키트)"],
-        ["녹음", "최대 96kHz/24bit 또는 48kHz/32bit float"],
-        ["거리", "시야 확보 시 최대 500m (제조사 수치)"],
-        ["내장 저장", "송신기마다 64GB"],
-        ["사용 시간", "송신기 최대 11시간"],
-        ["연결", "소니 MI 슈, USB-C(휴대폰·PC)"],
-        ["확장", "송신기 추가 구매 시 최대 4트랙"]
+        [
+          "구성",
+          "수신기 1 + 송신기 2 + 충전 케이스 (키트)"
+        ],
+        [
+          "녹음",
+          "최대 96kHz/24bit 또는 48kHz/32bit float"
+        ],
+        [
+          "거리",
+          "시야 확보 시 최대 500m (제조사 수치)"
+        ],
+        [
+          "내장 저장",
+          "송신기마다 64GB"
+        ],
+        [
+          "사용 시간",
+          "송신기 최대 11시간"
+        ],
+        [
+          "연결",
+          "소니 MI 슈, USB-C(휴대폰·PC)"
+        ],
+        [
+          "확장",
+          "송신기 추가 구매 시 최대 4트랙"
+        ]
       ],
       "price": "키트 $399.99 · 수신기 $189.99 · 송신기 $119.99 (미국 정가)",
       "release": "2026년 11월 출고",
@@ -25,22 +51,57 @@
         "32bit float로 소리 크기 실수(클리핑) 걱정 감소"
       ],
       "compare": [
-        { "ours": "오디오 무선 송수신기(Tr/Re)", "note": "지금 무선 세트 대체 후보. 내장 녹음·32bit float가 차이." },
-        { "ours": "COMICA VM40 ×2", "note": "카메라 위 샷건과 역할이 다름. 인터뷰·대사용으로 보완 관계." },
-        { "ours": "a7m4 / a7s2", "note": "카메라 안 32bit float 기록은 호환 기종 한정. 우리 카메라 호환 여부 미확인." }
+        {
+          "ours": "오디오 무선 송수신기(Tr/Re)",
+          "note": "지금 무선 세트 대체 후보. 내장 녹음·32bit float가 차이."
+        },
+        {
+          "ours": "COMICA VM40 ×2",
+          "note": "카메라 위 샷건과 역할이 다름. 인터뷰·대사용으로 보완 관계."
+        },
+        {
+          "ours": "a7m4 / a7s2",
+          "note": "카메라 안 32bit float 기록은 호환 기종 한정. 우리 카메라 호환 여부 미확인."
+        }
       ],
       "shops": [
-        { "name": "Sony 미국 정가", "price": "$399.99", "url": "https://petapixel.com/2026/10/14/sonys-new-ecm-w5-wireless-mic-system-wants-to-make-audio-easier/" },
-        { "name": "Pictureline", "price": "미확인", "url": "https://www.pictureline.com/products/sony-ecm-w5-wireless-microphone-kit" },
-        { "name": "Sony 캐나다", "price": "CA$569.99", "url": "https://www.sony.ca/fr/imaging/imaging-accessories/tous-les-accessoires/p/ecmw5t" }
+        {
+          "name": "Sony 미국 정가",
+          "price": "$399.99",
+          "url": "https://petapixel.com/2026/10/14/sonys-new-ecm-w5-wireless-mic-system-wants-to-make-audio-easier/"
+        },
+        {
+          "name": "Pictureline",
+          "price": "미확인",
+          "url": "https://www.pictureline.com/products/sony-ecm-w5-wireless-microphone-kit"
+        },
+        {
+          "name": "Sony 캐나다",
+          "price": "CA$569.99",
+          "url": "https://www.sony.ca/fr/imaging/imaging-accessories/tous-les-accessoires/p/ecmw5t"
+        }
       ],
       "reviews": [
-        { "src": "Engadget", "text": "DJI 무선 마이크와 정면으로 경쟁하는 제품으로 소개.", "url": "https://engadget.com/2286975/sony-is-taking-on-dji-with-its-new-ecm-w5-wireless-microphone-kit" },
-        { "src": "No Film School", "text": "32bit float를 카메라 안으로 바로 넣는 점을 핵심으로 봄.", "url": "https://nofilmschool.com/sony-ecm-w5-wireless-microphone-system" }
+        {
+          "src": "Engadget",
+          "text": "DJI 무선 마이크와 정면으로 경쟁하는 제품으로 소개.",
+          "url": "https://engadget.com/2286975/sony-is-taking-on-dji-with-its-new-ecm-w5-wireless-microphone-kit"
+        },
+        {
+          "src": "No Film School",
+          "text": "32bit float를 카메라 안으로 바로 넣는 점을 핵심으로 봄.",
+          "url": "https://nofilmschool.com/sony-ecm-w5-wireless-microphone-system"
+        }
       ],
       "sources": [
-        { "name": "PetaPixel", "url": "https://petapixel.com/2026/10/14/sonys-new-ecm-w5-wireless-mic-system-wants-to-make-audio-easier/" },
-        { "name": "RedShark News", "url": "https://www.redsharknews.com/sony-ecm-w5-wireless-microphone-32bit-float" }
+        {
+          "name": "PetaPixel",
+          "url": "https://petapixel.com/2026/10/14/sonys-new-ecm-w5-wireless-mic-system-wants-to-make-audio-easier/"
+        },
+        {
+          "name": "RedShark News",
+          "url": "https://www.redsharknews.com/sony-ecm-w5-wireless-microphone-32bit-float"
+        }
       ]
     },
     {
@@ -50,14 +111,40 @@
       "cat": "렌즈",
       "status": "공식",
       "summary": "APS-C용 밝은 표준 줌. 풀프레임 환산 24-75mm, 305g. 소니 E 버전 10월 29일 출시.",
+      "img": {
+        "url": "https://www.tamron.com/news/news_file/file/b091_ogp.jpg",
+        "src": "Tamron",
+        "page": "https://www.tamron.com/global/news/detail/b091_20261014.html"
+      },
       "specs": [
-        ["센서", "APS-C 전용 (풀프레임 환산 24-75mm)"],
-        ["조리개", "F2.8 고정, 최소 F16, 7매"],
-        ["구성", "10군 14매"],
-        ["무게·길이", "305g · 79.6mm (소니 E 기준)"],
-        ["필터", "55mm"],
-        ["최단 거리", "광각 0.15m · 망원 0.29m"],
-        ["손떨림 보정", "미확인"]
+        [
+          "센서",
+          "APS-C 전용 (풀프레임 환산 24-75mm)"
+        ],
+        [
+          "조리개",
+          "F2.8 고정, 최소 F16, 7매"
+        ],
+        [
+          "구성",
+          "10군 14매"
+        ],
+        [
+          "무게·길이",
+          "305g · 79.6mm (소니 E 기준)"
+        ],
+        [
+          "필터",
+          "55mm"
+        ],
+        [
+          "최단 거리",
+          "광각 0.15m · 망원 0.29m"
+        ],
+        [
+          "손떨림 보정",
+          "미확인"
+        ]
       ],
       "price": "$529 (미국) · ¥115,500 (일본, 세금 포함)",
       "release": "2026-10-29 (소니 E)",
@@ -67,17 +154,37 @@
         "생활방수·발수 코팅"
       ],
       "compare": [
-        { "ours": "a7m4 / a7s2", "note": "우리 카메라는 모두 풀프레임. 이 렌즈는 APS-C용이라 화면이 잘려(크롭) 찍힘. 맞지 않음." },
-        { "ours": "Samyang 24mm · 45mm T1.9", "note": "단렌즈 교체 없이 한 개로 덮는 범위지만, 풀프레임에선 의미 적음." }
+        {
+          "ours": "a7m4 / a7s2",
+          "note": "우리 카메라는 모두 풀프레임. 이 렌즈는 APS-C용이라 화면이 잘려(크롭) 찍힘. 맞지 않음."
+        },
+        {
+          "ours": "Samyang 24mm · 45mm T1.9",
+          "note": "단렌즈 교체 없이 한 개로 덮는 범위지만, 풀프레임에선 의미 적음."
+        }
       ],
       "shops": [
-        { "name": "미국 정가", "price": "$529", "url": "https://photorumors.com/2026/10/14/new-tamron-16-50mm-f-2-8-aps-c-lens-announced-z-e-rf-x/" },
-        { "name": "Calumet (독일)", "price": "미확인", "url": "https://www.calumet.de/product/tamron-16-50mm-f2-8-a-fuer-sony-e-mount" }
+        {
+          "name": "미국 정가",
+          "price": "$529",
+          "url": "https://photorumors.com/2026/10/14/new-tamron-16-50mm-f-2-8-aps-c-lens-announced-z-e-rf-x/"
+        },
+        {
+          "name": "Calumet (독일)",
+          "price": "미확인",
+          "url": "https://www.calumet.de/product/tamron-16-50mm-f2-8-a-fuer-sony-e-mount"
+        }
       ],
       "reviews": [],
       "sources": [
-        { "name": "Tamron 공식 발표", "url": "https://www.tamron.com/global/news/detail/b091_20261014.html" },
-        { "name": "Photo Rumors", "url": "https://photorumors.com/2026/10/14/new-tamron-16-50mm-f-2-8-aps-c-lens-announced-z-e-rf-x/" }
+        {
+          "name": "Tamron 공식 발표",
+          "url": "https://www.tamron.com/global/news/detail/b091_20261014.html"
+        },
+        {
+          "name": "Photo Rumors",
+          "url": "https://photorumors.com/2026/10/14/new-tamron-16-50mm-f-2-8-aps-c-lens-announced-z-e-rf-x/"
+        }
       ]
     },
     {
@@ -87,13 +194,36 @@
       "cat": "렌즈",
       "status": "공식",
       "summary": "소니 E용으로는 유일한 자동초점 85mm F1.2. 905g으로 같은 급 중 가벼운 편, 가격은 $1,599.",
+      "img": {
+        "url": "https://petapixel.com/assets/uploads/2026/09/Sigma-85mm-f1.2-DG-Art-Review-Sigma-is-the-Alpha-This-Time-1.jpg",
+        "src": "PetaPixel",
+        "page": "https://petapixel.com/2026/09/07/sigma-85mm-f-1-2-dg-art-review-sigma-is-the-alpha-this-time/"
+      },
       "specs": [
-        ["센서", "풀프레임"],
-        ["마운트", "소니 E, L"],
-        ["무게", "905g"],
-        ["초점", "HLA 리니어 모터 2개"],
-        ["영상용", "초점 숨쉬기 억제, 조리개 링 잠금·클릭 해제"],
-        ["손떨림 보정", "없음"]
+        [
+          "센서",
+          "풀프레임"
+        ],
+        [
+          "마운트",
+          "소니 E, L"
+        ],
+        [
+          "무게",
+          "905g"
+        ],
+        [
+          "초점",
+          "HLA 리니어 모터 2개"
+        ],
+        [
+          "영상용",
+          "초점 숨쉬기 억제, 조리개 링 잠금·클릭 해제"
+        ],
+        [
+          "손떨림 보정",
+          "없음"
+        ]
       ],
       "price": "$1,599 · £1,299",
       "release": "2026-10-06 매장 도착 (미국)",
@@ -103,21 +233,53 @@
         "영상 촬영용 조리개 링 클릭 해제"
       ],
       "compare": [
-        { "ours": "Sony 85mm F1.8", "note": "같은 화각. 더 밝고 얕은 심도 대신 무게가 약 2배 이상." },
-        { "ours": "Samyang 75mm T1.9", "note": "인물 클로즈업 역할이 겹침. 자동초점이 필요할 때 차이." }
+        {
+          "ours": "Sony 85mm F1.8",
+          "note": "같은 화각. 더 밝고 얕은 심도 대신 무게가 약 2배 이상."
+        },
+        {
+          "ours": "Samyang 75mm T1.9",
+          "note": "인물 클로즈업 역할이 겹침. 자동초점이 필요할 때 차이."
+        }
       ],
       "shops": [
-        { "name": "B&H", "price": "$1,599 (정가 기준)", "url": "https://www.bhphotovideo.com/c/product/1955787-REG/sigma_85mm_f_1_2_dg_art.html" },
-        { "name": "Park Cameras (영국)", "price": "£1,299", "url": "https://www.parkcameras.com/blog/reviews/sigma-85mm-f12-dg-art-review_sar-09" }
+        {
+          "name": "B&H",
+          "price": "$1,599 (정가 기준)",
+          "url": "https://www.bhphotovideo.com/c/product/1955787-REG/sigma_85mm_f_1_2_dg_art.html"
+        },
+        {
+          "name": "Park Cameras (영국)",
+          "price": "£1,299",
+          "url": "https://www.parkcameras.com/blog/reviews/sigma-85mm-f12-dg-art-review_sar-09"
+        }
       ],
       "reviews": [
-        { "src": "PetaPixel", "text": "이 화각·밝기에서 자동초점을 원하면 지금은 사실상 유일한 선택.", "url": "https://petapixel.com/2026/09/07/sigma-85mm-f-1-2-dg-art-review-sigma-is-the-alpha-this-time/" },
-        { "src": "Digital Camera World", "text": "초점이 빠르고 꾸준히 정확. 같은 급 대비 가볍고 저렴.", "url": "https://www.digitalcameraworld.com/cameras/lenses/sigma-85mm-f-1-2-dg-art-review" },
-        { "src": "Fstoppers", "text": "소니 G Master 대비 가격 차이가 큼.", "url": "https://fstoppers.com/education/sigmas-85mm-f12-undercuts-sonys-g-master-wide-margin-904574" }
+        {
+          "src": "PetaPixel",
+          "text": "이 화각·밝기에서 자동초점을 원하면 지금은 사실상 유일한 선택.",
+          "url": "https://petapixel.com/2026/09/07/sigma-85mm-f-1-2-dg-art-review-sigma-is-the-alpha-this-time/"
+        },
+        {
+          "src": "Digital Camera World",
+          "text": "초점이 빠르고 꾸준히 정확. 같은 급 대비 가볍고 저렴.",
+          "url": "https://www.digitalcameraworld.com/cameras/lenses/sigma-85mm-f-1-2-dg-art-review"
+        },
+        {
+          "src": "Fstoppers",
+          "text": "소니 G Master 대비 가격 차이가 큼.",
+          "url": "https://fstoppers.com/education/sigmas-85mm-f12-undercuts-sonys-g-master-wide-margin-904574"
+        }
       ],
       "sources": [
-        { "name": "Sony Alpha Rumors (발표)", "url": "https://www.sonyalpharumors.com/sigmas-september-8-surprise-two-new-lenses-and-an-epic-tease/" },
-        { "name": "Camera Jabber", "url": "https://camerajabber.com/photography-news/sigmas-85mm-f1-2-dg-art-is-the-lightest-fast-85mm-at-half-canons-price/" }
+        {
+          "name": "Sony Alpha Rumors (발표)",
+          "url": "https://www.sonyalpharumors.com/sigmas-september-8-surprise-two-new-lenses-and-an-epic-tease/"
+        },
+        {
+          "name": "Camera Jabber",
+          "url": "https://camerajabber.com/photography-news/sigmas-85mm-f1-2-dg-art-is-the-lightest-fast-85mm-at-half-canons-price/"
+        }
       ]
     },
     {
@@ -127,14 +289,40 @@
       "cat": "렌즈",
       "status": "공식",
       "summary": "풀프레임 초광각부터 표준까지 덮는 375g 소형 줌. 소니 E 버전 $849.",
+      "img": {
+        "url": "https://petapixel.com/assets/uploads/2026/09/Sigma-20-60mm-f2.8-4-Contemporary-DG-Review.jpg",
+        "src": "PetaPixel",
+        "page": "https://petapixel.com/2026/09/12/sigma-20-60mm-f-2-8-4-dg-contemporary-review-versatility-is-a-virtue/"
+      },
       "specs": [
-        ["센서", "풀프레임"],
-        ["조리개", "20mm F2.8 → 37mm부터 F4, 9매"],
-        ["구성", "13군 15매"],
-        ["무게", "375g (소니 E)"],
-        ["필터", "67mm"],
-        ["최단 거리", "약 0.2m (광각), 최대 0.435배"],
-        ["손떨림 보정", "없음"]
+        [
+          "센서",
+          "풀프레임"
+        ],
+        [
+          "조리개",
+          "20mm F2.8 → 37mm부터 F4, 9매"
+        ],
+        [
+          "구성",
+          "13군 15매"
+        ],
+        [
+          "무게",
+          "375g (소니 E)"
+        ],
+        [
+          "필터",
+          "67mm"
+        ],
+        [
+          "최단 거리",
+          "약 0.2m (광각), 최대 0.435배"
+        ],
+        [
+          "손떨림 보정",
+          "없음"
+        ]
       ],
       "price": "$849 (소니 E)",
       "release": "2026-10-06 매장 도착 (미국)",
@@ -144,20 +332,49 @@
         "역광(플레어)에 강함"
       ],
       "compare": [
-        { "ours": "Samyang 24mm T1.9 · Sony 28mm F2.0 · Sony 35mm F1.8 · Samyang 45mm T1.9 · Sony 55mm F1.8", "note": "단렌즈 5개 범위를 한 개로. 대신 37mm부터 F4라 어두운 현장엔 불리." }
+        {
+          "ours": "Samyang 24mm T1.9 · Sony 28mm F2.0 · Sony 35mm F1.8 · Samyang 45mm T1.9 · Sony 55mm F1.8",
+          "note": "단렌즈 5개 범위를 한 개로. 대신 37mm부터 F4라 어두운 현장엔 불리."
+        }
       ],
       "shops": [
-        { "name": "AVC Store", "price": "$849", "url": "https://avcstore.com/products/sigma-20-60mm-f-2-8-4-dg-contemporary-lens-sony-e" },
-        { "name": "B&H", "price": "미확인", "url": "https://www.bhphotovideo.com/c/product/1999665-REG/sigma_20_60mm_f_2_8_4_dg_contmp.html" }
+        {
+          "name": "AVC Store",
+          "price": "$849",
+          "url": "https://avcstore.com/products/sigma-20-60mm-f-2-8-4-dg-contemporary-lens-sony-e"
+        },
+        {
+          "name": "B&H",
+          "price": "미확인",
+          "url": "https://www.bhphotovideo.com/c/product/1999665-REG/sigma_20_60mm_f_2_8_4_dg_contmp.html"
+        }
       ],
       "reviews": [
-        { "src": "PetaPixel", "text": "작고 선명하며 역광에 강함. 배경 흐림은 거칠고 렌즈에 버튼·스위치가 없음.", "url": "https://petapixel.com/2026/09/12/sigma-20-60mm-f-2-8-4-dg-contemporary-review-versatility-is-a-virtue/" },
-        { "src": "Digital Camera World", "text": "초광각과 가벼운 일상 촬영에 강점, 망원 쪽은 짧음.", "url": "https://www.digitalcameraworld.com/cameras/lenses/sigma-20-60mm-f-2-8-4-dg-contemporary-review" },
-        { "src": "Dustin Abbott", "text": "화질이 좋고 줌 범위가 실용적.", "url": "https://dustinabbott.net/2026/09/sigma-20-60mm-f2-8-4-c-review/" }
+        {
+          "src": "PetaPixel",
+          "text": "작고 선명하며 역광에 강함. 배경 흐림은 거칠고 렌즈에 버튼·스위치가 없음.",
+          "url": "https://petapixel.com/2026/09/12/sigma-20-60mm-f-2-8-4-dg-contemporary-review-versatility-is-a-virtue/"
+        },
+        {
+          "src": "Digital Camera World",
+          "text": "초광각과 가벼운 일상 촬영에 강점, 망원 쪽은 짧음.",
+          "url": "https://www.digitalcameraworld.com/cameras/lenses/sigma-20-60mm-f-2-8-4-dg-contemporary-review"
+        },
+        {
+          "src": "Dustin Abbott",
+          "text": "화질이 좋고 줌 범위가 실용적.",
+          "url": "https://dustinabbott.net/2026/09/sigma-20-60mm-f2-8-4-c-review/"
+        }
       ],
       "sources": [
-        { "name": "The Digital Picture (사양)", "url": "https://www.the-digital-picture.com/Reviews/Lens-Specifications.aspx?Lens=1789" },
-        { "name": "Henry's (사양)", "url": "https://www.henrys.com/sigma-20-60mm-f2-8-4-dg-contemporary-lens/5637858637.p" }
+        {
+          "name": "The Digital Picture (사양)",
+          "url": "https://www.the-digital-picture.com/Reviews/Lens-Specifications.aspx?Lens=1789"
+        },
+        {
+          "name": "Henry's (사양)",
+          "url": "https://www.henrys.com/sigma-20-60mm-f2-8-4-dg-contemporary-lens/5637858637.p"
+        }
       ]
     },
     {
@@ -167,13 +384,36 @@
       "cat": "카메라",
       "status": "공식",
       "summary": "소니 시네마 라인 새 풀프레임. 적층 센서, 내부 X-OCN RAW, 5K 오픈게이트. 바디 $4,899.99.",
+      "img": {
+        "url": "https://alphauniverseglobal.media.zesty.site/alpha-universe-FX5_SEL1635GM2_front_top-Main.jpg?width=1200&height=630&fit=crop",
+        "src": "Sony Alpha Universe",
+        "page": "https://alphauniverse.com/stories/sony-electronics-launches-the-fx5/"
+      },
       "specs": [
-        ["센서", "풀프레임 적층"],
-        ["기록", "내부 16bit X-OCN RAW, 5K 오픈게이트"],
-        ["기본 감도", "ISO 800 · 4000 · 12800"],
-        ["다이내믹 레인지", "15스톱 이상 (제조사), 리뷰마다 14~16스톱으로 다름"],
-        ["없음", "내장 ND, 8K, 사진 모드"],
-        ["옵션", "OLED 뷰파인더, XLR 핸들(4채널)"]
+        [
+          "센서",
+          "풀프레임 적층"
+        ],
+        [
+          "기록",
+          "내부 16bit X-OCN RAW, 5K 오픈게이트"
+        ],
+        [
+          "기본 감도",
+          "ISO 800 · 4000 · 12800"
+        ],
+        [
+          "다이내믹 레인지",
+          "15스톱 이상 (제조사), 리뷰마다 14~16스톱으로 다름"
+        ],
+        [
+          "없음",
+          "내장 ND, 8K, 사진 모드"
+        ],
+        [
+          "옵션",
+          "OLED 뷰파인더, XLR 핸들(4채널)"
+        ]
       ],
       "price": "바디 $4,899.99 · XLR 핸들 포함 $5,499.99",
       "release": "2026년 8월 중순 출고",
@@ -183,21 +423,53 @@
         "모듈식 뷰파인더·XLR 핸들"
       ],
       "compare": [
-        { "ours": "a7s2 ×2", "note": "같은 소니 E마운트라 지금 렌즈 그대로 사용. 화질·RAW·오디오 모두 세대 차이." },
-        { "ours": "a7m4", "note": "사진은 a7m4가 담당, FX5는 영상 전용(사진 모드 없음)." }
+        {
+          "ours": "a7s2 ×2",
+          "note": "같은 소니 E마운트라 지금 렌즈 그대로 사용. 화질·RAW·오디오 모두 세대 차이."
+        },
+        {
+          "ours": "a7m4",
+          "note": "사진은 a7m4가 담당, FX5는 영상 전용(사진 모드 없음)."
+        }
       ],
       "shops": [
-        { "name": "Sony 미국 정가", "price": "$4,899.99 (바디)", "url": "https://alphauniverse.com/stories/sony-electronics-launches-the-fx5/" },
-        { "name": "Wex · Calumet · Clifton (영국)", "price": "미확인", "url": "https://camerajabber.com/photography-news/sony-fx5-price-specifications-and-availability-announced/" }
+        {
+          "name": "Sony 미국 정가",
+          "price": "$4,899.99 (바디)",
+          "url": "https://alphauniverse.com/stories/sony-electronics-launches-the-fx5/"
+        },
+        {
+          "name": "Wex · Calumet · Clifton (영국)",
+          "price": "미확인",
+          "url": "https://camerajabber.com/photography-news/sony-fx5-price-specifications-and-availability-announced/"
+        }
       ],
       "reviews": [
-        { "src": "CineD", "text": "최근 몇 년 사이 소형 시네마 카메라 중 가장 반응이 좋음.", "url": "https://www.cined.com/sony-fx5-review" },
-        { "src": "CompsMag", "text": "10점 중 9점. 내장 ND가 없는 점은 이 가격대에서 큰 아쉬움, 배터리는 FX3보다 짧음.", "url": "https://www.compsmag.com/reviews/sony-fx5-review/" },
-        { "src": "ProVideo Coalition", "text": "직접 써본 솔직 리뷰.", "url": "https://www.provideocoalition.com/sony-fx5-hands-on-honest-review/amp/" }
+        {
+          "src": "CineD",
+          "text": "최근 몇 년 사이 소형 시네마 카메라 중 가장 반응이 좋음.",
+          "url": "https://www.cined.com/sony-fx5-review"
+        },
+        {
+          "src": "CompsMag",
+          "text": "10점 중 9점. 내장 ND가 없는 점은 이 가격대에서 큰 아쉬움, 배터리는 FX3보다 짧음.",
+          "url": "https://www.compsmag.com/reviews/sony-fx5-review/"
+        },
+        {
+          "src": "ProVideo Coalition",
+          "text": "직접 써본 솔직 리뷰.",
+          "url": "https://www.provideocoalition.com/sony-fx5-hands-on-honest-review/amp/"
+        }
       ],
       "sources": [
-        { "name": "Sony Alpha Universe (공식)", "url": "https://alphauniverse.com/stories/sony-electronics-launches-the-fx5/" },
-        { "name": "Camera Jabber", "url": "https://camerajabber.com/photography-news/sony-fx5-price-specifications-and-availability-announced/" }
+        {
+          "name": "Sony Alpha Universe (공식)",
+          "url": "https://alphauniverse.com/stories/sony-electronics-launches-the-fx5/"
+        },
+        {
+          "name": "Camera Jabber",
+          "url": "https://camerajabber.com/photography-news/sony-fx5-price-specifications-and-availability-announced/"
+        }
       ]
     }
   ]
