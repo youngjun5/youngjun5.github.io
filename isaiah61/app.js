@@ -712,7 +712,7 @@ function shapes3D(ps,pl,X=PV){
     const mat=(col,o)=>new T.MeshLambertMaterial({color:col,transparent:true,opacity:(o==null?1:o)*op});
     const put=(g,col,o,y,rotY)=>{const m=new T.Mesh(g,mat(col,o));m.position.set(mx,y||0,mz);if(rotY)m.rotation.y=rotY;G.shapes.add(m);};
     if(p.kind==='area'){const h=Math.max(.1,p.h==null?3:p.h),g=new T.BoxGeometry(p.w||10,h,p.d||10);g.translate(0,h/2,0);put(g,new T.Color(ACOL[p.col||0]),.85,0,-a);continue;}
-    if(p.kind==='tm'){G.shapes.add(member3D(p,pl,ps,op));continue;}
+    if(p.kind==='tm'){const g=member3D(p,pl,ps,op);g.scale.setScalar(figScale(X));G.shapes.add(g);continue;}
     if(p.kind==='crew'){const col=0x475569,g=new T.CylinderGeometry(.28,.28,1.4,12);g.translate(0,.7,0);put(g,col);const s=new T.SphereGeometry(.26,12,10);s.translate(0,1.65,0);put(s,col);continue;}
     const cam=byId(S.cams,p.ref);if(!cam)continue;
     const rig=rig0(cam),col=new T.Color(RIGC[rig]),h=RIGH[rig]||1.5;
@@ -739,7 +739,9 @@ const partKey=t=>/드럼|drum|^D\d*$/i.test(t)?'D':/퍼커션|perc|카혼|cajon/
   :/어쿠스틱|통기타|acoustic|^A\.?G/i.test(t)?'A.G':/일렉|electric|^E\.?G|기타|guitar|gtr/i.test(t)?'E.G':/^WL$|인도|worship ?leader/i.test(t)?'WL':/보컬|vocal|싱어|sing|BGV|코러스|찬양|^V\d*$/i.test(t)?'V':'';
 const partCode=t=>{t=String(t||'').trim();const k=partKey(t);return k?(k==='WL'?k:k+((t.match(/\d+/)||[''])[0])):t;};
 /* 팀 인원 3D: 그 사람 색의 사람 모양 + 파트 소품. 무대 높이 위에 서고, 무대 앞쪽(+z)을 본다 */
-const FIG=1.4;   // 3D 사람 모형 크기 배율(실제 크기면 홀 전체 화면에서 너무 작음)
+/* 3D 사람 모형 크기 배율: 화면을 멀리 볼수록 크게(홀 전체 화면에서도 무대 인원이 보이게), 가까이 보면 1.4배까지 줄어든다.
+   목표: 사람 키가 화면에서 약 64px(홀 전체를 봐도 또렷하게). 시야각 38° 기준, 최대 14배 */
+const figScale=X=>{const h=X.stage.getBoundingClientRect().height||400;return clamp(64*X.th.dist*2*Math.tan(19*Math.PI/180)/(h*1.76),1.4,14);};
 function member3D(p,pl,ps,op){
   const T=THREE,[mx,mz]=toM(pl,p.x,p.y),fl=floorAt(ps,pl,mx,mz),g=new T.Group(),col=new T.Color(mcol(p.m)),D=0x334155,GOLD=0xd4a017;
   const A=(geo,c,x,y,z,rx,rz)=>{const m=new T.Mesh(geo,new T.MeshLambertMaterial({color:c,transparent:op<1,opacity:op}));m.position.set(x,y,z);if(rx)m.rotation.x=rx;if(rz)m.rotation.z=rz;g.add(m);};
@@ -759,18 +761,18 @@ function member3D(p,pl,ps,op){
     A(new T.CylinderGeometry(.24,.24,.015,18),GOLD,.6,1.15,.6);A(new T.CylinderGeometry(.26,.26,.015,18),GOLD,-.55,1.25,.75);A(new T.CylinderGeometry(.18,.18,.015,16),GOLD,.55,.95,.15);}
   if(k==='keys'){A(new T.BoxGeometry(1.3,.08,.35),D,0,.95,.5);A(new T.BoxGeometry(1.2,.01,.2),0xf8fafc,0,1,.55);A(new T.BoxGeometry(.05,.9,.3),D,-.55,.45,.5);A(new T.BoxGeometry(.05,.9,.3),D,.55,.45,.5);}
   if(k==='gtr'){A(new T.BoxGeometry(.38,.46,.1),col.clone().multiplyScalar(.6),.05,.95,.3,0,.6);A(new T.BoxGeometry(.75,.06,.04),D,-.38,1.2,.3,0,.6);}
-  g.position.set(mx,fl.h,mz);g.rotation.y=-fl.a;g.scale.setScalar(FIG);
+  g.position.set(mx,fl.h,mz);g.rotation.y=-fl.a;g.userData.fig=1;
   return g;
 }
 function dirty3(X=PV){if(X.raf||!X.G)return;X.raf=requestAnimationFrame(()=>{X.raf=0;draw3(X);});}
 function updCam(X=PV){const t=X.th,c=X.G.cam;c.position.set(t.tx+t.dist*Math.sin(t.phi)*Math.sin(t.theta),t.dist*Math.cos(t.phi),t.tz+t.dist*Math.sin(t.phi)*Math.cos(t.theta));c.lookAt(t.tx,0,t.tz);c.updateMatrixWorld();}
-function draw3(X=PV){if(!X.G||X.mode!=='3d')return;updCam(X);X.G.R.render(X.G.scene,X.G.cam);project3D(X);}
+function draw3(X=PV){if(!X.G||X.mode!=='3d')return;const f=figScale(X);for(const o of X.G.shapes.children)if(o.userData.fig)o.scale.setScalar(f);updCam(X);X.G.R.render(X.G.scene,X.G.cam);project3D(X);}
 function project3D(X=PV){
   if(!X.G||X.mode!=='3d')return;const pl=planOf(X);if(!pl)return;
   const T=THREE,r=X.stage.getBoundingClientRect(),v=new T.Vector3(),ps=pinsOf(X);X.G.cam.updateMatrixWorld();
   for(const el of $$('.mk',X.m3)){
     const p=byId(ps,el.dataset.id);if(!p)continue;
-    const [mx,mz]=toM(pl,p.x,p.y),cam=p.kind==='cam'&&byId(S.cams,p.ref),top=p.kind==='area'?(p.h==null?3:p.h)+.8:p.kind==='crew'?2.3:p.kind==='tm'?floorAt(ps,pl,mx,mz).h+2.05*FIG:(RIGH[rig0(cam)]||1.5)+.9;
+    const [mx,mz]=toM(pl,p.x,p.y),cam=p.kind==='cam'&&byId(S.cams,p.ref),top=p.kind==='area'?(p.h==null?3:p.h)+.8:p.kind==='crew'?2.3:p.kind==='tm'?floorAt(ps,pl,mx,mz).h+2.05*figScale(X):(RIGH[rig0(cam)]||1.5)+.9;
     v.set(mx,top,mz).project(X.G.cam);
     el.style.left=((v.x*.5+.5)*r.width)+'px';el.style.top=((-v.y*.5+.5)*r.height)+'px';el.style.display=v.z>1?'none':'';
   }

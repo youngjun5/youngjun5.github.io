@@ -1,7 +1,7 @@
 // CARECENTER 홈 PWA service worker.
 // HTML은 항상 네트워크에서 새로 받아온다 — "설치된 앱이 예전 버전에 멈춰있다"는 문제를 막기 위함.
 // 정적 자산(아이콘 등)만 캐시해서 설치 가능성/오프라인 아이콘 정도만 지원.
-const CACHE = "studio-shell-v16"; // v15->v16: 아이자야 61 파트 영어 약자·3D 모형 1.4배
+const CACHE = "studio-shell-v17"; // v16->v17: 아이자야 61 3D 모형 거리 비례 크기
 const STATIC = ["./icon-192.png", "./icon-512.png", "./manifest.json"];
 
 self.addEventListener("install", (e) => {
