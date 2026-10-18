@@ -326,3 +326,18 @@ canvas.gl{filter:var(--glf)}
   .t-tm td:has([data-k=col]){grid-column:span 4}
   .tcard{padding:10px}
 }
+
+/* 콜시트: 카메라 플랏 좌(보컬)·우(세션)에 무대 인원 */
+.prow{display:flex;gap:8px;align-items:flex-start}
+.prow .pmid{flex:1;min-width:0}
+.prow .side{width:104px;flex:none;display:flex;flex-direction:column;gap:6px}
+.mk.m3l .pill{display:flex;align-items:center;gap:5px;max-width:160px}
+.mk.m3l .pill i{width:8px;height:8px;border-radius:99px;flex:none}
+@media (max-width:640px){
+  .prow{gap:5px}
+  .prow .side{width:62px;gap:4px}
+  .prow .lu .ph{font-size:16px}
+  .prow .lu .cap{padding:3px 2px}
+  .prow .lu .cap small{font-size:9px;min-height:0}
+  .prow .lu .cap b{font-size:10px}
+}

@@ -279,7 +279,6 @@ function vCall(){
   return `<div class="doc">
   <div class="dh"><div><h1>CALL SHEET</h1><div style="color:var(--soft);font-weight:600">${esc(S.proj.title)} · ${esc(S.proj.sub)} · ${VENUE}</div></div><div class="r"><b>DAY ${n} / 3${V.part?' · '+V.part:''}</b>${esc(dateStr(n))}</div></div>
   <div class="clock"><b id="clk">${clockText()}</b></div>
-  ${teamStrip()}
   <div class="cnts"><div class="cn"><span>총원</span><b>${S.crew.length}</b></div><div class="cn ok"><span>현재원</span><b>${crew.length}</b></div><div class="cn ${absent.length?'bad':''}"><span>불참</span><b>${absent.length}</b>${absent.length?`<small>${esc(absent.slice(0,6).map(c=>c.name||'이름 없음').join(', '))}${absent.length>6?' 외 '+(absent.length-6)+'명':''}</small>`:''}</div></div>
   <div class="sec">일정</div>
   ${ses.length?`<div class="tw"><table class="t t-ro"><thead><tr><th>시간</th><th>구분</th><th>항목</th><th>팀</th><th>장소</th><th>담당</th><th>비고</th></tr></thead><tbody>${ses.map(s=>`<tr><td class="ro" data-l="시간" style="white-space:nowrap;font-variant-numeric:tabular-nums">${esc(s.start)}${s.end?'–'+esc(s.end):''}</td><td class="ro" data-l="구분">${esc(s.kind)}</td><td class="ro" data-l="항목"><b>${esc(s.title)}</b></td><td class="ro" data-l="팀">${esc((byId(S.teams,s.team)||{}).name||'')}</td><td class="ro" data-l="장소">${esc(s.place)}</td><td class="ro" data-l="담당">${esc(s.who)}</td><td class="ro" data-l="비고">${esc(s.note)}</td></tr>`).join('')}</tbody></table></div>`:`<div class="empty">일정 탭에서 입력</div>`}
@@ -295,7 +294,9 @@ function miniPlots(n){
     const data=imgOf(pl);
     const mini=`<div class="mini ${V.cs3?'printonly':''}" style="aspect-ratio:${pl.w}/${pl.h}">${data?`<img src="${data}" style="position:absolute;inset:0;width:100%;height:100%">`:''}<svg viewBox="0 0 ${pl.w} ${pl.h}" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%">${ps.filter(p=>p.kind==='area').map(p=>areaSVG(p,pl)).join('')}${ps.filter(p=>p.kind==='cam').map(p=>coneSVG(p,pl)).join('')}</svg><div class="marks">${ps.map(p=>markHTML(p)).join('')}</div></div>`;
     const v3=V.cs3?`<div class="cv3 noprint" data-plan="${pl.id}"><canvas class="gl"></canvas><div class="marks m3"></div><div class="zoom"><button data-cvz="in">+</button><button data-cvz="out">−</button><button data-cvz="fit" aria-label="맞춤">${ic('fit',18)}</button></div></div>`:'';
-    return `<div class="sec">카메라 플랏 · ${esc(pl.name)}<span class="sp"></span><div class="seg noprint"><button data-cs3="0" class="${V.cs3?'':'on'}">2D</button><button data-cs3="1" class="${V.cs3?'on':''}">3D</button></div></div>${v3}${mini}`;
+    const t=stageTeam(),ms=t?teamMem(t.id):[],voc=ms.filter(m=>propOf(m.part||'')==='mic'),band=ms.filter(m=>propOf(m.part||'')!=='mic');
+    const body=ms.length?`${teamChips(t,teamSes(n))}<div class="prow">${voc.length?`<div class="side">${voc.map(luCard).join('')}</div>`:''}<div class="pmid">${v3}${mini}</div>${band.length?`<div class="side">${band.map(luCard).join('')}</div>`:''}</div>`:v3+mini;
+    return `<div class="sec">카메라 플랏 · ${esc(pl.name)}${t&&ms.length?` · 무대 ${esc(t.name||'팀')} ${ms.length}명`:''}<span class="sp"></span><div class="seg noprint"><button data-cs3="0" class="${V.cs3?'':'on'}">2D</button><button data-cs3="1" class="${V.cs3?'on':''}">3D</button></div></div>${body}`;
   }).join('');
 }
 
@@ -337,11 +338,12 @@ function stageTeam(){
   if(todayN()===V.day){const hm=hhmm();s=l.find(x=>x.start<=hm&&hm<(x.end||'99'))||l.find(x=>x.start>hm)||l[l.length-1];}
   return byId(S.teams,s.team);
 }
+const luCard=m=>{const c=mcol(m),ph=photoOf(m);return `<div class="lu"><div class="ph">${ph?`<img src="${ph}" alt="">`:esc(ini(m.name))}</div><div class="cap" style="background:${c};color:${fgOf(c)}"><small>${esc(m.part||'')}</small><b>${esc(m.name||'')}</b></div></div>`;};
+const teamChips=(t,l)=>l.length>1||V.team?`<div class="tsel noprint">${V.team?`<button class="chip dash" data-st="">자동</button>`:''}${l.map(s=>`<button class="chip ${s.team===t.id?'on':''}" data-st="${s.team}">${esc(s.start||'')} ${esc(byId(S.teams,s.team).name||'팀')}</button>`).join('')}</div>`:'';
 function teamStrip(){
   const t=stageTeam(),l=teamSes(V.day);if(!t)return '';
   const ms=teamMem(t.id);
-  const chips=l.length>1||V.team?`<div class="tsel noprint">${V.team?`<button class="chip dash" data-st="">자동</button>`:''}${l.map(s=>`<button class="chip ${s.team===t.id?'on':''}" data-st="${s.team}">${esc(s.start||'')} ${esc(byId(S.teams,s.team).name||'팀')}</button>`).join('')}</div>`:'';
-  return `<div class="sec">무대 · ${esc(t.name||'팀')} · ${ms.length}명</div>${chips}${ms.length?`<div class="lineup">${ms.map(m=>{const c=mcol(m),ph=photoOf(m);return `<div class="lu"><div class="ph">${ph?`<img src="${ph}" alt="">`:esc(ini(m.name))}</div><div class="cap" style="background:${c};color:${fgOf(c)}"><small>${esc(m.part||'')}</small><b>${esc(m.name||'')}</b></div></div>`;}).join('')}</div>`:'<div class="empty">팀 탭에서 인원 추가</div>'}`;
+  return `<div class="sec">무대 · ${esc(t.name||'팀')} · ${ms.length}명</div>${teamChips(t,l)}${ms.length?`<div class="lineup">${ms.map(luCard).join('')}</div>`:'<div class="empty">팀 탭에서 인원 추가</div>'}`;
 }
 function vTeams(){
   const card=t=>{const ms=teamMem(t.id),used=S.sched.filter(s=>s.team===t.id).sort((a,b)=>a.day-b.day||byStart(a,b)).map(s=>`DAY ${s.day} ${s.start||''} ${s.title||''}`.trim());
@@ -483,6 +485,7 @@ function markHTML(p,o={}){
   if(p.kind==='area')return `<div class="mk area ${sel}" data-id="${p.id}" style="${st}"><span class="pill big"><i style="background:${ACOL[p.col||0]}"></i>${esc(p.name||'구역')}</span></div>`;
   if(p.kind==='cam'){const c=byId(S.cams,p.ref);if(!c)return '';const op=opOf(c);
     return `<div class="mk cam ${sel} ${o.dim?'dim':''}" data-id="${p.id}" style="${st}"><span class="tk" style="--c:${RIGC[rig0(c)]||RIGC.기타};font-size:${rigInit(c).length>2?11:rigInit(c).length>1?13:16}px">${esc(rigInit(c))}</span><span class="pill">${esc(c.no)}${op?' '+esc(short(op.name)):''}</span></div>`;}
+  if(p.kind==='tm'&&o.m3){const m=p.m;return `<div class="mk tm m3l ${o.dim?'dim':''}" data-id="${p.id}" data-tm="${m.id}" style="${st}"><span class="pill"><i style="background:${mcol(m)}"></i>${m.part?esc(m.part)+' · ':''}${esc(m.name)}</span></div>`;}
   if(p.kind==='tm'){const m=p.m,c=mcol(m),ph=photoOf(m);return `<div class="mk tm ${o.dim?'dim':''}" data-id="${p.id}" data-tm="${m.id}" style="${st}"><span class="tk" style="--c:${c};color:${fgOf(c)}">${ph?`<img src="${ph}" alt="">`:esc(ini(m.name))}</span><span class="pill">${m.part?esc(m.part)+' · ':''}${esc(m.name)}</span></div>`;}
   const c=crewOf(p.ref);if(!c)return '';
   return `<div class="mk crew ${sel} ${o.dim?'dim':''}" data-id="${p.id}" style="${st}"><span class="tk" style="--c:#475569">${esc(ini(c.name))}</span><span class="pill">${esc(short(c.name))}</span></div>`;
@@ -620,7 +623,7 @@ function renderMarks(){
   const ps=pinsNow().slice().sort((a,b)=>(a.id===V.sel)-(b.id===V.sel)),m3=PV.mode==='3d';
   PV.svg.setAttribute('viewBox',`0 0 ${pl.w} ${pl.h}`);
   PV.svg.innerHTML=ps.filter(p=>p.kind==='area').map(p=>areaSVG(p,pl)).join('')+ps.filter(p=>p.kind==='cam').map(p=>coneSVG(p,pl,dimOf(p))).join('');
-  const html=ps.map(p=>markHTML(p,{dim:dimOf(p)})).join('');
+  const html=ps.map(p=>markHTML(p,{dim:dimOf(p),m3})).join('');
   if(m3){PV.marks.innerHTML='';PV.m3.innerHTML=html;shapes3D(ps,pl);project3D();dirty3();}
   else{PV.m3.innerHTML='';PV.marks.innerHTML=html;}
 }
@@ -735,8 +738,17 @@ const propOf=t=>/드럼|drum|퍼커션|perc|카혼/i.test(t)?'drum':/건반|키�
 function member3D(p,pl,ps,op){
   const T=THREE,[mx,mz]=toM(pl,p.x,p.y),fl=floorAt(ps,pl,mx,mz),g=new T.Group(),col=new T.Color(mcol(p.m)),D=0x334155,GOLD=0xd4a017;
   const A=(geo,c,x,y,z,rx,rz)=>{const m=new T.Mesh(geo,new T.MeshLambertMaterial({color:c,transparent:op<1,opacity:op}));m.position.set(x,y,z);if(rx)m.rotation.x=rx;if(rz)m.rotation.z=rz;g.add(m);};
-  const k=propOf(p.m.part||''),sit=k==='drum'?-.45:0;
-  A(new T.CylinderGeometry(.24,.28,1.4,14),col,0,.7+sit,0);A(new T.SphereGeometry(.24,14,10),col,0,1.65+sit,0);
+  const k=propOf(p.m.part||''),sit=k==='drum',hip=sit?.5:.88,pants=col.clone().multiplyScalar(.4),SKIN=0xe8bf9a,reach=k&&k!=='drum'?-.7:k==='drum'?-1:0;
+  for(const sx of [-.11,.11]){
+    if(sit){A(new T.CylinderGeometry(.08,.08,.42,10),pants,sx,hip,.2,Math.PI/2);A(new T.CylinderGeometry(.07,.07,.48,10),pants,sx,.24,.42);}
+    else A(new T.CylinderGeometry(.08,.07,.88,10),pants,sx,.44,0);
+    A(new T.BoxGeometry(.12,.08,.24),0x111827,sx,.04,sit?.48:.06);
+  }
+  if(sit)A(new T.CylinderGeometry(.2,.2,.46,14),D,0,.23,-.02);
+  A(new T.BoxGeometry(.46,.62,.26),col,0,hip+.33,0);
+  for(const sx of [-.3,.3])A(new T.CylinderGeometry(.06,.055,.6,10),col,sx,hip+.34,reach?.16:0,reach);
+  A(new T.CylinderGeometry(.06,.06,.1,8),SKIN,0,hip+.69,0);A(new T.SphereGeometry(.14,16,12),SKIN,0,hip+.86,0);
+  A(new T.SphereGeometry(.145,16,8,0,Math.PI*2,0,Math.PI/2),0x1f2937,0,hip+.88,-.01);
   if(k==='mic'){A(new T.CylinderGeometry(.18,.18,.03,12),D,0,.015,.5);A(new T.CylinderGeometry(.015,.015,1.5,6),D,0,.75,.5);A(new T.CylinderGeometry(.04,.03,.18,8),D,0,1.5,.42,1.1);}
   if(k==='drum'){A(new T.CylinderGeometry(.28,.28,.4,16),col,0,.3,.75,Math.PI/2);A(new T.CylinderGeometry(.17,.17,.14,14),D,.38,.6,.45);A(new T.CylinderGeometry(.14,.14,.16,14),D,-.12,.8,.55);A(new T.CylinderGeometry(.2,.2,.45,14),D,-.5,.42,.4);
     A(new T.CylinderGeometry(.24,.24,.015,18),GOLD,.6,1.15,.6);A(new T.CylinderGeometry(.26,.26,.015,18),GOLD,-.55,1.25,.75);A(new T.CylinderGeometry(.18,.18,.015,16),GOLD,.55,.95,.15);}
@@ -753,7 +765,7 @@ function project3D(X=PV){
   const T=THREE,r=X.stage.getBoundingClientRect(),v=new T.Vector3(),ps=pinsOf(X);X.G.cam.updateMatrixWorld();
   for(const el of $$('.mk',X.m3)){
     const p=byId(ps,el.dataset.id);if(!p)continue;
-    const [mx,mz]=toM(pl,p.x,p.y),cam=p.kind==='cam'&&byId(S.cams,p.ref),top=p.kind==='area'?(p.h==null?3:p.h)+.8:p.kind==='crew'?2.3:p.kind==='tm'?floorAt(ps,pl,mx,mz).h+2.3:(RIGH[rig0(cam)]||1.5)+.9;
+    const [mx,mz]=toM(pl,p.x,p.y),cam=p.kind==='cam'&&byId(S.cams,p.ref),top=p.kind==='area'?(p.h==null?3:p.h)+.8:p.kind==='crew'?2.3:p.kind==='tm'?floorAt(ps,pl,mx,mz).h+2.05:(RIGH[rig0(cam)]||1.5)+.9;
     v.set(mx,top,mz).project(X.G.cam);
     el.style.left=((v.x*.5+.5)*r.width)+'px';el.style.top=((-v.y*.5+.5)*r.height)+'px';el.style.display=v.z>1?'none':'';
   }
@@ -790,7 +802,7 @@ async function mountCV(){
     const pl=byId(S.plans,el.dataset.plan);if(!pl||!el.isConnected)continue;
     const X={mode:'3d',stage:el,gl:$('canvas',el),m3:$('.m3',el),G:null,th:{theta:.35,phi:.85,dist:190,tx:0,tz:0},buildFor:'',orbitFor:'',plan:pl,nodim:true,pins:()=>[...pinsFor(V.day,V.part,pl.id),...tmPins(pl)]};
     CVS.push(X);
-    X.m3.innerHTML=X.pins().map(p=>markHTML(p)).join('');
+    X.m3.innerHTML=X.pins().map(p=>markHTML(p,{m3:true})).join('');
     bindOrbit(X);build3D(X);
     X.ro=new ResizeObserver(()=>resize3D(X));X.ro.observe(el);
   }
