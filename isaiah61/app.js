@@ -29,6 +29,7 @@ const IC={
   image:'<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="1.800"/><path d="M4 18l5-5 4 4 3-3 4 4"/>',
   edit:'<path d="M4 20h4L19 9l-4-4L4 16z"/>', rot:'<path d="M20 12a8 8 0 1 1-2.500-5.800M20 4v5h-5"/>',
   fov:'<path d="M12 20L4 6M12 20l8-14"/><path d="M4 6a12 12 0 0 1 16 0"/>', dist:'<path d="M4 12h16M4 8v8M20 8v8"/>',
+  mic:'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>',
   fit:'<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>', wand:'<path d="M5 19L16 8"/><path d="M14 4l2 2M18 8l2 2M17 2v3M20 5h-3"/>'
 };
 const ic=(n,s=20)=>`<svg class="i" width="${s}" height="${s}" viewBox="0 0 24 24">${IC[n]||''}</svg>`;
@@ -48,13 +49,13 @@ const overlap=(a,b)=>!a||!b||a===b;
 const inPart=(p,part)=>!part||!p||p===part;
 const KINDS=['콜','셋업','리허설','본행사','식사','철수'];
 const STAT={ok:'준비',check:'점검',miss:'부족'};
-const TABS=[{k:'call',n:'콜시트',i:'call'},{k:'sched',n:'일정',i:'sched'},{k:'crew',n:'크루',i:'crew'},{k:'gear',n:'장비',i:'gear'},{k:'cams',n:'카메라',i:'cams'},{k:'plot',n:'플랏',i:'plot'}];
+const TABS=[{k:'call',n:'콜시트',i:'call'},{k:'sched',n:'일정',i:'sched'},{k:'crew',n:'크루',i:'crew'},{k:'teams',n:'팀',i:'mic'},{k:'gear',n:'장비',i:'gear'},{k:'cams',n:'카메라',i:'cams'},{k:'plot',n:'플랏',i:'plot'}];
 const DAYN=[1,2,3];
 
 /* ═══ 데이터 ═══ */
 const KEY='isaiah61.doc.v1',UIK='isaiah61.doc.ui';
-const COLS=['crew','gear','sched','cams','plans','pins','days'];
-const fresh=()=>({schema:2,proj:{title:'ISAIAH 61',sub:'Solidoegloria',date1:'2027-01-26',u:0},crew:[],gear:[],sched:[],cams:[],plans:[],pins:[],days:[],del:{}});
+const COLS=['crew','gear','sched','cams','plans','pins','days','teams','tmem'];
+const fresh=()=>({schema:2,proj:{title:'ISAIAH 61',sub:'Solidoegloria',date1:'2027-01-26',u:0},crew:[],gear:[],sched:[],cams:[],plans:[],pins:[],days:[],teams:[],tmem:[],del:{}});
 let S=null;
 try{S=JSON.parse(localStorage.getItem(KEY));}catch(e){}
 if(!S||S.schema!==2)S=fresh();
@@ -197,6 +198,7 @@ function remove(col,id){
   if(col==='cams')kill(p=>p.kind==='cam'&&p.ref===id);
   if(col==='gear')for(const c of S.cams)if((c.gear||[]).includes(id)){c.gear=c.gear.filter(x=>x!==id);touch(c);}
   if(col==='plans')kill(p=>p.plan===id);
+  if(col==='teams'){for(const m of teamMem(id))S.del[m.id]=now();S.tmem=S.tmem.filter(m=>m.team!==id);}
   save();
 }
 
@@ -209,7 +211,9 @@ const ikey=pl=>pl.id+'@'+pl.iv;
 function imgOf(pl){
   if(pl.gen==='hall')return genHall(pl);
   if(pl.src)return pl.src;
-  const k=ikey(pl);
+  return imgK(ikey(pl));
+}
+function imgK(k){
   if(IMG[k])return IMG[k];
   if(!PEND[k]){PEND[k]=(async()=>{
     let d=await idb.get(k);
@@ -218,21 +222,22 @@ function imgOf(pl){
   })();}
   return null;
 }
-async function putImg(pl,data){
-  const k=ikey(pl);IMG[k]=data;await idb.set(k,data);
+const putImg=(pl,data)=>putK(ikey(pl),data);
+async function putK(k,data){
+  IMG[k]=data;await idb.set(k,data);
   if(DB){try{await DB.from(SB.table).upsert({id:SB.row+'-img-'+k,content:{d:data},rev:1,updated_at:new Date().toISOString()});}catch(e){console.warn(e);}}
 }
 const loadImg=src=>new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=src;});
-async function shrink(file){
+async function shrink(file,M=2200){
   const url=URL.createObjectURL(file);
   try{
-    const im=await loadImg(url),M=2200,s=Math.min(1,M/Math.max(im.naturalWidth,im.naturalHeight));
+    const im=await loadImg(url),s=Math.min(1,M/Math.max(im.naturalWidth,im.naturalHeight));
     const c=document.createElement('canvas');c.width=Math.round(im.naturalWidth*s);c.height=Math.round(im.naturalHeight*s);
     const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(im,0,0,c.width,c.height);
     return {data:c.toDataURL('image/jpeg',.88),w:c.width,h:c.height};
   }finally{URL.revokeObjectURL(url);}
 }
-function pickImage(cb){const f=document.createElement('input');f.type='file';f.accept='image/*';f.onchange=async()=>{if(f.files[0]){try{cb(await shrink(f.files[0]));}catch(e){console.warn(e);}}};f.click();}
+function pickImage(cb,M){const f=document.createElement('input');f.type='file';f.accept='image/*';f.onchange=async()=>{if(f.files[0]){try{cb(await shrink(f.files[0],M));}catch(e){console.warn(e);}}};f.click();}
 
 /* ═══ 야간 모드 ═══ */
 const THEME_KEY='isaiah61.theme',mq=matchMedia('(prefers-color-scheme: dark)');
@@ -274,9 +279,10 @@ function vCall(){
   return `<div class="doc">
   <div class="dh"><div><h1>CALL SHEET</h1><div style="color:var(--soft);font-weight:600">${esc(S.proj.title)} · ${esc(S.proj.sub)} · ${VENUE}</div></div><div class="r"><b>DAY ${n} / 3${V.part?' · '+V.part:''}</b>${esc(dateStr(n))}</div></div>
   <div class="clock"><b id="clk">${clockText()}</b></div>
+  ${teamStrip()}
   <div class="cnts"><div class="cn"><span>총원</span><b>${S.crew.length}</b></div><div class="cn ok"><span>현재원</span><b>${crew.length}</b></div><div class="cn ${absent.length?'bad':''}"><span>불참</span><b>${absent.length}</b>${absent.length?`<small>${esc(absent.slice(0,6).map(c=>c.name||'이름 없음').join(', '))}${absent.length>6?' 외 '+(absent.length-6)+'명':''}</small>`:''}</div></div>
   <div class="sec">일정</div>
-  ${ses.length?`<div class="tw"><table class="t t-ro"><thead><tr><th>시간</th><th>구분</th><th>항목</th><th>장소</th><th>담당</th><th>비고</th></tr></thead><tbody>${ses.map(s=>`<tr><td class="ro" data-l="시간" style="white-space:nowrap;font-variant-numeric:tabular-nums">${esc(s.start)}${s.end?'–'+esc(s.end):''}</td><td class="ro" data-l="구분">${esc(s.kind)}</td><td class="ro" data-l="항목"><b>${esc(s.title)}</b></td><td class="ro" data-l="장소">${esc(s.place)}</td><td class="ro" data-l="담당">${esc(s.who)}</td><td class="ro" data-l="비고">${esc(s.note)}</td></tr>`).join('')}</tbody></table></div>`:`<div class="empty">일정 탭에서 입력</div>`}
+  ${ses.length?`<div class="tw"><table class="t t-ro"><thead><tr><th>시간</th><th>구분</th><th>항목</th><th>팀</th><th>장소</th><th>담당</th><th>비고</th></tr></thead><tbody>${ses.map(s=>`<tr><td class="ro" data-l="시간" style="white-space:nowrap;font-variant-numeric:tabular-nums">${esc(s.start)}${s.end?'–'+esc(s.end):''}</td><td class="ro" data-l="구분">${esc(s.kind)}</td><td class="ro" data-l="항목"><b>${esc(s.title)}</b></td><td class="ro" data-l="팀">${esc((byId(S.teams,s.team)||{}).name||'')}</td><td class="ro" data-l="장소">${esc(s.place)}</td><td class="ro" data-l="담당">${esc(s.who)}</td><td class="ro" data-l="비고">${esc(s.note)}</td></tr>`).join('')}</tbody></table></div>`:`<div class="empty">일정 탭에서 입력</div>`}
   <div class="sec">카메라 · ${cams.length}대</div>
   ${cams.length?`<div class="tw"><table class="t t-ro"><thead><tr><th>CAM</th>${V.part?'':'<th>파트</th>'}<th>담당</th><th>포지션</th><th>장비</th><th>샷</th><th>비고</th></tr></thead><tbody>${cams.map(c=>`<tr><td class="ro" data-l="CAM"><b>${esc(c.no)}</b></td>${V.part?'':`<td class="ro" data-l="파트">${esc(c.part||'공통')}</td>`}<td class="ro" data-l="담당">${esc((opOf(c)||{}).name||'')}</td><td class="ro" data-l="포지션">${esc(rigTxt(c))}</td><td class="ro" data-l="장비">${esc(gearNames(c).join(', '))}</td><td class="ro" data-l="샷">${esc(c.shot)}</td><td class="ro" data-l="비고">${esc(c.note)}</td></tr>`).join('')}</tbody></table></div>`:`<div class="empty">카메라 탭에서 입력</div>`}
   ${miniPlots(n)}
@@ -285,7 +291,7 @@ function vCall(){
 }
 function miniPlots(n){
   return S.plans.map(pl=>{
-    const ps=pinsFor(n,V.part,pl.id);
+    const ps=[...pinsFor(n,V.part,pl.id),...tmPins(pl)];
     const data=imgOf(pl);
     const mini=`<div class="mini ${V.cs3?'printonly':''}" style="aspect-ratio:${pl.w}/${pl.h}">${data?`<img src="${data}" style="position:absolute;inset:0;width:100%;height:100%">`:''}<svg viewBox="0 0 ${pl.w} ${pl.h}" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%">${ps.filter(p=>p.kind==='area').map(p=>areaSVG(p,pl)).join('')}${ps.filter(p=>p.kind==='cam').map(p=>coneSVG(p,pl)).join('')}</svg><div class="marks">${ps.map(p=>markHTML(p)).join('')}</div></div>`;
     const v3=V.cs3?`<div class="cv3 noprint" data-plan="${pl.id}"><canvas class="gl"></canvas><div class="marks m3"></div><div class="zoom"><button data-cvz="in">+</button><button data-cvz="out">−</button><button data-cvz="fit" aria-label="맞춤">${ic('fit',18)}</button></div></div>`:'';
@@ -296,12 +302,13 @@ function miniPlots(n){
 /* ═══ 일정 ═══ */
 function vSched(){
   const n=V.day,all=S.sched.filter(s=>s.day===n).sort(byStart),live=todayN()===n,t=new Date(),hm=String(t.getHours()).padStart(2,'0')+':'+String(t.getMinutes()).padStart(2,'0');
-  const row=s=>`<tr class="${live&&s.start<=hm&&hm<s.end?'now':''}"><td style="width:92px">${inp('sched',s,'start',{t:'time',re:1})}</td><td style="width:92px">${inp('sched',s,'end',{t:'time'})}</td><td style="width:92px">${sel('sched',s,'kind',KINDS)}</td><td style="min-width:180px">${inp('sched',s,'title',{ph:'항목'})}</td><td style="min-width:100px">${inp('sched',s,'place',{ph:'장소'})}</td><td style="min-width:140px">${inp('sched',s,'who',{ph:'담당'})}</td><td style="min-width:140px">${inp('sched',s,'note',{ph:'비고'})}</td>${xb('sched',s.id)}</tr>`;
+  const row=s=>`<tr class="${live&&s.start<=hm&&hm<s.end?'now':''}"><td style="width:92px">${inp('sched',s,'start',{t:'time',re:1})}</td><td style="width:92px">${inp('sched',s,'end',{t:'time'})}</td><td style="width:92px">${sel('sched',s,'kind',KINDS)}</td><td style="min-width:180px">${inp('sched',s,'title',{ph:'항목'})}</td><td style="min-width:120px">${sel('sched',s,'team',[['','—'],...S.teams.map(t=>[t.id,t.name||'(이름 없음)'])],{re:1})}</td><td style="min-width:100px">${inp('sched',s,'place',{ph:'장소'})}</td><td style="min-width:140px">${inp('sched',s,'who',{ph:'담당'})}</td><td style="min-width:140px">${inp('sched',s,'note',{ph:'비고'})}</td>${xb('sched',s.id)}</tr>`;
   let rows='';
   if(V.part)rows=all.filter(s=>partOfTime(s.start)===V.part).map(row).join('');
-  else rows=[...PARTS,''].map(g=>{const l=all.filter(s=>partOfTime(s.start)===g);return l.length?`<tr class="grp"><td colspan="8"><div class="gc">${g||'시간 미정'} · ${l.length}</div></td></tr>`+l.map(row).join(''):'';}).join('');
+  else rows=[...PARTS,''].map(g=>{const l=all.filter(s=>partOfTime(s.start)===g);return l.length?`<tr class="grp"><td colspan="9"><div class="gc">${g||'시간 미정'} · ${l.length}</div></td></tr>`+l.map(row).join(''):'';}).join('');
   return `<div class="doc"><div class="dh"><div><h1>RUN OF SHOW</h1><div style="color:var(--soft);font-weight:600">${esc(S.proj.title)} · ${esc(S.proj.sub)}</div></div><div class="r"><b>DAY ${n} / 3${V.part?' · '+V.part:''}</b>${esc(dateStr(n))}</div></div>
-  <div class="tw"><table class="t t-sched" style="min-width:820px"><thead><tr><th>시작</th><th>끝</th><th>구분</th><th>항목</th><th>장소</th><th>담당</th><th>비고</th><th class="noprint"></th></tr></thead><tbody>${rows||`<tr><td colspan="8" class="empty">행 추가로 시작</td></tr>`}</tbody></table></div>
+  ${teamStrip()}
+  <div class="tw"><table class="t t-sched" style="min-width:940px"><thead><tr><th>시작</th><th>끝</th><th>구분</th><th>항목</th><th>팀</th><th>장소</th><th>담당</th><th>비고</th><th class="noprint"></th></tr></thead><tbody>${rows||`<tr><td colspan="9" class="empty">행 추가로 시작</td></tr>`}</tbody></table></div>
   <div class="addrow noprint"><button class="ib" data-add="sched">${ic('plus',16)}행 추가</button></div></div>`;
 }
 
@@ -311,6 +318,61 @@ function vCrew(){
   return `<div class="doc"><div class="dh"><div><h1>CREW LIST</h1><div style="color:var(--soft);font-weight:600">${esc(S.proj.title)} · ${esc(S.proj.sub)}</div></div><div class="r"><b>${S.crew.length}명</b>${DAYN.map(n=>`${dayLabel(n)} ${working(n).length}명`).join(' · ')}</div></div>
   <div class="tw"><table class="t t-crew" style="min-width:780px"><thead><tr><th>#</th><th>이름</th><th>번호</th><th>장비</th>${DAYN.map(n=>`<th class="ck">${dayLabel(n)}</th>`).join('')}<th>비고</th><th class="noprint"></th></tr></thead><tbody>${rows||`<tr><td colspan="9" class="empty">크루 추가로 시작</td></tr>`}</tbody></table></div>
   <div class="addrow noprint"><button class="ib" data-add="crew">${ic('plus',16)}크루 추가</button></div></div>`;
+}
+
+/* ═══ 팀 (무대에 올라가는 팀 · 파트별 인원 · 사진) ═══
+   큐시트(일정) 세션마다 팀을 고르면, 콜시트·일정 위에 그 팀 라인업이 색 띠와 함께 뜨고 플랏 무대 위에 인원이 올라간다 */
+const MCOL=[['화이트','#f1f5f9'],['블루','#2563eb'],['그린','#16a34a'],['옐로','#facc15'],['오렌지','#f97316'],['레드','#dc2626'],['퍼플','#7c3aed'],['핑크','#ec4899'],['브라운','#92400e'],['그레이','#64748b'],['블랙','#111827']];
+const mcol=m=>(MCOL[m.col]||MCOL[0])[1];
+const fgOf=h=>{const n=parseInt(h.slice(1),16);return ((n>>16)*299+(n>>8&255)*587+(n&255)*114)/1000>150?'#111':'#fff';};
+const teamMem=id=>S.tmem.filter(m=>m.team===id);
+const photoOf=m=>m.iv?imgK('tm-'+m.id+'@'+m.iv):null;
+const hhmm=()=>{const t=new Date();return String(t.getHours()).padStart(2,'0')+':'+String(t.getMinutes()).padStart(2,'0');};
+const teamSes=n=>S.sched.filter(s=>s.day===n&&byId(S.teams,s.team)&&(!V.part||partOfTime(s.start)===V.part)).sort(byStart);
+/* 지금 무대 팀: 직접 고른 팀 > 오늘이면 진행 중(없으면 다음) 세션의 팀 > 그날 첫 세션의 팀 */
+function stageTeam(){
+  if(V.team==='-')return null;
+  const f=V.team&&byId(S.teams,V.team);if(f)return f;
+  const l=teamSes(V.day);if(!l.length)return null;let s=l[0];
+  if(todayN()===V.day){const hm=hhmm();s=l.find(x=>x.start<=hm&&hm<(x.end||'99'))||l.find(x=>x.start>hm)||l[l.length-1];}
+  return byId(S.teams,s.team);
+}
+function teamStrip(){
+  const t=stageTeam(),l=teamSes(V.day);if(!t)return '';
+  const ms=teamMem(t.id);
+  const chips=l.length>1||V.team?`<div class="tsel noprint">${V.team?`<button class="chip dash" data-st="">자동</button>`:''}${l.map(s=>`<button class="chip ${s.team===t.id?'on':''}" data-st="${s.team}">${esc(s.start||'')} ${esc(byId(S.teams,s.team).name||'팀')}</button>`).join('')}</div>`:'';
+  return `<div class="sec">무대 · ${esc(t.name||'팀')} · ${ms.length}명</div>${chips}${ms.length?`<div class="lineup">${ms.map(m=>{const c=mcol(m),ph=photoOf(m);return `<div class="lu"><div class="ph">${ph?`<img src="${ph}" alt="">`:esc(ini(m.name))}</div><div class="cap" style="background:${c};color:${fgOf(c)}"><small>${esc(m.part||'')}</small><b>${esc(m.name||'')}</b></div></div>`;}).join('')}</div>`:'<div class="empty">팀 탭에서 인원 추가</div>'}`;
+}
+function vTeams(){
+  const card=t=>{const ms=teamMem(t.id),used=S.sched.filter(s=>s.team===t.id).sort((a,b)=>a.day-b.day||byStart(a,b)).map(s=>`DAY ${s.day} ${s.start||''} ${s.title||''}`.trim());
+    const rows=ms.map(m=>{const c=mcol(m),ph=photoOf(m);return `<tr><td class="pc" data-l="사진"><button class="phb" data-tp="${m.id}" aria-label="사진 넣기">${ph?`<img src="${ph}" alt="">`:ic('image',20)}</button></td><td style="width:110px"><select data-c="tmem" data-id="${m.id}" data-k="col" data-re="1" style="background:${c};color:${fgOf(c)};font-weight:700">${MCOL.map((x,i)=>`<option value="${i}"${String(m.col)===String(i)?' selected':''}>${x[0]}</option>`).join('')}</select></td><td style="min-width:150px">${inp('tmem',m,'part',{ph:'파트 (보컬, EG1, 드럼…)'})}</td><td style="min-width:150px">${inp('tmem',m,'name',{ph:'이름'})}</td>${xb('tmem',m.id)}</tr>`;}).join('');
+    return `<div class="tcard"><div class="tth"><input class="in" data-c="teams" data-id="${t.id}" data-k="name" value="${esc(t.name||'')}" placeholder="팀 이름 (예: 1부 찬양팀)"><span class="tn">${ms.length}명</span><button class="ib red noprint" data-del="teams" data-id="${t.id}" aria-label="팀 삭제">${ic('x',16)}</button></div>
+    <div class="tw"><table class="t t-tm"><thead><tr><th>사진</th><th>색</th><th>파트</th><th>이름</th><th class="noprint"></th></tr></thead><tbody>${rows||`<tr><td colspan="5" class="empty">인원 추가로 시작</td></tr>`}</tbody></table></div>
+    <div class="addrow noprint"><button class="ib" data-add="tmem" data-team="${t.id}">${ic('plus',16)}인원 추가</button><span class="sp" style="flex:1"></span><button class="ib on" data-mk="${t.id}">${ic('check',16)}${t.done?'무대에 다시 배치':'팀 생성'}</button></div>
+    ${used.length?`<div class="tuse">큐시트 · ${esc(used.join(' / '))}</div>`:''}</div>`;};
+  return `<div class="doc"><div class="dh"><div><h1>TEAMS</h1><div style="color:var(--soft);font-weight:600">무대 팀 · 파트별 인원</div></div><div class="r"><b>${S.teams.length}팀</b>${S.tmem.length}명</div></div>
+  ${S.teams.map(card).join('')||'<div class="empty">새 팀으로 시작 · 일정 탭에서 세션마다 팀을 고르면 콜시트와 플랏 무대에 뜹니다</div>'}
+  <div class="addrow noprint"><button class="ib" data-add="teams">${ic('plus',16)}새 팀</button></div></div>`;
+}
+/* 무대 구역('무대' 이름의 구역) 위에 인원을 줄 맞춰 올린다. 무대가 없으면 도면 위쪽 가운데. all=false 면 위치 없는 인원만 */
+function autoPlace(t,pl,all){
+  const ms=teamMem(t.id);if(!ms.length)return;
+  const st=S.pins.filter(p=>p.plan===pl.id&&p.kind==='area'&&/무대|stage/i.test(p.name||'')).sort((a,b)=>(b.day===V.day)-(a.day===V.day))[0];
+  const cols=Math.min(8,ms.length>4?Math.ceil(ms.length/2):ms.length),rows=Math.ceil(ms.length/cols);
+  ms.forEach((m,i)=>{
+    if(!all&&m.at&&m.at[pl.id])return;
+    const r=Math.floor(i/cols),c=i%cols,n=r===rows-1?ms.length-r*cols:cols;let x,y;
+    if(st){const [fw,fh]=mPerFrac(pl),w=(st.w||10)*.85,d=(st.d||8)*.8,a=(st.rot||0)*Math.PI/180,lx=-w/2+w*(c+.5)/n,ly=rows>1?-d/2+d*(r+.5)/rows:0;
+      x=st.x+(lx*Math.cos(a)-ly*Math.sin(a))/fw;y=st.y+(lx*Math.sin(a)+ly*Math.cos(a))/fh;}
+    else{x=.3+.4*(c+.5)/n;y=.12+.05*r;}
+    m.at={...(m.at||{}),[pl.id]:{x:clamp(x,0,1),y:clamp(y,0,1)}};touch(m);
+  });
+}
+/* 플랏에 올라가는 팀 인원(저장되는 핀이 아니라 인원 데이터의 위치로 그리는 표시용 핀) */
+function tmPins(pl){
+  const t=stageTeam();if(!t||!pl)return [];
+  const ms=teamMem(t.id);if(ms.some(m=>!(m.at&&m.at[pl.id]))){autoPlace(t,pl,false);persist();}
+  return ms.map(m=>({id:'tm-'+m.id,kind:'tm',plan:pl.id,m,x:m.at[pl.id].x,y:m.at[pl.id].y}));
 }
 
 /* ═══ 장비 ═══ */
@@ -384,7 +446,7 @@ function genHall(pl){
 const RIGH={트라이포드:1.6,짐벌:1.5,핸드헬드:1.5,지미집:3.5,다나돌리:.9,기타:1.5};
 const PV={el:null,z:1,tx:0,ty:0,z0:0,fitFor:'',mode:'2d',G:null,buildFor:'',orbitFor:'',th:{theta:.35,phi:.85,dist:190,tx:0,tz:0}};
 const planNow=()=>{let p=byId(S.plans,V.plan);if(!p){p=S.plans[0]||null;V.plan=p&&p.id;}return p;};
-const pinsNow=()=>{const pl=planNow();return pl?pinsFor(V.day,V.part,pl.id):[];};
+const pinsNow=()=>{const pl=planNow();return pl?[...pinsFor(V.day,V.part,pl.id),...tmPins(pl)]:[];};
 function ownPin(p){
   if(!V.part||p.part===V.part)return p;
   return add('pins',{...p,part:V.part,of:p.of||(p.kind==='area'?p.id:undefined)});
@@ -421,6 +483,7 @@ function markHTML(p,o={}){
   if(p.kind==='area')return `<div class="mk area ${sel}" data-id="${p.id}" style="${st}"><span class="pill big"><i style="background:${ACOL[p.col||0]}"></i>${esc(p.name||'구역')}</span></div>`;
   if(p.kind==='cam'){const c=byId(S.cams,p.ref);if(!c)return '';const op=opOf(c);
     return `<div class="mk cam ${sel} ${o.dim?'dim':''}" data-id="${p.id}" style="${st}"><span class="tk" style="--c:${RIGC[rig0(c)]||RIGC.기타};font-size:${rigInit(c).length>2?11:rigInit(c).length>1?13:16}px">${esc(rigInit(c))}</span><span class="pill">${esc(c.no)}${op?' '+esc(short(op.name)):''}</span></div>`;}
+  if(p.kind==='tm'){const m=p.m,c=mcol(m),ph=photoOf(m);return `<div class="mk tm ${o.dim?'dim':''}" data-id="${p.id}" data-tm="${m.id}" style="${st}"><span class="tk" style="--c:${c};color:${fgOf(c)}">${ph?`<img src="${ph}" alt="">`:esc(ini(m.name))}</span><span class="pill">${m.part?esc(m.part)+' · ':''}${esc(m.name)}</span></div>`;}
   const c=crewOf(p.ref);if(!c)return '';
   return `<div class="mk crew ${sel} ${o.dim?'dim':''}" data-id="${p.id}" style="${st}"><span class="tk" style="--c:#475569">${esc(ini(c.name))}</span><span class="pill">${esc(short(c.name))}</span></div>`;
 }
@@ -439,6 +502,7 @@ function buildPV(){
     const pa=e.target.closest('[data-pa]');if(pa){if(pa.dataset.pa==='add')addPlanMenu();else editPlan();return;}
     const mo=e.target.closest('[data-m]');if(mo){setMode(mo.dataset.m);return;}
     const z=e.target.closest('[data-z]');if(z){zoomBy(z.dataset.z);return;}
+    const tm=e.target.closest('[data-team]');if(tm){const t=stageTeam();V.team=tm.dataset.team?(t&&t.id===tm.dataset.team?'-':tm.dataset.team):null;render();return;}
     const fl=e.target.closest('[data-f]');if(fl){V.filter=fl.dataset.f;V.sel=null;V.armed=null;render();return;}
   });
   bindGestures(PV.stage);
@@ -456,7 +520,8 @@ function updatePV(){
   $$('.seg button',PV.el).forEach(b=>b.classList.toggle('on',b.dataset.m===PV.mode));
   const fb=$('[data-filter]',PV.el);fb.hidden=!pl;
   if(pl){const eff=pinsFor(V.day,V.part,pl.id),cnt=r=>eff.filter(p=>p.kind==='cam'&&rigsOf(byId(S.cams,p.ref)).includes(r)).length,tot=eff.filter(p=>p.kind!=='area').length;
-    fb.innerHTML=`<button class="chip ${!V.filter?'on':''}" data-f="">전체 ${tot}</button>`+FILTERS.map(([r,l])=>`<button class="chip ${V.filter===r?'on':''}" data-f="${r}"><span style="width:9px;height:9px;border-radius:3px;background:${RIGC[r]}"></span>${l} ${cnt(r)}</button>`).join('');}
+    fb.innerHTML=`<button class="chip ${!V.filter?'on':''}" data-f="">전체 ${tot}</button>`+FILTERS.map(([r,l])=>`<button class="chip ${V.filter===r?'on':''}" data-f="${r}"><span style="width:9px;height:9px;border-radius:3px;background:${RIGC[r]}"></span>${l} ${cnt(r)}</button>`).join('')+
+      (S.teams.length?S.teams.map(t=>`<button class="chip ${(stageTeam()||{}).id===t.id?'on':''}" data-team="${t.id}">${ic('mic',14)}${esc(t.name||'팀')}</button>`).join('')+(V.team?`<button class="chip dash" data-team="">자동</button>`:''):'');}
   $('[data-pa="edit"]',PV.el).hidden=!pl;$('.bigadd',PV.el).hidden=!!pl;PV.tray.hidden=!pl;PV.stage.classList.toggle('armed',!!V.armed);
   PV.world.hidden=!pl||m3;PV.gl.hidden=!pl||!m3;PV.m3.hidden=!pl||!m3;
   if(!pl){PV.insp.hidden=true;return;}
@@ -583,11 +648,19 @@ function inspClick(e){
 }
 function markDown(e){
   const el=e.target.closest('.mk');if(!el||!PV.stage.contains(el))return;
+  if(el.dataset.tm){tmDrag(e,el);return;}
   let p=byId(S.pins,el.dataset.id);if(!p)return;
   e.preventDefault();e.stopPropagation();
   const sx=e.clientX,sy=e.clientY;let moved=false;drag={id:p.id};
   const mv=ev=>{if(!moved&&Math.hypot(ev.clientX-sx,ev.clientY-sy)<5)return;if(!moved){p=ownPin(p);drag={id:p.id};}moved=true;const pos=stagePos(ev.clientX,ev.clientY);if(!pos)return;p.x=pos.x;p.y=pos.y;V.sel=p.id;renderMarks();};
   const up=()=>{removeEventListener('pointermove',mv);removeEventListener('pointerup',up);removeEventListener('pointercancel',up);drag=null;if(moved){touch(p);save();}V.sel=p.id;render();};
+  addEventListener('pointermove',mv);addEventListener('pointerup',up);addEventListener('pointercancel',up);
+}
+function tmDrag(e,el){
+  const m=byId(S.tmem,el.dataset.tm),pl=planNow();if(!m||!pl)return;
+  e.preventDefault();e.stopPropagation();drag={id:el.dataset.id};let moved=false;
+  const mv=ev=>{const pos=stagePos(ev.clientX,ev.clientY);if(!pos)return;moved=true;m.at={...(m.at||{}),[pl.id]:pos};renderMarks();};
+  const up=()=>{removeEventListener('pointermove',mv);removeEventListener('pointerup',up);removeEventListener('pointercancel',up);drag=null;if(moved){touch(m);save();}render();};
   addEventListener('pointermove',mv);addEventListener('pointerup',up);addEventListener('pointercancel',up);
 }
 
@@ -636,7 +709,7 @@ function shapes3D(ps,pl,X=PV){
     const mat=(col,o)=>new T.MeshLambertMaterial({color:col,transparent:true,opacity:(o==null?1:o)*op});
     const put=(g,col,o,y,rotY)=>{const m=new T.Mesh(g,mat(col,o));m.position.set(mx,y||0,mz);if(rotY)m.rotation.y=rotY;G.shapes.add(m);};
     if(p.kind==='area'){const h=Math.max(.1,p.h==null?3:p.h),g=new T.BoxGeometry(p.w||10,h,p.d||10);g.translate(0,h/2,0);put(g,new T.Color(ACOL[p.col||0]),.85,0,-a);continue;}
-    if(p.kind==='crew'){const g=new T.CylinderGeometry(.28,.28,1.4,12);g.translate(0,.7,0);put(g,0x475569);const s=new T.SphereGeometry(.26,12,10);s.translate(0,1.65,0);put(s,0x475569);continue;}
+    if(p.kind==='crew'||p.kind==='tm'){const col=p.kind==='tm'?new T.Color(mcol(p.m)):0x475569,g=new T.CylinderGeometry(.28,.28,1.4,12);g.translate(0,.7,0);put(g,col);const s=new T.SphereGeometry(.26,12,10);s.translate(0,1.65,0);put(s,col);continue;}
     const cam=byId(S.cams,p.ref);if(!cam)continue;
     const rig=rig0(cam),col=new T.Color(RIGC[rig]),h=RIGH[rig]||1.5;
     const pg=new T.CylinderGeometry(.08,.08,h,8);pg.translate(0,h/2,0);put(pg,col);
@@ -653,10 +726,10 @@ function updCam(X=PV){const t=X.th,c=X.G.cam;c.position.set(t.tx+t.dist*Math.sin
 function draw3(X=PV){if(!X.G||X.mode!=='3d')return;updCam(X);X.G.R.render(X.G.scene,X.G.cam);project3D(X);}
 function project3D(X=PV){
   if(!X.G||X.mode!=='3d')return;const pl=planOf(X);if(!pl)return;
-  const T=THREE,r=X.stage.getBoundingClientRect(),v=new T.Vector3();X.G.cam.updateMatrixWorld();
+  const T=THREE,r=X.stage.getBoundingClientRect(),v=new T.Vector3(),ps=pinsOf(X);X.G.cam.updateMatrixWorld();
   for(const el of $$('.mk',X.m3)){
-    const p=byId(S.pins,el.dataset.id);if(!p)continue;
-    const cam=p.kind==='cam'&&byId(S.cams,p.ref),top=p.kind==='area'?(p.h==null?3:p.h)+.8:p.kind==='crew'?2.3:(RIGH[rig0(cam)]||1.5)+.9,[mx,mz]=toM(pl,p.x,p.y);
+    const p=byId(ps,el.dataset.id);if(!p)continue;
+    const cam=p.kind==='cam'&&byId(S.cams,p.ref),top=p.kind==='area'?(p.h==null?3:p.h)+.8:(p.kind==='crew'||p.kind==='tm')?2.3:(RIGH[rig0(cam)]||1.5)+.9,[mx,mz]=toM(pl,p.x,p.y);
     v.set(mx,top,mz).project(X.G.cam);
     el.style.left=((v.x*.5+.5)*r.width)+'px';el.style.top=((-v.y*.5+.5)*r.height)+'px';el.style.display=v.z>1?'none':'';
   }
@@ -691,7 +764,7 @@ async function mountCV(){
   if(tok!==cvTok)return;
   for(const el of els){
     const pl=byId(S.plans,el.dataset.plan);if(!pl||!el.isConnected)continue;
-    const X={mode:'3d',stage:el,gl:$('canvas',el),m3:$('.m3',el),G:null,th:{theta:.35,phi:.85,dist:190,tx:0,tz:0},buildFor:'',orbitFor:'',plan:pl,nodim:true,pins:()=>pinsFor(V.day,V.part,pl.id)};
+    const X={mode:'3d',stage:el,gl:$('canvas',el),m3:$('.m3',el),G:null,th:{theta:.35,phi:.85,dist:190,tx:0,tz:0},buildFor:'',orbitFor:'',plan:pl,nodim:true,pins:()=>[...pinsFor(V.day,V.part,pl.id),...tmPins(pl)]};
     CVS.push(X);
     X.m3.innerHTML=X.pins().map(p=>markHTML(p)).join('');
     bindOrbit(X);build3D(X);
@@ -734,12 +807,13 @@ function textOf(tab){
   const n=V.day,L=[],head=t=>{L.push(`${S.proj.title} · ${S.proj.sub} — ${t}`);};
   if(tab==='call'){const d=dayRec(n);head(`CALL SHEET  DAY ${n}/3${V.part?' '+V.part:''}  ${dateStr(n)}`);
     {const wk=working(n),ab=S.crew.filter(c=>!wk.includes(c));L.push(`장소: ${VENUE}`);L.push(`총원 ${S.crew.length} · 현재원 ${wk.length} · 불참 ${ab.length}${ab.length?' ('+ab.map(c=>c.name||'이름 없음').join(', ')+')':''}`);}
-    const ses=S.sched.filter(s=>s.day===n&&(!V.part||partOfTime(s.start)===V.part)).sort(byStart);if(ses.length){L.push('','[일정]');for(const s of ses)L.push(`${s.start||'--:--'}${s.end?'~'+s.end:''}  [${s.kind}] ${s.title}${s.place?' @'+s.place:''}${s.who?' / '+s.who:''}${s.note?' ('+s.note+')':''}`);}
+    const ses=S.sched.filter(s=>s.day===n&&(!V.part||partOfTime(s.start)===V.part)).sort(byStart);if(ses.length){L.push('','[일정]');for(const s of ses){const t=byId(S.teams,s.team);L.push(`${s.start||'--:--'}${s.end?'~'+s.end:''}  [${s.kind}] ${s.title}${t?' <'+(t.name||'팀')+'>':''}${s.place?' @'+s.place:''}${s.who?' / '+s.who:''}${s.note?' ('+s.note+')':''}`);if(t)L.push('    '+teamMem(t.id).map(m=>`${m.part?m.part+' ':''}${m.name}`).join(' · '));}}
     L.push('','[카메라]');for(const c of camsFor(n,V.part))L.push(`  CAM ${c.no}${c.part&&!V.part?' ('+c.part+')':''}  ${(opOf(c)||{}).name||'담당 미정'}  ${rigTxt(c)}${gearNames(c).length?'  ['+gearNames(c).join(', ')+']':''}${c.shot?'  '+c.shot:''}${c.note?' ('+c.note+')':''}`);
     for(const pl of S.plans){const ps=pinsFor(n,V.part,pl.id);if(!ps.length)continue;L.push('',`[카메라 플랏 · ${pl.name}] (${pl.real?'미터 기준':'도면 화면 기준'})`);if(pl.real)L.push(`  기준: 도면 좌상단 0m · 가로 ${pl.real.w}m × 세로 ${pl.real.h}m · 높이 ${pl.real.H}m`);for(const p of ps){if(p.kind==='cam'){const c=byId(S.cams,p.ref);if(c)L.push(`  CAM ${c.no} ${rigTxt(c)}${c.shot?' · '+c.shot:''}  ${opOf(c)?opOf(c).name:'담당 미정'}${gearNames(c).length?'  ['+gearNames(c).join(', ')+']':''}  ${where(p)}`);}else if(p.kind==='area')L.push(`  [구역] ${p.name||'구역'} ${p.w||10}×${p.d||10}m 높이 ${p.h==null?3:p.h}m  ${where(p)}`);else{const c=crewOf(p.ref);if(c)L.push(`  ${c.name}  ${where(p)}`);}}}
     if(d.notes)L.push('','[공지]',d.notes);}
   if(tab==='sched'){head(`RUN OF SHOW  DAY ${n}/3${V.part?' '+V.part:''}  ${dateStr(n)}`);for(const s of S.sched.filter(s=>s.day===n&&(!V.part||partOfTime(s.start)===V.part)).sort(byStart))L.push([s.start,s.end,s.kind,s.title,s.place,s.who,s.note].join('\t'));}
   if(tab==='crew'){head('CREW LIST');L.push(['#','이름','번호','장비',DAYN.map(dayLabel).join(' '),'비고'].join('\t'));S.crew.forEach((c,i)=>L.push([i+1,c.name,c.phone,c.wear,DAYN.map(n=>(c.days||[]).includes(n)?'O':'-').join(' '),c.note].join('\t')));}
+  if(tab==='teams'){head('TEAMS');for(const t of S.teams){L.push('',`[${t.name||'팀'}]`);for(const m of teamMem(t.id))L.push([MCOL[m.col]?MCOL[m.col][0]:'',m.part,m.name].join('\t'));}}
   if(tab==='gear'){head('EQUIPMENT LIST');for(const cat of [...new Set([...CATS,...S.gear.map(g=>g.cat)])]){const l=S.gear.filter(g=>g.cat===cat);if(!l.length)continue;L.push(`[${cat}]`);for(const g of l)L.push([g.name,'×'+(g.qty==null?1:g.qty),STAT[g.status||'ok'],(ownerOf(g)||{}).name||'',g.note].join('\t'));}}
   if(tab==='cams'){head(`CAMERA LIST  DAY ${n}/3${V.part?' '+V.part:''}`);for(const c of camsFor(n,V.part))L.push([`CAM ${c.no}`,c.part||'공통',(opOf(c)||{}).name||'',rigTxt(c),gearNames(c).join(' + '),c.shot,c.note].join('\t'));}
   if(tab==='plot'){head(`CAMERA PLOT  DAY ${n}/3${V.part?' '+V.part:''} (도면 화면 기준)`);for(const p of pinsNow()){if(p.kind==='cam'){const c=byId(S.cams,p.ref);if(c)L.push(`CAM ${c.no}\t${rigTxt(c)}\t${(opOf(c)||{}).name||''}\t${gearNames(c).join(' + ')}\t${where(p)}`);}else if(p.kind==='area')L.push(`구역\t${p.name||'구역'}\t${p.w||10}×${p.d||10}m\t높이 ${p.h==null?3:p.h}m\t${where(p)}`);else{const c=crewOf(p.ref);if(c)L.push(`${c.name}\t${where(p)}`);}}}
@@ -795,10 +869,10 @@ function removeDemo(){
 }
 
 /* ═══ 렌더 · 이벤트 ═══ */
-const VIEWS={call:vCall,sched:vSched,crew:vCrew,gear:vGear,cams:vCams};
+const VIEWS={call:vCall,sched:vSched,crew:vCrew,teams:vTeams,gear:vGear,cams:vCams};
 function render(){
   if(drag){pendR=true;return;}
-  const tab=TABS.find(t=>t.k===V.tab)||TABS[0],showDays=!['crew','gear'].includes(V.tab),today=todayN();
+  const tab=TABS.find(t=>t.k===V.tab)||TABS[0],showDays=!['crew','gear','teams'].includes(V.tab),today=todayN();
   $('#bar').innerHTML=(showDays?`<div class="days">${DAYN.map(n=>{const d=dayDate(n);return `<button data-day="${n}" class="${V.day===n?'on':''}">DAY ${n}<small>${d?dayLabel(n)+(today===n?' · 오늘':''):'&nbsp;'}</small></button>`;}).join('')}</div>${['call','sched','cams','plot'].includes(V.tab)?`<div class="days parts">${[['','전체'],...PARTS.map(p=>[p,p])].map(([v,l])=>`<button data-part="${v}" class="${V.part===v?'on':''}">${l}</button>`).join('')}</div>`:''}`:`<b style="font-size:15px">${tab.n}</b>`)+
     `<span class="sp"></span><button class="ib" data-bar="theme" aria-label="${effDark()?'밝게':'어둡게'}">${ic(effDark()?'sun':'moon',16)}</button><button class="ib" data-bar="undo" aria-label="실행 취소"${H.u.length?'':' disabled'}>${ic('undo',16)}</button><button class="ib" data-bar="redo" aria-label="다시 실행"${H.r.length?'':' disabled'}>${ic('redo',16)}</button><button class="ib" data-bar="copy" aria-label="텍스트 복사">${ic('copy',16)}<span class="tx">복사</span></button><button class="ib" data-bar="print" aria-label="인쇄">${ic('print',16)}</button><button class="ib" data-bar="cog" aria-label="설정">${ic('cog',16)}</button>`;
   $('#tabs').innerHTML=TABS.map(t=>`<button class="${t.k===V.tab?'on':''}" data-tab="${t.k}">${ic(t.i,22)}${t.n}</button>`).join('');
@@ -818,10 +892,12 @@ function render(){
 function addRow(col,b){
   let it;
   if(col==='crew')it=add('crew',{name:'',phone:'',wear:'',days:[1,2,3],note:''});
+  if(col==='teams')it=add('teams',{name:'',done:false});
+  if(col==='tmem')it=add('tmem',{team:b.dataset.team,col:teamMem(b.dataset.team).length%MCOL.length,part:'',name:''});
   if(col==='gear'){V.lastCat=b.dataset.cat;it=add('gear',{cat:b.dataset.cat,name:'',qty:1,owner:'',status:'ok',note:''});}
   if(col==='sched')it=add('sched',{day:V.day,start:V.part?PART0[V.part]:'',end:'',kind:'본행사',title:'',place:'',who:'',note:''});
   if(col==='cams'){const no=Math.max(0,...S.cams.filter(c=>c.day===V.day).map(c=>c.no||0))+1;it=add('cams',{day:V.day,part:V.part,no,rigs:['트라이포드'],rig:'트라이포드',gear:[],pos:'',op:'',shot:'',note:''});}
-  V.focus=it.id;V.focusK=col==='crew'?'name':col==='sched'?'title':col==='cams'?'op':'name';render();
+  V.focus=it.id;V.focusK=col==='tmem'?'part':col==='crew'||col==='teams'?'name':col==='sched'?'title':col==='cams'?'op':'name';render();
 }
 function boot(){
   buildPV();
@@ -847,6 +923,13 @@ function boot(){
     const c3=e.target.closest('[data-cs3]');if(c3){V.cs3=c3.dataset.cs3==='1';saveUI();render();return;}
     const cz=e.target.closest('[data-cvz]');
     if(cz){const X=CVS.find(x=>x.stage===cz.closest('.cv3'));if(X){if(cz.dataset.cvz==='fit')resetOrbit(X);else X.th.dist=clamp(X.th.dist/(cz.dataset.cvz==='in'?1.3:1/1.3),10,600);dirty3(X);}return;}
+    const st=e.target.closest('[data-st]');if(st){V.team=st.dataset.st||null;render();return;}
+    const tp=e.target.closest('[data-tp]');if(tp){const m=byId(S.tmem,tp.dataset.tp);if(m)pickImage(async({data})=>{const iv=now();await putK('tm-'+m.id+'@'+iv,data);m.iv=iv;touch(m);save();render();},400);return;}
+    const mk=e.target.closest('[data-mk]');
+    if(mk){const t=byId(S.teams,mk.dataset.mk);if(!t)return;const ms=teamMem(t.id);if(!ms.length){toast('인원을 먼저 추가하세요');return;}
+      const pl=planNow();t.done=true;touch(t);V.team=t.id;if(pl)autoPlace(t,pl,true);save();
+      if(!pl){render();toast('팀 생성 · 플랏에 도면을 올리면 무대에 배치돼요',2400);return;}
+      V.tab='plot';saveUI();render();toast(`${t.name||'팀'} · 무대에 ${ms.length}명 배치 — 끌어서 위치 조정`,2600);return;}
     const ms=e.target.closest('[data-ms]');if(ms){pickMulti(ms.dataset.ms,byId(S.cams,ms.dataset.id));return;}
     const ad=e.target.closest('[data-add]');if(ad){addRow(ad.dataset.add,ad);return;}
     const dl=e.target.closest('[data-del]');

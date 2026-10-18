@@ -1,7 +1,7 @@
 // CARECENTER 홈 PWA service worker.
 // HTML은 항상 네트워크에서 새로 받아온다 — "설치된 앱이 예전 버전에 멈춰있다"는 문제를 막기 위함.
 // 정적 자산(아이콘 등)만 캐시해서 설치 가능성/오프라인 아이콘 정도만 지원.
-const CACHE = "studio-shell-v12"; // v11->v12: 장비 소식 캐시 예외 추가, 대표 이미지
+const CACHE = "studio-shell-v13"; // v12->v13: 아이자야 61 팀 탭
 const STATIC = ["./icon-192.png", "./icon-512.png", "./manifest.json"];
 
 self.addEventListener("install", (e) => {

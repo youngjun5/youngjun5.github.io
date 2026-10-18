@@ -38,7 +38,7 @@ main.fill{overflow:hidden;display:flex;flex-direction:column}
 .ib.red{color:var(--bad)}
 
 /* 하단 탭 */
-.tabs{display:grid;grid-template-columns:repeat(6,1fr);background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+.tabs{display:grid;grid-template-columns:repeat(7,1fr);background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
 .tabs button{height:58px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:11px;font-weight:700;color:var(--faint)}
 .tabs button.on{color:var(--acc)}
 
@@ -292,4 +292,37 @@ canvas.gl{filter:var(--glf)}
   .t-sched td:has([data-k=start]),.t-sched td:has([data-k=end]){grid-column:span 3}
   .t-sched td:has([data-k=kind]){grid-column:span 2}
   .t-sched td:has([data-k=title]){grid-column:span 4}
+}
+
+/* ═══ 팀 라인업 · 팀 탭 · 플랏 인원 ═══ */
+.lineup{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:8px}
+.lu{border-radius:10px;overflow:hidden;background:var(--card);border:1px solid var(--line);display:flex;flex-direction:column}
+.lu .ph{aspect-ratio:4/5;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;color:var(--faint)}
+.lu .ph img{width:100%;height:100%;object-fit:cover}
+.lu .cap{padding:5px 6px;text-align:center;line-height:1.2}
+.lu .cap small{display:block;font-size:11px;font-weight:700;opacity:.85;min-height:13px}
+.lu .cap b{display:block;font-size:14px;word-break:keep-all;overflow-wrap:anywhere}
+.tsel{display:flex;gap:6px;margin-bottom:8px;overflow-x:auto}
+.tcard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;margin-top:12px}
+.tth{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.tth .in{flex:1;min-width:0;height:40px;font-size:16px;font-weight:800}
+.tth .tn{color:var(--soft);font-weight:700;font-size:13px}
+.tuse{margin-top:8px;font-size:12px;color:var(--soft);font-weight:600}
+.t td.pc{width:64px;padding:4px 8px}
+.phb{width:44px;height:55px;border-radius:8px;overflow:hidden;background:var(--card2);border:1px dashed var(--line);display:flex;align-items:center;justify-content:center;color:var(--faint)}
+.phb img{width:100%;height:100%;object-fit:cover}
+.mk.tm .tk{border-radius:99px;overflow:hidden;font-size:11px;border-color:var(--c);border-width:3px}
+.mk.tm .tk img,.world .mk.tm .tk img,.mini .mk.tm .tk img{position:static;inset:auto;width:100%;height:100%;object-fit:cover;filter:none}
+.mk.tm .pill{max-width:140px}
+@media (max-width:640px){
+  .lineup{grid-template-columns:repeat(auto-fill,minmax(76px,1fr));gap:6px}
+  .lu .ph{aspect-ratio:1;font-size:20px}
+  .lu .cap b{font-size:12px}
+  .t td:has([data-k=team])::before{content:'팀';display:block}
+  .t td:has([data-k=col])::before{content:'색';display:block}
+  .t-sched td:has([data-k=team]){grid-column:span 3}
+  .t-ro td[data-l="팀"]{grid-column:span 3}
+  .t-tm td.pc{grid-column:span 2;width:auto;padding:0}
+  .t-tm td:has([data-k=col]){grid-column:span 4}
+  .tcard{padding:10px}
 }
