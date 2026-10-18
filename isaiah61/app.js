@@ -338,7 +338,7 @@ function stageTeam(){
   if(todayN()===V.day){const hm=hhmm();s=l.find(x=>x.start<=hm&&hm<(x.end||'99'))||l.find(x=>x.start>hm)||l[l.length-1];}
   return byId(S.teams,s.team);
 }
-const luCard=m=>{const c=mcol(m),ph=photoOf(m);return `<div class="lu"><div class="ph">${ph?`<img src="${ph}" alt="">`:esc(ini(m.name))}</div><div class="cap" style="background:${c};color:${fgOf(c)}"><small>${esc(m.part||'')}</small><b>${esc(m.name||'')}</b></div></div>`;};
+const luCard=m=>{const c=mcol(m),ph=photoOf(m);return `<div class="lu"><div class="ph">${ph?`<img src="${ph}" alt="">`:esc(ini(m.name))}</div><div class="cap" style="background:${c};color:${fgOf(c)}"><small>${esc(partCode(m.part))}</small><b>${esc(m.name||'')}</b></div></div>`;};
 const teamChips=(t,l)=>l.length>1||V.team?`<div class="tsel noprint">${V.team?`<button class="chip dash" data-st="">자동</button>`:''}${l.map(s=>`<button class="chip ${s.team===t.id?'on':''}" data-st="${s.team}">${esc(s.start||'')} ${esc(byId(S.teams,s.team).name||'팀')}</button>`).join('')}</div>`:'';
 function teamStrip(){
   const t=stageTeam(),l=teamSes(V.day);if(!t)return '';
@@ -485,8 +485,8 @@ function markHTML(p,o={}){
   if(p.kind==='area')return `<div class="mk area ${sel}" data-id="${p.id}" style="${st}"><span class="pill big"><i style="background:${ACOL[p.col||0]}"></i>${esc(p.name||'구역')}</span></div>`;
   if(p.kind==='cam'){const c=byId(S.cams,p.ref);if(!c)return '';const op=opOf(c);
     return `<div class="mk cam ${sel} ${o.dim?'dim':''}" data-id="${p.id}" style="${st}"><span class="tk" style="--c:${RIGC[rig0(c)]||RIGC.기타};font-size:${rigInit(c).length>2?11:rigInit(c).length>1?13:16}px">${esc(rigInit(c))}</span><span class="pill">${esc(c.no)}${op?' '+esc(short(op.name)):''}</span></div>`;}
-  if(p.kind==='tm'&&o.m3){const m=p.m;return `<div class="mk tm m3l ${o.dim?'dim':''}" data-id="${p.id}" data-tm="${m.id}" style="${st}"><span class="pill"><i style="background:${mcol(m)}"></i>${m.part?esc(m.part)+' · ':''}${esc(m.name)}</span></div>`;}
-  if(p.kind==='tm'){const m=p.m,c=mcol(m),ph=photoOf(m);return `<div class="mk tm ${o.dim?'dim':''}" data-id="${p.id}" data-tm="${m.id}" style="${st}"><span class="tk" style="--c:${c};color:${fgOf(c)}">${ph?`<img src="${ph}" alt="">`:esc(ini(m.name))}</span><span class="pill">${m.part?esc(m.part)+' · ':''}${esc(m.name)}</span></div>`;}
+  if(p.kind==='tm'&&o.m3){const m=p.m;return `<div class="mk tm m3l ${o.dim?'dim':''}" data-id="${p.id}" data-tm="${m.id}" style="${st}"><span class="pill"><i style="background:${mcol(m)}"></i>${m.part?esc(partCode(m.part))+' · ':''}${esc(m.name)}</span></div>`;}
+  if(p.kind==='tm'){const m=p.m,c=mcol(m),ph=photoOf(m);return `<div class="mk tm ${o.dim?'dim':''}" data-id="${p.id}" data-tm="${m.id}" style="${st}"><span class="tk" style="--c:${c};color:${fgOf(c)}">${ph?`<img src="${ph}" alt="">`:esc(ini(m.name))}</span><span class="pill">${m.part?esc(partCode(m.part))+' · ':''}${esc(m.name)}</span></div>`;}
   const c=crewOf(p.ref);if(!c)return '';
   return `<div class="mk crew ${sel} ${o.dim?'dim':''}" data-id="${p.id}" style="${st}"><span class="tk" style="--c:#475569">${esc(ini(c.name))}</span><span class="pill">${esc(short(c.name))}</span></div>`;
 }
@@ -733,8 +733,13 @@ function floorAt(ps,pl,mx,mz){
   return out;
 }
 /* 파트 이름으로 소품 고르기: 보컬→마이크 스탠드, 드럼→드럼 세트, 건반→키보드, 기타·베이스→기타 */
-const propOf=t=>/드럼|drum|퍼커션|perc|카혼/i.test(t)?'drum':/건반|키보드|keys?\b|piano|피아노|신스|synth|오르간|organ/i.test(t)?'keys':/기타|베이스|bass|guitar|gtr|\b[EA]G|^[EA]G/i.test(t)?'gtr':/보컬|vocal|싱어|sing|WL|인도|BGV|코러스|찬양/i.test(t)?'mic':'';
+const propOf=t=>({D:'drum',PERC:'drum',K:'keys',B:'gtr','A.G':'gtr','E.G':'gtr',V:'mic',WL:'mic'})[partKey(String(t||'').trim())]||'';
+/* 화면 표기용 파트 영어 약자: D 드럼 · B 베이스 · K 건반 · A.G 어쿠스틱 · E.G 일렉 · V 보컬 (번호는 유지: EG1 → E.G1) */
+const partKey=t=>/드럼|drum|^D\d*$/i.test(t)?'D':/퍼커션|perc|카혼|cajon/i.test(t)?'PERC':/베이스|bass|^B\d*$/i.test(t)?'B':/건반|키보드|keys?\b|^K\d*$|piano|피아노|신스|synth|오르간|organ/i.test(t)?'K'
+  :/어쿠스틱|통기타|acoustic|^A\.?G/i.test(t)?'A.G':/일렉|electric|^E\.?G|기타|guitar|gtr/i.test(t)?'E.G':/^WL$|인도|worship ?leader/i.test(t)?'WL':/보컬|vocal|싱어|sing|BGV|코러스|찬양|^V\d*$/i.test(t)?'V':'';
+const partCode=t=>{t=String(t||'').trim();const k=partKey(t);return k?(k==='WL'?k:k+((t.match(/\d+/)||[''])[0])):t;};
 /* 팀 인원 3D: 그 사람 색의 사람 모양 + 파트 소품. 무대 높이 위에 서고, 무대 앞쪽(+z)을 본다 */
+const FIG=1.4;   // 3D 사람 모형 크기 배율(실제 크기면 홀 전체 화면에서 너무 작음)
 function member3D(p,pl,ps,op){
   const T=THREE,[mx,mz]=toM(pl,p.x,p.y),fl=floorAt(ps,pl,mx,mz),g=new T.Group(),col=new T.Color(mcol(p.m)),D=0x334155,GOLD=0xd4a017;
   const A=(geo,c,x,y,z,rx,rz)=>{const m=new T.Mesh(geo,new T.MeshLambertMaterial({color:c,transparent:op<1,opacity:op}));m.position.set(x,y,z);if(rx)m.rotation.x=rx;if(rz)m.rotation.z=rz;g.add(m);};
@@ -754,7 +759,7 @@ function member3D(p,pl,ps,op){
     A(new T.CylinderGeometry(.24,.24,.015,18),GOLD,.6,1.15,.6);A(new T.CylinderGeometry(.26,.26,.015,18),GOLD,-.55,1.25,.75);A(new T.CylinderGeometry(.18,.18,.015,16),GOLD,.55,.95,.15);}
   if(k==='keys'){A(new T.BoxGeometry(1.3,.08,.35),D,0,.95,.5);A(new T.BoxGeometry(1.2,.01,.2),0xf8fafc,0,1,.55);A(new T.BoxGeometry(.05,.9,.3),D,-.55,.45,.5);A(new T.BoxGeometry(.05,.9,.3),D,.55,.45,.5);}
   if(k==='gtr'){A(new T.BoxGeometry(.38,.46,.1),col.clone().multiplyScalar(.6),.05,.95,.3,0,.6);A(new T.BoxGeometry(.75,.06,.04),D,-.38,1.2,.3,0,.6);}
-  g.position.set(mx,fl.h,mz);g.rotation.y=-fl.a;
+  g.position.set(mx,fl.h,mz);g.rotation.y=-fl.a;g.scale.setScalar(FIG);
   return g;
 }
 function dirty3(X=PV){if(X.raf||!X.G)return;X.raf=requestAnimationFrame(()=>{X.raf=0;draw3(X);});}
@@ -765,7 +770,7 @@ function project3D(X=PV){
   const T=THREE,r=X.stage.getBoundingClientRect(),v=new T.Vector3(),ps=pinsOf(X);X.G.cam.updateMatrixWorld();
   for(const el of $$('.mk',X.m3)){
     const p=byId(ps,el.dataset.id);if(!p)continue;
-    const [mx,mz]=toM(pl,p.x,p.y),cam=p.kind==='cam'&&byId(S.cams,p.ref),top=p.kind==='area'?(p.h==null?3:p.h)+.8:p.kind==='crew'?2.3:p.kind==='tm'?floorAt(ps,pl,mx,mz).h+2.05:(RIGH[rig0(cam)]||1.5)+.9;
+    const [mx,mz]=toM(pl,p.x,p.y),cam=p.kind==='cam'&&byId(S.cams,p.ref),top=p.kind==='area'?(p.h==null?3:p.h)+.8:p.kind==='crew'?2.3:p.kind==='tm'?floorAt(ps,pl,mx,mz).h+2.05*FIG:(RIGH[rig0(cam)]||1.5)+.9;
     v.set(mx,top,mz).project(X.G.cam);
     el.style.left=((v.x*.5+.5)*r.width)+'px';el.style.top=((-v.y*.5+.5)*r.height)+'px';el.style.display=v.z>1?'none':'';
   }
