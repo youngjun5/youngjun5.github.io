@@ -709,7 +709,8 @@ function shapes3D(ps,pl,X=PV){
     const mat=(col,o)=>new T.MeshLambertMaterial({color:col,transparent:true,opacity:(o==null?1:o)*op});
     const put=(g,col,o,y,rotY)=>{const m=new T.Mesh(g,mat(col,o));m.position.set(mx,y||0,mz);if(rotY)m.rotation.y=rotY;G.shapes.add(m);};
     if(p.kind==='area'){const h=Math.max(.1,p.h==null?3:p.h),g=new T.BoxGeometry(p.w||10,h,p.d||10);g.translate(0,h/2,0);put(g,new T.Color(ACOL[p.col||0]),.85,0,-a);continue;}
-    if(p.kind==='crew'||p.kind==='tm'){const col=p.kind==='tm'?new T.Color(mcol(p.m)):0x475569,g=new T.CylinderGeometry(.28,.28,1.4,12);g.translate(0,.7,0);put(g,col);const s=new T.SphereGeometry(.26,12,10);s.translate(0,1.65,0);put(s,col);continue;}
+    if(p.kind==='tm'){G.shapes.add(member3D(p,pl,ps,op));continue;}
+    if(p.kind==='crew'){const col=0x475569,g=new T.CylinderGeometry(.28,.28,1.4,12);g.translate(0,.7,0);put(g,col);const s=new T.SphereGeometry(.26,12,10);s.translate(0,1.65,0);put(s,col);continue;}
     const cam=byId(S.cams,p.ref);if(!cam)continue;
     const rig=rig0(cam),col=new T.Color(RIGC[rig]),h=RIGH[rig]||1.5;
     const pg=new T.CylinderGeometry(.08,.08,h,8);pg.translate(0,h/2,0);put(pg,col);
@@ -721,6 +722,29 @@ function shapes3D(ps,pl,X=PV){
     G.shapes.add(new T.Mesh(geom,new T.MeshBasicMaterial({color:col,transparent:true,opacity:.28*op,side:T.DoubleSide,depthWrite:false})));
   }
 }
+/* 무대 위 높이: 인원이 서 있는 구역(무대 등)의 높이와 방향. 구역 밖이면 바닥(0) */
+function floorAt(ps,pl,mx,mz){
+  let out={h:0,a:0};
+  for(const q of ps){if(q.kind!=='area')continue;const [cx,cz]=toM(pl,q.x,q.y),a=(q.rot||0)*Math.PI/180,dx=mx-cx,dz=mz-cz,lx=dx*Math.cos(a)+dz*Math.sin(a),lz=-dx*Math.sin(a)+dz*Math.cos(a),h=q.h==null?3:q.h;
+    if(Math.abs(lx)<=(q.w||10)/2&&Math.abs(lz)<=(q.d||10)/2&&h>=out.h)out={h,a};}
+  return out;
+}
+/* 파트 이름으로 소품 고르기: 보컬→마이크 스탠드, 드럼→드럼 세트, 건반→키보드, 기타·베이스→기타 */
+const propOf=t=>/드럼|drum|퍼커션|perc|카혼/i.test(t)?'drum':/건반|키보드|keys?\b|piano|피아노|신스|synth|오르간|organ/i.test(t)?'keys':/기타|베이스|bass|guitar|gtr|\b[EA]G|^[EA]G/i.test(t)?'gtr':/보컬|vocal|싱어|sing|WL|인도|BGV|코러스|찬양/i.test(t)?'mic':'';
+/* 팀 인원 3D: 그 사람 색의 사람 모양 + 파트 소품. 무대 높이 위에 서고, 무대 앞쪽(+z)을 본다 */
+function member3D(p,pl,ps,op){
+  const T=THREE,[mx,mz]=toM(pl,p.x,p.y),fl=floorAt(ps,pl,mx,mz),g=new T.Group(),col=new T.Color(mcol(p.m)),D=0x334155,GOLD=0xd4a017;
+  const A=(geo,c,x,y,z,rx,rz)=>{const m=new T.Mesh(geo,new T.MeshLambertMaterial({color:c,transparent:op<1,opacity:op}));m.position.set(x,y,z);if(rx)m.rotation.x=rx;if(rz)m.rotation.z=rz;g.add(m);};
+  const k=propOf(p.m.part||''),sit=k==='drum'?-.45:0;
+  A(new T.CylinderGeometry(.24,.28,1.4,14),col,0,.7+sit,0);A(new T.SphereGeometry(.24,14,10),col,0,1.65+sit,0);
+  if(k==='mic'){A(new T.CylinderGeometry(.18,.18,.03,12),D,0,.015,.5);A(new T.CylinderGeometry(.015,.015,1.5,6),D,0,.75,.5);A(new T.CylinderGeometry(.04,.03,.18,8),D,0,1.5,.42,1.1);}
+  if(k==='drum'){A(new T.CylinderGeometry(.28,.28,.4,16),col,0,.3,.75,Math.PI/2);A(new T.CylinderGeometry(.17,.17,.14,14),D,.38,.6,.45);A(new T.CylinderGeometry(.14,.14,.16,14),D,-.12,.8,.55);A(new T.CylinderGeometry(.2,.2,.45,14),D,-.5,.42,.4);
+    A(new T.CylinderGeometry(.24,.24,.015,18),GOLD,.6,1.15,.6);A(new T.CylinderGeometry(.26,.26,.015,18),GOLD,-.55,1.25,.75);A(new T.CylinderGeometry(.18,.18,.015,16),GOLD,.55,.95,.15);}
+  if(k==='keys'){A(new T.BoxGeometry(1.3,.08,.35),D,0,.95,.5);A(new T.BoxGeometry(1.2,.01,.2),0xf8fafc,0,1,.55);A(new T.BoxGeometry(.05,.9,.3),D,-.55,.45,.5);A(new T.BoxGeometry(.05,.9,.3),D,.55,.45,.5);}
+  if(k==='gtr'){A(new T.BoxGeometry(.38,.46,.1),col.clone().multiplyScalar(.6),.05,.95,.3,0,.6);A(new T.BoxGeometry(.75,.06,.04),D,-.38,1.2,.3,0,.6);}
+  g.position.set(mx,fl.h,mz);g.rotation.y=-fl.a;
+  return g;
+}
 function dirty3(X=PV){if(X.raf||!X.G)return;X.raf=requestAnimationFrame(()=>{X.raf=0;draw3(X);});}
 function updCam(X=PV){const t=X.th,c=X.G.cam;c.position.set(t.tx+t.dist*Math.sin(t.phi)*Math.sin(t.theta),t.dist*Math.cos(t.phi),t.tz+t.dist*Math.sin(t.phi)*Math.cos(t.theta));c.lookAt(t.tx,0,t.tz);c.updateMatrixWorld();}
 function draw3(X=PV){if(!X.G||X.mode!=='3d')return;updCam(X);X.G.R.render(X.G.scene,X.G.cam);project3D(X);}
@@ -729,7 +753,7 @@ function project3D(X=PV){
   const T=THREE,r=X.stage.getBoundingClientRect(),v=new T.Vector3(),ps=pinsOf(X);X.G.cam.updateMatrixWorld();
   for(const el of $$('.mk',X.m3)){
     const p=byId(ps,el.dataset.id);if(!p)continue;
-    const cam=p.kind==='cam'&&byId(S.cams,p.ref),top=p.kind==='area'?(p.h==null?3:p.h)+.8:(p.kind==='crew'||p.kind==='tm')?2.3:(RIGH[rig0(cam)]||1.5)+.9,[mx,mz]=toM(pl,p.x,p.y);
+    const [mx,mz]=toM(pl,p.x,p.y),cam=p.kind==='cam'&&byId(S.cams,p.ref),top=p.kind==='area'?(p.h==null?3:p.h)+.8:p.kind==='crew'?2.3:p.kind==='tm'?floorAt(ps,pl,mx,mz).h+2.3:(RIGH[rig0(cam)]||1.5)+.9;
     v.set(mx,top,mz).project(X.G.cam);
     el.style.left=((v.x*.5+.5)*r.width)+'px';el.style.top=((-v.y*.5+.5)*r.height)+'px';el.style.display=v.z>1?'none':'';
   }
