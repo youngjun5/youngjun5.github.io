@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-17T21:00:00+09:00",
+  "updated": "2026-10-21T13:55:00+09:00",
   "items": [
     {
       "id": "sony-ecm-w5",
@@ -374,101 +374,6 @@
         {
           "name": "Henry's (사양)",
           "url": "https://www.henrys.com/sigma-20-60mm-f2-8-4-dg-contemporary-lens/5637858637.p"
-        }
-      ]
-    },
-    {
-      "id": "sony-fx5",
-      "title": "소니 FX5 시네마 카메라",
-      "date": "2026-07-22",
-      "cat": "카메라",
-      "status": "공식",
-      "summary": "소니 시네마 라인 새 풀프레임. 적층 센서, 내부 X-OCN RAW, 5K 오픈게이트. 바디 $4,899.99.",
-      "img": {
-        "url": "https://alphauniverseglobal.media.zesty.site/alpha-universe-FX5_SEL1635GM2_front_top-Main.jpg?width=1200&height=630&fit=crop",
-        "src": "Sony Alpha Universe",
-        "page": "https://alphauniverse.com/stories/sony-electronics-launches-the-fx5/"
-      },
-      "specs": [
-        [
-          "센서",
-          "풀프레임 적층"
-        ],
-        [
-          "기록",
-          "내부 16bit X-OCN RAW, 5K 오픈게이트"
-        ],
-        [
-          "기본 감도",
-          "ISO 800 · 4000 · 12800"
-        ],
-        [
-          "다이내믹 레인지",
-          "15스톱 이상 (제조사), 리뷰마다 14~16스톱으로 다름"
-        ],
-        [
-          "없음",
-          "내장 ND, 8K, 사진 모드"
-        ],
-        [
-          "옵션",
-          "OLED 뷰파인더, XLR 핸들(4채널)"
-        ]
-      ],
-      "price": "바디 $4,899.99 · XLR 핸들 포함 $5,499.99",
-      "release": "2026년 8월 중순 출고",
-      "features": [
-        "내부 RAW 기록 (FX 시리즈 처음)",
-        "롤링셔터 적음",
-        "모듈식 뷰파인더·XLR 핸들"
-      ],
-      "compare": [
-        {
-          "ours": "a7s2 ×2",
-          "note": "같은 소니 E마운트라 지금 렌즈 그대로 사용. 화질·RAW·오디오 모두 세대 차이."
-        },
-        {
-          "ours": "a7m4",
-          "note": "사진은 a7m4가 담당, FX5는 영상 전용(사진 모드 없음)."
-        }
-      ],
-      "shops": [
-        {
-          "name": "Sony 미국 정가",
-          "price": "$4,899.99 (바디)",
-          "url": "https://alphauniverse.com/stories/sony-electronics-launches-the-fx5/"
-        },
-        {
-          "name": "Wex · Calumet · Clifton (영국)",
-          "price": "미확인",
-          "url": "https://camerajabber.com/photography-news/sony-fx5-price-specifications-and-availability-announced/"
-        }
-      ],
-      "reviews": [
-        {
-          "src": "CineD",
-          "text": "최근 몇 년 사이 소형 시네마 카메라 중 가장 반응이 좋음.",
-          "url": "https://www.cined.com/sony-fx5-review"
-        },
-        {
-          "src": "CompsMag",
-          "text": "10점 중 9점. 내장 ND가 없는 점은 이 가격대에서 큰 아쉬움, 배터리는 FX3보다 짧음.",
-          "url": "https://www.compsmag.com/reviews/sony-fx5-review/"
-        },
-        {
-          "src": "ProVideo Coalition",
-          "text": "직접 써본 솔직 리뷰.",
-          "url": "https://www.provideocoalition.com/sony-fx5-hands-on-honest-review/amp/"
-        }
-      ],
-      "sources": [
-        {
-          "name": "Sony Alpha Universe (공식)",
-          "url": "https://alphauniverse.com/stories/sony-electronics-launches-the-fx5/"
-        },
-        {
-          "name": "Camera Jabber",
-          "url": "https://camerajabber.com/photography-news/sony-fx5-price-specifications-and-availability-announced/"
         }
       ]
     }
