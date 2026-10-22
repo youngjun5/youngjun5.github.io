@@ -1,6 +1,113 @@
 {
-  "updated": "2026-10-21T13:55:00+09:00",
+  "updated": "2026-10-22T07:55:00+09:00",
   "items": [
+    {
+      "id": "sony-fe-400-f45-600-f63-gm",
+      "title": "소니 FE 400mm F4.5 GM · 600mm F6.3 GM 초망원 단렌즈",
+      "date": "2026-10-15",
+      "cat": "렌즈",
+      "status": "공식",
+      "summary": "약 1kg 무게의 풀프레임 초망원 G Master 단렌즈 2종. 9월 15일 발표, 10월 15일 미국 첫 출고. 600mm는 주문 몰려 지연.",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/09/SEL400F45GM_FHB_260624_sony_1188-740x493.jpg",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/09/15/sony-announces-fe-400mm-f4-5-gm-oss-and-fe-600mm-f6-3-gm-oss-super-telephoto-primes/"
+      },
+      "specs": [
+        [
+          "센서",
+          "풀프레임 (소니 E)"
+        ],
+        [
+          "무게",
+          "400mm 994g · 600mm 995g (삼각대 마운트 제외)"
+        ],
+        [
+          "길이·지름",
+          "400mm 242mm · 600mm 263mm, 지름 108mm"
+        ],
+        [
+          "조리개",
+          "11매"
+        ],
+        [
+          "초점",
+          "XD 리니어 모터 2개"
+        ],
+        [
+          "손떨림 보정",
+          "있음 (광학식, 모드 선택)"
+        ],
+        [
+          "텔레컨버터",
+          "1.4x·2x 지원 (400mm 최대 800mm, 600mm 최대 1200mm)"
+        ],
+        [
+          "최단 거리·필터",
+          "미확인"
+        ]
+      ],
+      "price": "400mm $2,699.99 · 600mm $3,699.99 (미국 정가)",
+      "release": "2026-10-15 미국 첫 출고 · 600mm 유럽 10월 23일 예정, 일본 지연",
+      "features": [
+        "같은 급에서 가장 가벼운 초망원 (제조사 주장)",
+        "손에 들고 찍기 좋게 무게 중심을 카메라 쪽으로",
+        "생활방수·방진, 앞 렌즈 불소 코팅"
+      ],
+      "compare": [
+        {
+          "ours": "Samyang 100mm T2.3 · Sony 90mm F2.8",
+          "note": "우리 가장 긴 렌즈의 4~6배 화각. 먼 무대 클로즈업용이지만 실내 집회엔 과함."
+        },
+        {
+          "ours": "a7m4 / a7s2",
+          "note": "소니 E 풀프레임이라 바로 장착 가능."
+        }
+      ],
+      "shops": [
+        {
+          "name": "Sony 미국 정가 (400mm)",
+          "price": "$2,699.99",
+          "url": "https://www.provideocoalition.com/fe-600mm-f6-3-gm-oss-2-g-master-super-telephoto/"
+        },
+        {
+          "name": "Sony 미국 정가 (600mm)",
+          "price": "$3,699.99",
+          "url": "https://www.provideocoalition.com/fe-600mm-f6-3-gm-oss-2-g-master-super-telephoto/"
+        },
+        {
+          "name": "Clifton Cameras (영국, 400mm)",
+          "price": "미확인",
+          "url": "https://www.cliftoncameras.co.uk/sony-fe-400mm-f45-gm-lens"
+        }
+      ],
+      "reviews": [
+        {
+          "src": "PetaPixel",
+          "text": "작고 가벼우며 선명, 자동초점 빠름. 아르카 호환 다리 없음·수동 초점 아쉬움.",
+          "url": "https://petapixel.com/2026/09/15/sony-fe-400mm-f-4-5-gm-oss-review-994-grams-of-telephoto-glory/"
+        },
+        {
+          "src": "Dustin Abbott",
+          "text": "400mm는 텔레컨버터를 끼워도 화질 유지가 강점.",
+          "url": "https://dustinabbott.net/2026/09/sony-fe-400mm-f4-5-gm-oss-review/"
+        }
+      ],
+      "sources": [
+        {
+          "name": "Sony 보도자료 (ProVideo Coalition)",
+          "url": "https://www.provideocoalition.com/fe-600mm-f6-3-gm-oss-2-g-master-super-telephoto/"
+        },
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/09/15/sony-announces-fe-400mm-f4-5-gm-oss-and-fe-600mm-f6-3-gm-oss-super-telephoto-primes/"
+        },
+        {
+          "name": "RedShark News (600mm 출고 지연)",
+          "url": "https://www.redsharknews.com/sony-fe-600mm-f63-gm-oss-shipping-delay"
+        }
+      ]
+    },
     {
       "id": "sony-ecm-w5",
       "title": "소니 ECM-W5 무선 마이크",
