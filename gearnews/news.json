@@ -1,6 +1,141 @@
 {
-  "updated": "2026-10-22T07:55:00+09:00",
+  "updated": "2026-10-24T06:01:00+09:00",
   "items": [
+    {
+      "id": "sigma-50-f14-cl-dg-c",
+      "title": "시그마 50mm F1.4 CL DG Contemporary",
+      "date": "2026-10-23",
+      "cat": "렌즈",
+      "status": "공식",
+      "summary": "새 I 시리즈 'CL' 첫 렌즈. 375g 금속 몸체의 소형 풀프레임 50mm F1.4. 소니 E·L 마운트, 2027년 초봄 출고. 가격 미발표.",
+      "img": {
+        "url": "https://www.lens-rumors.com/wp-content/uploads/2026/10/sigma-50mm-f1-4-cl-dg-contemporary.jpg",
+        "src": "Lens Rumors",
+        "page": "https://www.lens-rumors.com/sigma-50mm-f1-4-cl-dg-contemporary-official-375g-rdd-focus-spring-2027/"
+      },
+      "specs": [
+        ["센서", "풀프레임"],
+        ["마운트", "소니 E, L"],
+        ["무게", "375g"],
+        ["길이·지름", "소니 E 56.0mm · 지름 64.7mm"],
+        ["구성", "6군 9매 (FLD 1매, 비구면 3매)"],
+        ["조리개", "14매 원형"],
+        ["최단 거리·배율", "45cm · 1:6.8"],
+        ["필터", "52mm"],
+        ["초점", "RDD(회전 직접 구동) 모터, 전군 이동 초점"],
+        ["손떨림 보정", "미확인"]
+      ],
+      "price": "미확인 (미발표)",
+      "release": "2027년 초봄 출고",
+      "features": [
+        "금속 몸체, 초점·조리개 링, 피사계 심도 눈금",
+        "초점 링을 돌리면 바로 수동 초점 전환",
+        "방진·방적, 앞 렌즈 발수·발유 코팅",
+        "검정·은색 2종"
+      ],
+      "compare": [
+        {
+          "ours": "Sony 55mm F1.8",
+          "note": "비슷한 화각. 한 스톱 이상 밝음. 무게 비교는 우리 렌즈 무게 미확인."
+        },
+        {
+          "ours": "Samyang 45mm T1.9",
+          "note": "표준 화각 역할 겹침. 자동초점·더 밝은 조리개가 차이."
+        },
+        {
+          "ours": "a7m4 / a7s2",
+          "note": "소니 E 풀프레임이라 바로 장착 가능."
+        }
+      ],
+      "shops": [
+        {
+          "name": "B&H (소니 E)",
+          "price": "미확인 (가격 미정)",
+          "url": "https://www.bhphotovideo.com/c/product/2008621-REG/sigma_29b965_50mm_f_1_4_cl_dg.html"
+        }
+      ],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "DPReview (시그마 보도자료)",
+          "url": "https://www.dpreview.com/sigma-announces-50mm-f1-4-cl-dg-contemporary-a-new-lineage-for-premium-compact-prime-lenses/"
+        },
+        {
+          "name": "Lens Rumors (사양)",
+          "url": "https://www.lens-rumors.com/sigma-50mm-f1-4-cl-dg-contemporary-official-375g-rdd-focus-spring-2027/"
+        },
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/10/22/sigma-50mm-f1-4-cl-dg-contemporary/"
+        }
+      ]
+    },
+    {
+      "id": "insta360-mic",
+      "title": "Insta360 Mic 무선 마이크",
+      "date": "2026-10-22",
+      "cat": "음향",
+      "status": "공식",
+      "summary": "E-Ink 화면 송신기의 2채널 무선 마이크. microSD 넣으면 송신기 안에 32bit float 녹음. 키트 $249.99.",
+      "img": {
+        "url": "https://www.redsharknews.com/hubfs/insta360%20mic%202.jpg",
+        "src": "RedShark News",
+        "page": "https://www.redsharknews.com/insta360-mic-wireless-microphone-price-specs"
+      },
+      "specs": [
+        ["구성", "송신기 2 + 수신기 1 (키트) / 송신기 1 + 수신기 1"],
+        ["녹음", "microSD 넣으면 송신기 내부 32bit float/24bit"],
+        ["거리", "최대 400m"],
+        ["무게", "송신기 19.4g · 수신기 29.8g · 충전 케이스 174g"],
+        ["사용 시간", "송신기 최대 13시간 · 수신기 11시간 · 케이스 포함 34시간"],
+        ["연결", "USB-C(휴대폰), 3.5mm(카메라), Insta360 카메라 블루투스 직결"],
+        ["확장", "송신기 4 + 수신기 1, 또는 송신기 2 + 수신기 4"]
+      ],
+      "price": "키트(2송신+1수신) $249.99 · 1송신+1수신 $139.99 · 송신기 $79.99 (미국)",
+      "release": "2026-10-22 전 세계 출시",
+      "features": [
+        "AI 소음 제거 (전용 칩)",
+        "자동 음량 2종, 목소리 톤 3종",
+        "송신기 E-Ink 화면에 원하는 이미지 표시",
+        "Mic Pro 송신기와 호환"
+      ],
+      "compare": [
+        {
+          "ours": "오디오 무선 송수신기(Tr/Re)",
+          "note": "무선 세트 대체 후보. 송신기 안 32bit float 백업 녹음이 차이."
+        },
+        {
+          "ours": "COMICA VM40",
+          "note": "카메라 위 샷건과 역할 다름. 인터뷰·핀마이크용으로 보완."
+        },
+        {
+          "ours": "a7m4 / a7s2",
+          "note": "수신기 3.5mm 케이블로 연결. 소니 슈 직결은 아님."
+        }
+      ],
+      "shops": [
+        {
+          "name": "Insta360 미국 정가 (키트)",
+          "price": "$249.99",
+          "url": "https://www.prnewswire.com/news-releases/insta360-launches-mic-to-complete-its-wireless-microphone-lineup-flagship-level-audio-for-everyday-creators-302916915.html"
+        }
+      ],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "Insta360 보도자료 (PR Newswire)",
+          "url": "https://www.prnewswire.com/news-releases/insta360-launches-mic-to-complete-its-wireless-microphone-lineup-flagship-level-audio-for-everyday-creators-302916915.html"
+        },
+        {
+          "name": "RedShark News (사양)",
+          "url": "https://www.redsharknews.com/insta360-mic-wireless-microphone-price-specs"
+        },
+        {
+          "name": "The Gadgeteer (Mic·Mic Pro 비교)",
+          "url": "https://the-gadgeteer.com/2026/10/22/insta360-mic-vs-mic-pro/"
+        }
+      ]
+    },
     {
       "id": "sony-fe-400-f45-600-f63-gm",
       "title": "소니 FE 400mm F4.5 GM · 600mm F6.3 GM 초망원 단렌즈",
