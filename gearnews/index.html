@@ -89,6 +89,8 @@ td a,.src a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--
 .decide button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
 .decide button[data-s="buy"].on{background:var(--accent);border-color:var(--accent)}
 .decide .by{font-size:12px;color:var(--ink-faint);margin-left:auto}
+.share{all:unset;cursor:pointer;font-size:12px;color:var(--ink-soft);border:1px solid var(--hair-strong);border-radius:99px;padding:2px 10px;margin-left:8px}
+.share:hover{color:var(--ink)}
 .toList{all:unset;cursor:pointer;font-size:13px;color:var(--ink-soft);margin:0 4px 14px;display:inline-block}
 
 /* 이름 입력 */
@@ -140,6 +142,15 @@ td a,.src a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--
   function seen(){ try { return JSON.parse(ls('gearnews:seen')) || {}; } catch(e){ return {}; } }
   function markSeen(id){ var s = seen(); s[id] = 1; ls('gearnews:seen', JSON.stringify(s)); }
   function fmt(d){ return (d || '').replace(/-/g, '.'); }
+  var today = new Date(Date.now() + 9*3600e3).toISOString().slice(0,10);
+  var prevVisit = ls('gearnews:visit') || new Date(Date.now() + 9*3600e3 - 3*864e5).toISOString().slice(0,10);  // 처음이면 최근 3일
+  ls('gearnews:visit', today);
+  function isNew(it){ return (it.added || it.date) >= prevVisit && !seen()[it.id]; }
+  function share(text, link){
+    if (navigator.share) { navigator.share({ title:'장비 소식', text:text, url:link }).catch(function(){}); return; }
+    var all = text + '\n' + link;
+    (navigator.clipboard ? navigator.clipboard.writeText(all) : Promise.reject()).then(function(){ alert('복사됨'); }, function(){ prompt('복사', all); });
+  }
 
   /* ── 공유 판단 기록 (gear 방과 같은 방식: carescript 표의 한 줄) ── */
   function merge(R){
@@ -168,15 +179,21 @@ td a,.src a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--
     var rows = items.map(function(it){
       var m = marks.items[it.id], st = m && m.s;
       return '<li class="row" data-id="' + esc(it.id) + '">' +
-        '<span class="new' + (s[it.id] ? ' off' : '') + '"></span>' +
+        '<span class="new' + (isNew(it) ? '' : ' off') + '"></span>' +
         '<span class="t">' + esc(it.title) + '</span>' +
         (st ? '<span class="mk' + (st === 'buy' ? ' buy' : '') + '">' + LABEL[st] + '</span>' : '') +
         '<span class="d">' + fmt(it.date) + '</span></li>';
     }).join('');
     view.innerHTML =
-      '<div class="head"><h1>장비 소식</h1><span class="upd">' + (news.updated ? '업데이트 ' + fmt(news.updated.slice(0,10)) + ' ' + news.updated.slice(11,16) : '') + '</span></div>' +
+      '<div class="head"><h1>장비 소식</h1><span class="upd">' + (news.updated ? '업데이트 ' + fmt(news.updated.slice(0,10)) + ' ' + news.updated.slice(11,16) : '') + '<button class="share" id="shareList">공유</button></span></div>' +
       '<div class="panel"><ul class="list">' + (rows || '<li class="empty">소식 없음</li>') + '</ul></div>';
     document.title = '장비 소식 · CARECENTER';
+    document.getElementById('shareList').onclick = function(){
+      var wk = new Date(Date.now() + 9*3600e3 - 7*864e5).toISOString().slice(0,10);
+      var recent = items.filter(function(it){ return (it.added || it.date) >= wk; }).slice(0, 8);
+      if (!recent.length) recent = items.slice(0, 5);
+      share('장비 소식 ' + fmt(today) + '\n' + recent.map(function(it){ return '· ' + it.title + (it.price && it.price.indexOf('미확인') !== 0 ? ' — ' + it.price.split(' · ')[0] : ''); }).join('\n'), location.origin + location.pathname);
+    };
   }
 
   /* ── 논문처럼 읽기 ── */
@@ -208,7 +225,7 @@ td a,.src a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--
         sec('7', '출처', srcs ? '<ol class="src">' + srcs + '</ol>' : none) +
         '<div class="decide" id="decide">' +
           ['review','skip','buy'].map(function(k){ return '<button data-s="' + k + '"' + (m && m.s === k ? ' class="on"' : '') + '>' + LABEL[k] + '</button>'; }).join('') +
-          '<span class="by">' + (m && m.s ? esc(m.by) + ' · ' + fmt(new Date(m.u).toISOString().slice(0,10)) : '') + '</span>' +
+          '<button data-share="1">공유</button><span class="by">' + (m && m.s ? esc(m.by) + ' · ' + fmt(new Date(m.u).toISOString().slice(0,10)) : '') + '</span>' +
         '</div>' +
       '</article>';
     document.title = it.title + ' · 장비 소식';
@@ -216,6 +233,7 @@ td a,.src a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--
     document.getElementById('toList').onclick = function(){ location.hash = ''; };
     document.getElementById('decide').onclick = function(e){
       var b = e.target.closest('button'); if (!b) return;
+      if (b.hasAttribute('data-share')) { share(it.title + '\n' + it.summary + (it.price ? '\n가격: ' + it.price : ''), location.origin + location.pathname + '#' + encodeURIComponent(it.id)); return; }
       var cur = marks.items[it.id], s = b.getAttribute('data-s');
       marks.items[it.id] = { s:(cur && cur.s === s) ? null : s, by:me(), u:Date.now() };  // 같은 버튼 다시 누르면 해제
       push(); route();

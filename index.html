@@ -105,6 +105,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .ticon{width:44px;height:44px;border-radius:13px;background:var(--surface-3);
   display:flex;align-items:center;justify-content:center;color:var(--ink);flex:none}
 .tile:hover .ticon{background:var(--accent-soft);color:var(--accent)}
+.tnew{font-size:11px;font-weight:600;color:var(--accent);background:var(--accent-soft);border-radius:99px;padding:2px 8px}
 .tname{font-size:12.5px;font-weight:500;line-height:1.3;word-break:keep-all}
 .tsum{display:flex;flex-direction:column;gap:2px;font-size:10.5px;line-height:1.35;color:var(--ink-faint);word-break:keep-all}
 .tsum b{font-weight:500;color:var(--ink-soft)}
@@ -362,6 +363,20 @@ function esc2(v){ return String(v==null?'':v).replace(/[&<>]/g,function(c){retur
     wrap.appendChild(el);
   });
   document.getElementById('roomCount').textContent = ROOMS.length + '개';
+})();
+
+/* 장비 소식 카드: 마지막으로 연 뒤 새로 들어온 소식 개수 (gearnews 방과 같은 기준) */
+(function(){
+  var tile = document.querySelector('#rooms a[href*="/gearnews/"]'); if (!tile) return;
+  var ls = function(k){ try { return localStorage.getItem(k); } catch(e){ return null; } };
+  var prev = ls('gearnews:visit') || new Date(Date.now() + 9*3600e3 - 3*864e5).toISOString().slice(0,10);
+  var seen = {}; try { seen = JSON.parse(ls('gearnews:seen')) || {}; } catch(e){}
+  fetch('./gearnews/news.json', { cache:'no-store' }).then(function(r){ return r.json(); }).then(function(d){
+    var n = (d.items || []).filter(function(it){ return (it.added || it.date) >= prev && !seen[it.id]; }).length;
+    if (!n) return;
+    var b = document.createElement('span'); b.className = 'tnew'; b.textContent = '새 소식 ' + n;
+    tile.appendChild(b);
+  }).catch(function(){});
 })();
 
 /* ═══ 전역 검색 ═══ */

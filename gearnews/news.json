@@ -14,16 +14,46 @@
         "page": "https://www.lens-rumors.com/sigma-50mm-f1-4-cl-dg-contemporary-official-375g-rdd-focus-spring-2027/"
       },
       "specs": [
-        ["센서", "풀프레임"],
-        ["마운트", "소니 E, L"],
-        ["무게", "375g"],
-        ["길이·지름", "소니 E 56.0mm · 지름 64.7mm"],
-        ["구성", "6군 9매 (FLD 1매, 비구면 3매)"],
-        ["조리개", "14매 원형"],
-        ["최단 거리·배율", "45cm · 1:6.8"],
-        ["필터", "52mm"],
-        ["초점", "RDD(회전 직접 구동) 모터, 전군 이동 초점"],
-        ["손떨림 보정", "미확인"]
+        [
+          "센서",
+          "풀프레임"
+        ],
+        [
+          "마운트",
+          "소니 E, L"
+        ],
+        [
+          "무게",
+          "375g"
+        ],
+        [
+          "길이·지름",
+          "소니 E 56.0mm · 지름 64.7mm"
+        ],
+        [
+          "구성",
+          "6군 9매 (FLD 1매, 비구면 3매)"
+        ],
+        [
+          "조리개",
+          "14매 원형"
+        ],
+        [
+          "최단 거리·배율",
+          "45cm · 1:6.8"
+        ],
+        [
+          "필터",
+          "52mm"
+        ],
+        [
+          "초점",
+          "RDD(회전 직접 구동) 모터, 전군 이동 초점"
+        ],
+        [
+          "손떨림 보정",
+          "미확인"
+        ]
       ],
       "price": "미확인 (미발표)",
       "release": "2027년 초봄 출고",
@@ -68,7 +98,8 @@
           "name": "Newsshooter",
           "url": "https://www.newsshooter.com/2026/10/22/sigma-50mm-f1-4-cl-dg-contemporary/"
         }
-      ]
+      ],
+      "added": "2026-10-24"
     },
     {
       "id": "insta360-mic",
@@ -83,13 +114,34 @@
         "page": "https://www.redsharknews.com/insta360-mic-wireless-microphone-price-specs"
       },
       "specs": [
-        ["구성", "송신기 2 + 수신기 1 (키트) / 송신기 1 + 수신기 1"],
-        ["녹음", "microSD 넣으면 송신기 내부 32bit float/24bit"],
-        ["거리", "최대 400m"],
-        ["무게", "송신기 19.4g · 수신기 29.8g · 충전 케이스 174g"],
-        ["사용 시간", "송신기 최대 13시간 · 수신기 11시간 · 케이스 포함 34시간"],
-        ["연결", "USB-C(휴대폰), 3.5mm(카메라), Insta360 카메라 블루투스 직결"],
-        ["확장", "송신기 4 + 수신기 1, 또는 송신기 2 + 수신기 4"]
+        [
+          "구성",
+          "송신기 2 + 수신기 1 (키트) / 송신기 1 + 수신기 1"
+        ],
+        [
+          "녹음",
+          "microSD 넣으면 송신기 내부 32bit float/24bit"
+        ],
+        [
+          "거리",
+          "최대 400m"
+        ],
+        [
+          "무게",
+          "송신기 19.4g · 수신기 29.8g · 충전 케이스 174g"
+        ],
+        [
+          "사용 시간",
+          "송신기 최대 13시간 · 수신기 11시간 · 케이스 포함 34시간"
+        ],
+        [
+          "연결",
+          "USB-C(휴대폰), 3.5mm(카메라), Insta360 카메라 블루투스 직결"
+        ],
+        [
+          "확장",
+          "송신기 4 + 수신기 1, 또는 송신기 2 + 수신기 4"
+        ]
       ],
       "price": "키트(2송신+1수신) $249.99 · 1송신+1수신 $139.99 · 송신기 $79.99 (미국)",
       "release": "2026-10-22 전 세계 출시",
@@ -134,7 +186,8 @@
           "name": "The Gadgeteer (Mic·Mic Pro 비교)",
           "url": "https://the-gadgeteer.com/2026/10/22/insta360-mic-vs-mic-pro/"
         }
-      ]
+      ],
+      "added": "2026-10-24"
     },
     {
       "id": "sony-fe-400-f45-600-f63-gm",
@@ -241,7 +294,8 @@
           "name": "RedShark News (600mm 출고 지연)",
           "url": "https://www.redsharknews.com/sony-fe-600mm-f63-gm-oss-shipping-delay"
         }
-      ]
+      ],
+      "added": "2026-10-22"
     },
     {
       "id": "sony-ecm-w5",
@@ -344,7 +398,8 @@
           "name": "RedShark News",
           "url": "https://www.redsharknews.com/sony-ecm-w5-wireless-microphone-32bit-float"
         }
-      ]
+      ],
+      "added": "2026-10-17"
     },
     {
       "id": "tamron-16-50-f28-b091",
@@ -427,7 +482,8 @@
           "name": "Photo Rumors",
           "url": "https://photorumors.com/2026/10/14/new-tamron-16-50mm-f-2-8-aps-c-lens-announced-z-e-rf-x/"
         }
-      ]
+      ],
+      "added": "2026-10-17"
     },
     {
       "id": "sigma-85-f12-dg-art",
@@ -522,7 +578,8 @@
           "name": "Camera Jabber",
           "url": "https://camerajabber.com/photography-news/sigmas-85mm-f1-2-dg-art-is-the-lightest-fast-85mm-at-half-canons-price/"
         }
-      ]
+      ],
+      "added": "2026-10-17"
     },
     {
       "id": "sigma-20-60-f28-4-dg-c",
@@ -617,7 +674,8 @@
           "name": "Henry's (사양)",
           "url": "https://www.henrys.com/sigma-20-60mm-f2-8-4-dg-contemporary-lens/5637858637.p"
         }
-      ]
+      ],
+      "added": "2026-10-17"
     }
   ]
 }
