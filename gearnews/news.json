@@ -486,6 +486,614 @@
       "added": "2026-10-17"
     },
     {
+      "id": "ttartisan-af-24-f38",
+      "title": "TTArtisan AF 24mm F3.8",
+      "date": "2026-10-13",
+      "cat": "렌즈",
+      "status": "공식",
+      "summary": "57g 초소형 풀프레임 E마운트 AF 팬케이크",
+      "specs": [
+        [
+          "마운트",
+          "소니 E (풀프레임)"
+        ],
+        [
+          "조리개",
+          "F3.8"
+        ],
+        [
+          "무게",
+          "57g"
+        ],
+        [
+          "최단 초점",
+          "30cm"
+        ],
+        [
+          "구성",
+          "6군 6매 (ED 2, 비구면 2)"
+        ],
+        [
+          "AF",
+          "VCM"
+        ]
+      ],
+      "price": "$100 미만 (런칭 할인 $94.05)",
+      "release": "판매 중 (Amazon·Pergear)",
+      "features": [
+        "팬케이크형 초소형 바디",
+        "VCM 자동초점",
+        "가벼운 스냅·서브 렌즈 용도"
+      ],
+      "compare": [
+        {
+          "ours": "Samyang 24mm T1.9",
+          "note": "같은 24mm지만 T1.9 대비 훨씬 어둡고 대신 AF와 초경량"
+        },
+        {
+          "ours": "a7m4",
+          "note": "a7m4에 붙이면 주머니 크기 스냅 세팅 가능"
+        }
+      ],
+      "shops": [],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/10/13/ttartisan-af-24mm-f3-8-a-full-frame-sony-e-mount-af-lens-for-less-than-100-usd/"
+        }
+      ],
+      "added": "2026-10-13"
+    },
+    {
+      "id": "godox-litemons-la300bi-kit",
+      "title": "고독스 Litemons LA300Bi 3등 키트",
+      "date": "2026-10-11",
+      "cat": "조명",
+      "status": "공식",
+      "summary": "330W 바이컬러 모노라이트 3개 묶음 키트",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/10/Godox-deal-1100x620.jpg",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/10/11/godox-litemons-la300bi-led-monolight-kit/"
+      },
+      "specs": [
+        [
+          "출력",
+          "등당 330W"
+        ],
+        [
+          "색온도",
+          "2800-6500K"
+        ],
+        [
+          "연색",
+          "CRI 95, TLCI 95"
+        ],
+        [
+          "마운트",
+          "보웬스 S"
+        ],
+        [
+          "전원",
+          "AC 또는 배터리(옵션)"
+        ],
+        [
+          "무게",
+          "미확인"
+        ]
+      ],
+      "price": "$1,239 (3등 키트)",
+      "release": "예약 판매 중",
+      "features": [
+        "조명 3개·가방·어댑터·반사판 구성",
+        "효과 11종",
+        "앱·NFC 제어",
+        "후면 상태 화면"
+      ],
+      "compare": [
+        {
+          "ours": "지윤 G200 300W",
+          "note": "G200과 비슷한 300W급, 3등 세트로 인터뷰 3점 조명 구성 용이"
+        },
+        {
+          "ours": "80W 조명 Bowens",
+          "note": "같은 보웬스 계열 모디파이어 공유 가능, 출력은 4배 이상"
+        }
+      ],
+      "shops": [],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/10/11/godox-litemons-la300bi-led-monolight-kit/"
+        }
+      ],
+      "added": "2026-10-11"
+    },
+    {
+      "id": "sigma-50-120-f28-dc-os-c",
+      "title": "시그마 50-120mm F2.8 DC OS Contemporary",
+      "date": "2026-10-08",
+      "cat": "렌즈",
+      "status": "공식",
+      "summary": "손떨림 보정 내장 APS-C용 F2.8 망원 줌",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/10/03_PPhoto_50_120_28_dc_os_026_RFmt_representative_4000px.jpeg",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/10/08/sigma-50-120mm-f2-8-dc-os-contemporary/"
+      },
+      "specs": [
+        [
+          "마운트",
+          "소니 E·후지 X·캐논 RF (APS-C)"
+        ],
+        [
+          "환산 화각",
+          "75-180mm"
+        ],
+        [
+          "조리개",
+          "F2.8 고정"
+        ],
+        [
+          "무게",
+          "390g"
+        ],
+        [
+          "길이",
+          "9.9cm"
+        ],
+        [
+          "AF",
+          "HLA 리니어 모터"
+        ],
+        [
+          "OS",
+          "광각 6.5스톱 / 망원 4.5스톱"
+        ]
+      ],
+      "price": "$799",
+      "release": "2026-10-22",
+      "features": [
+        "APS-C 전용 소형 망원 줌",
+        "OS2 손떨림 보정",
+        "FLD 1매·SLD 3매·비구면 4매"
+      ],
+      "compare": [
+        {
+          "ours": "a7m4",
+          "note": "APS-C 렌즈라 a7m4 풀프레임에선 크롭 모드로만 사용"
+        },
+        {
+          "ours": "Sony 85mm F1.8",
+          "note": "85mm 단렌즈 대비 줌 편의성은 있으나 풀프레임 미지원"
+        }
+      ],
+      "shops": [],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/10/08/sigma-50-120mm-f2-8-dc-os-contemporary/"
+        }
+      ],
+      "added": "2026-10-08"
+    },
+    {
+      "id": "samyang-af-28-135-f28-fe",
+      "title": "삼양 AF 28-135mm F2.8 FE",
+      "date": "2026-09-30",
+      "cat": "렌즈",
+      "status": "공식",
+      "summary": "28~135mm 전 구간 F2.8의 고배율 표준 줌",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/09/all-rounder-1100x620.jpeg",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/09/30/samyang-af-28-135mm-f2-8-fe/"
+      },
+      "specs": [
+        [
+          "마운트",
+          "소니 E (풀프레임)"
+        ],
+        [
+          "조리개",
+          "F2.8 고정"
+        ],
+        [
+          "무게",
+          "854g"
+        ],
+        [
+          "필터",
+          "82mm"
+        ],
+        [
+          "최단 초점",
+          "27cm(28mm) / 73cm(135mm)"
+        ],
+        [
+          "구성",
+          "16군 20매"
+        ]
+      ],
+      "price": "미확인",
+      "release": "2027년 2월 예정",
+      "features": [
+        "28~135mm 단일 줌",
+        "전 구간 F2.8",
+        "올라운드 행사·다큐 촬영용"
+      ],
+      "compare": [
+        {
+          "ours": "Samyang 45mm T1.9",
+          "note": "팀 삼양 단렌즈들 화각(24~100mm)을 한 줌으로 커버, 대신 밝기는 F2.8"
+        },
+        {
+          "ours": "Sony 90mm F2.8",
+          "note": "90mm 마크로와 밝기 동일, 135mm까지 줌 가능하나 마크로 불가"
+        }
+      ],
+      "shops": [],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/09/30/samyang-af-28-135mm-f2-8-fe/"
+        }
+      ],
+      "added": "2026-09-30"
+    },
+    {
+      "id": "laowa-acris-35-f28-macro-af",
+      "title": "라오와 ACRIS 35mm F2.8 1X AF 매크로 APO",
+      "date": "2026-09-30",
+      "cat": "렌즈",
+      "status": "공식",
+      "summary": "1:1 등배 촬영이 되는 35mm 풀프레임 AF 매크로",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/09/Screenshot-2026-09-30-at-22.52.58-740x436.jpg",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/09/30/laowa-acris-35mm-f-2-8-1x-af-macro-apo/"
+      },
+      "specs": [
+        [
+          "마운트",
+          "소니 E·니콘 Z AF / 캐논 RF·L MF"
+        ],
+        [
+          "조리개",
+          "F2.8"
+        ],
+        [
+          "배율",
+          "1:1"
+        ],
+        [
+          "구성",
+          "10군 13매"
+        ],
+        [
+          "필터",
+          "72mm(AF) / 67mm(MF)"
+        ],
+        [
+          "무게",
+          "미확인"
+        ]
+      ],
+      "price": "$449",
+      "release": "판매 중",
+      "features": [
+        "35mm 광각 등배 매크로",
+        "AF 구간 무한~0.5m, 이후 매크로 보조",
+        "내부 초점 방식",
+        "APO 설계"
+      ],
+      "compare": [
+        {
+          "ours": "Sony 90mm F2.8",
+          "note": "90mm 매크로와 같은 1:1이지만 배경까지 넓게 담는 광각 매크로"
+        },
+        {
+          "ours": "Sony 35mm F1.8",
+          "note": "같은 35mm, 밝기는 낮지만 근접 1:1 촬영 가능"
+        }
+      ],
+      "shops": [],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/09/30/laowa-acris-35mm-f-2-8-1x-af-macro-apo/"
+        }
+      ],
+      "added": "2026-09-30"
+    },
+    {
+      "id": "hollyland-lark-m3",
+      "title": "홀리랜드 LARK M3",
+      "date": "2026-09-22",
+      "cat": "음향",
+      "status": "공식",
+      "summary": "최대 4TX·4RX 확장되는 $99부터의 소형 무선 마이크",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/09/Screenshot-2026-09-23-at-10.19.43-740x613.png",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/09/22/hollyland-lark-m3/"
+      },
+      "specs": [
+        [
+          "주파수",
+          "2.4GHz"
+        ],
+        [
+          "거리",
+          "최대 304.8m"
+        ],
+        [
+          "송신기 무게",
+          "9g"
+        ],
+        [
+          "배터리",
+          "TX 9시간 / RX 8시간"
+        ],
+        [
+          "노이즈 캔슬",
+          "10·15·20dB 3단계"
+        ],
+        [
+          "최대 SPL",
+          "125dB"
+        ]
+      ],
+      "price": "$99부터 (2TX+1RX USB)",
+      "release": "출고 중",
+      "features": [
+        "최대 4TX·4RX 동시 운용",
+        "iOS 32-bit float 녹음",
+        "USB-C로 4트랙 분리 녹음",
+        "오토 리미터",
+        "보컬 프리셋 8종"
+      ],
+      "compare": [
+        {
+          "ours": "Hollyland Lark M2",
+          "note": "M2 후속, 4채널 확장과 AI 노이즈 캔슬 강화"
+        },
+        {
+          "ours": "Hollyland Lark Max",
+          "note": "Max 대비 저가·초소형, 송신기 내장 녹음은 미확인"
+        }
+      ],
+      "shops": [],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/09/22/hollyland-lark-m3/"
+        }
+      ],
+      "added": "2026-09-22"
+    },
+    {
+      "id": "portkeys-lh5p-iii",
+      "title": "포트키즈 LH5P III",
+      "date": "2026-09-17",
+      "cat": "모니터",
+      "status": "공식",
+      "summary": "235g 경량 5.7인치 2200니트 카메라 제어 모니터",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/09/15.jpeg",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/09/17/portkeys-lh5p-iii-officially-announced/"
+      },
+      "specs": [
+        [
+          "화면",
+          "5.7인치 2160x1080 터치"
+        ],
+        [
+          "밝기",
+          "2200니트"
+        ],
+        [
+          "입출력",
+          "HDMI 입·출력"
+        ],
+        [
+          "무게",
+          "235g"
+        ],
+        [
+          "두께",
+          "28.4mm"
+        ],
+        [
+          "전원",
+          "NP-F, USB-C PD (약 13W)"
+        ]
+      ],
+      "price": "$399",
+      "release": "판매 중",
+      "features": [
+        "A7 IV 등 소니 무선·유선 제어",
+        "3D LUT 20개",
+        "Log Stops 노출 도구",
+        "최대 4대 모니터 원격 제어",
+        "아나모픽 디스퀴즈"
+      ],
+      "compare": [
+        {
+          "ours": "Desview p5 모니터",
+          "note": "같은 5인치급, a7m4 카메라 제어와 더 높은 밝기 추가"
+        },
+        {
+          "ours": "Hollyland Pyro H",
+          "note": "무선 영상 송수신 대신 카메라 제어에 집중한 온카메라 모니터"
+        }
+      ],
+      "shops": [],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/09/17/portkeys-lh5p-iii-officially-announced/"
+        }
+      ],
+      "added": "2026-09-17"
+    },
+    {
+      "id": "atomos-shinobi-7-ii",
+      "title": "아토모스 Shinobi 7 II",
+      "date": "2026-09-11",
+      "cat": "모니터",
+      "status": "공식",
+      "summary": "2800니트 밝기와 이더넷 카메라 제어를 갖춘 7인치 모니터",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/09/Shinobi-7-II-AV-19M_-IMG_2122-740x416.jpg",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/09/11/atomos-shinobi-7-ii-2800-nit-7-inch-monitor-adds-ethernet-camera-control/"
+      },
+      "specs": [
+        [
+          "화면",
+          "7인치 1920x1080 터치"
+        ],
+        [
+          "밝기",
+          "2800니트"
+        ],
+        [
+          "입출력",
+          "HDMI 2.0 입·출력 (4K60p)"
+        ],
+        [
+          "카메라 제어",
+          "USB-C, 10GbE 이더넷"
+        ],
+        [
+          "전원",
+          "NP-F, USB-C PD"
+        ],
+        [
+          "무게",
+          "401g (CineD)"
+        ]
+      ],
+      "price": "$499 / €499",
+      "release": "출고 중",
+      "features": [
+        "소니 미러리스 USB-C 제어",
+        "FX5·FX6 이더넷 제어",
+        "Calibrite 프로브 자체 캘리브레이션",
+        "3D LUT·파형·폴스컬러",
+        "녹화 기능 없음"
+      ],
+      "compare": [
+        {
+          "ours": "Hollyland Pyro 7 모니터",
+          "note": "같은 7인치, 무선 송수신 대신 고휘도와 카메라 제어 중심"
+        },
+        {
+          "ours": "Desview p5 모니터",
+          "note": "5인치 대비 큰 화면과 2800니트로 야외 시인성 우세"
+        }
+      ],
+      "shops": [],
+      "reviews": [
+        {
+          "src": "CineD",
+          "text": "유망한 제품이라는 평과 함께 IBC 베스트 오브 쇼 선정",
+          "url": "https://www.cined.com/atomos-shinobi-7-ii-shogun-av-19m-introduced-first-look/"
+        }
+      ],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/09/11/atomos-shinobi-7-ii-2800-nit-7-inch-monitor-adds-ethernet-camera-control/"
+        },
+        {
+          "name": "CineD",
+          "url": "https://www.cined.com/atomos-shinobi-7-ii-shogun-av-19m-introduced-first-look/"
+        }
+      ],
+      "added": "2026-09-11"
+    },
+    {
+      "id": "sony-rm-dp7-rm-dp5",
+      "title": "소니 RM-DP7 / RM-DP5 컨트롤 모니터",
+      "date": "2026-09-09",
+      "cat": "모니터",
+      "status": "공식",
+      "summary": "FX 시네마라인 전용 촬영 제어 겸 모니터",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/09/01_PrimaryTout-740x494.jpeg",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/09/12/sony-rm-dp7-rm-dp5-first-look-at-ibc-2026/"
+      },
+      "specs": [
+        [
+          "화면",
+          "7인치 / 5인치 1920x1080 터치"
+        ],
+        [
+          "밝기",
+          "최대 2000cd/m²"
+        ],
+        [
+          "입출력",
+          "HDMI 입·출력, DP7은 12G-SDI 추가"
+        ],
+        [
+          "제어",
+          "이더넷·USB-C 유선"
+        ],
+        [
+          "전원",
+          "BP-U, USB PD (DP7 DC 추가)"
+        ],
+        [
+          "지원 카메라",
+          "FX5·FX3·FX2·FX30"
+        ]
+      ],
+      "price": "DP7 $3,099 / DP5 $2,299",
+      "release": "2027년 1월",
+      "features": [
+        "터치 포커스·줌 제어",
+        "LUT 16개",
+        "파형·벡터스코프·폴스컬러",
+        "방진·방적 알루미늄 바디",
+        "Pyro Ultra·Bolt 7 무선 연동 예정"
+      ],
+      "compare": [
+        {
+          "ours": "a7m4",
+          "note": "현재 FX 시리즈만 지원, a7m4 등 알파 바디 지원은 미확인"
+        },
+        {
+          "ours": "Hollyland Pyro 7 모니터",
+          "note": "가격이 크게 높은 대신 소니 카메라 전용 깊은 제어"
+        }
+      ],
+      "shops": [],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/09/12/sony-rm-dp7-rm-dp5-first-look-at-ibc-2026/"
+        },
+        {
+          "name": "YMCinema",
+          "url": "https://ymcinema.com/2026/09/09/sony-cinema-line-control-monitor-dp7-dp5/"
+        }
+      ],
+      "added": "2026-09-09"
+    },
+    {
       "id": "sigma-85-f12-dg-art",
       "title": "시그마 85mm F1.2 DG Art",
       "date": "2026-09-08",
@@ -676,6 +1284,4350 @@
         }
       ],
       "added": "2026-10-17"
+    },
+    {
+      "id": "aputure-storm-cs32",
+      "title": "어퓨처 STORM CS32",
+      "date": "2026-09-08",
+      "cat": "조명",
+      "status": "공식",
+      "summary": "가정용 콘센트로 돌아가는 3200W급 풀컬러 대형 조명",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/04/Features_CS32_16x9_1-740x416.jpeg",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/09/08/aputure-storm-cs32-officially-announced/"
+      },
+      "specs": [
+        [
+          "소비전력",
+          "최대 3200W"
+        ],
+        [
+          "색온도",
+          "1800-20,000K"
+        ],
+        [
+          "조도",
+          "106,000lux @3m (미디엄 반사판, 5600K)"
+        ],
+        [
+          "무게",
+          "헤드 17kg / 컨트롤 박스 10.8kg"
+        ],
+        [
+          "방수",
+          "IP65"
+        ],
+        [
+          "연색",
+          "CRI 97, TLCI 98"
+        ]
+      ],
+      "price": "$6,990 (헤드) / $7,590 (플라이트 케이스)",
+      "release": "예약 판매 중",
+      "features": [
+        "2026-04-16 NAB 첫 공개, 9월 출시",
+        "110V·220V 일반 콘센트 사용",
+        "인디고·익스텐디드 레드 칩",
+        "Sidus Link·DMX·CRMX·Art-Net 제어",
+        "어레이 리깅용 큐브형 헤드"
+      ],
+      "compare": [
+        {
+          "ours": "지윤 G200 300W",
+          "note": "G200 대비 10배급 출력의 대형 세트 조명, 팀 규모엔 과함"
+        }
+      ],
+      "shops": [],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/09/08/aputure-storm-cs32-officially-announced/"
+        },
+        {
+          "name": "CineD",
+          "url": "https://www.cined.com/aputure-storm-cs32-3200w-of-full-color-from-a-household-outlet/"
+        },
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/04/16/aputure-storm-cs32/"
+        }
+      ],
+      "added": "2026-09-08"
+    },
+    {
+      "id": "sony-fe-8-14-f35-fisheye-g",
+      "title": "소니 FE 8-14mm F3.5 Fisheye G",
+      "date": "2026-09-08",
+      "cat": "렌즈",
+      "status": "공식",
+      "summary": "원형·대각 어안을 한 렌즈로 쓰는 소니 첫 풀프레임 어안 줌",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/09/IMG_5401-740x492.jpg",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/09/08/sony-fe-8-14mm-f-3-5-g-fisheye-zoom/"
+      },
+      "specs": [
+        [
+          "마운트",
+          "소니 E (풀프레임)"
+        ],
+        [
+          "조리개",
+          "F3.5 고정"
+        ],
+        [
+          "무게",
+          "314g"
+        ],
+        [
+          "최단 초점",
+          "14.98cm"
+        ],
+        [
+          "AF",
+          "리니어 모터 2개"
+        ],
+        [
+          "필터",
+          "후면 필터 홀더"
+        ]
+      ],
+      "price": "$1,598",
+      "release": "10월 15일 출고 예정",
+      "features": [
+        "줌·조리개·초점 링 독립",
+        "조리개 클릭 해제 스위치",
+        "줌 잠금",
+        "방진·방적 설계",
+        "불소 코팅 전면 렌즈",
+        "적은 포커스 브리딩"
+      ],
+      "compare": [
+        {
+          "ours": "Samyang 24mm T1.9",
+          "note": "팀 최광각 24mm보다 훨씬 넓은 180도 어안 화각 추가"
+        },
+        {
+          "ours": "Sony 28mm F2.0",
+          "note": "28mm 광각 대비 극단적 왜곡 연출용, 밝기는 F3.5로 어두움"
+        }
+      ],
+      "shops": [],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/09/08/sony-fe-8-14mm-f-3-5-g-fisheye-zoom/"
+        }
+      ],
+      "added": "2026-09-08"
+    },
+    {
+      "id": "hollyland-lark-a2",
+      "title": "홀리랜드 LARK A2",
+      "date": "2026-09-08",
+      "cat": "음향",
+      "status": "공식",
+      "summary": "8.5g 초경량 클립형 보급 무선 마이크",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/09/Screenshot-2026-09-09-at-9.04.06-740x619.png",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/09/08/hollyland-lark-a2/"
+      },
+      "specs": [
+        [
+          "거리",
+          "최대 200m"
+        ],
+        [
+          "송신기 무게",
+          "8.5g"
+        ],
+        [
+          "배터리",
+          "7시간 (절전 9시간), 케이스 포함 42시간"
+        ],
+        [
+          "노이즈 캔슬",
+          "AI 3단계, 최대 20dB"
+        ],
+        [
+          "구성",
+          "DUO·MINI DUO·SOLO"
+        ]
+      ],
+      "price": "미확인",
+      "release": "미확인",
+      "features": [
+        "출고 시 페어링 완료",
+        "앱에서 게인 6단계·EQ 자동 조정",
+        "5분 충전 1시간 사용",
+        "MFi 인증"
+      ],
+      "compare": [
+        {
+          "ours": "Hollyland Lark M2",
+          "note": "M2와 비슷한 초소형 계열, 브이로그·인터뷰용 보급형"
+        },
+        {
+          "ours": "COMICA VM40",
+          "note": "카메라 위 샷건 대신 화자 몸에 다는 무선 방식"
+        }
+      ],
+      "shops": [],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/09/08/hollyland-lark-a2/"
+        }
+      ],
+      "added": "2026-09-08"
+    },
+    {
+      "id": "zhiyun-weebill-5",
+      "title": "지윤 WEEBILL 5",
+      "date": "2026-09-08",
+      "cat": "짐벌",
+      "status": "공식",
+      "summary": "손잡이가 연장봉이 되는 2.94kg 페이로드 소형 짐벌",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/09/Screenshot-2026-09-08-at-16.53.20-740x414.jpg",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/09/08/zhiyun-weebill-5-handheld-gimbal-stabilizer/"
+      },
+      "specs": [
+        [
+          "페이로드",
+          "2.94kg"
+        ],
+        [
+          "배터리",
+          "2600mAh x2 내장"
+        ],
+        [
+          "사용 시간",
+          "최대 9시간"
+        ],
+        [
+          "충전",
+          "USB-C PD 2시간"
+        ],
+        [
+          "화면",
+          "1.8인치 터치"
+        ],
+        [
+          "무게",
+          "미확인"
+        ]
+      ],
+      "price": "$499 (기본) / $529 (콤보)",
+      "release": "예약 판매 중",
+      "features": [
+        "슬링 핸들 겸 연장봉",
+        "내장 보조광 2150lux",
+        "AI 트래킹 모듈 별매",
+        "가로·세로 빠른 전환",
+        "블루투스·USB 카메라 제어"
+      ],
+      "compare": [
+        {
+          "ours": "Ronin RS3 짐벌",
+          "note": "RS3보다 가볍고 로우·하이앵글이 쉬운 일체형 디자인"
+        }
+      ],
+      "shops": [],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/09/08/zhiyun-weebill-5-handheld-gimbal-stabilizer/"
+        }
+      ],
+      "added": "2026-09-08"
+    },
+    {
+      "id": "hollyland-pyro-7-ultra",
+      "title": "홀리랜드 Pyro 7 Ultra",
+      "date": "2026-09-03",
+      "cat": "모니터",
+      "status": "공식",
+      "summary": "1km 4K60 무선 송수신 일체형 7인치 모니터",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/09/Pyro-7-Ultra-740x740.png",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/09/03/hollyland-pyro-7-ultra/"
+      },
+      "specs": [
+        [
+          "화면",
+          "7인치 QD-LCD"
+        ],
+        [
+          "밝기",
+          "1500니트"
+        ],
+        [
+          "무선",
+          "최대 1km, 지연 20ms"
+        ],
+        [
+          "영상",
+          "4K60 전송"
+        ],
+        [
+          "입출력",
+          "HDMI·SDI 루프아웃·크로스 출력"
+        ],
+        [
+          "무게",
+          "미확인"
+        ]
+      ],
+      "price": "$1,399",
+      "release": "판매 중",
+      "features": [
+        "2026-06 Cine Gear 첫 공개, 9월 3일 정식 출시",
+        "HollyOS 신규 UI",
+        "송신기 1대에 수신기 무제한",
+        "소니·캐논·니콘·ARRI 카메라 제어",
+        "자체 캘리브레이터 지원",
+        "소니 RM-DP 모니터 무선 연동 예정"
+      ],
+      "compare": [
+        {
+          "ours": "Hollyland Pyro 7 모니터",
+          "note": "팀 Pyro 7 상위 모델, 4K60 전송과 SDI·카메라 제어 추가"
+        },
+        {
+          "ours": "Hollyland Pyro H",
+          "note": "같은 Pyro 생태계라 기존 송수신기와 함께 운용 가능"
+        }
+      ],
+      "shops": [],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/09/03/hollyland-pyro-7-ultra/"
+        },
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/06/07/hollyland-pyro-7-ultra-7-wireless-monitor-introduced-at-cine-gear-2026/"
+        }
+      ],
+      "added": "2026-09-03"
+    },
+    {
+      "id": "nanlite-fc-1200b-fc-1200c",
+      "title": "난라이트 FC-1200B / FC-1200C",
+      "date": "2026-09-03",
+      "cat": "조명",
+      "status": "공식",
+      "summary": "전원부 일체형 1350W 바이컬러·풀컬러 COB 조명",
+      "img": {
+        "url": "https://www.cined.com/content/uploads/2026/09/NANLITE-FC-1200B-FC-1200C-5-1300x750.jpeg",
+        "src": "CineD",
+        "page": "https://www.cined.com/nanlite-fc-1200b-and-fc-1200c-released-1350w-rated-power-bowens-mount-all-in-one-design/"
+      },
+      "specs": [
+        [
+          "정격 전력",
+          "1350W"
+        ],
+        [
+          "색온도",
+          "B 2700-6500K / C 2400-12,000K"
+        ],
+        [
+          "조도",
+          "B 15,620lux / C 14,220lux @3m"
+        ],
+        [
+          "무게",
+          "약 10kg"
+        ],
+        [
+          "마운트",
+          "보웬스"
+        ],
+        [
+          "연색(B)",
+          "CRI 96, TLCI 98"
+        ]
+      ],
+      "price": "FC-1200B $1,290 / FC-1200C $1,490",
+      "release": "미확인",
+      "features": [
+        "헤드 내장 전원, 케이블 하나로 운용",
+        "DMX·NFC·NANLINK 앱 제어",
+        "0.1% 단위 디밍",
+        "C 모델 HSI·RGBW·젤 모드"
+      ],
+      "compare": [
+        {
+          "ours": "60B 조명 Nanlite",
+          "note": "같은 난라이트 계열, 60B 대비 20배 이상 출력"
+        },
+        {
+          "ours": "지윤 G200 300W",
+          "note": "G200보다 4배 이상 강한 메인 키라이트급"
+        }
+      ],
+      "shops": [],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "CineD",
+          "url": "https://www.cined.com/nanlite-fc-1200b-and-fc-1200c-released-1350w-rated-power-bowens-mount-all-in-one-design/"
+        }
+      ],
+      "added": "2026-09-03"
+    },
+    {
+      "id": "swit-mini-150b",
+      "title": "SWIT Mini-150B",
+      "date": "2026-09-01",
+      "cat": "조명",
+      "status": "공식",
+      "summary": "V마운트 내장 1kg급 150W 바이컬러 소형 COB",
+      "img": {
+        "url": "https://www.cined.com/content/uploads/2026/08/SWITMini-150B_Featured-1300x750.jpg",
+        "src": "CineD",
+        "page": "https://www.cined.com/swit-mini-150b-released-a-compact-150w-bi-color-cob-led-light-with-built-in-v-mount/"
+      },
+      "specs": [
+        [
+          "출력",
+          "최대 150W"
+        ],
+        [
+          "색온도",
+          "2700-6500K"
+        ],
+        [
+          "조도",
+          "약 24,000lux @1m"
+        ],
+        [
+          "연색",
+          "CRI 98, TLCI 98"
+        ],
+        [
+          "무게",
+          "약 1kg"
+        ],
+        [
+          "크기",
+          "104x104x125mm"
+        ]
+      ],
+      "price": "미확인",
+      "release": "출시",
+      "features": [
+        "V마운트 배터리 직결",
+        "USB-C PD 최대 90W",
+        "디밍 곡선 4종",
+        "플리커 프리"
+      ],
+      "compare": [
+        {
+          "ours": "60B 조명 Nanlite",
+          "note": "60B보다 2배 이상 출력이면서 배터리 직결로 현장 이동 편리"
+        },
+        {
+          "ours": "울란지 소형 조명",
+          "note": "소형 조명보다 훨씬 강한 휴대형 키라이트"
+        }
+      ],
+      "shops": [],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "CineD",
+          "url": "https://www.cined.com/swit-mini-150b-released-a-compact-150w-bi-color-cob-led-light-with-built-in-v-mount/"
+        }
+      ],
+      "added": "2026-09-01"
+    },
+    {
+      "id": "sigma-aizu-prime-21-100-125",
+      "title": "시그마 Aizu Prime 21·100·125mm T1.3 LF",
+      "date": "2026-08-31",
+      "cat": "렌즈",
+      "status": "공식",
+      "summary": "T1.3 시네 프라임 라인업에 세 화각 추가",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/08/Sigma-1-1100x620.jpg",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/08/31/sigma-adds-three-new-focal-lengths-to-the-aizu-prime-lineup/"
+      },
+      "specs": [
+        [
+          "마운트",
+          "PL 또는 소니 E"
+        ],
+        [
+          "조리개",
+          "T1.3-T22"
+        ],
+        [
+          "이미지서클",
+          "46.3mm"
+        ],
+        [
+          "무게",
+          "1.6-2.2kg (라인업 기준)"
+        ],
+        [
+          "최단 초점",
+          "0.8m"
+        ],
+        [
+          "전면 지름",
+          "114mm"
+        ]
+      ],
+      "price": "개당 $9,799",
+      "release": "2026년 11월",
+      "features": [
+        "라인업 18~125mm 총 12종",
+        "Cooke/i·ZEISS eXtended Data 지원",
+        "적은 왜곡·포커스 브리딩",
+        "270도 포커스 회전"
+      ],
+      "compare": [
+        {
+          "ours": "Samyang 100mm T2.3",
+          "note": "같은 100mm지만 T1.3으로 훨씬 밝은 하이엔드 시네 렌즈"
+        },
+        {
+          "ours": "Samyang 24mm T1.9",
+          "note": "팀 삼양 시네 렌즈 대비 무게·가격 모두 대형 프로덕션급"
+        }
+      ],
+      "shops": [],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/08/31/sigma-adds-three-new-focal-lengths-to-the-aizu-prime-lineup/"
+        }
+      ],
+      "added": "2026-08-31"
+    },
+    {
+      "id": "saramonic-k9-xtx",
+      "title": "사라모닉 K9 XTX 플러그온 송신기",
+      "date": "2026-08-04",
+      "cat": "음향",
+      "status": "공식",
+      "summary": "XLR 마이크를 디지털 UHF 무선으로 바꾸는 플러그온 송신기",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/08/K9XTX-1100x620.jpeg",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/08/04/saramonic-k9-xtx-digital-uhf-plug-on-wireless-transmitter/"
+      },
+      "specs": [
+        [
+          "대역",
+          "550-960MHz UHF"
+        ],
+        [
+          "거리",
+          "150m"
+        ],
+        [
+          "녹음",
+          "32-bit float, 64GB 내장"
+        ],
+        [
+          "팬텀",
+          "3V/5V/12V/24V/48V"
+        ],
+        [
+          "전원",
+          "AA 2개 7시간 이상, USB-C"
+        ],
+        [
+          "방수",
+          "IP66"
+        ]
+      ],
+      "price": "송신기 $299 / 키트 $749",
+      "release": "미확인",
+      "features": [
+        "타임코드 내장",
+        "잠금식 XLR",
+        "RF 출력 최대 100mW",
+        "앱으로 최대 48대 관리"
+      ],
+      "compare": [
+        {
+          "ours": "RODE NTG3",
+          "note": "NTG3 같은 XLR 샷건을 무선 붐으로 쓰게 해 주는 장비"
+        },
+        {
+          "ours": "Zoom F1",
+          "note": "F1 별도 녹음 없이 송신기 자체 32-bit float 백업"
+        }
+      ],
+      "shops": [],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/08/04/saramonic-k9-xtx-digital-uhf-plug-on-wireless-transmitter/"
+        }
+      ],
+      "added": "2026-08-04"
+    },
+    {
+      "id": "godox-litemons-le-series",
+      "title": "고독스 LITEMONS LE 시리즈 (LE200R/LE300R/LE600R)",
+      "date": "2026-07-30",
+      "cat": "조명",
+      "status": "공식",
+      "summary": "보웬스 마운트 RGB COB 3종, 230W~635W 저가형 라인업",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/07/IMG_5171-740x710.jpg",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/07/30/godox-litemons-le-series-rgb-led-lights/"
+      },
+      "specs": [
+        [
+          "출력",
+          "LE200R 230W / LE300R 330W / LE600R 635W"
+        ],
+        [
+          "색온도",
+          "1800-10000K"
+        ],
+        [
+          "CRI/TLCI",
+          "96 / 95"
+        ],
+        [
+          "조도(1m, 리플렉터, 5600K)",
+          "71,700 / 94,400 / 130,000lux"
+        ],
+        [
+          "마운트",
+          "보웬스"
+        ],
+        [
+          "무게",
+          "2.81kg / 2.8kg / 5.2kg"
+        ],
+        [
+          "전원",
+          "AC 일체형 전원"
+        ]
+      ],
+      "price": "LE200R $299 / LE300R $379 / LE600R $599",
+      "release": "미확인",
+      "features": [
+        "HSI·RGBW·젤·FX 모드",
+        "14종 효과",
+        "앱·DMX/RDM 제어, NFC 연결",
+        "Godox 소프트박스 호환"
+      ],
+      "compare": [
+        {
+          "ours": "지윤 G200 300W",
+          "note": "LE300R이 비슷한 출력대에 풀 RGB 추가"
+        },
+        {
+          "ours": "80W 조명 Bowens",
+          "note": "같은 보웬스 모디파이어 공유 가능, 출력 대폭 상승"
+        }
+      ],
+      "shops": [],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/07/30/godox-litemons-le-series-rgb-led-lights/"
+        }
+      ],
+      "added": "2026-07-30"
+    },
+    {
+      "id": "sony-fx5",
+      "title": "소니 FX5",
+      "date": "2026-07-22",
+      "cat": "카메라",
+      "status": "공식",
+      "summary": "5K 오픈 게이트·내부 X-OCN RAW·트리플 베이스 ISO의 E마운트 시네마 라인",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/07/FX5_V6-1-1-1100x620.jpeg",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/07/22/sony-fx5-5k60-open-gate-32-5k120-169-x-ocn-internal-raw-recording/"
+      },
+      "specs": [
+        [
+          "센서",
+          "16.6MP 풀프레임 적층 Exmor RS"
+        ],
+        [
+          "동영상",
+          "5K 3:2 오픈 게이트 60p, 4K 120p, FHD 240p"
+        ],
+        [
+          "RAW",
+          "내부 16bit X-OCN LT/C1/C2"
+        ],
+        [
+          "베이스 ISO",
+          "800 / 4000 / 12800"
+        ],
+        [
+          "다이내믹 레인지",
+          "15스톱+(Dual Gain 16스톱+)"
+        ],
+        [
+          "미디어",
+          "CFexpress Type A / SD 듀얼"
+        ],
+        [
+          "배터리",
+          "NP-SA100"
+        ],
+        [
+          "무게",
+          "734g(바디)"
+        ]
+      ],
+      "price": "$4,898 (바디) / $5,498 (XLR 핸들 포함)",
+      "release": "미국 2026-08-18 출고 예정, 주문 폭주로 지연 공지",
+      "features": [
+        "XLR-H2 핸들 사용 시 32bit float 녹음",
+        "별매 틸트 EVF DVF-EL1(핸들과 동시 사용 불가)",
+        "XAVC 오픈 게이트는 2027년 펌웨어 예정",
+        "USB-C 전원·충전"
+      ],
+      "compare": [
+        {
+          "ours": "a7m4",
+          "note": "오픈 게이트·내부 RAW·트리플 ISO로 영상 전용 성능 대폭 우위, 사진 기능은 제한적"
+        },
+        {
+          "ours": "a7s2",
+          "note": "저조도 특화 계보의 사실상 상위 대체, 10bit·RAW·발열 내구성 모두 세대 차이"
+        }
+      ],
+      "shops": [],
+      "reviews": [
+        {
+          "src": "CineD",
+          "text": "오픈 게이트·내부 RAW·저조도 성능 호평, 핵심 기능 일부 펌웨어 대기와 FX3 대비 높은 가격은 아쉬움",
+          "url": "https://www.cined.com/sony-fx5-review"
+        }
+      ],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/07/22/sony-fx5-5k60-open-gate-32-5k120-169-x-ocn-internal-raw-recording/"
+        },
+        {
+          "name": "CineD",
+          "url": "https://www.cined.com/sony-fx5-review"
+        }
+      ],
+      "added": "2026-07-22"
+    },
+    {
+      "id": "hollyland-pyro-5-4k",
+      "title": "홀리랜드 Pyro 5 4K",
+      "date": "2026-07-22",
+      "cat": "모니터",
+      "status": "공식",
+      "summary": "송신·수신 전환형 4K30 무선 5.5인치 모니터, 소니 카메라 제어 지원",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/07/Screenshot-2026-07-23-at-12.06.35-1100x620.jpg",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/07/22/hollyland-pyro-5-4k/"
+      },
+      "specs": [
+        [
+          "화면",
+          "5.5인치 1920x1080"
+        ],
+        [
+          "밝기",
+          "1500cd/m²"
+        ],
+        [
+          "전송",
+          "최대 4K30"
+        ],
+        [
+          "거리",
+          "최대 1312ft(가시거리), 방송 모드 656ft"
+        ],
+        [
+          "지연",
+          "Smooth 60ms / HD 75ms"
+        ],
+        [
+          "무게",
+          "미확인"
+        ]
+      ],
+      "price": "$449",
+      "release": "사전 주문 중(출고일 미확인)",
+      "features": [
+        "송신기·수신기 모드 전환",
+        "터치로 ISO·조리개·셔터·WB 제어(일부 소니 기종, 별도 케이블)",
+        "탭 포커스"
+      ],
+      "compare": [
+        {
+          "ours": "Hollyland Pyro H",
+          "note": "같은 생태계 소형 무선 모니터, 4K 전송과 카메라 제어 추가"
+        },
+        {
+          "ours": "Desview p5 모니터",
+          "note": "비슷한 크기에 무선 송수신 기능 추가"
+        }
+      ],
+      "shops": [],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/07/22/hollyland-pyro-5-4k/"
+        }
+      ],
+      "added": "2026-07-22"
+    },
+    {
+      "id": "tamron-12-20-f28-a084",
+      "title": "탐론 12-20mm F2.8 (A084)",
+      "date": "2026-07-15",
+      "cat": "렌즈",
+      "status": "공식",
+      "summary": "후면 필터 홀더를 갖춘 570g 풀프레임 초광각 F2.8 줌",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/07/Tamron-HZ-v2-1-740x416.jpeg",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/07/14/tamron-12-20mm-f-2-8-di-iii/"
+      },
+      "specs": [
+        [
+          "초점거리",
+          "12-20mm"
+        ],
+        [
+          "조리개",
+          "F2.8 고정, 12매 원형"
+        ],
+        [
+          "구성",
+          "12군 17매"
+        ],
+        [
+          "최단 초점거리",
+          "0.18m(12mm) / 0.28m(20mm)"
+        ],
+        [
+          "필터",
+          "후면 시트 필터 홀더"
+        ],
+        [
+          "무게",
+          "570g(E)"
+        ],
+        [
+          "길이",
+          "119.3mm(E)"
+        ],
+        [
+          "AF",
+          "VXD 리니어 모터"
+        ]
+      ],
+      "price": "$1,699 (Sony E)",
+      "release": "Sony E 2026-07-30 / Nikon Z 2026-08-27",
+      "features": [
+        "코마 억제로 천체·실내 촬영 지향",
+        "USB-C 포트와 Lens Utility 지원",
+        "디클릭 조리개 스위치, 줌 잠금",
+        "방습 설계와 불소 코팅"
+      ],
+      "compare": [
+        {
+          "ours": "Samyang 24mm T1.9",
+          "note": "팀 최광각 24mm보다 훨씬 넓은 12-20mm 화각, AF 줌으로 실내·공간 촬영에 유리"
+        },
+        {
+          "ours": "Sony 28mm F2.0",
+          "note": "광각 단렌즈 대비 무겁지만 초광각 영역 확보"
+        }
+      ],
+      "shops": [],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "Tamron Americas",
+          "url": "https://tamron-americas.com/tamron-announces-new-12-20mm-f2-8-for-sony-e-and-nikon-z-mount/"
+        },
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/07/14/tamron-12-20mm-f-2-8-di-iii/"
+        }
+      ],
+      "added": "2026-07-15"
+    },
+    {
+      "id": "viltrox-af-26-f28-evo",
+      "title": "빌트록스 AF 26mm F2.8 EVO",
+      "date": "2026-07-15",
+      "cat": "렌즈",
+      "status": "공식",
+      "summary": "130g 풀프레임 E마운트 금속 팬케이크 광각 렌즈",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/07/EVO-740x416.jpg",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/07/15/viltrox-af-26mm-f2-8-evo/"
+      },
+      "specs": [
+        [
+          "포맷",
+          "풀프레임"
+        ],
+        [
+          "마운트",
+          "Sony E, Nikon Z"
+        ],
+        [
+          "조리개",
+          "F2.8-F16"
+        ],
+        [
+          "구성",
+          "6군 8매"
+        ],
+        [
+          "최단 초점거리",
+          "0.2m"
+        ],
+        [
+          "필터",
+          "43mm(후드 장착)"
+        ],
+        [
+          "무게",
+          "130g"
+        ],
+        [
+          "AF",
+          "STM"
+        ]
+      ],
+      "price": "$299",
+      "release": "판매 중",
+      "features": [
+        "독립 조리개 링·포커스 링",
+        "올메탈 바디",
+        "마그네틱 렌즈 캡",
+        "후드 필터 슬롯"
+      ],
+      "compare": [
+        {
+          "ours": "Sony 28mm F2.0",
+          "note": "비슷한 화각에 훨씬 얇고 가벼운 팬케이크, 밝기는 28mm F2.0 쪽 우위"
+        },
+        {
+          "ours": "Sony 35mm F1.8",
+          "note": "짐벌·브이로그용 초경량 광각 대안"
+        }
+      ],
+      "shops": [],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/07/15/viltrox-af-26mm-f2-8-evo/"
+        }
+      ],
+      "added": "2026-07-15"
+    },
+    {
+      "id": "dji-mic-mini-2s",
+      "title": "DJI Mic Mini 2S",
+      "date": "2026-07-02",
+      "cat": "음향",
+      "status": "공식",
+      "summary": "송신기 내부 녹음·32bit float 지원 초소형 무선 마이크(중국 선출시)",
+      "img": {
+        "url": "https://cdn.dronexl.co/wp-content/uploads/2026/07/TBnet26-312-1.jpg",
+        "src": "DroneXL",
+        "page": "https://dronexl.co/2026/07/03/dji-mic-mini-2s-records-china/"
+      },
+      "specs": [
+        [
+          "송신기 무게",
+          "12g"
+        ],
+        [
+          "내장 저장",
+          "14.5GB"
+        ],
+        [
+          "녹음 시간",
+          "24bit 기준 최대 28시간"
+        ],
+        [
+          "녹음 포맷",
+          "32bit float 지원"
+        ],
+        [
+          "송신기 연결",
+          "수신기 1대에 최대 4대"
+        ],
+        [
+          "거리",
+          "최대 400m"
+        ],
+        [
+          "배터리",
+          "TX 약 11시간, RX 약 10시간, 케이스 포함 약 40시간"
+        ]
+      ],
+      "price": "중국 1,199위안(충전 케이스 세트) · AU$279 (2TX+1RX+케이스), AU$149 (1TX+1RX)",
+      "release": "중국 2026-07-02 출시, 글로벌 미확인",
+      "features": [
+        "두 단계 노이즈 캔슬링",
+        "송신기 단독 녹음",
+        "미국 출시 미정"
+      ],
+      "compare": [
+        {
+          "ours": "Hollyland Lark M2",
+          "note": "비슷한 초소형급에 내부 녹음·32bit float 백업 추가"
+        },
+        {
+          "ours": "Hollyland Lark Max",
+          "note": "Max와 같은 내부 녹음 기능을 더 작은 송신기로 구현"
+        }
+      ],
+      "shops": [],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "DroneXL",
+          "url": "https://dronexl.co/2026/07/03/dji-mic-mini-2s-records-china/"
+        },
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/08/04/dji-mic-mini-2s/"
+        }
+      ],
+      "added": "2026-07-02"
+    },
+    {
+      "id": "7artisans-af-135-f18-max",
+      "title": "7아티잔 AF 135mm F1.8 MAX",
+      "date": "2026-06-29",
+      "cat": "렌즈",
+      "status": "공식",
+      "summary": "풀프레임 E마운트 대응 저가형 AF 135mm F1.8",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/06/Screenshot-2026-06-30-at-9.24.00-740x927.png",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/06/29/7artisans-af-135mm-f1-8-max/"
+      },
+      "specs": [
+        [
+          "포맷",
+          "풀프레임"
+        ],
+        [
+          "마운트",
+          "Sony E, Nikon Z, Leica L"
+        ],
+        [
+          "구성",
+          "13군 16매(ED 6매)"
+        ],
+        [
+          "조리개 날",
+          "12매"
+        ],
+        [
+          "최단 초점거리",
+          "0.68m"
+        ],
+        [
+          "필터",
+          "82mm"
+        ],
+        [
+          "무게",
+          "약 1,014g(E)"
+        ],
+        [
+          "AF",
+          "STM"
+        ]
+      ],
+      "price": "$689",
+      "release": "판매 중",
+      "features": [
+        "펑션 버튼 2개와 AF/MF 스위치",
+        "E·L 마운트 클릭 조리개 링",
+        "USB-C 펌웨어 업데이트"
+      ],
+      "compare": [
+        {
+          "ours": "Sony 85mm F1.8",
+          "note": "더 긴 135mm 화각과 강한 배경 압축, 무게는 훨씬 무거운 편"
+        },
+        {
+          "ours": "Samyang 100mm T2.3",
+          "note": "AF 지원 망원 단렌즈로 인터뷰 클로즈업에 편리"
+        }
+      ],
+      "shops": [],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/06/29/7artisans-af-135mm-f1-8-max/"
+        }
+      ],
+      "added": "2026-06-29"
+    },
+    {
+      "id": "samyang-af-60-180-f28-fe",
+      "title": "삼양 AF 60-180mm F2.8 FE",
+      "date": "2026-06-25",
+      "cat": "렌즈",
+      "status": "공식",
+      "summary": "슈나이더 공동 설계 730g 초경량 F2.8 망원 줌",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/06/sam-1100x620.jpg",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/06/25/samyang-af-60-180mm-f2-8-fe/"
+      },
+      "specs": [
+        [
+          "초점거리",
+          "60-180mm"
+        ],
+        [
+          "조리개",
+          "F2.8 고정, 9매"
+        ],
+        [
+          "구성",
+          "14군 17매"
+        ],
+        [
+          "최단 초점거리",
+          "0.35m"
+        ],
+        [
+          "최대 배율",
+          "0.26x"
+        ],
+        [
+          "필터",
+          "77mm"
+        ],
+        [
+          "무게",
+          "730g"
+        ],
+        [
+          "AF",
+          "리니어 STM"
+        ]
+      ],
+      "price": "국내 1,290,000원",
+      "release": "미확인",
+      "features": [
+        "포커스 홀드 버튼, AF/MF 스위치",
+        "USB 펌웨어 업데이트 포트",
+        "방진·방적 설계",
+        "슈나이더 크로이츠나흐 공동 개발"
+      ],
+      "compare": [
+        {
+          "ours": "Samyang 100mm T2.3",
+          "note": "같은 브랜드 수동 시네 단렌즈 대비 AF 줌 편의성과 화각 범위 우위"
+        },
+        {
+          "ours": "Sony 90mm F2.8",
+          "note": "망원 줌 하나로 90mm 포함 60-180mm 커버, 접사 배율은 90mm 매크로 쪽 우위"
+        }
+      ],
+      "shops": [],
+      "reviews": [
+        {
+          "src": "Park Cameras",
+          "text": "선명도·AF·경량성 우수한 가성비 70-200 대안, 텔레컨버터 미지원과 짧은 망원 끝은 단점",
+          "url": "https://www.parkcameras.com/blog/reviews/lk-samyang-af-60-180mm-f28-fe-review_sem-07"
+        }
+      ],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/06/25/samyang-af-60-180mm-f2-8-fe/"
+        }
+      ],
+      "added": "2026-06-25"
+    },
+    {
+      "id": "ulanzi-c01-100w",
+      "title": "울란지 C01 100W 바이컬러 COB",
+      "date": "2026-06-21",
+      "cat": "조명",
+      "status": "공식",
+      "summary": "330g 초경량 100W 바이컬러 COB, 집광 렌즈 포함",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/06/Screenshot-2026-06-22-at-10.14.39-1100x620.png",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/06/21/ulanzi-c01-100w-bi-color-cob-led-light-with-condenser-lens/"
+      },
+      "specs": [
+        [
+          "출력",
+          "100W"
+        ],
+        [
+          "색온도",
+          "2700-6500K"
+        ],
+        [
+          "CRI/TLCI",
+          "96 / 98"
+        ],
+        [
+          "조도",
+          "1m 3625lux"
+        ],
+        [
+          "마운트",
+          "미니 보웬스"
+        ],
+        [
+          "전원",
+          "USB-C PD 최대 100W 입력, 파워 그립, AC"
+        ],
+        [
+          "무게",
+          "330g"
+        ]
+      ],
+      "price": "$79",
+      "release": "사전 주문 중(출고일 미확인)",
+      "features": [
+        "집광 렌즈·리플렉터 기본 포함",
+        "0-100% 디밍",
+        "앱 제어",
+        "고속 냉각 팬"
+      ],
+      "compare": [
+        {
+          "ours": "80W 조명 Bowens",
+          "note": "비슷한 출력대에 USB-C 구동으로 훨씬 가볍고 휴대 간편, 미니 보웬스라 모디파이어 호환 확인 필요"
+        },
+        {
+          "ours": "울란지 소형 조명",
+          "note": "같은 브랜드 상위 출력, 키 라이트까지 대응"
+        }
+      ],
+      "shops": [],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/06/21/ulanzi-c01-100w-bi-color-cob-led-light-with-condenser-lens/"
+        }
+      ],
+      "added": "2026-06-21"
+    },
+    {
+      "id": "meike-af-56-f17-air",
+      "title": "메이케 AF 56mm F1.7 Air",
+      "date": "2026-06-18",
+      "cat": "렌즈",
+      "status": "공식",
+      "summary": "190g 초경량 APS-C 전용 AF 중망원 단렌즈",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/06/Screenshot-2026-06-19-at-12.51.06-740x404.png",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/06/18/meike-af-56mm-f-1-7-air-lens/"
+      },
+      "specs": [
+        [
+          "포맷",
+          "APS-C(풀프레임 환산 85mm)"
+        ],
+        [
+          "마운트",
+          "Sony E, Nikon Z, Fujifilm X"
+        ],
+        [
+          "조리개",
+          "F1.7-F16, 9매"
+        ],
+        [
+          "구성",
+          "7군 11매"
+        ],
+        [
+          "최단 초점거리",
+          "0.55m"
+        ],
+        [
+          "필터",
+          "52mm"
+        ],
+        [
+          "무게",
+          "190g"
+        ],
+        [
+          "AF",
+          "STM"
+        ]
+      ],
+      "price": "$159(블랙) / $169(화이트)",
+      "release": "판매 중",
+      "features": [
+        "소형·경량 단렌즈",
+        "저렴한 가격대"
+      ],
+      "compare": [
+        {
+          "ours": "Sony 55mm F1.8",
+          "note": "APS-C 전용 렌즈라 풀프레임 a7m4·a7s2에선 크롭 모드 필요, 팀 기존 55mm가 더 적합"
+        }
+      ],
+      "shops": [],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/06/18/meike-af-56mm-f-1-7-air-lens/"
+        }
+      ],
+      "added": "2026-06-18"
+    },
+    {
+      "id": "desview-blade-5",
+      "title": "데스뷰 Blade 5",
+      "date": "2026-06-11",
+      "cat": "모니터",
+      "status": "공식",
+      "summary": "두께 13mm·207g 초슬림 5.5인치 OLED 4K HDMI 모니터",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/06/DESVIEW-1100x620.jpg",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/06/11/desview-blade-5-5-oled-touchscreen-4k-hdmi-ultra-light-and-thin-on-camera-monitor/"
+      },
+      "specs": [
+        [
+          "화면",
+          "5.5인치 OLED 터치"
+        ],
+        [
+          "밝기",
+          "최대 1200니트"
+        ],
+        [
+          "색역",
+          "DCI-P3 100%"
+        ],
+        [
+          "입출력",
+          "HDMI 2.0 입·출력(DCI 4K 60p)"
+        ],
+        [
+          "전원",
+          "7-26V DC, USB-C"
+        ],
+        [
+          "두께",
+          "13mm"
+        ],
+        [
+          "무게",
+          "207g"
+        ]
+      ],
+      "price": "$299",
+      "release": "미국 사전 주문 중(출고일 미확인)",
+      "features": [
+        "공장 하드웨어 3D LUT 캘리브레이션",
+        "웨이브폼·벡터스코프·히스토그램",
+        "아나모픽 디스퀴즈",
+        "무선·카메라 제어 미지원"
+      ],
+      "compare": [
+        {
+          "ours": "Desview p5 모니터",
+          "note": "같은 브랜드 5인치급 후속 성격, OLED 명암비와 경량화가 핵심 차이"
+        },
+        {
+          "ours": "Hollyland Pyro H",
+          "note": "무선 기능 없는 순수 온카메라 모니터, 더 가볍고 얇음"
+        }
+      ],
+      "shops": [],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/06/11/desview-blade-5-5-oled-touchscreen-4k-hdmi-ultra-light-and-thin-on-camera-monitor/"
+        }
+      ],
+      "added": "2026-06-11"
+    },
+    {
+      "id": "godox-lc500r-air-lr150-air",
+      "title": "고독스 LC500R Air / LR150 Air",
+      "date": "2026-06-08",
+      "cat": "조명",
+      "status": "공식",
+      "summary": "공기 주입식 초경량 RGB 스틱 라이트와 바이컬러 링 라이트",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/06/Screenshot-2026-06-09-at-9.38.28-740x461.jpg",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/06/08/godox-lc500r-air-lr150-air/"
+      },
+      "specs": [
+        [
+          "LC500R Air 색온도",
+          "2800-10000K + RGBW"
+        ],
+        [
+          "LR150 Air 색온도",
+          "2800-6500K"
+        ],
+        [
+          "CRI/TLCI",
+          "LC500R 96/98, LR150 97/98"
+        ],
+        [
+          "출력(1m, 5600K)",
+          "LC500R 854lux / LR150 564lux"
+        ],
+        [
+          "크기",
+          "스틱 2.5피트 / 링 지름 2피트"
+        ],
+        [
+          "배터리",
+          "최대 출력 약 1.5시간"
+        ],
+        [
+          "무게",
+          "LC500R 532g, LR150 미확인"
+        ]
+      ],
+      "price": "LC500R Air $99 / LR150 Air $109",
+      "release": "사전 주문 중(출고일 미확인)",
+      "features": [
+        "공기 주입식 접이 구조",
+        "에어 펌프·가방 포함",
+        "앱 제어와 펌웨어 업데이트",
+        "배터리 그립 일체형 컨트롤러"
+      ],
+      "compare": [
+        {
+          "ours": "튜브라이트 (알리산)",
+          "note": "비슷한 스틱형에 RGBW·CRI 96으로 색 품질 향상, 휴대성 우수"
+        },
+        {
+          "ours": "울란지 소형 조명",
+          "note": "넓은 면광원으로 인물 보조광에 더 부드러운 빛"
+        }
+      ],
+      "shops": [],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/06/08/godox-lc500r-air-lr150-air/"
+        }
+      ],
+      "added": "2026-06-08"
+    },
+    {
+      "id": "viltrox-dc-550-pro-ii",
+      "title": "빌트록스 DC-550 Pro II",
+      "date": "2026-06-07",
+      "cat": "모니터",
+      "status": "공식",
+      "summary": "1400니트 5.5인치 터치 모니터, USB·Wi-Fi 카메라 제어 지원",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/06/Screenshot-2026-06-08-at-8.59.28-740x827.jpg",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/06/07/viltrox-dc-550-pro-ii-5-5-inch-high-brightness-lcd-camera-monitor/"
+      },
+      "specs": [
+        [
+          "화면",
+          "5.5인치 IPS 터치"
+        ],
+        [
+          "해상도",
+          "1920x1080"
+        ],
+        [
+          "밝기",
+          "1400cd/m²"
+        ],
+        [
+          "입출력",
+          "HDMI 2.0 입력·루프 출력(4K60)"
+        ],
+        [
+          "전원",
+          "12V DC, USB-C, L시리즈 배터리"
+        ],
+        [
+          "무게",
+          "254g"
+        ]
+      ],
+      "price": "$238",
+      "release": "판매 중",
+      "features": [
+        "셔터·조리개·ISO 카메라 제어(USB/Wi-Fi)",
+        "3D LUT 실시간 미리보기",
+        "웨이브폼·폴스컬러·피킹",
+        "자이로 자동 화면 회전",
+        "냉각 팬 내장"
+      ],
+      "compare": [
+        {
+          "ours": "Desview p5 모니터",
+          "note": "비슷한 5.5인치급에 카메라 제어·고휘도 추가"
+        },
+        {
+          "ours": "Lilliput 모니터",
+          "note": "야외 시인성과 측정 도구 면에서 우위"
+        }
+      ],
+      "shops": [],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/06/07/viltrox-dc-550-pro-ii-5-5-inch-high-brightness-lcd-camera-monitor/"
+        }
+      ],
+      "added": "2026-06-07"
+    },
+    {
+      "id": "kinefinity-vista",
+      "title": "키네피니티 VISTA",
+      "date": "2026-06-04",
+      "cat": "카메라",
+      "status": "공식",
+      "summary": "소니 E마운트 옵션을 갖춘 6K 풀프레임 초소형 시네마 카메라",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/06/DSC_0806-1100x620.jpeg",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/06/04/kinefinity-vista-officially-announced-2499-usd/"
+      },
+      "specs": [
+        [
+          "센서",
+          "6K 3:2 풀프레임 CMOS"
+        ],
+        [
+          "최대 해상도",
+          "6K 오픈 게이트 6016x3984 36fps"
+        ],
+        [
+          "고속",
+          "S35 4K 2.4:1 90fps, S16 2K 2.4:1 172fps"
+        ],
+        [
+          "코덱",
+          "ProRes 422HQ/422/LT, H.265 10bit"
+        ],
+        [
+          "듀얼 네이티브 ISO",
+          "800 / 5120"
+        ],
+        [
+          "마운트",
+          "KineMOUNT, Sony E, PL"
+        ],
+        [
+          "저장",
+          "내장 240GB SSD + CFexpress Type B"
+        ],
+        [
+          "무게",
+          "바디 600g"
+        ]
+      ],
+      "price": "$2,499",
+      "release": "2026-06-20 첫 출고 예정",
+      "features": [
+        "4인치 OLED 틸트 터치스크린",
+        "내장 RAW·ND·SDI 미지원",
+        "NP-F 배터리 약 3시간",
+        "아나모픽 1.25x~2x 지원"
+      ],
+      "compare": [
+        {
+          "ours": "a7m4",
+          "note": "오픈 게이트·ProRes 내장으로 시네 워크플로 강점, 사진 기능과 AF 편의성은 미지원 수준"
+        },
+        {
+          "ours": "a7s2",
+          "note": "6K ProRes 내장으로 화질·후반 유연성 대폭 향상"
+        }
+      ],
+      "shops": [],
+      "reviews": [
+        {
+          "src": "Newsshooter",
+          "text": "양산 전 기체 기준 가격 대비 사양 우수, 하이라이트 롤오프와 팬 소음은 아쉬운 편",
+          "url": "https://www.newsshooter.com/2026/06/04/kinefinity-vista-officially-announced-2499-usd/"
+        }
+      ],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/06/04/kinefinity-vista-officially-announced-2499-usd/"
+        }
+      ],
+      "added": "2026-06-04"
+    },
+    {
+      "id": "godox-ml40r-ml40bi",
+      "title": "고독스 ML40R / ML40Bi",
+      "date": "2026-05-18",
+      "cat": "조명",
+      "status": "공식",
+      "summary": "배터리 내장 손바닥 크기 RGB·바이컬러 휴대용 LED",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/05/0-740x395.jpeg",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/05/18/godox-ml40r-bi/"
+      },
+      "specs": [
+        [
+          "색온도",
+          "Bi 2800-6500K / R 1800-10000K"
+        ],
+        [
+          "CRI",
+          "약 96"
+        ],
+        [
+          "배터리",
+          "내장 4800mAh, 최대 출력 약 43분"
+        ],
+        [
+          "충전",
+          "USB-C 최대 60W, 촬영 중 충전"
+        ],
+        [
+          "무게",
+          "422g"
+        ],
+        [
+          "크기",
+          "97 x 46 x 91mm"
+        ],
+        [
+          "마운트",
+          "Godox 마운트"
+        ],
+        [
+          "출력",
+          "미확인"
+        ]
+      ],
+      "price": "ML40Bi $99 / ML40R $119",
+      "release": "사전 주문 중(출고일 미확인)",
+      "features": [
+        "마그네틱 부착",
+        "앱·NFC 제어",
+        "내장 FX 효과 Bi 11종 / R 14종",
+        "전용 리플렉터 ML-L10 별매 $11.90"
+      ],
+      "compare": [
+        {
+          "ours": "울란지 소형 조명",
+          "note": "비슷한 휴대 크기에 RGB·배터리 용량 강화형"
+        },
+        {
+          "ours": "60B 조명 Nanlite",
+          "note": "키 라이트보다 보조광·포인트광 용도에 적합"
+        }
+      ],
+      "shops": [],
+      "reviews": [
+        {
+          "src": "Newsshooter",
+          "text": "작고 밝으며 가격 경쟁력 우수, 디밍 시 색 변화와 전용 마운트 한계는 단점",
+          "url": "https://www.newsshooter.com/2026/07/10/godox-ml40r-review/"
+        }
+      ],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/05/18/godox-ml40r-bi/"
+        }
+      ],
+      "added": "2026-05-18"
+    },
+    {
+      "id": "sony-a7r-vi",
+      "title": "소니 a7R VI",
+      "date": "2026-05-13",
+      "cat": "카메라",
+      "status": "공식",
+      "summary": "66.8MP 적층 센서와 8K30p·4K120p를 갖춘 고화소 풀프레임 E마운트 바디",
+      "img": {
+        "url": "https://alphashooters.b-cdn.net/wp-content/uploads/2026/05/sony-a7rvi-lcd.jpg",
+        "src": "Alpha Shooters",
+        "page": "https://www.alphashooters.com/sony-a7r-vi-announced-with-66-8-mp-fully-stacked-sensor/"
+      },
+      "specs": [
+        [
+          "센서",
+          "66.8MP 풀프레임 적층 Exmor RS BSI"
+        ],
+        [
+          "동영상",
+          "8K 30p(10bit), 4K 120p(10bit)"
+        ],
+        [
+          "로그",
+          "S-Log2, S-Log3, S-Cinetone"
+        ],
+        [
+          "RAW 영상",
+          "HDMI 16bit RAW 출력(4K 60p까지), 내부 RAW 없음"
+        ],
+        [
+          "손떨림 보정",
+          "5축 IBIS 최대 8.5스톱"
+        ],
+        [
+          "연사",
+          "전자셔터 30fps"
+        ],
+        [
+          "미디어",
+          "CFexpress Type A / SD UHS-II 듀얼"
+        ],
+        [
+          "배터리",
+          "NP-SA100"
+        ],
+        [
+          "무게",
+          "미확인"
+        ]
+      ],
+      "price": "$4,499 (바디)",
+      "release": "2026년 6월 초",
+      "features": [
+        "8.2K 오버샘플링 8K 30p 녹화",
+        "5K 오버샘플링 4K 120p 녹화",
+        "Dual Gain 모드로 다이내믹 레인지 확장",
+        "9.44M 도트 EVF와 4축 틸트 LCD",
+        "오픈 게이트 미지원"
+      ],
+      "compare": [
+        {
+          "ours": "a7m4",
+          "note": "화소·연사·4K120p 모두 큰 폭 향상이나 가격 부담 큼"
+        },
+        {
+          "ours": "a7s2",
+          "note": "8K·10bit·IBIS 성능 압도적 우위, 저조도 특화는 아닌 고화소 바디"
+        }
+      ],
+      "shops": [],
+      "reviews": [
+        {
+          "src": "DPReview",
+          "text": "현역 풀프레임 중 최고 수준 화질, 다만 4K 화면이 다소 무른 편이라는 평가",
+          "url": "https://www.dpreview.com/reviews/4042249542/3"
+        },
+        {
+          "src": "Engadget",
+          "text": "속도·화질은 호평, 내부 RAW 부재와 부드러운 4K로 영상용 매력은 제한적이라는 평가",
+          "url": "https://engadget.com/2201555/sony-a7r-vi-review"
+        }
+      ],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/05/13/sony-a7r-vi-fe-100-400mm-f-4-5-g-master/"
+        },
+        {
+          "name": "Alpha Shooters",
+          "url": "https://www.alphashooters.com/sony-a7r-vi-announced-with-66-8-mp-fully-stacked-sensor/"
+        }
+      ],
+      "added": "2026-05-13"
+    },
+    {
+      "id": "sony-fe-100-400-f45-gm",
+      "title": "소니 FE 100-400mm F4.5 GM OSS",
+      "date": "2026-05-13",
+      "cat": "렌즈",
+      "status": "공식",
+      "summary": "전 구간 F4.5 고정 조리개와 내부 줌 구조의 초망원 G마스터 줌",
+      "img": {
+        "url": "https://mma.prnewswire.com/media/2977108/Sony_Electronics__Inc_FE_100_400mm_F4_5_GM_OSS_G_Master.jpg",
+        "src": "Sony",
+        "page": "https://sony.mediaroom.com/2026-05-13-Sony-Electronics-Unveils-the-FE-100-400mm-F4-5-GM-OSS-G-Master-TM"
+      },
+      "specs": [
+        [
+          "초점거리",
+          "100-400mm"
+        ],
+        [
+          "최대 개방",
+          "F4.5 고정"
+        ],
+        [
+          "무게",
+          "약 1,840g"
+        ],
+        [
+          "조리개 날",
+          "11매 원형"
+        ],
+        [
+          "AF",
+          "XD 리니어 모터 4개"
+        ],
+        [
+          "텔레컨버터",
+          "1.4x, 2x 호환"
+        ],
+        [
+          "최단 초점거리",
+          "미확인"
+        ],
+        [
+          "필터",
+          "미확인"
+        ]
+      ],
+      "price": "약 $4,299.99",
+      "release": "2026년 6월",
+      "features": [
+        "줌 시 길이 변화 없는 내부 줌",
+        "이전 100-400 GM 대비 최대 약 3배 빠른 AF",
+        "포커스 홀드 버튼 4개와 펑션 링",
+        "영상 브리딩 보정 지원",
+        "방진·방적 설계와 불소 코팅"
+      ],
+      "compare": [
+        {
+          "ours": "Sony 90mm F2.8",
+          "note": "팀 최장 망원 대비 최대 400mm까지 확장, 무게는 훨씬 무거운 전문 망원"
+        },
+        {
+          "ours": "Samyang 100mm T2.3",
+          "note": "시네 단렌즈 대비 AF·손떨림 보정 탑재, 원거리 스포츠·행사용"
+        }
+      ],
+      "shops": [],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "Sony 보도자료",
+          "url": "https://sony.mediaroom.com/2026-05-13-Sony-Electronics-Unveils-the-FE-100-400mm-F4-5-GM-OSS-G-Master-TM"
+        },
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/05/13/sony-a7r-vi-fe-100-400mm-f-4-5-g-master/"
+        }
+      ],
+      "added": "2026-05-13"
+    },
+    {
+      "id": "sony-xlr-a4",
+      "title": "소니 XLR-A4 XLR 어댑터",
+      "date": "2026-05-13",
+      "cat": "음향",
+      "status": "공식",
+      "summary": "멀티 인터페이스 슈 장착형 4채널 32bit float XLR 오디오 어댑터",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/05/Screenshot-2026-05-13-at-23.14.31-1100x620.jpg",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/05/13/sony-a7r-vi-fe-100-400mm-f-4-5-g-master/"
+      },
+      "specs": [
+        [
+          "입력",
+          "XLR/TRS 콤보 2개 + 3.5mm 1개"
+        ],
+        [
+          "채널",
+          "4채널 입력(듀얼 ADC)"
+        ],
+        [
+          "녹음",
+          "96kHz / 32bit float"
+        ],
+        [
+          "장착",
+          "멀티 인터페이스 슈"
+        ],
+        [
+          "무게",
+          "미확인"
+        ]
+      ],
+      "price": "$778",
+      "release": "미확인",
+      "features": [
+        "카메라 내 별도 WAV 파일 녹음",
+        "마이크 홀더 일체형",
+        "a7R VI와 동시 발표"
+      ],
+      "compare": [
+        {
+          "ours": "RODE NTG4+",
+          "note": "샷건 마이크를 XLR로 바로 연결해 카메라에 32bit float 녹음 가능, 대응 바디 확인 필요"
+        },
+        {
+          "ours": "Zoom F1",
+          "note": "별도 레코더 없이 카메라 내부 녹음·싱크 해결 가능"
+        }
+      ],
+      "shops": [],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/05/13/sony-a7r-vi-fe-100-400mm-f-4-5-g-master/"
+        }
+      ],
+      "added": "2026-05-13"
+    },
+    {
+      "id": "dji-mic-mini-2",
+      "title": "DJI Mic Mini 2",
+      "date": "2026-04-28",
+      "cat": "음향",
+      "status": "공식",
+      "summary": "11g 초소형 송신기, 교체형 페이스플레이트 무선 마이크 2세대",
+      "img": {
+        "url": "https://cdn.dronexl.co/wp-content/uploads/2026/04/DJI-Launches-Mic-Mini-2-With-Ten-Faceplate-Colors-And-A-E33-Starting-Price.jpg",
+        "src": "DroneXL",
+        "page": "https://dronexl.co/2026/04/21/dji-launches-mic-mini-2/"
+      },
+      "specs": [
+        [
+          "송신기 무게",
+          "약 11g"
+        ],
+        [
+          "수신기 무게",
+          "약 17.8g"
+        ],
+        [
+          "배터리",
+          "송신기 11.5시간 / 수신기 10.5시간 / 케이스 포함 48시간"
+        ],
+        [
+          "전송 거리",
+          "최대 400m (Mic Mini 수신기)"
+        ],
+        [
+          "오디오",
+          "48kHz/24bit"
+        ],
+        [
+          "32비트 플로트",
+          "미지원"
+        ]
+      ],
+      "price": "€33(송신기 단품)~€99(풀세트)",
+      "release": "2026-04-28 글로벌 출시 (미국 미출시)",
+      "features": [
+        "페이스플레이트 10색 교체",
+        "2단계 노이즈 캔슬링",
+        "자동 클리핑 방지",
+        "보이스 톤 프리셋 3종"
+      ],
+      "compare": [
+        {
+          "ours": "Hollyland Lark M2",
+          "note": "같은 초소형 무선 마이크급, 더 가벼운 송신기"
+        },
+        {
+          "ours": "COMICA VM40",
+          "note": "온카메라 마이크 대신 인터뷰용 핀마이크 형태"
+        }
+      ],
+      "shops": [],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "DJI 공식 스펙",
+          "url": "https://www.dji.com/mic-mini-2/specs"
+        },
+        {
+          "name": "DroneXL",
+          "url": "https://dronexl.co/2026/04/21/dji-launches-mic-mini-2/"
+        }
+      ],
+      "added": "2026-04-28"
+    },
+    {
+      "id": "swit-k7",
+      "title": "SWIT K7 7인치 2800니트 모니터",
+      "date": "2026-04-21",
+      "cat": "모니터",
+      "status": "공식",
+      "summary": "2800니트 HDMI·SDI 크로스 변환 7인치 온카메라 모니터",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/04/IMG_3828.jpeg",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/04/21/swit-k7-7-2800nit-on-camera-monitor-first-look-at-nab-2026/"
+      },
+      "specs": [
+        [
+          "화면",
+          "7인치 1920x1080"
+        ],
+        [
+          "밝기",
+          "2,800니트"
+        ],
+        [
+          "입출력",
+          "3G-SDI + HDMI 2.0 (4K60P), 크로스 변환"
+        ],
+        [
+          "전원",
+          "2핀 LEMO 7-34V / USB-C PD"
+        ],
+        [
+          "무게",
+          "미확인"
+        ]
+      ],
+      "price": "$699",
+      "release": "2026년 3분기",
+      "features": [
+        "SDI·HDMI 상호 변환",
+        "고휘도 야외용"
+      ],
+      "compare": [
+        {
+          "ours": "Lilliput 모니터",
+          "note": "고휘도·SDI 갖춘 상위 대안"
+        },
+        {
+          "ours": "Desview p5 모니터",
+          "note": "더 큰 화면과 높은 밝기"
+        }
+      ],
+      "shops": [],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/04/21/swit-k7-7-2800nit-on-camera-monitor-first-look-at-nab-2026/"
+        }
+      ],
+      "added": "2026-04-21"
+    },
+    {
+      "id": "viltrox-af-35-55-f18-evo",
+      "title": "빌트록스 AF 35mm·55mm F1.8 EVO",
+      "date": "2026-04-20",
+      "cat": "렌즈",
+      "status": "공식",
+      "summary": "APO 설계 풀프레임 F1.8 단렌즈 2종, 소니 FE·니콘 Z",
+      "img": {
+        "url": "https://www.35mmc.com/wp-content/uploads/2026/04/1110443.jpg",
+        "src": "35mmc",
+        "page": "https://www.35mmc.com/20/04/2026/news-and-preview-viltrox-announces-35mm-1-8-55mm-1-8-evo-lenses-in-sony-fe-and-nikon-z-mount/"
+      },
+      "specs": [
+        [
+          "마운트",
+          "Sony FE / Nikon Z (풀프레임)"
+        ],
+        [
+          "무게 (FE)",
+          "35mm 330g / 55mm 365g"
+        ],
+        [
+          "필터",
+          "58mm (공통)"
+        ],
+        [
+          "최단 초점거리",
+          "35mm 0.34m / 55mm 0.43m"
+        ],
+        [
+          "렌즈 구성",
+          "35mm 10군 13매 / 55mm 9군 13매"
+        ],
+        [
+          "AF 모터",
+          "STM"
+        ],
+        [
+          "화각",
+          "35mm 63° / 55mm 43°"
+        ]
+      ],
+      "price": "35mm $395 / 55mm $370",
+      "release": "2026-04-20 판매 시작 (Viltrox 직판)",
+      "features": [
+        "APO 광학 설계",
+        "두 렌즈 필터 58mm 통일",
+        "NAB 2026 공개"
+      ],
+      "compare": [
+        {
+          "ours": "Sony 35mm F1.8",
+          "note": "같은 35mm F1.8, APO 설계지만 더 무거운 구성"
+        },
+        {
+          "ours": "Sony 55mm F1.8",
+          "note": "55mm F1.8 동일 스펙, 소니 자이스 대비 저가 대안"
+        }
+      ],
+      "shops": [],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "35mmc",
+          "url": "https://www.35mmc.com/20/04/2026/news-and-preview-viltrox-announces-35mm-1-8-55mm-1-8-evo-lenses-in-sony-fe-and-nikon-z-mount/"
+        }
+      ],
+      "added": "2026-04-20"
+    },
+    {
+      "id": "godox-palettelab-lights",
+      "title": "고독스 PaletteLab 조명 5종 (SL300RF 등)",
+      "date": "2026-04-20",
+      "cat": "조명",
+      "status": "공식",
+      "summary": "9색 다이오드 PaletteLab 엔진 탑재 풀컬러 조명 5종",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/04/03-980x600-2-740x861.png",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/04/20/godox-unveils-its-new-palettelab-lighting-engine-5-new-lights/"
+      },
+      "specs": [
+        [
+          "모델",
+          "Knowled PL1200RF, PL600RF, SL300RF, SL200RF, ML150RF"
+        ],
+        [
+          "엔진",
+          "9색 다이오드 PaletteLab"
+        ],
+        [
+          "색재현",
+          "CRI R9 99, TM-30 Rf 97, Rec.2020 92%"
+        ],
+        [
+          "응답 곡선",
+          "Godox·Blackbody·TM-30 3종"
+        ],
+        [
+          "출력/무게",
+          "미확인"
+        ]
+      ],
+      "price": "PL1200RF $3,490 / PL600RF $1,990 / SL300RF $719 / 나머지 미확인",
+      "release": "발표 약 1개월 후 (2026년 5월 말 예정)",
+      "features": [
+        "고연색 풀컬러 신규 엔진",
+        "소형 ML부터 대형 패널까지 동일 엔진"
+      ],
+      "compare": [
+        {
+          "ours": "지윤 G200 300W",
+          "note": "SL300RF가 같은 300W급 풀컬러 대안"
+        },
+        {
+          "ours": "60B 조명 Nanlite",
+          "note": "ML150RF가 휴대형 상위 대안 (출력 미확인)"
+        }
+      ],
+      "shops": [],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/04/20/godox-unveils-its-new-palettelab-lighting-engine-5-new-lights/"
+        }
+      ],
+      "added": "2026-04-20"
+    },
+    {
+      "id": "smallrig-rf-20c",
+      "title": "스몰리그 RF 20C 포커스 조명",
+      "date": "2026-04-20",
+      "cat": "조명",
+      "status": "공식",
+      "summary": "빔각 조절 20W 배터리 내장 휴대용 RGB 조명",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/04/SmallRig-RF-20C_IMG_1080-740x416.jpg",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/04/20/smallrig-rf-20c-portable-focusable-led-video-light/"
+      },
+      "specs": [
+        [
+          "출력",
+          "20W, 1m 5400lux (5600K)"
+        ],
+        [
+          "빔각",
+          "24°~60°"
+        ],
+        [
+          "색",
+          "5600K + RGB"
+        ],
+        [
+          "연색",
+          "CRI 97 / TLCI 99"
+        ],
+        [
+          "배터리",
+          "5000mAh, 최대 3시간, USB-C 충전"
+        ],
+        [
+          "무게",
+          "미확인"
+        ]
+      ],
+      "price": "$67.99",
+      "release": "미확인",
+      "features": [
+        "줌 방식 빔각 조절",
+        "36° 광학 스누트 별도 예정"
+      ],
+      "compare": [
+        {
+          "ours": "울란지 소형 조명",
+          "note": "동급 소형 조명에 빔각 조절 추가"
+        }
+      ],
+      "shops": [],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/04/20/smallrig-rf-20c-portable-focusable-led-video-light/"
+        }
+      ],
+      "added": "2026-04-20"
+    },
+    {
+      "id": "hollyland-pyro-ultra",
+      "title": "홀리랜드 Pyro Ultra 무선 영상 송수신기",
+      "date": "2026-04-18",
+      "cat": "모니터",
+      "status": "공식",
+      "summary": "4K60 전송·최대 1.5km Pyro 시리즈 상위 무선 영상 시스템",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/04/Hollylan-Pyro-Ultra_IMG_1091-740x416.jpg",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/04/19/hollylan-pyro-ultra-nab-2026/"
+      },
+      "specs": [
+        [
+          "해상도",
+          "최대 UHD 4K60 (HDMI 한정)"
+        ],
+        [
+          "지연",
+          "22ms (포커스 모드, 제조사 표기)"
+        ],
+        [
+          "거리",
+          "최대 1.5km"
+        ],
+        [
+          "비트레이트",
+          "12Mb/s"
+        ],
+        [
+          "입출력",
+          "HDMI + SDI"
+        ],
+        [
+          "전원",
+          "DC / NP-F 배터리"
+        ]
+      ],
+      "price": "1TX/1RX $1,199 / 1TX/2RX $1,699",
+      "release": "판매 중",
+      "features": [
+        "UVC 스트리밍",
+        "자동 채널 스캔",
+        "포커스 모드 저지연"
+      ],
+      "compare": [
+        {
+          "ours": "Hollyland Pyro H",
+          "note": "같은 Pyro 계열 상위, 4K 전송과 SDI 추가"
+        },
+        {
+          "ours": "Hollyland Pyro 7 모니터",
+          "note": "모니터 일체형이 아닌 별도 송수신기, Pyro 7과 조합 사용 여부 미확인"
+        }
+      ],
+      "shops": [],
+      "reviews": [
+        {
+          "src": "Newsshooter",
+          "text": "튼튼한 만듦새와 안정적 장거리 전송 호평, HDMI 지연과 낮은 비트레이트는 아쉬움",
+          "url": "https://www.newsshooter.com/2026/04/18/hollyland-pyro-ultra-wireless-video-system-review/"
+        }
+      ],
+      "sources": [
+        {
+          "name": "Newsshooter NAB",
+          "url": "https://www.newsshooter.com/2026/04/19/hollylan-pyro-ultra-nab-2026/"
+        },
+        {
+          "name": "Newsshooter 리뷰",
+          "url": "https://www.newsshooter.com/2026/04/18/hollyland-pyro-ultra-wireless-video-system-review/"
+        }
+      ],
+      "added": "2026-04-18"
+    },
+    {
+      "id": "rodelink-ii",
+      "title": "로데 RØDELink II UHF 무선 시스템",
+      "date": "2026-04-16",
+      "cat": "음향",
+      "status": "공식",
+      "summary": "32비트 플로트 내장 녹음·타임코드 지원 2인용 UHF 무선 마이크",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/04/rode-rodelink-II-packaging-three-quarter-4096x2730-rgb-740x493.jpg",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/04/16/rode-announces-the-rodelink-ii-uhf-wireless-system/"
+      },
+      "specs": [
+        [
+          "구성",
+          "송신기 2 + 수신기 1"
+        ],
+        [
+          "전송",
+          "UHF (RØDE 독자 방식)"
+        ],
+        [
+          "녹음",
+          "송신기 32비트 플로트 microSD 녹음"
+        ],
+        [
+          "타임코드",
+          "전용 TC I/O, 내장 TC 제너레이터"
+        ],
+        [
+          "배터리",
+          "교체형 리튬이온 3개 포함 (EN-EL25 타입)"
+        ],
+        [
+          "주파수·거리",
+          "미확인"
+        ]
+      ],
+      "price": "$1,499",
+      "release": "2026년 중반",
+      "features": [
+        "UHF 방식의 혼잡 환경 대응",
+        "송신기 백업 녹음",
+        "외부 TC 박스 없이 싱크",
+        "Newsshooter NAB 2026 Best of Show 수상"
+      ],
+      "compare": [
+        {
+          "ours": "Hollyland Lark Max",
+          "note": "2.4GHz 무선 대비 UHF 방식에 타임코드까지 갖춘 상위급"
+        },
+        {
+          "ours": "오디오 무선 송수신기(Tr/Re)",
+          "note": "기존 무선 송수신기 대체 가능한 2채널 UHF 시스템"
+        }
+      ],
+      "shops": [
+        {
+          "name": "B&H",
+          "price": "$1,499",
+          "url": "https://www.bhphotovideo.com/c/product/1965323-REG/rode_rodelink_ii_professional_2_person.html"
+        }
+      ],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "Newsshooter 발표",
+          "url": "https://www.newsshooter.com/2026/04/16/rode-announces-the-rodelink-ii-uhf-wireless-system/"
+        },
+        {
+          "name": "Newsshooter NAB 퍼스트룩",
+          "url": "https://www.newsshooter.com/2026/04/20/rodelink-ii-uhf-wireless-system-first-look-nab-2026/"
+        },
+        {
+          "name": "Newsshooter Best of Show",
+          "url": "https://www.newsshooter.com/2026/04/22/newsshooter-nab-2026-best-of-show-award-winners/"
+        }
+      ],
+      "added": "2026-04-16"
+    },
+    {
+      "id": "accsoon-cineview-m7h",
+      "title": "액순 CineView M7H 7인치 스마트 모니터",
+      "date": "2026-04-16",
+      "cat": "모니터",
+      "status": "공식",
+      "summary": "Wi-Fi 영상 송수신·스트리밍 내장 7인치 HDMI 모니터",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/04/accsoon-1100x620.jpg",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/04/16/accsoon-cineview-m7h-7-smart-hdmi-monitor-with-wi-fi-streaming/"
+      },
+      "specs": [
+        [
+          "화면",
+          "7인치 1920x1080"
+        ],
+        [
+          "밝기",
+          "1,000cd/m²"
+        ],
+        [
+          "입출력",
+          "HDMI 2.0 in/out (DCI 4K60)"
+        ],
+        [
+          "무선",
+          "듀얼밴드 Wi-Fi 수신·송신, 1080p 최대 1200ft"
+        ],
+        [
+          "오디오",
+          "3.5mm 마이크·헤드폰"
+        ],
+        [
+          "무게",
+          "미확인"
+        ]
+      ],
+      "price": "$729",
+      "release": "예약 판매 중",
+      "features": [
+        "모니터 겸 무선 수신기",
+        "라이브 스트리밍·클라우드 업로드",
+        "Wi-Fi·블루투스 파일 전송"
+      ],
+      "compare": [
+        {
+          "ours": "Hollyland Pyro 7 모니터",
+          "note": "같은 무선 수신 7인치 모니터 콘셉트, 스트리밍 기능 추가"
+        }
+      ],
+      "shops": [],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/04/16/accsoon-cineview-m7h-7-smart-hdmi-monitor-with-wi-fi-streaming/"
+        }
+      ],
+      "added": "2026-04-16"
+    },
+    {
+      "id": "nanlux-evoke-5c",
+      "title": "난럭스 Evoke 5C",
+      "date": "2026-04-15",
+      "cat": "조명",
+      "status": "공식",
+      "summary": "160g 배터리 내장 6W 초소형 풀컬러 스포트 조명",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/04/5c-9-fullcopy-2-740x740.jpeg",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/04/15/nanlux-evoke-5c/"
+      },
+      "specs": [
+        [
+          "소비전력",
+          "6W"
+        ],
+        [
+          "출력",
+          "0.5m 2,026lux (5600K)"
+        ],
+        [
+          "색온도",
+          "1,000K~20,000K, ±200 G/M"
+        ],
+        [
+          "연색",
+          "CRI/TLCI 98/98"
+        ],
+        [
+          "무게·크기",
+          "160g / 5.6x4.4x4.5cm"
+        ],
+        [
+          "배터리",
+          "내장 약 2.5시간 (그립 사용 4.7시간)"
+        ]
+      ],
+      "price": "$219 / 키트 $265 / 8등 키트 $2,950",
+      "release": "2026년 4월 출고",
+      "features": [
+        "프레넬·스팟 렌즈 액세서리",
+        "USB-C·E27 소켓 전원",
+        "8등 충전 케이스 키트"
+      ],
+      "compare": [
+        {
+          "ours": "울란지 소형 조명",
+          "note": "같은 포켓 조명급, 고연색 풀컬러와 스팟 렌즈 지원"
+        }
+      ],
+      "shops": [],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/04/15/nanlux-evoke-5c/"
+        }
+      ],
+      "added": "2026-04-15"
+    },
+    {
+      "id": "deity-pr-4",
+      "title": "데이티 PR-4 소형 필드 레코더",
+      "date": "2026-04-14",
+      "cat": "음향",
+      "status": "공식",
+      "summary": "4입력 6트랙 32비트 플로트 소형 필드 레코더",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/04/PR-4-FULL-5-740x740.jpg",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/04/14/deity-announces-pr-4-compact-field-recorder/"
+      },
+      "specs": [
+        [
+          "트랙/입력",
+          "6트랙 / 4입력"
+        ],
+        [
+          "포맷",
+          "32비트 플로트"
+        ],
+        [
+          "게인",
+          "최대 60dB (ReGain 프리앰프)"
+        ],
+        [
+          "저장",
+          "SD + 내장 64GB SSD 동시 기록"
+        ],
+        [
+          "타임코드",
+          "무선 TC 송출 (10m 내)"
+        ],
+        [
+          "배터리",
+          "NP-F550 기준 8.5시간 이상"
+        ],
+        [
+          "무게",
+          "미확인"
+        ]
+      ],
+      "price": "$449 (케이지 $59 별도)",
+      "release": "2026년 5월 중순 출고",
+      "features": [
+        "이중 저장 백업",
+        "무선 타임코드 송출",
+        "USB-C·히로세 전원"
+      ],
+      "compare": [
+        {
+          "ours": "Zoom F1",
+          "note": "F1보다 입력 많고 32비트 플로트 지원하는 상위 필드 레코더"
+        },
+        {
+          "ours": "Zoom H6",
+          "note": "H6와 비슷한 다채널, 더 작은 크기에 TC 기능 추가"
+        }
+      ],
+      "shops": [],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/04/14/deity-announces-pr-4-compact-field-recorder/"
+        }
+      ],
+      "added": "2026-04-14"
+    },
+    {
+      "id": "blackmagic-ursa-cine-12k-lf-100g",
+      "title": "블랙매직 URSA Cine 12K LF 100G",
+      "date": "2026-04-13",
+      "cat": "카메라",
+      "status": "공식",
+      "summary": "100G 이더넷 SMPTE-2110 라이브 출력 지원 12K 대형 포맷 시네마 카메라",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/04/1-blackmagic-ursa-cine-12k-lf-100g@2x-1100x620.jpg",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/04/13/blackmagic-design-announces-blackmagic-ursa-cine-12k-lf-100g/"
+      },
+      "specs": [
+        [
+          "센서",
+          "36x24mm 대형 포맷 RGBW"
+        ],
+        [
+          "BRAW",
+          "12K 80fps / 8K 144fps / 4K 240fps"
+        ],
+        [
+          "라이브 출력",
+          "SMPTE-2110 최대 2160p60, 최대 440fps"
+        ],
+        [
+          "마운트",
+          "PL, EF, LPL, B4 (옵션), E마운트 아님"
+        ],
+        [
+          "네트워크",
+          "100G 이더넷, RTMP·SRT 스트리밍"
+        ],
+        [
+          "무게",
+          "미확인"
+        ]
+      ],
+      "price": "$8,995",
+      "release": "2026년 3분기",
+      "features": [
+        "라이브 IP 방송용 12K 시네마 카메라",
+        "고속 리플레이용 고프레임 출력",
+        "Wi-Fi·모바일 데이터 연결"
+      ],
+      "compare": [
+        {
+          "ours": "a7m4",
+          "note": "미러리스 대비 방송·대형 프로덕션급, E마운트 미지원으로 팀 렌즈 호환 불가"
+        }
+      ],
+      "shops": [],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/04/13/blackmagic-design-announces-blackmagic-ursa-cine-12k-lf-100g/"
+        }
+      ],
+      "added": "2026-04-13"
+    },
+    {
+      "id": "tascam-dr-40xp",
+      "title": "타스캠 DR-40XP 휴대용 레코더",
+      "date": "2026-04-08",
+      "cat": "음향",
+      "status": "공식",
+      "summary": "내장 스테레오 마이크·XLR 2입력 4채널 32비트 플로트 핸디 레코더",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/04/DR-40XP_1-740x740.jpg",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/04/08/tascam-announces-the-dr-40xp-4-channel-32-bit-float-portable-handheld-recorder/"
+      },
+      "specs": [
+        [
+          "채널",
+          "4채널 (내장 마이크 2 + XLR/TRS 2)"
+        ],
+        [
+          "포맷",
+          "32비트 플로트, 최대 96kHz"
+        ],
+        [
+          "내장 마이크",
+          "A/B·X/Y 전환 단일지향 콘덴서"
+        ],
+        [
+          "인터페이스",
+          "USB-C 2in/2out"
+        ],
+        [
+          "전원",
+          "AA 3개, 최대 18시간"
+        ],
+        [
+          "무게",
+          "미확인"
+        ]
+      ],
+      "price": "$249",
+      "release": "예약 판매 중 (출고일 미확인)",
+      "features": [
+        "클리핑 없는 32비트 플로트",
+        "팬텀 전원 XLR 입력",
+        "USB 오디오 인터페이스 겸용"
+      ],
+      "compare": [
+        {
+          "ours": "Zoom H1n",
+          "note": "H1n보다 XLR 입력 갖춘 상위 휴대 레코더"
+        },
+        {
+          "ours": "Zoom H6",
+          "note": "H6보다 입력 적지만 32비트 플로트 지원"
+        }
+      ],
+      "shops": [],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/04/08/tascam-announces-the-dr-40xp-4-channel-32-bit-float-portable-handheld-recorder/"
+        }
+      ],
+      "added": "2026-04-08"
+    },
+    {
+      "id": "samyang-af-35-f18-p-fe",
+      "title": "삼양 AF 35mm F1.8 P FE",
+      "date": "2026-03-26",
+      "cat": "렌즈",
+      "status": "공식",
+      "summary": "216g 초경량 풀프레임 35mm F1.8 프리마 시리즈 신형",
+      "img": {
+        "url": "https://www.dailycameranews.com/wp-content/uploads/2026/03/samyang-af-35mm-f1-8-p-fe-sony-e-mount-900x600.webp",
+        "src": "Daily Camera News",
+        "page": "https://www.dailycameranews.com/2026/03/samyang-af-35mm-f1-8-p-fe-sony-e-mount/"
+      },
+      "specs": [
+        [
+          "마운트",
+          "Sony FE (풀프레임)"
+        ],
+        [
+          "무게",
+          "216g"
+        ],
+        [
+          "길이",
+          "71.5mm"
+        ],
+        [
+          "필터",
+          "62mm"
+        ],
+        [
+          "렌즈 구성",
+          "8군 10매 (비구면 2, XHR 2)"
+        ],
+        [
+          "조리개 날",
+          "9매 원형"
+        ],
+        [
+          "AF 모터",
+          "Linear STM II"
+        ],
+        [
+          "최단 초점거리",
+          "미확인"
+        ]
+      ],
+      "price": "EUR 299 / 국내 399,000원",
+      "release": "2026년 5월 출고 (유럽 기준, 매체별 상이)",
+      "features": [
+        "XHR 렌즈로 소형화",
+        "UMC II 코팅",
+        "방진방적",
+        "USB-C 펌웨어 업데이트 단자"
+      ],
+      "compare": [
+        {
+          "ours": "Sony 35mm F1.8",
+          "note": "같은 35mm F1.8 AF 단렌즈, 더 가볍고 저렴한 대안"
+        },
+        {
+          "ours": "Samyang 24mm T1.9",
+          "note": "수동 시네 렌즈 대비 AF 지원 사진·영상 겸용"
+        }
+      ],
+      "shops": [],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "Samyang 보도자료 (Focus Nordic)",
+          "url": "https://newsroom.notified.com/focus-nordic---global/posts/pressreleases/samyang-af-35mm-f18-p-fe-lightweight-prime-fo"
+        },
+        {
+          "name": "Daily Camera News",
+          "url": "https://www.dailycameranews.com/2026/03/samyang-af-35mm-f1-8-p-fe-sony-e-mount/"
+        }
+      ],
+      "added": "2026-03-26"
+    },
+    {
+      "id": "portkeys-lh7c",
+      "title": "포트키스 LH7C 7인치 모니터",
+      "date": "2026-03-19",
+      "cat": "모니터",
+      "status": "공식",
+      "summary": "245g 1000니트 7인치 카메라 제어 모니터",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/03/lQDPJwYf0S4zY8nNDZjNGDCwbtp91YTEcDoJdlitnQmbAQ_6192_3480.jpeg",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/03/19/portkeys-lh7c/"
+      },
+      "specs": [
+        [
+          "화면",
+          "7인치 1920x1080"
+        ],
+        [
+          "밝기",
+          "1,000니트"
+        ],
+        [
+          "입출력",
+          "HDMI in/out"
+        ],
+        [
+          "카메라 제어",
+          "유선 (A7 IV, A7S III, FX3 등)"
+        ],
+        [
+          "무게",
+          "245g"
+        ],
+        [
+          "크기",
+          "17.6x10.3x1.8cm"
+        ]
+      ],
+      "price": "$249 / 선후드 포함 $299",
+      "release": "미확인",
+      "features": [
+        "USB-C/HDMI 케이블로 카메라 제어",
+        "소니·캐논·파나소닉 지원"
+      ],
+      "compare": [
+        {
+          "ours": "Hollyland Pyro 7 모니터",
+          "note": "무선 송수신 없이 가볍고 저렴한 7인치"
+        },
+        {
+          "ours": "Desview p5 모니터",
+          "note": "더 큰 7인치 화면에 a7m4 유선 제어 지원"
+        }
+      ],
+      "shops": [],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/03/19/portkeys-lh7c/"
+        }
+      ],
+      "added": "2026-03-19"
+    },
+    {
+      "id": "audio-technica-atv-sg1",
+      "title": "오디오테크니카 ATV-SG1·SG1LE 온카메라 샷건",
+      "date": "2026-03-18",
+      "cat": "음향",
+      "status": "공식",
+      "summary": "충전식 상위형과 플러그인 전원 보급형 온카메라 샷건 마이크",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/03/Screenshot-2026-03-18-at-19.15.54-740x497.png",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/03/18/audio-technica-atv-sg1-sg1le-on-camera-shotgun-mics/"
+      },
+      "specs": [
+        [
+          "캡슐",
+          "14mm 대구경"
+        ],
+        [
+          "음향관",
+          "100mm"
+        ],
+        [
+          "전원",
+          "SG1 USB-C 충전 최대 24시간 / SG1LE 플러그인 전원"
+        ],
+        [
+          "출력",
+          "3.5mm"
+        ],
+        [
+          "무게",
+          "미확인"
+        ]
+      ],
+      "price": "ATV-SG1 $249 / ATV-SG1LE $119",
+      "release": "미확인",
+      "features": [
+        "SG1 세이프티 트랙 분리 녹음",
+        "헤드폰 모니터링",
+        "SG1LE 배터리 불필요"
+      ],
+      "compare": [
+        {
+          "ours": "RODE VideoMic Pro",
+          "note": "같은 온카메라 샷건, 충전식·세이프티 트랙 추가"
+        },
+        {
+          "ours": "COMICA VM40",
+          "note": "동급 온카메라 마이크, 더 긴 사용 시간"
+        }
+      ],
+      "shops": [],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/03/18/audio-technica-atv-sg1-sg1le-on-camera-shotgun-mics/"
+        }
+      ],
+      "added": "2026-03-18"
+    },
+    {
+      "id": "laowa-17-f4-zero-d-tilt-shift",
+      "title": "라오와 17mm F4 Zero-D 틸트시프트·시프트",
+      "date": "2026-03-10",
+      "cat": "렌즈",
+      "status": "공식",
+      "summary": "왜곡 최소 17mm 초광각 틸트시프트·시프트 렌즈 2종",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/03/Screenshot-2026-03-08-at-14.38.34-1100x620.jpg",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/03/10/laowa-17mm-f-4-zero-d-tilt-shift-shift-lenses/"
+      },
+      "specs": [
+        [
+          "마운트",
+          "Sony E, Nikon Z, Canon RF, L, GFX, XCD"
+        ],
+        [
+          "화각",
+          "104°"
+        ],
+        [
+          "시프트",
+          "±12mm (TS) / ±11mm (시프트)"
+        ],
+        [
+          "조리개 날",
+          "14매"
+        ],
+        [
+          "최단 초점거리",
+          "25cm"
+        ],
+        [
+          "필터",
+          "86mm"
+        ],
+        [
+          "무게",
+          "미확인"
+        ]
+      ],
+      "price": "틸트시프트 $1,249 / 시프트 $999",
+      "release": "2026-03-10 판매 시작",
+      "features": [
+        "Zero-D 저왜곡 설계",
+        "중형 포맷 커버 대형 이미지 서클",
+        "아르카 스위스 일체형 마운트",
+        "15° 간격 360° 회전"
+      ],
+      "compare": [
+        {
+          "ours": "Samyang 24mm T1.9",
+          "note": "팀 최광각 24mm보다 넓은 17mm, 건축·인테리어 원근 보정용 수동 렌즈"
+        }
+      ],
+      "shops": [],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/03/10/laowa-17mm-f-4-zero-d-tilt-shift-shift-lenses/"
+        }
+      ],
+      "added": "2026-03-10"
+    },
+    {
+      "id": "desview-r7s-iii",
+      "title": "데스뷰 R7S III 7인치 모니터",
+      "date": "2026-03-09",
+      "cat": "모니터",
+      "status": "공식",
+      "summary": "2800니트 고휘도 HDMI·SDI 7인치 터치 모니터",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/03/DESVIEW-1100x620.jpg",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/03/09/desview-r7s-iii-7-high-bright-1080p-touchscreen-hdmi-3g-sdi-monitor/"
+      },
+      "specs": [
+        [
+          "화면",
+          "7인치 IPS 1920x1080 터치, 10bit"
+        ],
+        [
+          "밝기",
+          "2,800cd/m²"
+        ],
+        [
+          "입출력",
+          "HDMI 2.0 + 3G-SDI (DCI 4K60 입력)"
+        ],
+        [
+          "전원",
+          "USB-C·DC, 8V DC 출력"
+        ],
+        [
+          "배터리",
+          "듀얼 L시리즈 또는 V마운트"
+        ],
+        [
+          "무게",
+          "미확인"
+        ]
+      ],
+      "price": "듀얼 L시리즈 $329 / V마운트 $269",
+      "release": "L시리즈 예약 판매, V마운트 판매 중",
+      "features": [
+        "LUT 불러오기",
+        "파형·벡터스코프·포커스 피킹",
+        "카메라 전원 공급"
+      ],
+      "compare": [
+        {
+          "ours": "Desview p5 모니터",
+          "note": "같은 브랜드 상위 7인치, 야외용 고휘도·SDI 추가"
+        },
+        {
+          "ours": "Lilliput 모니터",
+          "note": "고휘도 야외 촬영용 대안"
+        }
+      ],
+      "shops": [],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/03/09/desview-r7s-iii-7-high-bright-1080p-touchscreen-hdmi-3g-sdi-monitor/"
+        }
+      ],
+      "added": "2026-03-09"
+    },
+    {
+      "id": "amaran-halo-series",
+      "title": "아마란 Halo 시리즈 (60x~600x)",
+      "date": "2026-03-04",
+      "cat": "조명",
+      "status": "공식",
+      "summary": "63W~610W 5종 저가형 바이컬러 COB 조명 라인업",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/03/1_amaranHalo60x_Hero_1x1-1.jpeg",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/03/04/amaran-halo-series/"
+      },
+      "specs": [
+        [
+          "Halo 60x",
+          "63W / 1.05kg / USB-C PD / 1m 3,270lux"
+        ],
+        [
+          "Halo 100x",
+          "100W / 1.21kg / USB-C PD"
+        ],
+        [
+          "Halo 200x",
+          "200W / 2.45kg / AC 내장 전원"
+        ],
+        [
+          "Halo 300x",
+          "305W / 2.85kg / AC 내장 전원"
+        ],
+        [
+          "Halo 600x",
+          "610W / 3.36kg / 1m 32,500lux"
+        ],
+        [
+          "타입",
+          "바이컬러 COB (색온도 범위 미확인)"
+        ]
+      ],
+      "price": "$119(60x)~$469(600x)",
+      "release": "출시 완료",
+      "features": [
+        "밝기·색온도 독립 노브",
+        "전 모델 USB-C DMX",
+        "NFC로 앱 등록"
+      ],
+      "compare": [
+        {
+          "ours": "60B 조명 Nanlite",
+          "note": "Halo 60x가 비슷한 출력에 USB-C PD 전원"
+        },
+        {
+          "ours": "지윤 G200 300W",
+          "note": "Halo 300x가 동급 출력 저가 대안"
+        },
+        {
+          "ours": "80W 조명 Bowens",
+          "note": "Halo 100x가 소폭 상위 출력"
+        }
+      ],
+      "shops": [],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/03/04/amaran-halo-series/"
+        }
+      ],
+      "added": "2026-03-04"
+    },
+    {
+      "id": "atomos-ninja-raw",
+      "title": "아토모스 Ninja RAW",
+      "date": "2026-02-26",
+      "cat": "모니터",
+      "status": "공식",
+      "summary": "$699 5인치 1500nits ProRes RAW 모니터 레코더",
+      "specs": [
+        [
+          "화면",
+          "5인치 터치스크린"
+        ],
+        [
+          "밝기",
+          "1500nits"
+        ],
+        [
+          "RAW 녹화",
+          "ProRes RAW / RAW HQ, HDMI 최대 6Kp30"
+        ],
+        [
+          "코덱",
+          "ProRes 422 HQ·422·LT, H.265"
+        ],
+        [
+          "저장",
+          "CFexpress Type B / USB-C 외장"
+        ],
+        [
+          "전원",
+          "NP-F / USB-C 보조배터리 / DC"
+        ],
+        [
+          "무게",
+          "미확인"
+        ]
+      ],
+      "price": "$699 / €699",
+      "release": "발표 시 판매 개시",
+      "features": [
+        "USB-C 카메라 제어(녹화·ISO·셔터·조리개·WB·터치 AF)",
+        "EL Zone 폴스컬러·파형·벡터스코프",
+        "어니언 스킨 오버레이",
+        "주요 NLE 호환"
+      ],
+      "compare": [
+        {
+          "ours": "Desview p5 모니터",
+          "note": "비슷한 5인치급에 외부 RAW·ProRes 녹화 기능 추가"
+        },
+        {
+          "ours": "a7m4",
+          "note": "a7m4 RAW 출력 지원 여부는 원문에 없어 미확인"
+        }
+      ],
+      "shops": [],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/02/26/atomos-ninja-raw/"
+        }
+      ],
+      "added": "2026-02-26"
+    },
+    {
+      "id": "accsoon-cineview-se-4k",
+      "title": "악순 CineView SE 4K 무선 영상 송수신기",
+      "date": "2026-02-26",
+      "cat": "모니터",
+      "status": "공식",
+      "summary": "카메라 제어 지원하는 $499 4K30 무선 영상 전송 시스템",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/02/rgba-10-740x740.jpeg",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/02/26/accsoon-cineview-se-4k-wireless-video-transmission-system-with-camera-control-capabilities/"
+      },
+      "specs": [
+        [
+          "해상도",
+          "최대 UHD 4K30 (H.265)"
+        ],
+        [
+          "전송 거리",
+          "최대 400m (가시거리)"
+        ],
+        [
+          "지연",
+          "50ms 미만"
+        ],
+        [
+          "대역",
+          "2.4GHz + 5GHz 듀얼"
+        ],
+        [
+          "동시 모니터링",
+          "최대 5대"
+        ],
+        [
+          "Sony 카메라 제어",
+          "FX3, FX30, A7C II, A7S III, A7 IV, A9 III"
+        ]
+      ],
+      "price": "$499",
+      "release": "발표 시 구매 가능",
+      "features": [
+        "ISO·조리개·셔터·WB·터치 AF·녹화 트리거 원격 제어",
+        "비트레이트 12단계",
+        "CineView M7 Pro·Accsoon SEE 앱 연동"
+      ],
+      "compare": [
+        {
+          "ours": "Hollyland Pyro H",
+          "note": "같은 무선 영상 송수신 용도, 4K30 전송과 a7m4 카메라 제어 지원"
+        },
+        {
+          "ours": "a7m4",
+          "note": "A7 IV가 카메라 제어 지원 목록에 포함, a7s2는 미포함"
+        }
+      ],
+      "shops": [],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/02/26/accsoon-cineview-se-4k-wireless-video-transmission-system-with-camera-control-capabilities/"
+        }
+      ],
+      "added": "2026-02-26"
+    },
+    {
+      "id": "sigma-35-f14-dg-ii-art",
+      "title": "시그마 35mm F1.4 DG II Art",
+      "date": "2026-02-24",
+      "cat": "렌즈",
+      "status": "공식",
+      "summary": "이전 모델보다 약 20% 가볍고 14% 짧아진 35mm F1.4 2세대",
+      "img": {
+        "url": "https://www.sigma-global.com/en/news/images/a026_35_14_pr.jpg",
+        "src": "SIGMA",
+        "page": "https://www.sigma-global.com/en/news/2026/02/24/011999/"
+      },
+      "specs": [
+        [
+          "마운트",
+          "Sony E / L-Mount"
+        ],
+        [
+          "무게",
+          "525g (Sony E) / 530g (L)"
+        ],
+        [
+          "필터",
+          "67mm"
+        ],
+        [
+          "최단 초점거리",
+          "28cm"
+        ],
+        [
+          "렌즈 구성",
+          "15매 12군 (비구면 4매, SLD 2매)"
+        ],
+        [
+          "AF",
+          "듀얼 HLA 리니어 모터"
+        ]
+      ],
+      "price": "$1,059",
+      "release": "2026-04-16",
+      "features": [
+        "조리개 링·잠금 스위치·클릭 on/off 스위치",
+        "AFL 버튼 2개",
+        "방적 구조·전면 발수 코팅",
+        "플로팅 포커스"
+      ],
+      "compare": [
+        {
+          "ours": "Sony 35mm F1.8",
+          "note": "같은 35mm 화각에 F1.4로 더 밝지만 무게는 크게 증가"
+        },
+        {
+          "ours": "Samyang 24mm T1.9",
+          "note": "수동 시네 렌즈 대비 AF와 디클릭 조리개 링으로 영상·사진 겸용"
+        }
+      ],
+      "shops": [],
+      "reviews": [
+        {
+          "src": "Amateur Photographer",
+          "text": "전 조리개 구간 선명도와 경량화, 가격 대비 가치 호평",
+          "url": "https://amateurphotographer.com/review/sigma-35mm-f1-4-dg-il-art-review/"
+        }
+      ],
+      "sources": [
+        {
+          "name": "SIGMA",
+          "url": "https://www.sigma-global.com/en/news/2026/02/24/011999/"
+        },
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/02/23/sigma-35mm-f1-4-dg-ii-art/"
+        }
+      ],
+      "added": "2026-02-24"
+    },
+    {
+      "id": "sigma-15-f14-dc-c",
+      "title": "시그마 15mm F1.4 DC Contemporary",
+      "date": "2026-02-24",
+      "cat": "렌즈",
+      "status": "공식",
+      "summary": "220g의 작고 가벼운 APS-C 광각 F1.4 단렌즈",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/02/LeonieEbbert_Product_013-1-1100x620.jpeg",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/02/23/sigma-15mm-f1-4-dc-contemporary/"
+      },
+      "specs": [
+        [
+          "마운트",
+          "Sony E / Canon RF / Fujifilm X"
+        ],
+        [
+          "포맷",
+          "APS-C (35mm 환산 22.5mm)"
+        ],
+        [
+          "무게",
+          "220g"
+        ],
+        [
+          "길이",
+          "64.8mm"
+        ],
+        [
+          "필터",
+          "58mm"
+        ],
+        [
+          "최단 초점거리",
+          "17.7cm"
+        ],
+        [
+          "AF",
+          "스테핑 모터"
+        ]
+      ],
+      "price": "$579",
+      "release": "2026-03-12",
+      "features": [
+        "Sony·Fuji 버전 조리개 링",
+        "포커스 브리딩 최소화",
+        "원형 9매 조리개",
+        "방적 구조·전면 코팅"
+      ],
+      "compare": [
+        {
+          "ours": "Samyang 24mm T1.9",
+          "note": "APS-C 전용 렌즈로 우리 풀프레임 a7m4·a7s2에서는 크롭 모드 필요"
+        }
+      ],
+      "shops": [],
+      "reviews": [
+        {
+          "src": "Photography News",
+          "text": "선명도·밝기·가성비 우수, 손떨림 보정과 커스텀 버튼 부재",
+          "url": "https://www.photographynews.co.uk/reviews/sigma-contemporary-15mm-f-1-4-dc-review/"
+        }
+      ],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/02/23/sigma-15mm-f1-4-dc-contemporary/"
+        },
+        {
+          "name": "ProVideo Coalition",
+          "url": "https://www.provideocoalition.com/sigma-launches-35mm-f1-4-dg-ii-art-and-15mm-f1-4-dc-contemporary/amp/"
+        }
+      ],
+      "added": "2026-02-24"
+    },
+    {
+      "id": "zeiss-otus-ml-35-f14",
+      "title": "자이스 Otus ML 1.4/35",
+      "date": "2026-02-24",
+      "cat": "렌즈",
+      "status": "공식",
+      "summary": "디클릭 조리개 링을 갖춘 금속 바디 수동 초점 35mm F1.4",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/02/Screenshot-2026-02-24-at-19.07.35-740x674.png",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/02/24/zeiss-otus-ml-1-4-35/"
+      },
+      "specs": [
+        [
+          "마운트",
+          "Sony E / Canon RF / Nikon Z"
+        ],
+        [
+          "초점",
+          "수동(MF)"
+        ],
+        [
+          "무게",
+          "698g (Sony E)"
+        ],
+        [
+          "길이",
+          "101mm (Sony E, 캡 제외)"
+        ],
+        [
+          "필터",
+          "M67"
+        ],
+        [
+          "최단 초점거리",
+          "0.3m"
+        ],
+        [
+          "렌즈 구성",
+          "15매 11군"
+        ]
+      ],
+      "price": "$2,299",
+      "release": "미확인 (발표 시 예약 판매)",
+      "features": [
+        "Distagon 광학 설계",
+        "조리개 날 10매",
+        "디클릭 조리개 링",
+        "풀 메탈 바디",
+        "T* 반사 방지 코팅"
+      ],
+      "compare": [
+        {
+          "ours": "Sony 35mm F1.8",
+          "note": "같은 35mm지만 AF 없는 수동 렌즈, 무게·가격 모두 대폭 상승"
+        },
+        {
+          "ours": "Samyang 45mm T1.9",
+          "note": "수동 포커스 운용 방식은 같고, 광학·만듦새는 고급 지향"
+        }
+      ],
+      "shops": [],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/02/24/zeiss-otus-ml-1-4-35/"
+        },
+        {
+          "name": "ZEISS 데이터시트",
+          "url": "https://www.zeiss.co.uk/content/dam/pno/downloads/photo-lenses/datasheets/otus-ml-lenses/datasheet-zeiss-otus-ml-1435.pdf"
+        }
+      ],
+      "added": "2026-02-24"
+    },
+    {
+      "id": "tamron-35-100-f28-a078",
+      "title": "탐론 35-100mm F2.8 Di III VXD",
+      "date": "2026-02-19",
+      "cat": "렌즈",
+      "status": "공식",
+      "summary": "565g의 가볍고 작은 풀프레임 F2.8 인물용 줌",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/02/Screenshot-2026-02-19-at-13.00.20-740x536.png",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/02/18/tamron-35-100mm-f-2-8-di-iii-vxd/"
+      },
+      "specs": [
+        [
+          "마운트",
+          "Sony E / Nikon Z (풀프레임)"
+        ],
+        [
+          "무게",
+          "565g (Sony E)"
+        ],
+        [
+          "길이",
+          "약 119mm (Sony E)"
+        ],
+        [
+          "필터",
+          "67mm"
+        ],
+        [
+          "최단 초점거리",
+          "22.09cm(35mm) / 65cm(100mm)"
+        ],
+        [
+          "렌즈 구성",
+          "15매 13군, 조리개 날 9매"
+        ],
+        [
+          "AF",
+          "VXD 리니어 모터"
+        ]
+      ],
+      "price": "$899 (Sony E) / $929 (Nikon Z)",
+      "release": "2026-03-26 매장 출시 (Photo Review 기준)",
+      "features": [
+        "35~100mm 전 구간 F2.8 고정",
+        "Tamron Lens Utility 커넥터 포트",
+        "방습 구조·불소 코팅",
+        "손떨림 보정 미탑재"
+      ],
+      "compare": [
+        {
+          "ours": "Sony 35mm F1.8",
+          "note": "35mm 화각을 포함하는 줌이지만 최대 개방은 F2.8로 한 스톱 이상 어두움"
+        },
+        {
+          "ours": "Sony 85mm F1.8",
+          "note": "85mm 인물 화각까지 한 렌즈로 커버, 단렌즈 교체 부담 감소"
+        },
+        {
+          "ours": "Sony 90mm F2.8",
+          "note": "망원단 100mm로 90mm 화각 대체 가능, 단 매크로 배율은 아님"
+        }
+      ],
+      "shops": [],
+      "reviews": [
+        {
+          "src": "Photo Review",
+          "text": "가볍고 방진방습인 일상용 줌, 개방 시 주변부 화질 저하는 보정 필요",
+          "url": "https://www.photoreview.com.au/reviews/mirrorless-lenses/mirrorless-lenses-full-frame/tamron-35-100mm-f-2-8-di-iii-vxd-model-a078-lens/"
+        },
+        {
+          "src": "Amateur Photographer",
+          "text": "인물에 맞는 화각과 합리적 가격 호평, 광각단 부족은 단점",
+          "url": "https://amateurphotographer.com/review/tamron-35-100mm-f-2-8-di-iii-vxd-review/"
+        }
+      ],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/02/18/tamron-35-100mm-f-2-8-di-iii-vxd/"
+        },
+        {
+          "name": "Photo Review",
+          "url": "https://www.photoreview.com.au/reviews/mirrorless-lenses/mirrorless-lenses-full-frame/tamron-35-100mm-f-2-8-di-iii-vxd-model-a078-lens/"
+        }
+      ],
+      "added": "2026-02-19"
+    },
+    {
+      "id": "voigtlander-septon-40-f2",
+      "title": "보이그랜더 SEPTON 40mm F2 Aspherical",
+      "date": "2026-02-15",
+      "cat": "렌즈",
+      "status": "공식",
+      "summary": "전자 접점 지원하는 납작한 수동 초점 40mm F2",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/02/Screenshot-2026-02-16-at-10.24.29.jpeg",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/02/15/voigtlander-septon-40mm-f2-aspherical-e-mount-z-mount/"
+      },
+      "specs": [
+        [
+          "마운트",
+          "Sony E / Nikon Z (풀프레임)"
+        ],
+        [
+          "길이",
+          "마운트면 기준 32mm"
+        ],
+        [
+          "최단 초점거리",
+          "30cm"
+        ],
+        [
+          "렌즈 구성",
+          "7매"
+        ],
+        [
+          "후드 나사",
+          "52mm"
+        ]
+      ],
+      "price": "¥85,000",
+      "release": "2026년 4월",
+      "features": [
+        "금속 헬리코이드 수동 초점",
+        "전자 접점으로 Exif·바디 손떨림 보정 연동",
+        "돔형 금속 스크루 후드"
+      ],
+      "compare": [
+        {
+          "ours": "Sony 35mm F1.8",
+          "note": "AF 없는 수동 렌즈, 대신 훨씬 얇은 팬케이크형"
+        },
+        {
+          "ours": "Samyang 45mm T1.9",
+          "note": "비슷한 표준 화각, 시네 기어 없는 사진형 수동 렌즈"
+        }
+      ],
+      "shops": [],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/02/15/voigtlander-septon-40mm-f2-aspherical-e-mount-z-mount/"
+        }
+      ],
+      "added": "2026-02-15"
+    },
+    {
+      "id": "tilta-nucleus-af-adapter",
+      "title": "틸타 Nucleus 오토포커스 어댑터 (E-PL)",
+      "date": "2026-02-05",
+      "cat": "렌즈",
+      "status": "공식",
+      "summary": "Sony FX 카메라 AF로 PL 수동 렌즈를 구동하는 저가형 어댑터",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/02/Screenshot-2026-02-06-at-12.21.29%20PM-740x421.jpg",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/02/05/tilta-nucleus-autofocus-adapter-officially-announced/"
+      },
+      "specs": [
+        [
+          "마운트",
+          "PL 입력 → Sony E (Canon RF 추후)"
+        ],
+        [
+          "지원 카메라",
+          "Sony FX2 / FX3 / FX30 / FX6"
+        ],
+        [
+          "AF 방식",
+          "카메라 위상차 AF 데이터 → Nucleus-M II·Nano II 무선 모터"
+        ]
+      ],
+      "price": "$269부터 / 듀얼 Nano II 모터 키트 $449",
+      "release": "2026-04-07 이후 출고",
+      "features": [
+        "두 모터 사용 시 카메라에서 조리개 제어",
+        "앱 없이 어댑터 자체 렌즈 캘리브레이션",
+        "Nucleus-M II로 수동 포커스 오버라이드"
+      ],
+      "compare": [
+        {
+          "ours": "a7m4",
+          "note": "공식 지원 목록이 FX 계열뿐이라 a7m4·a7s2 사용 미확인"
+        },
+        {
+          "ours": "Samyang 24mm T1.9",
+          "note": "PL 렌즈 전용이라 우리 E마운트 삼양 렌즈와 무관"
+        }
+      ],
+      "shops": [],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/02/05/tilta-nucleus-autofocus-adapter-officially-announced/"
+        }
+      ],
+      "added": "2026-02-05"
+    },
+    {
+      "id": "nanlite-fc-720b-720c",
+      "title": "난라이트 FC-720B / FC-720C",
+      "date": "2026-02-03",
+      "cat": "조명",
+      "status": "공식",
+      "summary": "보웬스 마운트 750W 바이컬러·풀컬러 COB 라이트",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/02/FC-720B_001-740x740.jpg",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/02/03/nanlite-fc-720b-fc-720c/"
+      },
+      "specs": [
+        [
+          "소비전력",
+          "750W"
+        ],
+        [
+          "밝기",
+          "FC-720B 12,690lux / FC-720C 11,400lux (3m, 5600K, 45° 리플렉터)"
+        ],
+        [
+          "색온도",
+          "720B 2700~6500K / 720C 2400~12000K"
+        ],
+        [
+          "무게",
+          "헤드 약 4.4kg / 전원부 2.12kg"
+        ],
+        [
+          "마운트",
+          "보웬스"
+        ]
+      ],
+      "price": "$649 (FC-720B) / $749 (FC-720C)",
+      "release": "발표 시 출고",
+      "features": [
+        "DMX 5핀 유선·NANLINK 앱 무선 제어",
+        "NFC 빠른 앱 연결",
+        "팬 모드 4종",
+        "720C: HSI·RGBW·젤 460종·효과 15종"
+      ],
+      "compare": [
+        {
+          "ours": "80W 조명 Bowens",
+          "note": "같은 보웬스 마운트, 출력은 약 9배급으로 키라이트 대체 가능"
+        },
+        {
+          "ours": "지윤 G200 300W",
+          "note": "300W 대비 2배 이상 출력, 대신 무게·전원부 부담"
+        }
+      ],
+      "shops": [],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/02/03/nanlite-fc-720b-fc-720c/"
+        }
+      ],
+      "added": "2026-02-03"
+    },
+    {
+      "id": "dji-rs-5",
+      "title": "DJI RS 5 짐벌",
+      "date": "2026-01-29",
+      "cat": "짐벌",
+      "status": "공식",
+      "summary": "자석식 AI 트래킹 모듈과 14시간 배터리를 갖춘 미러리스용 짐벌",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/01/01.jpeg",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/01/29/dji-rs-5-gimbal/"
+      },
+      "specs": [
+        [
+          "탑재 하중",
+          "최대 2.97kg"
+        ],
+        [
+          "무게",
+          "1.46kg (배터리 그립·퀵릴리즈 플레이트 포함)"
+        ],
+        [
+          "배터리",
+          "표준 14시간 / BG70 그립 사용 시 30시간"
+        ],
+        [
+          "충전",
+          "65W PD 충전 시 약 1시간"
+        ],
+        [
+          "트래킹",
+          "최대 10m 거리 인물 추적"
+        ]
+      ],
+      "price": "$569 (단품) / $719 (콤보: AI 트래킹 모듈·브리프케이스 핸들 포함)",
+      "release": "발표 당일 예약 판매, 출고일 미확인",
+      "features": [
+        "사람·차량·반려동물 추적 가능한 분리형 AI 트래킹·프레이밍 모듈",
+        "Z축 수직 흔들림 표시",
+        "2세대 자동 축 잠금",
+        "OLED 터치스크린",
+        "3세대 세로 촬영 전환",
+        "블루투스 셔터 Sony·Canon·Nikon·Panasonic·Fujifilm 지원"
+      ],
+      "compare": [
+        {
+          "ours": "Ronin RS3 짐벌",
+          "note": "RS3 대비 트래킹 모듈·배터리 시간·자동 축 잠금 세대 업그레이드"
+        }
+      ],
+      "shops": [],
+      "reviews": [
+        {
+          "src": "CGMagazine",
+          "text": "축별 미세 조정 노브와 비인물 트래킹 호평, 10점 만점",
+          "url": "https://www.cgmagonline.com/review/hardware/dji-rs-5-gimbal/"
+        },
+        {
+          "src": "ProVideo Coalition",
+          "text": "믿을 만한 개선판이지만 트래킹 모듈이 운반 중 빠지기 쉬운 점은 아쉬움",
+          "url": "https://www.provideocoalition.com/dji-rs-5-review-refining-the-workhorse/"
+        }
+      ],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/01/29/dji-rs-5-gimbal/"
+        }
+      ],
+      "added": "2026-01-29"
+    },
+    {
+      "id": "blazar-talon-15x-af-anamorphic",
+      "title": "Blazar TALON 1.5X AF 아나모픽 렌즈",
+      "date": "2026-01-29",
+      "cat": "렌즈",
+      "status": "공식",
+      "summary": "E마운트 전용 풀프레임 오토포커스 1.5배 아나모픽 렌즈 3종",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/01/Talon-1100x620.jpg",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/01/29/blazar-talon-1-5x-af-anamorphic-lenses/"
+      },
+      "specs": [
+        [
+          "마운트",
+          "Sony E (초기 전용)"
+        ],
+        [
+          "초점거리",
+          "35mm / 50mm / 75mm"
+        ],
+        [
+          "밝기",
+          "T2.1 (35mm), 그 외 미확인"
+        ],
+        [
+          "무게",
+          "664g~689g"
+        ],
+        [
+          "스퀴즈",
+          "1.5x"
+        ],
+        [
+          "이미지 서클",
+          "36 x 24mm"
+        ],
+        [
+          "필터",
+          "77mm (전면 80mm)"
+        ]
+      ],
+      "price": "예약가 $999 / 정가 $1,099 (렌즈당)",
+      "release": "2026-02-03 예약 시작, 2월 초 출고 예정",
+      "features": [
+        "AF/MF 스위치",
+        "1.8x에 가까운 아나모픽 룩 주장",
+        "포커스 기어 미탑재"
+      ],
+      "compare": [
+        {
+          "ours": "Samyang 45mm T1.9",
+          "note": "수동 구면 시네 렌즈 대비 AF와 아나모픽 플레어·보케 룩"
+        },
+        {
+          "ours": "Samyang 75mm T1.9",
+          "note": "같은 75mm 화각, 1.5x 스퀴즈로 실제 가로 화각은 더 넓음"
+        }
+      ],
+      "shops": [],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/01/29/blazar-talon-1-5x-af-anamorphic-lenses/"
+        }
+      ],
+      "added": "2026-01-29"
+    },
+    {
+      "id": "lilliput-v7",
+      "title": "릴리풋 V7 음성 제어 7인치 모니터",
+      "date": "2026-01-25",
+      "cat": "모니터",
+      "status": "공식",
+      "summary": "음성·터치 조작 지원하는 $217.60 7인치 온카메라 모니터",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/01/Screenshot-2026-01-26-at-7.47.52-740x571.png",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/01/25/lilliput-7-voice-control-on-camera-monitor-v7/"
+      },
+      "specs": [
+        [
+          "화면",
+          "7인치 1920x1200"
+        ],
+        [
+          "밝기",
+          "450cd/m²"
+        ],
+        [
+          "입출력",
+          "HDMI 2.0 입·출력 (4K60)"
+        ],
+        [
+          "전원",
+          "USB-C / DC 2.5mm / L시리즈·NP-F 배터리"
+        ],
+        [
+          "무게",
+          "미확인"
+        ]
+      ],
+      "price": "$217.60",
+      "release": "B&H 판매 중",
+      "features": [
+        "음성·터치스크린 제어",
+        "파형·히스토그램·폴스컬러",
+        "선후드·볼헤드 슈마운트 포함"
+      ],
+      "compare": [
+        {
+          "ours": "Lilliput 모니터",
+          "note": "같은 릴리풋 계열, 음성 제어와 4K60 HDMI 입력 추가"
+        },
+        {
+          "ours": "Hollyland Pyro 7 모니터",
+          "note": "같은 7인치, 무선 송수신 기능은 없고 밝기 450nits로 야외에 약함"
+        }
+      ],
+      "shops": [],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/01/25/lilliput-7-voice-control-on-camera-monitor-v7/"
+        }
+      ],
+      "added": "2026-01-25"
+    },
+    {
+      "id": "nanlite-pavoslim-360c",
+      "title": "난라이트 PavoSlim 360C",
+      "date": "2026-01-22",
+      "cat": "조명",
+      "status": "공식",
+      "summary": "두께 1.96cm의 4x2피트 초박형 풀컬러 소프트 패널",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/01/1_1-Post-after-Jan.-22-2026-8PM-UTC8-740x740.jpg",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/01/22/nanlite-pavoslim-360c-ultra-thin-4-x-2-rgbww-soft-panel-light/"
+      },
+      "specs": [
+        [
+          "소비전력",
+          "370W"
+        ],
+        [
+          "밝기",
+          "27,060lux (1m, 5600K)"
+        ],
+        [
+          "두께",
+          "1.96cm"
+        ],
+        [
+          "무게",
+          "패널 5.73kg / 전원·컨트롤러 3.28kg"
+        ],
+        [
+          "크기",
+          "4 x 2피트"
+        ],
+        [
+          "CRI/TLCI",
+          "평균 96/97"
+        ]
+      ],
+      "price": "$2,490",
+      "release": "발표 시 출고",
+      "features": [
+        "RGBWW 풀컬러, 젤 460종·효과 15종",
+        "AC·DC·V마운트 배터리 핫스왑",
+        "팬리스 마그네슘 바디",
+        "DMX/RDM·CRMX 지원"
+      ],
+      "compare": [
+        {
+          "ours": "60B 조명 Nanlite",
+          "note": "같은 난라이트 계열, 소형 COB 대비 넓은 면광원 소프트 조명"
+        },
+        {
+          "ours": "튜브라이트 (알리산)",
+          "note": "튜브보다 훨씬 넓고 부드러운 풀컬러 면광원, 가격대는 고급"
+        }
+      ],
+      "shops": [],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/01/22/nanlite-pavoslim-360c-ultra-thin-4-x-2-rgbww-soft-panel-light/"
+        }
+      ],
+      "added": "2026-01-22"
+    },
+    {
+      "id": "behringer-flow-4v",
+      "title": "베링거 FLOW 4V 필드 레코더",
+      "date": "2026-01-18",
+      "cat": "음향",
+      "status": "공식",
+      "summary": "$279에 32bit float·타임코드 갖춘 10트랙 필드 레코더",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/01/Screenshot-2026-01-19-at-14.35.18-740x374.png",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/01/18/behringer-flow-4v-a-10-track-32-bit-float-field-recorder-with-timecode/"
+      },
+      "specs": [
+        [
+          "프리앰프",
+          "Midas 듀얼 게인 4채널"
+        ],
+        [
+          "녹음",
+          "SD 카드 10채널 (아이솔 8 + 스테레오 믹스)"
+        ],
+        [
+          "포맷",
+          "32bit float / 24bit"
+        ],
+        [
+          "타임코드",
+          "SMPTE 송수신·잼싱크"
+        ],
+        [
+          "전원",
+          "USB-C PD 2포트 / StageConnect"
+        ]
+      ],
+      "price": "$279",
+      "release": "미확인",
+      "features": [
+        "8채널 믹서·EQ·다이내믹스·오토믹스",
+        "프리레코드 버퍼",
+        "HDMI CEC 카메라 녹화 연동",
+        "블루투스 앱 원격 제어",
+        "12in/2out USB 오디오 인터페이스"
+      ],
+      "compare": [
+        {
+          "ours": "Zoom H6",
+          "note": "H6처럼 다채널이지만 32bit float와 타임코드 추가"
+        },
+        {
+          "ours": "Zoom F1",
+          "note": "F1보다 크지만 4채널 프리앰프로 다인 인터뷰 대응"
+        }
+      ],
+      "shops": [],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/01/18/behringer-flow-4v-a-10-track-32-bit-float-field-recorder-with-timecode/"
+        }
+      ],
+      "added": "2026-01-18"
+    },
+    {
+      "id": "viltrox-nexusfocus-f1",
+      "title": "빌트록스 NexusFocus F1 오토포커스 어댑터",
+      "date": "2026-01-15",
+      "cat": "렌즈",
+      "status": "공식",
+      "summary": "PL 수동 시네 렌즈를 Sony 카메라 AF로 구동하는 PL-E 어댑터",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/01/DSC0761-740x494.jpeg",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/01/15/viltrox-nexusfocus-f1-adapter-officially-announced/"
+      },
+      "specs": [
+        [
+          "마운트",
+          "PL 입력 → Sony E 출력"
+        ],
+        [
+          "AF 방식",
+          "카메라 PDAF·피사체 인식 신호로 외부 모터 구동"
+        ],
+        [
+          "모터",
+          "기본 2개 / 3모터 키트 별도"
+        ],
+        [
+          "전원",
+          "USB-C PD, DC 5~20V (35W 이상 권장)"
+        ]
+      ],
+      "price": "킥스타터 $699~$1,049 / 정가 $1,099(2모터)·$1,299(3모터)",
+      "release": "2026-01-15 킥스타터 시작, 출고일 미확인",
+      "features": [
+        "카메라에서 조리개·줌 제어",
+        "Sony Monitor & Ctrl 앱 원격 제어",
+        "렌즈 프리셋 저장·자동 캘리브레이션(iOS)",
+        "상단 디스플레이"
+      ],
+      "compare": [
+        {
+          "ours": "Samyang 24mm T1.9",
+          "note": "PL 렌즈 전용이라 우리 E마운트 삼양 시네 렌즈에는 해당 없음"
+        },
+        {
+          "ours": "a7m4",
+          "note": "카메라 AF 연동 방식이라 a7m4 위상차 AF 활용 가능성, 지원 기종은 미확인"
+        }
+      ],
+      "shops": [],
+      "reviews": [
+        {
+          "src": "Newsshooter",
+          "text": "캘리브레이션 후 성능은 안정적이나 설정 과정이 번거롭고 장비 부피 증가",
+          "url": "https://www.newsshooter.com/2026/02/08/viltrox-nexusfocus-f1-adapter-review/"
+        }
+      ],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/01/15/viltrox-nexusfocus-f1-adapter-officially-announced/"
+        }
+      ],
+      "added": "2026-01-15"
+    },
+    {
+      "id": "desview-blade-5-pro",
+      "title": "데스뷰 Blade 5 Pro 5.5인치 OLED 모니터",
+      "date": "2026-01-06",
+      "cat": "모니터",
+      "status": "공식",
+      "summary": "207g 초경량 5.5인치 OLED 온카메라 모니터",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/01/Screenshot-2026-01-07-at-10.38.08-1100x620.png",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/01/06/desview-blade-5-pro-5-5-oled-monitor/"
+      },
+      "specs": [
+        [
+          "화면",
+          "5.5인치 OLED 1920x1080"
+        ],
+        [
+          "밝기",
+          "최대 1200nits"
+        ],
+        [
+          "명암비",
+          "100000:1, DCI-P3 100%"
+        ],
+        [
+          "입출력",
+          "4K60p HDMI 입·출력, USB-C"
+        ],
+        [
+          "무게",
+          "207g"
+        ],
+        [
+          "두께",
+          "13mm"
+        ],
+        [
+          "전원",
+          "DC / USB-C / NP-F 배터리"
+        ]
+      ],
+      "price": "£265 (영국 판매점 기준)",
+      "release": "유럽 판매점 입고, 공식 스토어 미등록",
+      "features": [
+        "사용자 3D LUT 로드",
+        "유닛별 하드웨어 3D LUT 캘리브레이션",
+        "멀티터치",
+        "무소음 쿨링 팬"
+      ],
+      "compare": [
+        {
+          "ours": "Desview p5 모니터",
+          "note": "같은 데스뷰 5인치급, OLED 패널과 1200nits 밝기로 업그레이드"
+        },
+        {
+          "ours": "Hollyland Pyro 7 모니터",
+          "note": "7인치보다 작고 가벼워 짐벌·핸드헬드에 유리"
+        }
+      ],
+      "shops": [],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/01/06/desview-blade-5-pro-5-5-oled-monitor/"
+        }
+      ],
+      "added": "2026-01-06"
+    },
+    {
+      "id": "smallrig-s70-wireless-mic",
+      "title": "스몰리그 S70 무선 마이크",
+      "date": "2026-01-05",
+      "cat": "음향",
+      "status": "공식",
+      "summary": "$89.99의 로고 없는 저가형 2.4GHz 무선 마이크",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/01/官网Blog-1-740x494.jpeg",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/01/05/smallrig-s70-wireless-microphone/"
+      },
+      "specs": [
+        [
+          "전송 거리",
+          "최대 300m"
+        ],
+        [
+          "배터리",
+          "송신기 8시간 / 케이스 포함 40시간"
+        ],
+        [
+          "음질",
+          "48kHz/24bit, 최대 120dB SPL, SNR 70dB"
+        ],
+        [
+          "녹음 모드",
+          "모노 / 스테레오 / 세이프티 트랙"
+        ],
+        [
+          "내장 녹음",
+          "미지원 (32bit float 미지원)"
+        ]
+      ],
+      "price": "$89.99",
+      "release": "발표 시 구매 가능",
+      "features": [
+        "3단계 노이즈 리덕션·리미터",
+        "EQ 프리셋 9종",
+        "8.8mm 소형 마이크 헤드",
+        "SmallGoGo 앱 제어"
+      ],
+      "compare": [
+        {
+          "ours": "Hollyland Lark M2",
+          "note": "비슷한 소형 무선 마이크, 송신기 내부 녹음 없어 백업 용도는 약함"
+        },
+        {
+          "ours": "Hollyland Lark Max",
+          "note": "Lark Max의 내부 녹음·모니터링 기능 대비 하위급 가성비 제품"
+        }
+      ],
+      "shops": [],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/01/05/smallrig-s70-wireless-microphone/"
+        }
+      ],
+      "added": "2026-01-05"
+    },
+    {
+      "id": "godox-litemons-lp800bi",
+      "title": "고독스 Litemons LP800Bi",
+      "date": "2026-01-05",
+      "cat": "조명",
+      "status": "공식",
+      "summary": "$119 스탠드 포함 팬리스 바이컬러 대형 소프트 패널",
+      "img": {
+        "url": "https://media.newsshooter.com/wp-content/uploads/2026/01/1-740x395.jpeg",
+        "src": "Newsshooter",
+        "page": "https://www.newsshooter.com/2026/01/05/godox-litemons-lp800bi/"
+      },
+      "specs": [
+        [
+          "밝기",
+          "1930lux (1m, 5600K)"
+        ],
+        [
+          "색온도",
+          "2800~6500K"
+        ],
+        [
+          "CRI/TLCI",
+          "약 96 / 약 98"
+        ],
+        [
+          "무게",
+          "2.3kg"
+        ],
+        [
+          "크기",
+          "13.5 x 2.6 x 24.49인치"
+        ],
+        [
+          "소비전력",
+          "미확인"
+        ]
+      ],
+      "price": "$119",
+      "release": "발표 시 구매 가능",
+      "features": [
+        "팬리스 패시브 쿨링",
+        "효과 11종",
+        "내장 LED 화면·Godox Light 앱 제어",
+        "180° 틸트, 라이트 스탠드 포함"
+      ],
+      "compare": [
+        {
+          "ours": "울란지 소형 조명",
+          "note": "소형 조명보다 넓은 면광원으로 인터뷰 페이스 라이트에 적합"
+        },
+        {
+          "ours": "60B 조명 Nanlite",
+          "note": "출력은 낮지만 소프트박스 없이 부드러운 광질"
+        }
+      ],
+      "shops": [],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/01/05/godox-litemons-lp800bi/"
+        }
+      ],
+      "added": "2026-01-05"
     }
   ]
 }
