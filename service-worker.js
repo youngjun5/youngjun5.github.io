@@ -1,7 +1,7 @@
 // CARECENTER 홈 PWA service worker.
 // HTML은 항상 네트워크에서 새로 받아온다 — "설치된 앱이 예전 버전에 멈춰있다"는 문제를 막기 위함.
 // 정적 자산(아이콘 등)만 캐시해서 설치 가능성/오프라인 아이콘 정도만 지원.
-const CACHE = "studio-shell-v18"; // v17->v18: 장비 소식 공유 버튼·홈 새 소식 표시
+const CACHE = "studio-shell-v19"; // v18->v19: 공모전 공고 방 추가
 const STATIC = ["./icon-192.png", "./icon-512.png", "./manifest.json"];
 
 self.addEventListener("install", (e) => {
@@ -37,6 +37,7 @@ self.addEventListener("fetch", (e) => {
   if (url.pathname.indexOf("/carecolor/") === 0) return;      // CARECOLOR — 실시간 편집 데이터, 캐시 없이 항상 최신으로
   if (url.pathname.indexOf("/kit/") === 0) return;            // 장비 셋업 — 실시간 편집 데이터, 캐시 없이 항상 최신으로
   if (url.pathname.indexOf("/gearnews/") === 0) return;       // 장비 소식 — 매일 아침 자동 갱신되는 데이터, 캐시 없이 항상 최신으로
+  if (url.pathname.indexOf("/contests/") === 0) return;       // 공모전 공고 — 매일 아침 자동 갱신되는 데이터, 캐시 없이 항상 최신으로
 
   const isPage = e.request.mode === "navigate" || url.pathname.endsWith("/") || url.pathname.endsWith("index.html");
   if (isPage) {
