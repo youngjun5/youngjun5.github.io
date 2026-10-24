@@ -1,6 +1,106 @@
 {
-  "updated": "2026-10-24T06:01:00+09:00",
+  "updated": "2026-10-25T06:01:00+09:00",
   "items": [
+    {
+      "id": "thypoch-simera-c-100-t19",
+      "title": "Thypoch Simera-C 100mm T1.9 시네 렌즈",
+      "date": "2026-10-23",
+      "cat": "렌즈",
+      "status": "공식",
+      "summary": "Simera-C 시네 단렌즈 7번째이자 마지막 화각. 풀프레임 100mm T1.9 수동 초점. 소니 E $879, 10월 말 출고.",
+      "img": {
+        "url": "https://www.sonyalpharumors.com/wp-content/uploads/2026/10/Thypoch-Simera-C-100mm-T1.9-Cine-Lens-Sony-E.png",
+        "src": "Sony Alpha Rumors",
+        "page": "https://www.sonyalpharumors.com/just-announced-new-thypoch-simera-c-100mm-t1-9-cine-lens/"
+      },
+      "specs": [
+        [
+          "센서",
+          "풀프레임 (수평 화각 21.4°)"
+        ],
+        [
+          "마운트",
+          "소니 E, 라이카 M"
+        ],
+        [
+          "무게",
+          "소니 E 477g · 라이카 M 451g"
+        ],
+        [
+          "길이",
+          "소니 E 86.4mm · 라이카 M 76.6mm"
+        ],
+        [
+          "앞 지름·필터",
+          "72mm · M67×0.75"
+        ],
+        [
+          "구성",
+          "8군 11매"
+        ],
+        [
+          "조리개",
+          "16매"
+        ],
+        [
+          "최단 거리",
+          "0.85m"
+        ],
+        [
+          "초점",
+          "수동, 회전각 210°, 초점·조리개 0.8MOD 기어"
+        ]
+      ],
+      "price": "소니 E $879 / €799 · 라이카 M $959 / €869 · 7개 세트 $4,799",
+      "release": "2026년 10월 말 출고 예정",
+      "features": [
+        "16mm~100mm 7개 시네 단렌즈 라인업 완성",
+        "16매 조리개",
+        "초점·조리개 링 기어 내장",
+        "백포커스 조정용 심(shim) 세트 포함"
+      ],
+      "compare": [
+        {
+          "ours": "Samyang 100mm T2.3",
+          "note": "같은 100mm 시네 렌즈. 조금 더 밝은 T1.9가 차이."
+        },
+        {
+          "ours": "Samyang 75mm T1.9",
+          "note": "같은 T1.9, 더 좁은 화각. 인물 클로즈업용으로 보완."
+        },
+        {
+          "ours": "Sony 90mm F2.8",
+          "note": "비슷한 화각. 자동초점·매크로 필요하면 소니, 시네 기어 운용이면 Thypoch."
+        },
+        {
+          "ours": "a7m4 / a7s2",
+          "note": "소니 E 풀프레임이라 바로 장착 가능."
+        }
+      ],
+      "shops": [
+        {
+          "name": "Thypoch 발표 가격 (소니 E)",
+          "price": "$879",
+          "url": "https://thypoch.com/en/newsroom/126"
+        }
+      ],
+      "reviews": [],
+      "sources": [
+        {
+          "name": "Thypoch 뉴스룸 (공식 발표)",
+          "url": "https://thypoch.com/en/newsroom/126"
+        },
+        {
+          "name": "Newsshooter",
+          "url": "https://www.newsshooter.com/2026/10/23/thypoch-simera-c-100mm-t1-9-lens/"
+        },
+        {
+          "name": "Photo Rumors",
+          "url": "https://photorumors.com/2026/10/24/thypoch-simera-c-100mm-t1-9-lens-for-sony-e-leica-m-mount-announced/"
+        }
+      ],
+      "added": "2026-10-25"
+    },
     {
       "id": "sigma-50-f14-cl-dg-c",
       "title": "시그마 50mm F1.4 CL DG Contemporary",
