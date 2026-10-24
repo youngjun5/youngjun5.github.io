@@ -52,6 +52,13 @@ body{
 .row .mk{font-size:11px;color:var(--ink-soft);border:1px solid var(--hair-strong);border-radius:99px;padding:1px 8px;flex:none}
 .row .mk.buy{color:var(--accent);border-color:var(--accent);background:var(--accent-soft)}
 .row .d{font-size:13px;color:var(--ink-faint);font-variant-numeric:tabular-nums;flex:none}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:0 4px 12px}
+.chip{all:unset;cursor:pointer;font-size:13px;color:var(--ink-soft);padding:5px 12px;border-radius:99px;border:1px solid var(--hair-strong);background:rgba(255,255,255,.5)}
+.chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.chip i{font-style:normal;opacity:.6;margin-left:4px;font-size:11px}
+.month{list-style:none;padding:14px 20px 6px;font-size:12px;font-weight:600;color:var(--ink-faint);letter-spacing:.04em;border-top:1px solid var(--hair)}
+.month:first-child{border-top:0;padding-top:8px}
+.month + .row{border-top:0}
 .empty{padding:40px 20px;text-align:center;color:var(--ink-faint)}
 
 /* 논문처럼 읽기 */
@@ -175,10 +182,20 @@ td a,.src a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--
   /* ── 목록 ── */
   function renderList(){
     var s = seen();
-    var items = news.items.slice().sort(function(a,b){ return a.date < b.date ? 1 : -1; });
+    var all = news.items.slice().sort(function(a,b){ return a.date < b.date ? 1 : -1; });
+    var CATS = ['전체','카메라','렌즈','음향','조명','모니터','짐벌'];
+    var cat = ls('gearnews:cat'); if (CATS.indexOf(cat) < 0) cat = '전체';
+    var items = cat === '전체' ? all : all.filter(function(it){ return it.cat === cat; });
+    var chips = CATS.map(function(c){
+      var n = c === '전체' ? all.length : all.filter(function(it){ return it.cat === c; }).length;
+      return '<button class="chip' + (c === cat ? ' on' : '') + '" data-cat="' + c + '">' + c + '<i>' + n + '</i></button>';
+    }).join('');
+    var lastMonth = '';
     var rows = items.map(function(it){
       var m = marks.items[it.id], st = m && m.s;
-      return '<li class="row" data-id="' + esc(it.id) + '">' +
+      var mon = (it.date || '').slice(0,7), sep = '';
+      if (mon !== lastMonth) { lastMonth = mon; sep = '<li class="month">' + fmt(mon) + '</li>'; }
+      return sep + '<li class="row" data-id="' + esc(it.id) + '">' +
         '<span class="new' + (isNew(it) ? '' : ' off') + '"></span>' +
         '<span class="t">' + esc(it.title) + '</span>' +
         (st ? '<span class="mk' + (st === 'buy' ? ' buy' : '') + '">' + LABEL[st] + '</span>' : '') +
@@ -186,6 +203,7 @@ td a,.src a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--
     }).join('');
     view.innerHTML =
       '<div class="head"><h1>장비 소식</h1><span class="upd">' + (news.updated ? '업데이트 ' + fmt(news.updated.slice(0,10)) + ' ' + news.updated.slice(11,16) : '') + '<button class="share" id="shareList">공유</button></span></div>' +
+      '<div class="chips">' + chips + '</div>' +
       '<div class="panel"><ul class="list">' + (rows || '<li class="empty">소식 없음</li>') + '</ul></div>';
     document.title = '장비 소식 · CARECENTER';
     document.getElementById('shareList').onclick = function(){
@@ -246,6 +264,7 @@ td a,.src a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--
     if (it) renderPaper(it); else renderList();
   }
   view.addEventListener('click', function(e){
+    var c = e.target.closest('.chip'); if (c) { ls('gearnews:cat', c.getAttribute('data-cat')); renderList(); return; }
     var r = e.target.closest('.row'); if (r) location.hash = encodeURIComponent(r.getAttribute('data-id'));
   });
   window.addEventListener('hashchange', route);
